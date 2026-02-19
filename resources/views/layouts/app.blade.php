@@ -1,36 +1,114 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Universidad Internacional Cuba México')</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-uicm-gray font-sans antialiased text-gray-800">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    {{-- ===== NAVBAR ===== --}}
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md" id="main-navbar">
+        <div class="container mx-auto px-4 lg:px-10">
+            <div class="flex items-center justify-between h-16">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+                {{-- Marca --}}
+                <a href="{{ route('home') }}" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                         style="background-color: #0F4229;">
+                        <span class="text-white font-extrabold text-sm tracking-wider">UICM</span>
                     </div>
-                </header>
-            @endisset
+                    <span class="font-bold text-uicm-green uppercase tracking-wide text-sm md:text-base">
+                        Universidad Internacional Cuba México
+                    </span>
+                </a>
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                {{-- Botón hamburguesa (móvil) --}}
+                <button id="mobile-menu-btn"
+                        class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-uicm-green hover:bg-gray-100 focus:outline-none"
+                        aria-controls="nav-menu" aria-expanded="false">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="hamburger-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
+                {{-- Links escritorio --}}
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="{{ route('home') }}" class="text-sm font-medium text-uicm-green hover:text-green-800 transition-colors">Inicio</a>
+                    <a href="#oferta" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Oferta educativa</a>
+                    <a href="#contacto" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Contáctanos</a>
+                    <a href="{{ route('login') }}"
+                       class="ml-2 px-4 py-2 rounded-md text-sm font-semibold text-white transition-colors duration-200"
+                       style="background-color: #0F4229;"
+                       onmouseover="this.style.backgroundColor='#0a2f1c'"
+                       onmouseout="this.style.backgroundColor='#0F4229'">
+                        Iniciar sesión
+                    </a>
+                </div>
+            </div>
         </div>
-    </body>
+
+        {{-- Menú móvil desplegable --}}
+        <div id="nav-menu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 pb-4">
+            <div class="flex flex-col gap-3 pt-3">
+                <a href="{{ route('home') }}" class="text-sm font-medium text-uicm-green">Inicio</a>
+                <a href="#oferta" class="text-sm font-medium text-gray-600 hover:text-uicm-green">Oferta educativa</a>
+                <a href="#contacto" class="text-sm font-medium text-gray-600 hover:text-uicm-green">Contáctanos</a>
+                <a href="{{ route('login') }}"
+                   class="w-full text-center px-4 py-2 rounded-md text-sm font-semibold text-white"
+                   style="background-color: #0F4229;">
+                    Iniciar sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    {{-- Espaciado para el navbar fijo --}}
+    <div class="h-16"></div>
+
+    {{-- ===== CONTENIDO PRINCIPAL ===== --}}
+    <main>
+        @yield('content')
+    </main>
+
+    {{-- ===== FOOTER ===== --}}
+    <footer class="text-white text-center py-5" style="background-color: #0F4229;">
+        <div class="container mx-auto px-4 lg:px-10">
+            <div class="mb-2">
+                <span class="font-bold text-lg tracking-wide">UICM</span>
+            </div>
+            <p class="text-green-200 text-sm mb-1">Universidad Internacional Cuba México</p>
+            <p class="text-green-300 text-xs">&copy; {{ date('Y') }} Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    {{-- Script menú móvil --}}
+    <script>
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('nav-menu');
+        const hamburger = document.getElementById('hamburger-icon');
+        const closeIcon = document.getElementById('close-icon');
+
+        btn.addEventListener('click', () => {
+            const isOpen = !menu.classList.contains('hidden');
+            menu.classList.toggle('hidden');
+            hamburger.classList.toggle('hidden', !isOpen ? true : false);
+            closeIcon.classList.toggle('hidden', !isOpen ? false : true);
+        });
+
+        // Cambiar sombra del navbar al hacer scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('main-navbar');
+            if (window.scrollY > 10) {
+                navbar.classList.add('shadow-lg');
+            } else {
+                navbar.classList.remove('shadow-lg');
+            }
+        });
+    </script>
+
+    @stack('scripts')
+</body>
 </html>

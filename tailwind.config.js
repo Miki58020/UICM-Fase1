@@ -11,6 +11,17 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                custom: {
+                    light: '#f3f4f6',
+                    DEFAULT: '#d1d5db',
+                    dark: '#374151',
+                },
+                'uicm-gray': '#F5F6FA',
+                'uicm-green': '#0F4229',
+                'uicm-gold': '#D4AF37',
+                'uicm-orange': '#EFAD5A',
+            },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
