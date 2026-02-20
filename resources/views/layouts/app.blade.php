@@ -10,18 +10,12 @@
 
     {{-- ===== NAVBAR ===== --}}
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md" id="main-navbar">
-        <div class="container mx-auto px-4 lg:px-10">
+        <div class="container mx-auto px-8 lg:px-24">
             <div class="flex items-center justify-between h-16">
 
                 {{-- Marca --}}
-                <a href="{{ route('home') }}" class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center"
-                         style="background-color: #0F4229;">
-                        <span class="text-white font-extrabold text-sm tracking-wider">UICM</span>
-                    </div>
-                    <span class="font-bold text-uicm-green uppercase tracking-wide text-sm md:text-base">
-                        Universidad Internacional Cuba México
-                    </span>
+                <a href="{{ route('home') }}">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo UICM" class="h-10 w-auto">
                 </a>
 
                 {{-- Botón hamburguesa (móvil) --}}
@@ -75,7 +69,7 @@
 
     {{-- ===== FOOTER ===== --}}
     <footer class="text-white text-center py-5" style="background-color: #0F4229;">
-        <div class="container mx-auto px-4 lg:px-10">
+        <div class="container mx-auto px-8 lg:px-24">
             <div class="mb-2">
                 <span class="font-bold text-lg tracking-wide">UICM</span>
             </div>

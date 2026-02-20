@@ -5,13 +5,23 @@
 @section('content')
 
     {{-- ===== HERO SECTION ===== --}}
-    <section id="inicio" class="relative overflow-hidden text-white" style="background-color: #0F4229; min-height: 88vh;">
-        {{-- Overlay decorativo --}}
-        <div class="absolute inset-0 opacity-10"
+    <section id="inicio" class="relative overflow-hidden text-white" style="min-height: 88vh;">
+
+        {{-- Imagen de fondo con degradado --}}
+        <div class="absolute inset-0">
+            <img src="{{ asset('images/fondo.jpg') }}" alt="Fondo UICM"
+                 class="w-full h-full object-cover object-center">
+            {{-- Degradado encima de la imagen: izquierda sólido verde, derecha transparente --}}
+            <div class="absolute inset-0"
+                 style="background: linear-gradient(to right, rgba(15,66,41,0.97) 0%, rgba(15,66,41,0.85) 50%, rgba(15,66,41,0.45) 100%);"></div>
+        </div>
+
+        {{-- Overlay patrón decorativo sutil --}}
+        <div class="absolute inset-0 opacity-5"
              style="background: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')">
         </div>
 
-        <div class="container mx-auto px-4 lg:px-10 py-16 md:py-24 relative z-10">
+        <div class="container mx-auto px-8 lg:px-24 py-16 md:py-24 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
                 {{-- Texto principal --}}
@@ -26,7 +36,7 @@
                         La UICM combina un modelo académico integral con una plataforma digital
                         que acompaña al estudiante desde su ingreso hasta la conclusión de sus estudios.
                     </p>
-                    <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="flex flex-col sm:flex-row gap-3 flex-wrap">
                         <a href="{{ route('login') }}"
                            class="inline-flex items-center justify-center px-6 py-3 bg-white text-uicm-green font-semibold rounded-lg hover:bg-green-50 transition-colors duration-200 shadow-lg">
                             Acceso a la plataforma
@@ -35,35 +45,39 @@
                            class="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-uicm-green transition-colors duration-200">
                             Consulta la oferta educativa
                         </a>
+                        <a href="{{ route('aspirantes.seguimiento') }}"
+                           class="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-uicm-green transition-colors duration-200">
+                            Consultar estatus
+                        </a>
                     </div>
                 </div>
 
-                {{-- Panel lateral --}}
+                {{-- Panel lateral — "Lo que distingue a la UICM" con fondo blanco --}}
                 <div class="lg:col-span-5">
-                    <div class="bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-20 rounded-2xl p-6 md:p-8">
-                        <h5 class="font-bold text-lg mb-5 text-white">Lo que distingue a la UICM</h5>
+                    <div class="bg-white rounded-2xl p-6 md:p-8 shadow-2xl">
+                        <h5 class="font-bold text-lg mb-5 text-uicm-green">Lo que distingue a la UICM</h5>
                         <ul class="space-y-4">
                             <li class="flex items-start gap-3">
                                 <span class="mt-1.5 flex-shrink-0 w-2.5 h-2.5 rounded-full bg-uicm-gold"></span>
-                                <p class="text-green-100 text-sm leading-relaxed">
+                                <p class="text-gray-600 text-sm leading-relaxed">
                                     Programas académicos diseñados para responder a los retos actuales del entorno profesional.
                                 </p>
                             </li>
                             <li class="flex items-start gap-3">
                                 <span class="mt-1.5 flex-shrink-0 w-2.5 h-2.5 rounded-full bg-uicm-gold"></span>
-                                <p class="text-green-100 text-sm leading-relaxed">
+                                <p class="text-gray-600 text-sm leading-relaxed">
                                     Acompañamiento académico, tutorías y seguimiento del desempeño del estudiante.
                                 </p>
                             </li>
                             <li class="flex items-start gap-3">
                                 <span class="mt-1.5 flex-shrink-0 w-2.5 h-2.5 rounded-full bg-uicm-gold"></span>
-                                <p class="text-green-100 text-sm leading-relaxed">
+                                <p class="text-gray-600 text-sm leading-relaxed">
                                     Procesos institucionales claros: admisión, reinscripción, evaluación y titulación.
                                 </p>
                             </li>
                             <li class="flex items-start gap-3">
                                 <span class="mt-1.5 flex-shrink-0 w-2.5 h-2.5 rounded-full bg-uicm-gold"></span>
-                                <p class="text-green-100 text-sm leading-relaxed">
+                                <p class="text-gray-600 text-sm leading-relaxed">
                                     Uso de herramientas digitales para la gestión académica y administrativa.
                                 </p>
                             </li>
@@ -74,17 +88,12 @@
             </div>
         </div>
 
-        {{-- Ola decorativa inferior --}}
-        <div class="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" class="w-full">
-                <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#F5F6FA"/>
-            </svg>
-        </div>
+
     </section>
 
     {{-- ===== CIFRAS ===== --}}
     <section class="bg-uicm-gray py-12">
-        <div class="container mx-auto px-4 lg:px-10">
+        <div class="container mx-auto px-8 lg:px-24">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 @foreach([['4','Licenciaturas'],['3','Maestrías'],['1','Doctorado'],['1+','Campus digital']] as $stat)
                 <div class="bg-white rounded-xl shadow-sm p-6 text-center hover:shadow-md transition-shadow duration-200">
@@ -98,7 +107,7 @@
 
     {{-- ===== SOBRE LA UICM ===== --}}
     <section class="bg-white py-16">
-        <div class="container mx-auto px-4 lg:px-10">
+        <div class="container mx-auto px-8 lg:px-24">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
                     <p class="text-uicm-gold text-xs font-bold uppercase tracking-widest mb-2">Nuestra institución</p>
@@ -143,7 +152,7 @@
 
     {{-- ===== ÁREAS DE FORMACIÓN ===== --}}
     <section id="oferta" class="bg-uicm-gray py-16">
-        <div class="container mx-auto px-4 lg:px-10">
+        <div class="container mx-auto px-8 lg:px-24">
             <div class="text-center mb-10">
                 <p class="text-uicm-gold text-xs font-bold uppercase tracking-widest mb-2">Programas</p>
                 <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Áreas de formación</h2>
@@ -206,9 +215,62 @@
         </div>
     </section>
 
+    {{-- ===== EVENTOS — CARRUSEL ===== --}}
+    <section class="bg-white py-16">
+        <div class="container mx-auto px-8 lg:px-24">
+            <div class="text-center mb-10">
+                <p class="text-uicm-gold text-xs font-bold uppercase tracking-widest mb-2">Galería</p>
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Eventos y vida universitaria</h2>
+                <p class="text-gray-500">Momentos que hacen grande a nuestra comunidad.</p>
+            </div>
+
+            {{-- Carrusel --}}
+            <div class="relative overflow-hidden rounded-2xl shadow-lg" id="carrusel">
+                {{-- Track --}}
+                <div class="flex transition-transform duration-500 ease-in-out" id="carrusel-track">
+                    @foreach(['evento1','evento2','evento3','evento4','evento5'] as $ev)
+                    <div class="min-w-full">
+                        <img src="{{ asset('images/' . $ev . '.jpg') }}"
+                             alt="Evento UICM"
+                             class="w-full object-cover"
+                             style="height: 420px; object-position: center;">
+                    </div>
+                    @endforeach
+                </div>
+
+                {{-- Botón anterior --}}
+                <button id="prev-btn"
+                        class="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-uicm-green rounded-full w-10 h-10 flex items-center justify-center shadow-md transition-all duration-200 focus:outline-none"
+                        aria-label="Anterior">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+
+                {{-- Botón siguiente --}}
+                <button id="next-btn"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-uicm-green rounded-full w-10 h-10 flex items-center justify-center shadow-md transition-all duration-200 focus:outline-none"
+                        aria-label="Siguiente">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+
+                {{-- Indicadores (dots) --}}
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2" id="carrusel-dots">
+                    @foreach(['evento1','evento2','evento3','evento4','evento5'] as $i => $ev)
+                    <button class="w-2.5 h-2.5 rounded-full transition-all duration-200 carrusel-dot {{ $i === 0 ? 'bg-white scale-125' : 'bg-white bg-opacity-50' }}"
+                            data-index="{{ $i }}"
+                            aria-label="Slide {{ $i + 1 }}"></button>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
     {{-- ===== CONVOCATORIA / CTA ===== --}}
-    <section class="bg-white py-10">
-        <div class="container mx-auto px-4 lg:px-10">
+    <section class="bg-uicm-gray py-10">
+        <div class="container mx-auto px-8 lg:px-24">
             <div class="rounded-xl p-6 md:p-8 border-l-4 border-uicm-orange bg-orange-50 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h3 class="text-xl font-bold text-gray-800 mb-1">Convocatoria Abierta 2024</h3>
@@ -217,7 +279,7 @@
                         Asegúrate de tener toda tu documentación lista y digitalizada antes de iniciar el trámite.
                     </p>
                 </div>
-                <a href="/registro"
+                <a href="{{ route('aspirantes.registro') }}"
                    class="flex-shrink-0 px-6 py-3 rounded-lg font-semibold text-white text-sm text-center transition-colors duration-200"
                    style="background-color: #0F4229;"
                    onmouseover="this.style.backgroundColor='#0a2f1c'"
@@ -229,8 +291,8 @@
     </section>
 
     {{-- ===== CONTACTO ===== --}}
-    <section id="contacto" class="bg-uicm-gray py-16">
-        <div class="container mx-auto px-4 lg:px-10">
+    <section id="contacto" class="bg-white py-16">
+        <div class="container mx-auto px-8 lg:px-24">
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
 
                 {{-- Info --}}
@@ -259,21 +321,20 @@
 
                 {{-- Formulario --}}
                 <div class="lg:col-span-3">
-                    <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+                    <div class="bg-uicm-gray rounded-2xl shadow-sm p-6 md:p-8">
                         <h5 class="font-bold text-gray-800 text-lg mb-5">Envíanos un mensaje</h5>
-                        {{-- Formulario estático — preparado para conectar con controlador --}}
                         <form method="POST" action="#contacto">
                             @csrf
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
                                 <input type="text" name="nombre"
-                                       class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
+                                       class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
                                        placeholder="Nombre y apellidos">
                             </div>
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
                                 <input type="email" name="correo"
-                                       class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
+                                       class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
                                        placeholder="ejemplo@correo.com">
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -290,14 +351,14 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono <span class="text-gray-400">(opcional)</span></label>
                                     <input type="tel" name="telefono"
-                                           class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
+                                           class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
                                            placeholder="55 0000 0000">
                                 </div>
                             </div>
                             <div class="mb-5">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
                                 <textarea name="mensaje" rows="3"
-                                          class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent resize-none"
+                                          class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent resize-none"
                                           placeholder="Cuéntanos brevemente en qué podemos apoyarte."></textarea>
                             </div>
                             <button type="submit"
@@ -316,3 +377,32 @@
     </section>
 
 @endsection
+
+@push('scripts')
+<script>
+    // ===== CARRUSEL =====
+    const track = document.getElementById('carrusel-track');
+    const dots  = document.querySelectorAll('.carrusel-dot');
+    const total = 5;
+    let current = 0;
+    let autoplay;
+
+    function goTo(index) {
+        current = (index + total) % total;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => {
+            d.classList.toggle('bg-opacity-50', i !== current);
+            d.classList.toggle('scale-125', i === current);
+        });
+    }
+
+    document.getElementById('prev-btn').addEventListener('click', () => { clearInterval(autoplay); goTo(current - 1); startAutoplay(); });
+    document.getElementById('next-btn').addEventListener('click', () => { clearInterval(autoplay); goTo(current + 1); startAutoplay(); });
+    dots.forEach(d => d.addEventListener('click', () => { clearInterval(autoplay); goTo(parseInt(d.dataset.index)); startAutoplay(); }));
+
+    function startAutoplay() {
+        autoplay = setInterval(() => goTo(current + 1), 4000);
+    }
+    startAutoplay();
+</script>
+@endpush
