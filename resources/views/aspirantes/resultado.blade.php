@@ -182,6 +182,19 @@
             {{-- ══════════════════════════════════
                  BOTONES
             ══════════════════════════════════ --}}
+
+            {{-- Botón de pago — visible solo cuando el estado es "Pago pendiente" (índice 2) --}}
+            @if($pasoActual === 2)
+            <a href="{{ route('aspirantes.pago') }}"
+               class="block w-full py-3.5 rounded-xl text-center text-white text-sm font-bold
+                      transition-colors duration-200 shadow-md"
+               style="background-color: #EFAD5A;"
+               onmouseover="this.style.backgroundColor='#e09a3a'"
+               onmouseout="this.style.backgroundColor='#EFAD5A'">
+                Realizar pago
+            </a>
+            @endif
+
             <div class="flex flex-col sm:flex-row gap-3">
                 <a href="{{ route('aspirantes.seguimiento') }}"
                    class="flex-1 py-3 rounded-xl border-2 font-semibold text-sm text-center transition-colors duration-200"
