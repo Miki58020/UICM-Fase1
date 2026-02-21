@@ -33,6 +33,7 @@
                     <a href="{{ route('home') }}" class="text-sm font-medium text-uicm-green hover:text-green-800 transition-colors">Inicio</a>
                     <a href="#oferta" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Oferta educativa</a>
                     <a href="#contacto" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Contáctanos</a>
+                    <a href="{{ route('aspirantes.seguimiento') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Consultar estatus</a>
                     <a href="{{ route('login') }}"
                        class="ml-2 px-4 py-2 rounded-md text-sm font-semibold text-white transition-colors duration-200"
                        style="background-color: #0F4229;"
@@ -50,6 +51,7 @@
                 <a href="{{ route('home') }}" class="text-sm font-medium text-uicm-green">Inicio</a>
                 <a href="#oferta" class="text-sm font-medium text-gray-600 hover:text-uicm-green">Oferta educativa</a>
                 <a href="#contacto" class="text-sm font-medium text-gray-600 hover:text-uicm-green">Contáctanos</a>
+                <a href="{{ route('aspirantes.seguimiento') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green">Consultar estatus</a>
                 <a href="{{ route('login') }}"
                    class="w-full text-center px-4 py-2 rounded-md text-sm font-semibold text-white"
                    style="background-color: #0F4229;">

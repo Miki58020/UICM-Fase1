@@ -37,17 +37,9 @@
                         que acompaña al estudiante desde su ingreso hasta la conclusión de sus estudios.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-3 flex-wrap">
-                        <a href="{{ route('login') }}"
-                           class="inline-flex items-center justify-center px-6 py-3 bg-white text-uicm-green font-semibold rounded-lg hover:bg-green-50 transition-colors duration-200 shadow-lg">
-                            Acceso a la plataforma
-                        </a>
                         <a href="#oferta"
                            class="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-uicm-green transition-colors duration-200">
                             Consulta la oferta educativa
-                        </a>
-                        <a href="{{ route('aspirantes.seguimiento') }}"
-                           class="inline-flex items-center justify-center px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-uicm-green transition-colors duration-200">
-                            Consultar estatus
                         </a>
                     </div>
                 </div>

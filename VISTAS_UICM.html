@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vistas UICM — Fase 1</title>
+    <style>
+        /* ── Reset ──────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ── Base ───────────────────────────────── */
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 13px;
+            color: #1a1a2e;
+            background: #f5f6fa;
+            line-height: 1.5;
+        }
+
+        /* ── Página ─────────────────────────────── */
+        .page {
+            max-width: 860px;
+            margin: 32px auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+        }
+
+        /* ── Header ─────────────────────────────── */
+        .header {
+            background-color: #0F4229;
+            padding: 32px 40px 28px;
+            color: white;
+        }
+        .header-logo {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 8px;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.65);
+            margin-top: 6px;
+        }
+        .header-bar {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+        .header-stat {
+            text-align: center;
+        }
+        .header-stat span {
+            display: block;
+            font-size: 20px;
+            font-weight: 800;
+            color: #D4AF37;
+        }
+        .header-stat small {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.55);
+        }
+        .divider-v {
+            width: 1px;
+            height: 36px;
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* ── Contenido ──────────────────────────── */
+        .content {
+            padding: 32px 40px 40px;
+        }
+
+        /* ── Sección ────────────────────────────── */
+        .section {
+            margin-bottom: 28px;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .section-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: white;
+        }
+        .badge-green  { background-color: #0F4229; }
+        .badge-gold   { background-color: #D4AF37; }
+        .badge-orange { background-color: #EFAD5A; }
+        .badge-gray   { background-color: #6B7280; }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        /* ── Tabla ──────────────────────────────── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+        }
+        thead tr {
+            background: #f9fafb;
+        }
+        thead th {
+            text-align: left;
+            padding: 9px 14px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        tbody tr {
+            border-bottom: 1px solid #f3f4f6;
+        }
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+        tbody td {
+            padding: 10px 14px;
+            vertical-align: top;
+        }
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .url {
+            font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #0F4229;
+            background: #f0f9f4;
+            padding: 2px 7px;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+        .method {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            padding: 1px 6px;
+            border-radius: 4px;
+            background: #e0f0e8;
+            color: #0F4229;
+            margin-left: 4px;
+        }
+        .desc {
+            color: #374151;
+            line-height: 1.45;
+        }
+        .tag {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 600;
+            padding: 1.5px 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+        }
+        .tag-public  { background: #fef3c7; color: #92400e; }
+        .tag-auth    { background: #dbeafe; color: #1e40af; }
+        .tag-admin   { background: #f3e8ff; color: #6b21a8; }
+        .tag-finance { background: #fce7f3; color: #9d174d; }
+        .tag-coord   { background: #d1fae5; color: #065f46; }
+        .tag-alumno  { background: #e0e7ff; color: #3730a3; }
+
+        /* ── Footer ─────────────────────────────── */
+        .footer {
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .footer p {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+        .footer strong {
+            color: #0F4229;
+        }
+
+        /* ── Print ──────────────────────────────── */
+        @media print {
+            body { background: white; }
+            .page {
+                max-width: 100%;
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            tbody tr:hover { background: transparent; }
+            .no-break { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+        <p class="header-logo">Universidad Internacional Cuba México — UICM</p>
+        <h1>Vistas del Sistema — Fase 1</h1>
+        <p class="header-sub">Referencia de rutas y módulos implementados · Laravel 12 + Tailwind CSS + Alpine.js</p>
+        <div class="header-bar">
+            <div class="header-stat">
+                <span>17</span>
+                <small>Vistas totales</small>
+            </div>
+            <div class="divider-v"></div>
+            <div class="header-stat">
+                <span>7</span>
+                <small>Módulos</small>
+            </div>
+            <div class="divider-v"></div>
+            <div class="header-stat">
+                <span>4</span>
+                <small>Roles</small>
+            </div>
+            <div class="divider-v"></div>
+            <div class="header-stat">
+                <span>2026</span>
+                <small>Ciclo activo</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="content">
+
+        <!-- ── 1. ACCESO ── -->
+        <div class="section no-break">
+            <div class="section-title">
+                <span class="section-badge badge-gray">Acceso al sistema</span>
+                <div class="section-line"></div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36%">URL</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="url">/login</span></td>
+                        <td>
+                            <p class="desc"><strong>Login institucional.</strong> Formulario de acceso con correo y contraseña. Incluye modal de recuperación de contraseña (Alpine.js).</p>
+                            <span class="tag tag-public">Público</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/dashboard</span></td>
+                        <td>
+                            <p class="desc"><strong>Panel principal.</strong> Accesos rápidos a todos los módulos del sistema agrupados en cards.</p>
+                            <span class="tag tag-auth">Requiere login</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ── 2. PROCESO DE ADMISIÓN ── -->
+        <div class="section no-break">
+            <div class="section-title">
+                <span class="section-badge badge-orange">Proceso de admisión</span>
+                <div class="section-line"></div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36%">URL</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="url">/</span></td>
+                        <td>
+                            <p class="desc"><strong>Página de inicio.</strong> Portal institucional público. Presentación de la universidad e inicio del proceso de admisión.</p>
+                            <span class="tag tag-public">Público</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/registro</span></td>
+                        <td>
+                            <p class="desc"><strong>Registro de aspirante.</strong> Formulario completo con datos personales y académicos para solicitar ingreso. Al enviarlo se genera un folio único.</p>
+                            <span class="tag tag-public">Público</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/confirmacion</span></td>
+                        <td>
+                            <p class="desc"><strong>Confirmación de registro.</strong> Pantalla de éxito tras enviar el formulario. Muestra el número de folio asignado al aspirante.</p>
+                            <span class="tag tag-public">Público</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/seguimiento</span></td>
+                        <td>
+                            <p class="desc"><strong>Seguimiento de solicitud.</strong> El aspirante ingresa su folio para consultar el estado actual de su solicitud de ingreso.</p>
+                            <span class="tag tag-public">Público</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/resultado</span></td>
+                        <td>
+                            <p class="desc"><strong>Resultado de solicitud.</strong> Muestra si la solicitud fue aprobada, rechazada o si tiene un pago pendiente. Cuando hay pago pendiente aparece el botón "Realizar pago".</p>
+                            <span class="tag tag-public">Público</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/aspirante/pago</span></td>
+                        <td>
+                            <p class="desc"><strong>Pago de inscripción.</strong> El aspirante visualiza los datos bancarios (BBVA, CLABE, referencia) y sube su comprobante de pago mediante zona de carga de archivo.</p>
+                            <span class="tag tag-public">Público</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/aspirante/pago-confirmacion</span></td>
+                        <td>
+                            <p class="desc"><strong>Confirmación de pago.</strong> Pantalla tras enviar el comprobante. Indica que el pago está en revisión y tiene un tiempo estimado de 24–48 horas.</p>
+                            <span class="tag tag-public">Público</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ── 3. PORTAL DEL ALUMNO ── -->
+        <div class="section no-break">
+            <div class="section-title">
+                <span class="section-badge badge-green">Portal del alumno</span>
+                <div class="section-line"></div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36%">URL</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="url">/alumno</span></td>
+                        <td>
+                            <p class="desc"><strong>Panel personal del alumno.</strong> Muestra saludo de bienvenida, cards con matrícula, programa, grupo, cuatrimestre y estado administrativo. Tabla de materias (clave, profesor, horario, aula, créditos) e historial de pagos con estados Pagado / Pendiente.</p>
+                            <span class="tag tag-alumno">Alumno</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ── 4. CONTROL ESCOLAR ── -->
+        <div class="section no-break">
+            <div class="section-title">
+                <span class="section-badge badge-gray">Control Escolar — Administración</span>
+                <div class="section-line"></div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36%">URL</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="url">/admin/aspirantes</span></td>
+                        <td>
+                            <p class="desc"><strong>Validación de aspirantes.</strong> Lista de todos los aspirantes registrados con contadores (pendientes / validados / rechazados), badges de estado y botones de acción: Ver detalle, Aprobar, Rechazar.</p>
+                            <span class="tag tag-admin">Admin / Control Escolar</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/admin/aspirantes/show</span></td>
+                        <td>
+                            <p class="desc"><strong>Ficha del aspirante.</strong> Datos personales completos del aspirante, lista de documentos entregados (subido / pendiente) con contador de documentos recibidos. Botones: Aprobar, Rechazar.</p>
+                            <span class="tag tag-admin">Admin / Control Escolar</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/admin/inscripciones</span></td>
+                        <td>
+                            <p class="desc"><strong>Generación de matrículas.</strong> Lista de aspirantes con pago validado listos para inscripción. Contadores de estatus y botón "Generar matrícula" por registro.</p>
+                            <span class="tag tag-admin">Admin / Control Escolar</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/admin/inscripciones/generar</span></td>
+                        <td>
+                            <p class="desc"><strong>Confirmación de inscripción.</strong> Muestra la matrícula generada (ej. UICM-2026-IS-001), el grupo asignado y las credenciales de acceso (correo institucional y contraseña temporal) del nuevo alumno.</p>
+                            <span class="tag tag-admin">Admin / Control Escolar</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ── 5. FINANZAS ── -->
+        <div class="section no-break">
+            <div class="section-title">
+                <span class="section-badge badge-gold">Finanzas</span>
+                <div class="section-line"></div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36%">URL</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="url">/finanzas/pagos</span></td>
+                        <td>
+                            <p class="desc"><strong>Lista de pagos en revisión.</strong> Tabla de comprobantes enviados por los aspirantes con folio, nombre, programa, monto, fecha y estado (En revisión / Validado / Rechazado).</p>
+                            <span class="tag tag-finance">Finanzas</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/finanzas/pagos/show</span></td>
+                        <td>
+                            <p class="desc"><strong>Detalle de comprobante.</strong> Vista del comprobante subido (imagen con fallback), datos del aspirante y monto. Botones: Aprobar pago (verde), Rechazar pago (gris).</p>
+                            <span class="tag tag-finance">Finanzas</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ── 6. COORDINACIÓN ACADÉMICA ── -->
+        <div class="section no-break">
+            <div class="section-title">
+                <span class="section-badge badge-green">Coordinación Académica</span>
+                <div class="section-line"></div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36%">URL</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="url">/admin/materias</span></td>
+                        <td>
+                            <p class="desc"><strong>Gestión de materias.</strong> Catálogo de materias con clave, nombre, programa, cuatrimestre y estado (activa/inactiva). Modal Alpine.js para crear o editar. Botones de activar/desactivar por registro.</p>
+                            <span class="tag tag-coord">Coordinación Académica</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/admin/profesores</span></td>
+                        <td>
+                            <p class="desc"><strong>Gestión de profesores.</strong> Planta docente registrada con ID, nombre, correo institucional, teléfono, especialidad y estado. Modal para agregar o editar. Botones de activar/desactivar.</p>
+                            <span class="tag tag-coord">Coordinación Académica</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/admin/carga-academica</span></td>
+                        <td>
+                            <p class="desc"><strong>Generación de carga académica.</strong> Filtros por ciclo, cuatrimestre, programa y grupo. Al cargar: muestra resumen del grupo (alumnos, materias, profesores) y tabla de materias asignadas. Botón principal "Generar carga académica" con pantalla de éxito al finalizar.</p>
+                            <span class="tag tag-coord">Coordinación Académica</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div><!-- /content -->
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>
+            <strong>UICM — Sistema de Gestión Universitaria</strong> · Fase 1 · Laravel 12 + Tailwind CSS + Alpine.js
+        </p>
+        <p>Base URL: <strong>http://localhost:8000</strong></p>
+    </div>
+
+</div><!-- /page -->
+
+</body>
+</html>

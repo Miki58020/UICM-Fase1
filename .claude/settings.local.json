@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where:*)",
+      "Bash(node --version:*)",
+      "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless=new --disable-gpu --no-margins --print-to-pdf=\"c:/Users/Angel/Desktop/UICM-Fase1/VISTAS_UICM.pdf\" \"file:///c:/Users/Angel/Desktop/UICM-Fase1/VISTAS_UICM.html\")",
+      "Bash(php artisan tinker:*)"
+    ]
+  }
+}
