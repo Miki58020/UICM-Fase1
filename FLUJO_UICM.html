@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo del Sistema — UICM Fase 1</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 13px;
+            color: #1a1a2e;
+            background: #f5f6fa;
+            line-height: 1.5;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 32px auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+        }
+
+        /* ── Header ── */
+        .header {
+            background-color: #0F4229;
+            padding: 32px 40px 28px;
+            color: white;
+        }
+        .header-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 8px;
+        }
+        .header h1 { font-size: 22px; font-weight: 800; }
+        .header-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 6px; }
+        .header-bar {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+        .header-stat span {
+            display: block;
+            font-size: 20px;
+            font-weight: 800;
+            color: #D4AF37;
+        }
+        .header-stat small {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.5);
+        }
+        .divider-v { width: 1px; height: 36px; background: rgba(255,255,255,0.2); }
+
+        /* ── Contenido ── */
+        .content { padding: 36px 40px 44px; }
+
+        /* ── Paso ── */
+        .step {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 0;
+        }
+
+        /* Línea vertical del timeline */
+        .step-timeline {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            width: 40px;
+        }
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            color: white;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .step-line {
+            width: 2px;
+            flex: 1;
+            min-height: 24px;
+            background: #e5e7eb;
+            margin: 4px 0;
+        }
+        .step-line.dashed {
+            background: repeating-linear-gradient(
+                to bottom,
+                #d1fae5 0px,
+                #d1fae5 6px,
+                transparent 6px,
+                transparent 12px
+            );
+        }
+
+        /* Contenido del paso */
+        .step-body {
+            flex: 1;
+            padding-bottom: 28px;
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            margin-top: 8px;
+        }
+        .step-role {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 20px;
+            color: white;
+        }
+        .role-aspirante  { background-color: #EFAD5A; }
+        .role-control    { background-color: #0F4229; }
+        .role-finanzas   { background-color: #D4AF37; color: #1a1a2e; }
+        .role-coord      { background-color: #6366f1; }
+        .role-alumno     { background-color: #0ea5e9; }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .step-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .step-card p {
+            font-size: 12.5px;
+            color: #374151;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .step-card p:last-child { margin-bottom: 0; }
+
+        .action-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .action-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 12px;
+            color: #4b5563;
+        }
+        .action-list li::before {
+            content: '→';
+            font-weight: 700;
+            color: #0F4229;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .url-tag {
+            display: inline-block;
+            font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: #0F4229;
+            background: #f0f9f4;
+            padding: 1px 7px;
+            border-radius: 5px;
+            border: 1px solid #d1fae5;
+        }
+
+        .result-box {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .result-ok   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .result-warn { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+        .result-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+        .result-box::before {
+            font-size: 13px;
+        }
+        .result-ok::before   { content: '✓'; }
+        .result-warn::before { content: '⚠'; }
+        .result-info::before { content: 'ℹ'; }
+
+        /* Tabla de BD */
+        .db-table {
+            margin-top: 28px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        .db-table-header {
+            background: #0F4229;
+            color: white;
+            padding: 10px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+        }
+        .db-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .db-table thead tr { background: #f9fafb; }
+        .db-table thead th {
+            text-align: left;
+            padding: 8px 14px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .db-table tbody td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #374151;
+        }
+        .db-table tbody tr:last-child td { border-bottom: none; }
+        .db-table tbody td:first-child {
+            font-family: 'Cascadia Code','Courier New',monospace;
+            font-weight: 600;
+            color: #0F4229;
+            font-size: 11px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            padding: 14px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .footer p { font-size: 11px; color: #9ca3af; }
+        .footer strong { color: #0F4229; }
+
+        @media print {
+            body { background: white; }
+            .page { max-width: 100%; margin: 0; border-radius: 0; box-shadow: none; }
+            .step { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+        <p class="header-label">Universidad Internacional Cuba México — UICM</p>
+        <h1>Flujo del Sistema — Fase 1</h1>
+        <p class="header-sub">Cadena de procesos institucionales · Desde el registro del aspirante hasta el portal del alumno</p>
+        <div class="header-bar">
+            <div class="header-stat">
+                <span>7</span>
+                <small>Etapas</small>
+            </div>
+            <div class="divider-v"></div>
+            <div class="header-stat">
+                <span>5</span>
+                <small>Roles</small>
+            </div>
+            <div class="divider-v"></div>
+            <div class="header-stat">
+                <span>6</span>
+                <small>Tablas BD</small>
+            </div>
+            <div class="divider-v"></div>
+            <div class="header-stat">
+                <span>17</span>
+                <small>Vistas</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLUJO -->
+    <div class="content">
+
+        <!-- PASO 1 -->
+        <div class="step">
+            <div class="step-timeline">
+                <div class="step-circle" style="background-color: #EFAD5A;">1</div>
+                <div class="step-line dashed"></div>
+            </div>
+            <div class="step-body">
+                <div class="step-header">
+                    <span class="step-role role-aspirante">Aspirante</span>
+                    <span class="step-title">Registro e inicio del proceso</span>
+                </div>
+                <div class="step-card">
+                    <p>El aspirante accede al portal público y completa el formulario de solicitud de ingreso con sus datos personales y académicos.</p>
+                    <ul class="action-list">
+                        <li>Ingresa a <span class="url-tag">/registro</span> y llena el formulario completo</li>
+                        <li>El sistema genera un <strong>folio único</strong> de seguimiento</li>
+                        <li>Recibe confirmación en <span class="url-tag">/confirmacion</span> con su número de folio</li>
+                        <li>Puede consultar el estado de su solicitud en <span class="url-tag">/seguimiento</span></li>
+                    </ul>
+                    <div class="result-info" style="margin-top: 10px;">Estado inicial del aspirante: <strong>Pendiente de revisión</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="step">
+            <div class="step-timeline">
+                <div class="step-circle" style="background-color: #0F4229;">2</div>
+                <div class="step-line dashed"></div>
+            </div>
+            <div class="step-body">
+                <div class="step-header">
+                    <span class="step-role role-control">Control Escolar</span>
+                    <span class="step-title">Validación del expediente</span>
+                </div>
+                <div class="step-card">
+                    <p>El personal de Control Escolar revisa los expedientes recibidos, valida la documentación entregada y decide si el aspirante puede continuar al siguiente paso.</p>
+                    <ul class="action-list">
+                        <li>Accede al listado en <span class="url-tag">/admin/aspirantes</span></li>
+                        <li>Revisa la ficha completa y documentos en <span class="url-tag">/admin/aspirantes/show</span></li>
+                        <li>Aprueba el expediente → estado cambia a <strong>"Pago pendiente"</strong></li>
+                        <li>O rechaza el expediente → estado cambia a <strong>"Rechazado"</strong></li>
+                    </ul>
+                    <div class="result-ok" style="margin-top:10px;">Si aprueba: el aspirante puede avanzar al pago de inscripción</div>
+                    <div class="result-warn" style="margin-top:6px;">Si rechaza: el proceso se detiene y se notifica al aspirante</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 3 -->
+        <div class="step">
+            <div class="step-timeline">
+                <div class="step-circle" style="background-color: #EFAD5A;">3</div>
+                <div class="step-line dashed"></div>
+            </div>
+            <div class="step-body">
+                <div class="step-header">
+                    <span class="step-role role-aspirante">Aspirante</span>
+                    <span class="step-title">Pago de inscripción</span>
+                </div>
+                <div class="step-card">
+                    <p>El aspirante aprobado consulta su resultado y encuentra disponible el acceso al módulo de pago. Realiza la transferencia bancaria y sube el comprobante.</p>
+                    <ul class="action-list">
+                        <li>Consulta su resultado en <span class="url-tag">/resultado</span> — aparece botón <em>"Realizar pago"</em></li>
+                        <li>Accede a <span class="url-tag">/aspirante/pago</span> — ve datos bancarios (BBVA, CLABE, referencia)</li>
+                        <li>Sube su comprobante de transferencia (imagen o PDF)</li>
+                        <li>Recibe confirmación en <span class="url-tag">/aspirante/pago-confirmacion</span></li>
+                    </ul>
+                    <div class="result-info" style="margin-top:10px;">Estado: <strong>Comprobante en revisión</strong> · Tiempo estimado 24–48 hrs</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="step">
+            <div class="step-timeline">
+                <div class="step-circle" style="background-color: #D4AF37;">4</div>
+                <div class="step-line dashed"></div>
+            </div>
+            <div class="step-body">
+                <div class="step-header">
+                    <span class="step-role role-finanzas">Finanzas</span>
+                    <span class="step-title">Validación del pago</span>
+                </div>
+                <div class="step-card">
+                    <p>El área de Finanzas revisa los comprobantes de pago recibidos, verifica que el monto y los datos sean correctos y emite su validación.</p>
+                    <ul class="action-list">
+                        <li>Accede al listado de comprobantes en <span class="url-tag">/finanzas/pagos</span></li>
+                        <li>Revisa el detalle e imagen del comprobante en <span class="url-tag">/finanzas/pagos/show</span></li>
+                        <li>Aprueba el pago → estado cambia a <strong>"Pago validado"</strong></li>
+                        <li>O rechaza → solicita nuevo comprobante al aspirante</li>
+                    </ul>
+                    <div class="result-ok" style="margin-top:10px;">Si valida: el aspirante queda listo para ser inscrito y recibir su matrícula</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="step">
+            <div class="step-timeline">
+                <div class="step-circle" style="background-color: #0F4229;">5</div>
+                <div class="step-line dashed"></div>
+            </div>
+            <div class="step-body">
+                <div class="step-header">
+                    <span class="step-role role-control">Control Escolar</span>
+                    <span class="step-title">Generación de matrícula y cuenta</span>
+                </div>
+                <div class="step-card">
+                    <p>Con el pago validado, Control Escolar procede a inscribir formalmente al alumno: genera su número de matrícula institucional y crea sus credenciales de acceso al sistema.</p>
+                    <ul class="action-list">
+                        <li>Accede al listado de inscritos en <span class="url-tag">/admin/inscripciones</span></li>
+                        <li>Ejecuta la inscripción en <span class="url-tag">/admin/inscripciones/generar</span></li>
+                        <li>El sistema genera matrícula tipo <strong>UICM-2026-IS-001</strong></li>
+                        <li>Se crean credenciales: correo institucional y contraseña temporal</li>
+                        <li>El aspirante deja de existir como aspirante y pasa a ser <strong>alumno</strong></li>
+                    </ul>
+                    <div class="result-ok" style="margin-top:10px;">El alumno queda registrado en el sistema con acceso al portal estudiantil</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="step">
+            <div class="step-timeline">
+                <div class="step-circle" style="background-color: #6366f1;">6</div>
+                <div class="step-line dashed"></div>
+            </div>
+            <div class="step-body">
+                <div class="step-header">
+                    <span class="step-role role-coord">Coordinación Académica</span>
+                    <span class="step-title">Configuración académica del ciclo</span>
+                </div>
+                <div class="step-card">
+                    <p>La Coordinación Académica prepara la estructura del ciclo escolar: registra las materias, asigna a los profesores y genera la carga académica por grupo.</p>
+                    <ul class="action-list">
+                        <li>Gestiona el catálogo de materias en <span class="url-tag">/admin/materias</span></li>
+                        <li>Registra y actualiza la planta docente en <span class="url-tag">/admin/profesores</span></li>
+                        <li>Genera la carga académica por grupo y ciclo en <span class="url-tag">/admin/carga-academica</span></li>
+                        <li>Asigna materias, profesores, horarios y aulas a cada grupo</li>
+                    </ul>
+                    <div class="result-ok" style="margin-top:10px;">Una vez generada la carga, el alumno puede ver sus materias en su portal</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 7 -->
+        <div class="step">
+            <div class="step-timeline">
+                <div class="step-circle" style="background-color: #0ea5e9;">7</div>
+            </div>
+            <div class="step-body">
+                <div class="step-header">
+                    <span class="step-role role-alumno">Alumno</span>
+                    <span class="step-title">Acceso al portal estudiantil</span>
+                </div>
+                <div class="step-card">
+                    <p>El alumno ya inscrito accede al sistema con sus credenciales institucionales y puede consultar toda su información académica y administrativa.</p>
+                    <ul class="action-list">
+                        <li>Inicia sesión en <span class="url-tag">/login</span> con su correo y contraseña institucional</li>
+                        <li>Accede a su portal en <span class="url-tag">/alumno</span></li>
+                        <li>Consulta: matrícula, programa, grupo, cuatrimestre y estado</li>
+                        <li>Revisa sus materias asignadas: clave, profesor, horario y aula</li>
+                        <li>Consulta su historial de pagos con estados Pagado / Pendiente</li>
+                    </ul>
+                    <div class="result-ok" style="margin-top:10px;">El alumno tiene acceso completo a su información académica y financiera</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA DE BD -->
+        <div class="db-table">
+            <div class="db-table-header">Tablas de base de datos requeridas para el backend</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tabla</th>
+                        <th>Descripción</th>
+                        <th>Campos clave</th>
+                        <th>Relacionada con</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>aspirantes</td>
+                        <td>Solicitudes de ingreso</td>
+                        <td>folio, nombre, programa, estado, documentos</td>
+                        <td>pagos, users</td>
+                    </tr>
+                    <tr>
+                        <td>pagos</td>
+                        <td>Comprobantes de inscripción</td>
+                        <td>aspirante_id, monto, comprobante_path, estado</td>
+                        <td>aspirantes</td>
+                    </tr>
+                    <tr>
+                        <td>users</td>
+                        <td>Cuentas de acceso al sistema</td>
+                        <td>name, email, password, role</td>
+                        <td>alumnos, admins</td>
+                    </tr>
+                    <tr>
+                        <td>alumnos</td>
+                        <td>Perfil académico del estudiante</td>
+                        <td>user_id, matricula, programa, grupo, cuatrimestre</td>
+                        <td>users, grupos, materias</td>
+                    </tr>
+                    <tr>
+                        <td>profesores</td>
+                        <td>Planta docente</td>
+                        <td>nombre, correo, telefono, especialidad, estado</td>
+                        <td>carga_academica</td>
+                    </tr>
+                    <tr>
+                        <td>materias</td>
+                        <td>Catálogo de materias</td>
+                        <td>clave, nombre, programa, cuatrimestre, creditos, estado</td>
+                        <td>carga_academica</td>
+                    </tr>
+                    <tr>
+                        <td>carga_academica</td>
+                        <td>Asignación de materias por ciclo y grupo</td>
+                        <td>ciclo, grupo, materia_id, profesor_id, horario, aula</td>
+                        <td>materias, profesores, alumnos</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div><!-- /content -->
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p><strong>UICM — Sistema de Gestión Universitaria</strong> · Fase 1 · Laravel 12 + Tailwind CSS + Alpine.js</p>
+        <p>Base URL: <strong>http://localhost:8000</strong></p>
+    </div>
+
+</div>
+</body>
+</html>
