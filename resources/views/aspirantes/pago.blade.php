@@ -137,48 +137,78 @@ $monto    = '$3,500 MXN';
                 <div class="px-6 py-5">
                     <form method="POST"
                           action="{{ route('aspirantes.pago.enviar') }}"
-                          enctype="multipart/form-data">
+                          enctype="multipart/form-data"
+                          x-data="{ archivo: null, subiendo: false }"
+                          @submit="subiendo = true">
                         @csrf
+                        <input type="hidden" name="folio" value="{{ $folio }}">
+
+                        @error('comprobante')
+                        <div class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-4 text-sm">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            {{ $message }}
+                        </div>
+                        @enderror
 
                         <div class="mb-5">
-                            <label for="comprobante"
-                                   class="block text-sm font-medium text-gray-700 mb-2">
-                                Archivo del comprobante
-                                <span class="text-red-500">*</span>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Archivo del comprobante <span class="text-red-500">*</span>
                             </label>
 
-                            {{-- Zona de carga estilizada --}}
+                            {{-- Zona de carga — cambia visualmente al seleccionar --}}
                             <label for="comprobante"
-                                   class="flex flex-col items-center justify-center w-full h-32
-                                          border-2 border-dashed border-gray-300 rounded-xl cursor-pointer
-                                          bg-gray-50 hover:bg-gray-100 transition-colors duration-150">
-                                <svg class="w-7 h-7 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6
-                                             a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                                </svg>
-                                <p class="text-xs text-gray-500">
-                                    <span class="font-semibold" style="color: #0F4229;">Haz clic para seleccionar</span>
-                                    &nbsp;o arrastra aquí
-                                </p>
-                                <p class="text-xs text-gray-400 mt-0.5">PDF, JPG o PNG — máx. 5 MB</p>
+                                   class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-colors duration-150"
+                                   :class="archivo ? 'border-green-400 bg-green-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'">
+
+                                <template x-if="!archivo">
+                                    <div class="flex flex-col items-center">
+                                        <svg class="w-7 h-7 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                        </svg>
+                                        <p class="text-xs text-gray-500">
+                                            <span class="font-semibold" style="color: #0F4229;">Haz clic para seleccionar</span>
+                                            &nbsp;o arrastra aquí
+                                        </p>
+                                        <p class="text-xs text-gray-400 mt-0.5">PDF, JPG o PNG — máx. 5 MB</p>
+                                    </div>
+                                </template>
+
+                                <template x-if="archivo">
+                                    <div class="flex flex-col items-center">
+                                        <svg class="w-7 h-7 text-green-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <p class="text-xs font-semibold text-green-700" x-text="archivo"></p>
+                                        <p class="text-xs text-gray-400 mt-0.5">Haz clic para cambiar</p>
+                                    </div>
+                                </template>
                             </label>
 
                             <input type="file"
                                    id="comprobante"
                                    name="comprobante"
                                    accept=".pdf,.jpg,.jpeg,.png"
-                                   required
-                                   class="sr-only">
+                                   class="sr-only"
+                                   @change="archivo = $event.target.files[0]?.name ?? null">
                         </div>
 
                         <button type="submit"
-                                class="w-full py-3 rounded-xl text-white text-sm font-bold
-                                       transition-colors duration-200 shadow-sm"
+                                :disabled="!archivo || subiendo"
+                                class="w-full py-3 rounded-xl text-white text-sm font-bold transition-colors duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                 style="background-color: #0F4229;"
-                                onmouseover="this.style.backgroundColor='#0a2e1c'"
+                                onmouseover="if(!this.disabled) this.style.backgroundColor='#0a2e1c'"
                                 onmouseout="this.style.backgroundColor='#0F4229'">
-                            Enviar comprobante
+                            <span x-show="!subiendo">Enviar comprobante</span>
+                            <span x-show="subiendo" class="inline-flex items-center gap-2 justify-center">
+                                <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                                </svg>
+                                Subiendo...
+                            </span>
                         </button>
 
                     </form>

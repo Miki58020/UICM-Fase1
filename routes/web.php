@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\ContactoController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home.index')->name('home');
+Route::post('/contacto', [ContactoController::class, 'store'])->name('contacto.store');
 
 // Módulo de aspirantes
 Route::view('/registro', 'aspirantes.registro')->name('aspirantes.registro');
@@ -17,9 +20,7 @@ Route::view('/alumno', 'alumno.dashboard')->name('alumno.dashboard');
 
 // Módulo pago de inscripción
 Route::view('/aspirante/pago', 'aspirantes.pago')->name('aspirantes.pago');
-Route::post('/aspirante/pago', function () {
-    return redirect()->route('aspirantes.pago.confirmacion');
-})->name('aspirantes.pago.enviar');
+Route::post('/aspirante/pago', [PagoController::class, 'store'])->name('aspirantes.pago.enviar');
 Route::view('/aspirante/pago-confirmacion', 'aspirantes.pago_confirmacion')->name('aspirantes.pago.confirmacion');
 
 // Módulo finanzas — Validación de pagos

@@ -314,45 +314,86 @@
                 {{-- Formulario --}}
                 <div class="lg:col-span-3">
                     <div class="bg-uicm-gray rounded-2xl shadow-sm p-6 md:p-8">
+
+                        {{-- Mensaje de éxito --}}
+                        @if(session('contacto_enviado'))
+                        <div class="flex items-start gap-3 bg-green-50 border border-green-200 text-green-800 rounded-xl px-4 py-4 mb-5">
+                            <svg class="w-5 h-5 flex-shrink-0 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <div>
+                                <p class="font-semibold text-sm">¡Mensaje enviado correctamente!</p>
+                                <p class="text-xs text-green-700 mt-0.5">Un asesor se pondrá en contacto contigo a la brevedad.</p>
+                            </div>
+                        </div>
+                        @endif
+
                         <h5 class="font-bold text-gray-800 text-lg mb-5">Envíanos un mensaje</h5>
-                        <form method="POST" action="#contacto">
+                        <form method="POST" action="{{ route('contacto.store') }}">
                             @csrf
+
+                            {{-- Nombre --}}
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
-                                <input type="text" name="nombre"
-                                       class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
+                                <input type="text" name="nombre" value="{{ old('nombre') }}"
+                                       class="w-full rounded-lg border @error('nombre') border-red-400 bg-red-50 @else border-gray-200 bg-white @enderror px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
                                        placeholder="Nombre y apellidos">
+                                @error('nombre')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
+
+                            {{-- Correo --}}
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
-                                <input type="email" name="correo"
-                                       class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
+                                <input type="email" name="correo" value="{{ old('correo') }}"
+                                       class="w-full rounded-lg border @error('correo') border-red-400 bg-red-50 @else border-gray-200 bg-white @enderror px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
                                        placeholder="ejemplo@correo.com">
+                                @error('correo')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                {{-- Interés --}}
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Interés principal</label>
                                     <select name="interes"
-                                            class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent bg-white">
-                                        <option value="admisiones">Información de admisiones</option>
-                                        <option value="oferta">Oferta educativa</option>
-                                        <option value="plataforma">Plataforma académica</option>
-                                        <option value="otro">Otro</option>
+                                            class="w-full rounded-lg border @error('interes') border-red-400 bg-red-50 @else border-gray-200 bg-white @enderror px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent">
+                                        <option value="">Selecciona una opción</option>
+                                        <option value="oferta"     {{ old('interes') == 'oferta'     ? 'selected' : '' }}>Oferta educativa</option>
+                                        <option value="admisiones" {{ old('interes') == 'admisiones' ? 'selected' : '' }}>Información de admisiones</option>
+                                        <option value="estatus"    {{ old('interes') == 'estatus'    ? 'selected' : '' }}>Dudas sobre estatus</option>
+                                        <option value="plataforma" {{ old('interes') == 'plataforma' ? 'selected' : '' }}>Plataforma digital</option>
+                                        <option value="otros"      {{ old('interes') == 'otros'      ? 'selected' : '' }}>Otros</option>
                                     </select>
+                                    @error('interes')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
+
+                                {{-- Teléfono --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono <span class="text-gray-400">(opcional)</span></label>
-                                    <input type="tel" name="telefono"
-                                           class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
-                                           placeholder="55 0000 0000">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                                    <input type="tel" name="telefono" value="{{ old('telefono') }}"
+                                           maxlength="10"
+                                           oninput="this.value=this.value.replace(/\D/g,'')"
+                                           class="w-full rounded-lg border @error('telefono') border-red-400 bg-red-50 @else border-gray-200 bg-white @enderror px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
+                                           placeholder="10 dígitos">
+                                    @error('telefono')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
+
+                            {{-- Mensaje --}}
                             <div class="mb-5">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
                                 <textarea name="mensaje" rows="3"
                                           class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent resize-none"
-                                          placeholder="Cuéntanos brevemente en qué podemos apoyarte."></textarea>
+                                          placeholder="Cuéntanos brevemente en qué podemos apoyarte.">{{ old('mensaje') }}</textarea>
                             </div>
+
                             <button type="submit"
                                     class="w-full py-3 rounded-lg text-white font-semibold text-sm transition-colors duration-200"
                                     style="background-color: #0F4229;"
