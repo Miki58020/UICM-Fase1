@@ -23,9 +23,20 @@
 
             <div class="p-6 md:p-10">
                 <form method="POST"
-                      action="{{ route('aspirantes.confirmacion') }}"
+                      action="{{ route('aspirantes.store') }}"
                       enctype="multipart/form-data">
                     @csrf
+
+                    @if($errors->any())
+                    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+                        <p class="text-sm font-semibold text-red-700 mb-2">Por favor corrige los siguientes errores:</p>
+                        <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
 
                     {{-- ══════════════════════════════════════════
                          SECCIÓN 1: DATOS PERSONALES
@@ -39,19 +50,60 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                            {{-- Nombre completo --}}
-                            <div class="md:col-span-2">
-                                <label for="nombre_completo"
+                            {{-- Nombre --}}
+                            <div>
+                                <label for="nombre"
                                        class="block text-sm font-medium text-gray-700 mb-1">
-                                    Nombre completo <span class="text-red-500">*</span>
+                                    Nombre(s) <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text"
-                                       id="nombre_completo"
-                                       name="nombre_completo"
-                                       placeholder="Apellido Apellido, Nombre(s)"
+                                       id="nombre"
+                                       name="nombre"
+                                       placeholder="Nombre(s)"
+                                       value="{{ old('nombre') }}"
                                        required
-                                       class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+                                       class="w-full rounded-lg border {{ $errors->has('nombre') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
+                                @error('nombre')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Apellido paterno --}}
+                            <div>
+                                <label for="apellido_paterno"
+                                       class="block text-sm font-medium text-gray-700 mb-1">
+                                    Apellido paterno <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text"
+                                       id="apellido_paterno"
+                                       name="apellido_paterno"
+                                       placeholder="Apellido paterno"
+                                       value="{{ old('apellido_paterno') }}"
+                                       required
+                                       class="w-full rounded-lg border {{ $errors->has('apellido_paterno') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                                @error('apellido_paterno')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Apellido materno --}}
+                            <div>
+                                <label for="apellido_materno"
+                                       class="block text-sm font-medium text-gray-700 mb-1">
+                                    Apellido materno
+                                </label>
+                                <input type="text"
+                                       id="apellido_materno"
+                                       name="apellido_materno"
+                                       placeholder="Apellido materno"
+                                       value="{{ old('apellido_materno') }}"
+                                       class="w-full rounded-lg border {{ $errors->has('apellido_materno') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                                @error('apellido_materno')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- CURP --}}
@@ -65,9 +117,13 @@
                                        name="curp"
                                        placeholder="18 caracteres"
                                        maxlength="18"
+                                       value="{{ old('curp') }}"
                                        required
-                                       class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm uppercase focus:outline-none focus:ring-2 focus:border-transparent"
+                                       class="w-full rounded-lg border {{ $errors->has('curp') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm uppercase focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
+                                @error('curp')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Fecha de nacimiento --}}
@@ -79,9 +135,13 @@
                                 <input type="date"
                                        id="fecha_nacimiento"
                                        name="fecha_nacimiento"
+                                       value="{{ old('fecha_nacimiento') }}"
                                        required
-                                       class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
+                                       class="w-full rounded-lg border {{ $errors->has('fecha_nacimiento') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
+                                @error('fecha_nacimiento')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Teléfono --}}
@@ -94,11 +154,15 @@
                                        id="telefono"
                                        name="telefono"
                                        placeholder="10 dígitos"
+                                       value="{{ old('telefono') }}"
                                        required
                                        maxlength="10"
                                        oninput="this.value=this.value.replace(/\D/g,'')"
-                                       class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+                                       class="w-full rounded-lg border {{ $errors->has('telefono') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
+                                @error('telefono')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Correo electrónico --}}
@@ -111,9 +175,13 @@
                                        id="email"
                                        name="email"
                                        placeholder="ejemplo@correo.com"
+                                       value="{{ old('email') }}"
                                        required
-                                       class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+                                       class="w-full rounded-lg border {{ $errors->has('email') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
+                                @error('email')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                         </div>
@@ -143,24 +211,27 @@
                                 <select id="programa_academico"
                                         name="programa_academico"
                                         required
-                                        class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
+                                        class="w-full rounded-lg border {{ $errors->has('programa_academico') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
                                         style="--tw-ring-color: #0F4229;">
-                                    <option value="" disabled selected>Selecciona un programa</option>
+                                    <option value="" disabled {{ old('programa_academico') ? '' : 'selected' }}>Selecciona un programa</option>
                                     <optgroup label="Licenciaturas">
-                                        <option value="psicopedagogia">Psicopedagogía</option>
-                                        <option value="lengua_inglesa">Lengua Inglesa</option>
-                                        <option value="administracion">Administración</option>
-                                        <option value="lengua_literatura">Lengua y Literatura</option>
+                                        <option value="psicopedagogia" {{ old('programa_academico') == 'psicopedagogia' ? 'selected' : '' }}>Psicopedagogía</option>
+                                        <option value="lengua_inglesa" {{ old('programa_academico') == 'lengua_inglesa' ? 'selected' : '' }}>Lengua Inglesa</option>
+                                        <option value="administracion" {{ old('programa_academico') == 'administracion' ? 'selected' : '' }}>Administración</option>
+                                        <option value="lengua_literatura" {{ old('programa_academico') == 'lengua_literatura' ? 'selected' : '' }}>Lengua y Literatura</option>
                                     </optgroup>
                                     <optgroup label="Maestrías">
-                                        <option value="mba">Administración y Negocios</option>
-                                        <option value="maestria_educacion">Educación</option>
-                                        <option value="negocios_logistica">Negocios y Logística Internacional</option>
+                                        <option value="mba" {{ old('programa_academico') == 'mba' ? 'selected' : '' }}>Administración y Negocios</option>
+                                        <option value="maestria_educacion" {{ old('programa_academico') == 'maestria_educacion' ? 'selected' : '' }}>Educación</option>
+                                        <option value="negocios_logistica" {{ old('programa_academico') == 'negocios_logistica' ? 'selected' : '' }}>Negocios y Logística Internacional</option>
                                     </optgroup>
                                     <optgroup label="Doctorado">
-                                        <option value="doctorado_educacion">Doctorado en Educación</option>
+                                        <option value="doctorado_educacion" {{ old('programa_academico') == 'doctorado_educacion' ? 'selected' : '' }}>Doctorado en Educación</option>
                                     </optgroup>
                                 </select>
+                                @error('programa_academico')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Generación --}}
@@ -172,12 +243,15 @@
                                 <select id="generacion"
                                         name="generacion"
                                         required
-                                        class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
+                                        class="w-full rounded-lg border {{ $errors->has('generacion') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
                                         style="--tw-ring-color: #0F4229;">
-                                    <option value="" disabled selected>Selecciona una generación</option>
-                                    <option value="2026-1">2026-1 (Enero – Junio)</option>
-                                    <option value="2026-2">2026-2 (Agosto – Diciemb­re)</option>
+                                    <option value="" disabled {{ old('generacion') ? '' : 'selected' }}>Selecciona una generación</option>
+                                    <option value="2026-1" {{ old('generacion') == '2026-1' ? 'selected' : '' }}>2026-1 (Enero – Junio)</option>
+                                    <option value="2026-2" {{ old('generacion') == '2026-2' ? 'selected' : '' }}>2026-2 (Agosto – Diciemb­re)</option>
                                 </select>
+                                @error('generacion')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                         </div>

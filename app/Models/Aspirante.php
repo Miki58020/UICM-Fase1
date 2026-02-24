@@ -8,7 +8,9 @@ class Aspirante extends Model
 {
     protected $fillable = [
         'folio', 'nombre', 'apellido_paterno', 'apellido_materno',
-        'email', 'telefono', 'curp', 'programa_id', 'estado', 'observaciones',
+        'email', 'telefono', 'curp', 'fecha_nacimiento', 'programa_id',
+        'generacion', 'acta_nacimiento_url', 'certificado_url', 'identificacion_url',
+        'estado', 'observaciones',
     ];
 
     public function programa()

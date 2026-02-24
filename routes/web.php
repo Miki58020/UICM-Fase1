@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AspiranteController;
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProfileController;
@@ -9,7 +10,8 @@ Route::view('/', 'home.index')->name('home');
 Route::post('/contacto', [ContactoController::class, 'store'])->name('contacto.store');
 
 // Módulo de aspirantes
-Route::view('/registro', 'aspirantes.registro')->name('aspirantes.registro');
+Route::get('/registro', [AspiranteController::class, 'create'])->name('aspirantes.registro');
+Route::post('/registro', [AspiranteController::class, 'store'])->name('aspirantes.store');
 
 Route::view('/confirmacion', 'aspirantes.confirmacion')->name('aspirantes.confirmacion');
 Route::view('/seguimiento', 'aspirantes.seguimiento')->name('aspirantes.seguimiento');

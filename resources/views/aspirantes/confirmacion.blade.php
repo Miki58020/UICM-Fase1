@@ -4,6 +4,10 @@
 
 @section('content')
 
+@if(!session('folio'))
+<script>window.location.href = "{{ route('aspirantes.registro') }}";</script>
+@endif
+
 <section class="bg-uicm-gray min-h-screen flex items-center py-16">
     <div class="container mx-auto px-8 lg:px-24">
 
@@ -40,7 +44,7 @@
 
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Folio</span>
-                            <span class="text-sm font-bold text-uicm-green tracking-widest">UICM-2026-0001</span>
+                            <span class="text-sm font-bold text-uicm-green tracking-widest">{{ session('folio') }}</span>
                         </div>
 
                         <hr class="border-gray-200">

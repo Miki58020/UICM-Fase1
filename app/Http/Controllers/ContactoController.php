@@ -11,7 +11,7 @@ class ContactoController extends Controller
     {
         $request->validate([
             'nombre'   => ['required', 'string', 'max:100'],
-            'correo'   => ['required', 'email', 'max:150'],
+            'correo'   => ['required', 'email:rfc,filter', 'max:150'],
             'telefono' => ['required', 'digits:10'],
             'interes'  => ['required', 'in:oferta,admisiones,estatus,plataforma,otros'],
             'mensaje'  => ['nullable', 'string', 'max:1000'],
