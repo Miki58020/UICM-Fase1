@@ -4,32 +4,6 @@
 
 @section('content')
 
-@php
-// Datos simulados del aspirante
-$aspirante = [
-    'folio'           => 'UICM-2026-0001',
-    'nombre'          => 'Juan',
-    'apellido_pat'    => 'Pérez',
-    'apellido_mat'    => 'García',
-    'curp'            => 'PEGJ990315HDFRRC09',
-    'fecha_nac'       => '15 de marzo de 1999',
-    'telefono'        => '+52 55 1234 5678',
-    'email'           => 'juan.perez@correo.com',
-    'programa'        => 'Ingeniería en Sistemas Computacionales',
-    'generacion'      => '2026-A',
-    'estado'          => 'pendiente_validacion',
-    'fecha_registro'  => '12 de enero de 2026',
-];
-
-$documentos = [
-    ['nombre' => 'Acta de nacimiento',    'archivo' => 'acta_nacimiento_UICM-2026-0001.pdf',    'estado' => 'subido'],
-    ['nombre' => 'Certificado de estudios','archivo' => 'certificado_UICM-2026-0001.pdf',         'estado' => 'subido'],
-    ['nombre' => 'Identificación oficial', 'archivo' => 'identificacion_UICM-2026-0001.pdf',      'estado' => 'subido'],
-    ['nombre' => 'CURP',                  'archivo' => 'curp_UICM-2026-0001.pdf',                 'estado' => 'pendiente'],
-    ['nombre' => 'Fotografía',             'archivo' => 'foto_UICM-2026-0001.jpg',                 'estado' => 'pendiente'],
-];
-@endphp
-
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-5xl">
 
@@ -43,8 +17,15 @@ $documentos = [
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
-            <span class="font-medium text-gray-600">{{ $aspirante['folio'] }}</span>
+            <span class="font-medium text-gray-600">{{ $aspirante->folio }}</span>
         </nav>
+
+        {{-- ── Flash de éxito ── --}}
+        @if (session('success'))
+            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
+                <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
+            </div>
+        @endif
 
         {{-- ── Encabezado del expediente ── --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
@@ -56,24 +37,24 @@ $documentos = [
                         Expediente de aspirante
                     </p>
                     <h1 class="text-xl font-extrabold text-gray-900">
-                        {{ $aspirante['nombre'] }} {{ $aspirante['apellido_pat'] }} {{ $aspirante['apellido_mat'] }}
+                        {{ $aspirante->nombre_completo }}
                     </h1>
-                    <p class="text-sm text-gray-500 mt-0.5 font-mono">{{ $aspirante['folio'] }}</p>
+                    <p class="text-sm text-gray-500 mt-0.5 font-mono">{{ $aspirante->folio }}</p>
                 </div>
 
                 {{-- Badge estado --}}
                 <div>
-                    @if ($aspirante['estado'] === 'pendiente_validacion')
+                    @if ($aspirante->estado === 'pendiente')
                         <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white"
                               style="background-color: #EFAD5A;">
                             <span class="w-2 h-2 rounded-full bg-white opacity-80 inline-block"></span>
                             Pendiente de validación
                         </span>
-                    @elseif ($aspirante['estado'] === 'validado')
+                    @elseif ($aspirante->estado === 'aprobado')
                         <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white"
                               style="background-color: #0F4229;">
                             <span class="w-2 h-2 rounded-full bg-white opacity-80 inline-block"></span>
-                            Validado
+                            Aprobado
                         </span>
                     @else
                         <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-gray-600 bg-gray-200">
@@ -104,46 +85,46 @@ $documentos = [
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Nombre completo</dt>
-                            <dd class="text-sm font-semibold text-gray-800">
-                                {{ $aspirante['nombre'] }} {{ $aspirante['apellido_pat'] }} {{ $aspirante['apellido_mat'] }}
-                            </dd>
+                            <dd class="text-sm font-semibold text-gray-800">{{ $aspirante->nombre_completo }}</dd>
                         </div>
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">CURP</dt>
-                            <dd class="text-sm font-mono font-semibold text-gray-800 tracking-wide">
-                                {{ $aspirante['curp'] }}
-                            </dd>
+                            <dd class="text-sm font-mono font-semibold text-gray-800 tracking-wide">{{ $aspirante->curp }}</dd>
                         </div>
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Fecha de nacimiento</dt>
-                            <dd class="text-sm text-gray-800">{{ $aspirante['fecha_nac'] }}</dd>
+                            <dd class="text-sm text-gray-800">
+                                {{ \Carbon\Carbon::parse($aspirante->fecha_nacimiento)->format('d \d\e F \d\e Y') }}
+                            </dd>
                         </div>
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Teléfono</dt>
-                            <dd class="text-sm text-gray-800">{{ $aspirante['telefono'] }}</dd>
+                            <dd class="text-sm text-gray-800">{{ $aspirante->telefono }}</dd>
                         </div>
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Correo electrónico</dt>
-                            <dd class="text-sm text-gray-800">{{ $aspirante['email'] }}</dd>
+                            <dd class="text-sm text-gray-800">{{ $aspirante->email }}</dd>
                         </div>
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Fecha de registro</dt>
-                            <dd class="text-sm text-gray-800">{{ $aspirante['fecha_registro'] }}</dd>
+                            <dd class="text-sm text-gray-800">
+                                {{ $aspirante->created_at->format('d \d\e F \d\e Y') }}
+                            </dd>
                         </div>
 
                         <div class="sm:col-span-2">
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Programa solicitado</dt>
-                            <dd class="text-sm font-semibold text-gray-800">{{ $aspirante['programa'] }}</dd>
+                            <dd class="text-sm font-semibold text-gray-800">{{ $aspirante->programa->nombre ?? '—' }}</dd>
                         </div>
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Generación</dt>
-                            <dd class="text-sm font-bold" style="color: #0F4229;">{{ $aspirante['generacion'] }}</dd>
+                            <dd class="text-sm font-bold" style="color: #0F4229;">{{ $aspirante->generacion }}</dd>
                         </div>
 
                     </dl>
@@ -164,10 +145,19 @@ $documentos = [
                 </div>
 
                 <ul class="divide-y divide-gray-100">
+
+                    @php
+                        $documentos = [
+                            ['nombre' => 'Acta de nacimiento',     'url' => $aspirante->acta_nacimiento_url],
+                            ['nombre' => 'Certificado de estudios','url' => $aspirante->certificado_url],
+                            ['nombre' => 'Identificación oficial', 'url' => $aspirante->identificacion_url],
+                        ];
+                        $subidos = collect($documentos)->filter(fn($d) => !empty($d['url']))->count();
+                    @endphp
+
                     @foreach ($documentos as $doc)
                     <li class="px-6 py-3.5 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            {{-- Icono PDF --}}
                             <div class="flex-shrink-0 w-7 h-7 rounded flex items-center justify-center"
                                  style="background-color: #f0f9f4;">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -180,8 +170,8 @@ $documentos = [
                             <span class="text-xs text-gray-700 font-medium truncate">{{ $doc['nombre'] }}</span>
                         </div>
 
-                        @if ($doc['estado'] === 'subido')
-                            <a href="#"
+                        @if (!empty($doc['url']))
+                            <a href="{{ $doc['url'] }}" target="_blank"
                                class="flex-shrink-0 text-xs font-semibold transition-colors duration-150"
                                style="color: #D4AF37;"
                                onmouseover="this.style.color='#b8962e'"
@@ -193,63 +183,113 @@ $documentos = [
                         @endif
                     </li>
                     @endforeach
+
                 </ul>
 
                 <div class="px-6 py-3 border-t border-gray-100 bg-gray-50">
                     <p class="text-xs text-gray-400">
-                        {{ count(array_filter($documentos, fn($d) => $d['estado'] === 'subido')) }}
-                        de {{ count($documentos) }} documentos recibidos
+                        {{ $subidos }} de {{ count($documentos) }} documentos recibidos
                     </p>
                 </div>
             </div>
 
         </div>{{-- /grid --}}
 
+        {{-- ── Observaciones si está rechazado ── --}}
+        @if ($aspirante->estado === 'rechazado' && $aspirante->observaciones)
+            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-gray-50" style="border-color: #9ca3af;">
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Motivo de rechazo</p>
+                <p class="text-sm text-gray-700">{{ $aspirante->observaciones }}</p>
+            </div>
+        @endif
+
         {{-- ── Acciones principales ── --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Resolución del expediente</h2>
             </div>
-            <div class="px-6 py-5 flex flex-col sm:flex-row items-center gap-4">
+            <div class="px-6 py-5 flex flex-col gap-4">
 
-                {{-- Aprobar --}}
-                <button type="button"
-                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2
-                               px-6 py-3 rounded-xl text-sm font-bold text-white
-                               transition-colors duration-200 shadow-sm"
-                        style="background-color: #0F4229;"
-                        onmouseover="this.style.backgroundColor='#0a2e1c'"
-                        onmouseout="this.style.backgroundColor='#0F4229'">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Aprobar aspirante
-                </button>
+                @if ($aspirante->estado === 'pendiente')
 
-                {{-- Rechazar --}}
-                <button type="button"
-                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2
-                               px-6 py-3 rounded-xl text-sm font-bold text-white
-                               bg-gray-400 hover:bg-gray-500 transition-colors duration-200 shadow-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                    Rechazar aspirante
-                </button>
+                    <div class="flex flex-col sm:flex-row items-start gap-4">
+
+                        {{-- Aprobar --}}
+                        <form method="POST" action="{{ route('admin.aspirantes.aprobar', $aspirante->id) }}"
+                              onsubmit="return confirm('¿Confirmas la aprobación de este aspirante? Se generará una matrícula automáticamente.')">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit"
+                                    class="inline-flex items-center justify-center gap-2
+                                           px-6 py-3 rounded-xl text-sm font-bold text-white
+                                           transition-colors duration-200 shadow-sm"
+                                    style="background-color: #0F4229;"
+                                    onmouseover="this.style.backgroundColor='#0a2e1c'"
+                                    onmouseout="this.style.backgroundColor='#0F4229'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Aprobar aspirante
+                            </button>
+                        </form>
+
+                        {{-- Rechazar (toggle) --}}
+                        <button type="button"
+                                onclick="document.getElementById('form-rechazar').classList.toggle('hidden')"
+                                class="inline-flex items-center justify-center gap-2
+                                       px-6 py-3 rounded-xl text-sm font-bold text-white
+                                       bg-gray-400 hover:bg-gray-500 transition-colors duration-200 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                            Rechazar aspirante
+                        </button>
+
+                    </div>
+
+                    {{-- Formulario de rechazo --}}
+                    <div id="form-rechazar" class="hidden">
+                        <form method="POST" action="{{ route('admin.aspirantes.rechazar', $aspirante->id) }}">
+                            @csrf
+                            @method('PATCH')
+                            <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                                Motivo del rechazo <span class="text-red-500">*</span>
+                            </label>
+                            <textarea name="observaciones" required maxlength="500" rows="3"
+                                      placeholder="Describe el motivo por el que se rechaza la solicitud..."
+                                      class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 resize-none mb-3"
+                                      style="--tw-ring-color: #9ca3af;">{{ old('observaciones') }}</textarea>
+                            @error('observaciones')
+                                <p class="text-xs text-red-500 mb-2">{{ $message }}</p>
+                            @enderror
+                            <button type="submit"
+                                    class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gray-500 hover:bg-gray-600 transition-colors shadow-sm">
+                                Confirmar rechazo
+                            </button>
+                        </form>
+                    </div>
+
+                @else
+                    <p class="text-sm text-gray-500 italic">
+                        Este expediente ya fue procesado ({{ $aspirante->estado }}).
+                    </p>
+                @endif
 
                 {{-- Volver a la lista --}}
-                <a href="{{ route('admin.aspirantes.index') }}"
-                   class="w-full sm:w-auto inline-flex items-center justify-center gap-2
-                          px-6 py-3 rounded-xl text-sm font-bold border-2
-                          transition-colors duration-200"
-                   style="border-color: #0F4229; color: #0F4229;"
-                   onmouseover="this.style.backgroundColor='#f0f9f4'"
-                   onmouseout="this.style.backgroundColor='transparent'">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                    Volver a la lista
-                </a>
+                <div>
+                    <a href="{{ route('admin.aspirantes.index') }}"
+                       class="inline-flex items-center justify-center gap-2
+                              px-6 py-3 rounded-xl text-sm font-bold border-2
+                              transition-colors duration-200"
+                       style="border-color: #0F4229; color: #0F4229;"
+                       onmouseover="this.style.backgroundColor='#f0f9f4'"
+                       onmouseout="this.style.backgroundColor='transparent'">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Volver a la lista
+                    </a>
+                </div>
 
             </div>
         </div>{{-- /acciones --}}

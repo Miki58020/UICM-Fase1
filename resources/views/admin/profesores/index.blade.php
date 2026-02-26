@@ -4,75 +4,37 @@
 
 @section('content')
 
-@php
-// Datos simulados
-$profesores = [
-    [
-        'id'          => 'PRF-001',
-        'nombre'      => 'Dr. Alejandro Fuentes Mora',
-        'correo'      => 'a.fuentes@uicm.edu.mx',
-        'telefono'    => '222-345-6781',
-        'especialidad'=> 'Ingeniería de Software',
-        'estado'      => 'activo',
-    ],
-    [
-        'id'          => 'PRF-002',
-        'nombre'      => 'Mtra. Carmen Ortiz Salinas',
-        'correo'      => 'c.ortiz@uicm.edu.mx',
-        'telefono'    => '222-345-6782',
-        'especialidad'=> 'Derecho Civil',
-        'estado'      => 'activo',
-    ],
-    [
-        'id'          => 'PRF-003',
-        'nombre'      => 'Ing. Ricardo Vázquez Pérez',
-        'correo'      => 'r.vazquez@uicm.edu.mx',
-        'telefono'    => '222-345-6783',
-        'especialidad'=> 'Bases de Datos',
-        'estado'      => 'activo',
-    ],
-    [
-        'id'          => 'PRF-004',
-        'nombre'      => 'Lic. Patricia Herrera Ramos',
-        'correo'      => 'p.herrera@uicm.edu.mx',
-        'telefono'    => '222-345-6784',
-        'especialidad'=> 'Administración Estratégica',
-        'estado'      => 'inactivo',
-    ],
-    [
-        'id'          => 'PRF-005',
-        'nombre'      => 'Dr. Luis Medina Torres',
-        'correo'      => 'l.medina@uicm.edu.mx',
-        'telefono'    => '222-345-6785',
-        'especialidad'=> 'Cálculo y Álgebra Lineal',
-        'estado'      => 'activo',
-    ],
-    [
-        'id'          => 'PRF-006',
-        'nombre'      => 'Mtra. Sofía Ríos Castillo',
-        'correo'      => 's.rios@uicm.edu.mx',
-        'telefono'    => '222-345-6786',
-        'especialidad'=> 'Psicología Organizacional',
-        'estado'      => 'inactivo',
-    ],
-    [
-        'id'          => 'PRF-007',
-        'nombre'      => 'Ing. Marco Antonio Leal Cruz',
-        'correo'      => 'm.leal@uicm.edu.mx',
-        'telefono'    => '222-345-6787',
-        'especialidad'=> 'Redes y Telecomunicaciones',
-        'estado'      => 'activo',
-    ],
-];
-
-$totalActivos   = count(array_filter($profesores, fn($p) => $p['estado'] === 'activo'));
-$totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'inactivo'));
-@endphp
-
-<div x-data="{ showModal: false, editando: false }">
+<div x-data="{
+    showModal: false,
+    editando: null,
+    form: { nombre: '', correo: '', telefono: '', especialidad: '' },
+    abrir() {
+        this.editando = null;
+        this.form = { nombre: '', correo: '', telefono: '', especialidad: '' };
+        this.showModal = true;
+    },
+    abrirEditar(p) {
+        this.editando = p;
+        this.form = { nombre: p.nombre, correo: p.correo, telefono: p.telefono ?? '', especialidad: p.especialidad ?? '' };
+        this.showModal = true;
+    },
+    get accion() {
+        return this.editando
+            ? '/admin/profesores/' + this.editando.id
+            : '/admin/profesores';
+    }
+}">
 
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
+
+        {{-- Flash --}}
+        @if (session('success'))
+            <div class="mb-6 px-5 py-3 rounded-xl text-sm font-semibold text-white"
+                 style="background-color: #0F4229;">
+                {{ session('success') }}
+            </div>
+        @endif
 
         {{-- Encabezado de módulo --}}
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
@@ -85,7 +47,7 @@ $totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'in
             </div>
 
             <button
-                @click="showModal = true; editando = false"
+                @click="abrir()"
                 class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white
                        shadow-sm transition-colors duration-150 whitespace-nowrap"
                 style="background-color: #0F4229;"
@@ -104,21 +66,21 @@ $totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'in
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total de profesores</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">
-                    {{ count($profesores) }}
+                    {{ $profesores->count() }}
                 </p>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #D4AF37;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Activos</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">
-                    {{ $totalActivos }}
+                    {{ $profesores->where('activo', true)->count() }}
                 </p>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #EFAD5A;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Inactivos</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">
-                    {{ $totalInactivos }}
+                    {{ $profesores->where('activo', false)->count() }}
                 </p>
             </div>
 
@@ -131,7 +93,7 @@ $totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'in
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Planta docente registrada</h2>
-                <span class="text-xs text-gray-400">{{ count($profesores) }} profesores</span>
+                <span class="text-xs text-gray-400">{{ $profesores->count() }} profesores</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -150,12 +112,12 @@ $totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'in
                     </thead>
 
                     <tbody class="divide-y divide-gray-100">
-                        @foreach ($profesores as $profesor)
+                        @forelse ($profesores as $profesor)
                         <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                             {{-- ID --}}
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-500 whitespace-nowrap">
-                                {{ $profesor['id'] }}
+                                PRF-{{ str_pad($profesor->id, 3, '0', STR_PAD_LEFT) }}
                             </td>
 
                             {{-- Nombre --}}
@@ -163,9 +125,9 @@ $totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'in
                                 <div class="flex items-center gap-3">
                                     <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
                                          style="background-color: #0F4229;">
-                                        {{ strtoupper(substr(explode(' ', $profesor['nombre'])[1] ?? $profesor['nombre'], 0, 1)) }}
+                                        {{ strtoupper(substr(explode(' ', $profesor->nombre)[1] ?? $profesor->nombre, 0, 1)) }}
                                     </div>
-                                    <span class="font-semibold text-gray-800">{{ $profesor['nombre'] }}</span>
+                                    <span class="font-semibold text-gray-800">{{ $profesor->nombre }}</span>
                                 </div>
                             </td>
 
@@ -176,31 +138,35 @@ $totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'in
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
-                                    {{ $profesor['correo'] }}
+                                    {{ $profesor->correo }}
                                 </span>
                             </td>
 
                             {{-- Teléfono --}}
                             <td class="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                <span class="inline-flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13
-                                                 a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498
-                                                 a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                    </svg>
-                                    {{ $profesor['telefono'] }}
-                                </span>
+                                @if ($profesor->telefono)
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13
+                                                     a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498
+                                                     a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                        </svg>
+                                        {{ $profesor->telefono }}
+                                    </span>
+                                @else
+                                    <span class="text-gray-400">—</span>
+                                @endif
                             </td>
 
                             {{-- Especialidad --}}
                             <td class="px-6 py-4 text-gray-700">
-                                {{ $profesor['especialidad'] }}
+                                {{ $profesor->especialidad ?? '—' }}
                             </td>
 
                             {{-- Estado --}}
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if ($profesor['estado'] === 'activo')
+                                @if ($profesor->activo)
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
                                           style="background-color: #0F4229;">
                                         <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
@@ -221,7 +187,13 @@ $totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'in
 
                                     {{-- Editar --}}
                                     <button
-                                        @click="showModal = true; editando = true"
+                                        @click="abrirEditar({
+                                            id: {{ $profesor->id }},
+                                            nombre: {{ Js::from($profesor->nombre) }},
+                                            correo: {{ Js::from($profesor->correo) }},
+                                            telefono: {{ Js::from($profesor->telefono) }},
+                                            especialidad: {{ Js::from($profesor->especialidad) }}
+                                        })"
                                         class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white
                                                transition-colors duration-150"
                                         style="background-color: #D4AF37;"
@@ -236,36 +208,48 @@ $totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'in
                                     </button>
 
                                     {{-- Activar / Desactivar --}}
-                                    @if ($profesor['estado'] === 'activo')
-                                        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
-                                                       text-gray-600 bg-gray-100 transition-colors duration-150
-                                                       hover:bg-gray-200">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728
-                                                         A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                            </svg>
-                                            Desactivar
-                                        </button>
-                                    @else
-                                        <button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
-                                                       text-white transition-colors duration-150"
-                                                style="background-color: #EFAD5A;"
-                                                onmouseover="this.style.backgroundColor='#d4923a'"
-                                                onmouseout="this.style.backgroundColor='#EFAD5A'">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            Activar
-                                        </button>
-                                    @endif
+                                    <form method="POST"
+                                          action="{{ route('admin.profesores.toggle', $profesor->id) }}">
+                                        @csrf
+                                        @method('PATCH')
+                                        @if ($profesor->activo)
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                                           text-gray-600 bg-gray-100 transition-colors duration-150 hover:bg-gray-200">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728
+                                                             A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                                </svg>
+                                                Desactivar
+                                            </button>
+                                        @else
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                                           text-white transition-colors duration-150"
+                                                    style="background-color: #EFAD5A;"
+                                                    onmouseover="this.style.backgroundColor='#d4923a'"
+                                                    onmouseout="this.style.backgroundColor='#EFAD5A'">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                Activar
+                                            </button>
+                                        @endif
+                                    </form>
 
                                 </div>
                             </td>
 
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">
+                                No hay profesores registrados.
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
 
                 </table>
@@ -342,94 +326,130 @@ $totalInactivos = count(array_filter($profesores, fn($p) => $p['estado'] === 'in
             </button>
         </div>
 
-        {{-- Cuerpo --}}
-        <div class="px-6 py-5 space-y-4">
+        {{-- Formulario --}}
+        <form method="POST" :action="accion">
+            @csrf
+            <input type="hidden" name="_method" x-bind:value="editando ? 'PATCH' : 'POST'">
 
-            {{-- Nombre completo --}}
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                    Nombre completo
-                </label>
-                <input
-                    type="text"
-                    placeholder="Ej. Dr. Alejandro Fuentes Mora"
-                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
-                           placeholder-gray-400 outline-none transition-all duration-150"
-                    onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
-                    onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
-            </div>
+            {{-- Cuerpo --}}
+            <div class="px-6 py-5 space-y-4">
 
-            {{-- Correo institucional --}}
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                    Correo institucional
-                </label>
-                <input
-                    type="email"
-                    placeholder="nombre.apellido@uicm.edu.mx"
-                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
-                           placeholder-gray-400 outline-none transition-all duration-150"
-                    onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
-                    onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
-            </div>
+                {{-- Errores de validación --}}
+                @if ($errors->any())
+                    <div class="px-4 py-3 rounded-xl text-xs text-red-700 bg-red-50 border border-red-200 space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
 
-            {{-- Teléfono + Especialidad en fila --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
+                {{-- Nombre completo --}}
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                        Teléfono
-                    </label>
-                    <input
-                        type="tel"
-                        placeholder="222-345-6780"
-                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
-                               placeholder-gray-400 outline-none transition-all duration-150"
-                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
-                        onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                        Especialidad
+                        Nombre completo
                     </label>
                     <input
                         type="text"
-                        placeholder="Ej. Ingeniería de Software"
+                        name="nombre"
+                        x-model="form.nombre"
+                        placeholder="Ej. Dr. Alejandro Fuentes Mora"
                         class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
                                placeholder-gray-400 outline-none transition-all duration-150"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
                         onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
                 </div>
 
+                {{-- Correo institucional --}}
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                        Correo institucional
+                    </label>
+                    <input
+                        type="email"
+                        name="correo"
+                        x-model="form.correo"
+                        placeholder="nombre.apellido@uicm.edu.mx"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
+                               placeholder-gray-400 outline-none transition-all duration-150"
+                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
+                        onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                </div>
+
+                {{-- Teléfono + Especialidad en fila --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                            Teléfono
+                        </label>
+                        <input
+                            type="tel"
+                            name="telefono"
+                            x-model="form.telefono"
+                            placeholder="222-345-6780"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
+                                   placeholder-gray-400 outline-none transition-all duration-150"
+                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
+                            onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                            Especialidad
+                        </label>
+                        <input
+                            type="text"
+                            name="especialidad"
+                            x-model="form.especialidad"
+                            placeholder="Ej. Ingeniería de Software"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
+                                   placeholder-gray-400 outline-none transition-all duration-150"
+                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
+                            onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                    </div>
+
+                </div>
+
             </div>
 
-        </div>
+            {{-- Footer --}}
+            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3">
 
-        {{-- Footer --}}
-        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3">
+                <button
+                    type="button"
+                    @click="showModal = false"
+                    class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100
+                           hover:bg-gray-200 transition-colors duration-150">
+                    Cancelar
+                </button>
 
-            <button
-                @click="showModal = false"
-                class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100
-                       hover:bg-gray-200 transition-colors duration-150">
-                Cancelar
-            </button>
+                <button
+                    type="submit"
+                    class="px-5 py-2 rounded-xl text-sm font-bold text-white shadow-sm
+                           transition-colors duration-150"
+                    style="background-color: #0F4229;"
+                    onmouseover="this.style.backgroundColor='#0a2e1c'"
+                    onmouseout="this.style.backgroundColor='#0F4229'">
+                    Guardar
+                </button>
 
-            <button
-                class="px-5 py-2 rounded-xl text-sm font-bold text-white shadow-sm
-                       transition-colors duration-150"
-                style="background-color: #0F4229;"
-                onmouseover="this.style.backgroundColor='#0a2e1c'"
-                onmouseout="this.style.backgroundColor='#0F4229'">
-                Guardar
-            </button>
-
-        </div>
+            </div>
+        </form>
 
     </div>
 </div>
 
 </div>{{-- /x-data --}}
+
+@if ($errors->any())
+{{-- Reabrir modal si hay errores de validación --}}
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.nextTick(() => {
+            document.querySelector('[x-data]').__x.$data.showModal = true;
+        });
+    });
+</script>
+@endif
 
 @endsection

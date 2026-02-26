@@ -4,61 +4,7 @@
 
 @section('content')
 
-@php
-// Opciones de filtros
-$ciclos = ['2025-1', '2025-2', '2026-1'];
-
-$programas = [
-    'Ingeniería en Sistemas Computacionales',
-    'Derecho',
-    'Administración de Empresas',
-    'Contaduría Pública',
-    'Psicología',
-];
-
-$grupos = [
-    'IS-101', 'IS-102',
-    'DER-101',
-    'ADM-101', 'ADM-102',
-    'CON-101',
-    'PSI-101',
-];
-
-// Datos simulados del grupo
-$infoGrupo = [
-    'grupo'      => 'IS-101',
-    'programa'   => 'Ingeniería en Sistemas Computacionales',
-    'ciclo'      => '2026-1',
-    'cuatrimestre'=> '1°',
-    'alumnos'    => 28,
-    'materias'   => 6,
-    'profesores' => 6,
-];
-
-$materiasGrupo = [
-    ['clave' => 'IS-101', 'nombre' => 'Programación I',             'creditos' => 8, 'profesor' => 'Dr. Alejandro Fuentes Mora'],
-    ['clave' => 'MAT-101','nombre' => 'Cálculo Diferencial',         'creditos' => 8, 'profesor' => 'Dr. Luis Medina Torres'],
-    ['clave' => 'FIS-101','nombre' => 'Física I',                    'creditos' => 6, 'profesor' => 'Ing. Ricardo Vázquez Pérez'],
-    ['clave' => 'HUM-101','nombre' => 'Habilidades del Pensamiento', 'creditos' => 4, 'profesor' => 'Mtra. Carmen Ortiz Salinas'],
-    ['clave' => 'ADM-101','nombre' => 'Introducción a la Administración','creditos'=> 4,'profesor'=> 'Lic. Patricia Herrera Ramos'],
-    ['clave' => 'ING-101','nombre' => 'Inglés I',                    'creditos' => 4, 'profesor' => 'Mtra. Sofía Ríos Castillo'],
-];
-@endphp
-
-<div x-data="{
-    cargado:  false,
-    generado: false,
-    cargando: false,
-    cargar() {
-        this.cargando = true;
-        this.generado = false;
-        setTimeout(() => { this.cargando = false; this.cargado = true; }, 800);
-    },
-    generar() {
-        this.generado = true;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-}">
+<div x-data="{ cargando: false }">
 
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-5xl">
@@ -75,19 +21,13 @@ $materiasGrupo = [
         {{-- ══════════════════════════════════════════
              MENSAJE DE ÉXITO
         ══════════════════════════════════════════ --}}
-        <div
-            x-show="generado"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0 -translate-y-3"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            class="bg-white rounded-2xl shadow-md overflow-hidden mb-6"
-            style="display: none;">
+        @if (session('success'))
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
 
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
             <div class="px-6 py-10 flex flex-col items-center text-center">
 
-                {{-- Ícono check --}}
                 <div class="w-16 h-16 rounded-full flex items-center justify-center mb-5"
                      style="background-color: #f0f9f4;">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -101,36 +41,36 @@ $materiasGrupo = [
                     ¡Carga académica generada correctamente!
                 </h2>
                 <p class="text-sm text-gray-500 mb-6">
-                    El grupo <span class="font-bold text-gray-700">IS-101</span> del ciclo
-                    <span class="font-bold text-gray-700">2026-1</span> ha sido configurado exitosamente.
+                    {{ session('success') }}
                 </p>
 
-                {{-- Resumen rápido --}}
+                @if ($grupo)
                 <div class="grid grid-cols-3 gap-4 w-full max-w-sm mb-8">
                     <div class="bg-uicm-gray rounded-xl py-3 px-2 text-center">
                         <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Alumnos</p>
-                        <p class="text-xl font-extrabold" style="color: #0F4229;">28</p>
+                        <p class="text-xl font-extrabold" style="color: #0F4229;">{{ $grupo->alumnos->count() }}</p>
                     </div>
                     <div class="bg-uicm-gray rounded-xl py-3 px-2 text-center">
                         <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Materias</p>
-                        <p class="text-xl font-extrabold" style="color: #0F4229;">6</p>
+                        <p class="text-xl font-extrabold" style="color: #0F4229;">{{ $carga->count() }}</p>
                     </div>
                     <div class="bg-uicm-gray rounded-xl py-3 px-2 text-center">
                         <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Profesores</p>
-                        <p class="text-xl font-extrabold" style="color: #0F4229;">6</p>
+                        <p class="text-xl font-extrabold" style="color: #0F4229;">
+                            {{ $carga->whereNotNull('profesor_id')->pluck('profesor_id')->unique()->count() }}
+                        </p>
                     </div>
                 </div>
+                @endif
 
-                {{-- Acciones --}}
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <button
-                        @click="generado = false; cargado = false"
-                        class="px-6 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors duration-150"
-                        style="border-color: #0F4229; color: #0F4229;"
-                        onmouseover="this.style.backgroundColor='#0F4229'; this.style.color='white'"
-                        onmouseout="this.style.backgroundColor='transparent'; this.style.color='#0F4229'">
+                    <a href="{{ route('admin.carga-academica.index') }}"
+                       class="px-6 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors duration-150 text-center"
+                       style="border-color: #0F4229; color: #0F4229;"
+                       onmouseover="this.style.backgroundColor='#0F4229'; this.style.color='white'"
+                       onmouseout="this.style.backgroundColor='transparent'; this.style.color='#0F4229'">
                         Generar otra carga
-                    </button>
+                    </a>
                     <a href="{{ route('dashboard') }}"
                        class="px-6 py-2.5 rounded-xl text-sm font-bold text-white text-center transition-colors duration-150"
                        style="background-color: #D4AF37;"
@@ -142,16 +82,12 @@ $materiasGrupo = [
 
             </div>
         </div>
+        @endif
 
         {{-- ══════════════════════════════════════════
              FORMULARIO DE FILTROS
         ══════════════════════════════════════════ --}}
-        <div
-            x-show="!generado"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            class="space-y-6">
+        <div class="space-y-6">
 
             {{-- Card de filtros --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
@@ -169,129 +105,136 @@ $materiasGrupo = [
                     <h2 class="text-sm font-semibold text-gray-700">Filtros de búsqueda</h2>
                 </div>
 
-                <div class="px-6 py-5">
+                <div class="px-6 py-5"
+                     x-data="{
+                         ciclo: '{{ request('ciclo', '') }}',
+                         programa_id: '{{ request('programa_id', '') }}',
+                         cuatrimestre: '{{ request('cuatrimestre', '') }}',
+                         grupos: @js($grupos->map(fn($g) => ['id' => $g->id, 'clave' => $g->clave, 'ciclo' => $g->ciclo, 'programa_id' => $g->programa_id, 'cuatrimestre' => $g->cuatrimestre])),
+                         get gruposFiltrados() {
+                             return this.grupos.filter(g =>
+                                 (!this.ciclo        || g.ciclo         === this.ciclo) &&
+                                 (!this.programa_id  || g.programa_id   == this.programa_id) &&
+                                 (!this.cuatrimestre || g.cuatrimestre  == this.cuatrimestre)
+                             );
+                         }
+                     }">
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+                    <form method="GET" action="{{ route('admin.carga-academica.index') }}" @submit="cargando = true">
 
-                        {{-- Ciclo --}}
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                Ciclo
-                            </label>
-                            <select class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
-                                           outline-none transition-all duration-150 bg-white"
-                                    onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
-                                    onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
-                                <option value="">Seleccionar</option>
-                                @foreach ($ciclos as $ciclo)
-                                    <option value="{{ $ciclo }}" {{ $ciclo === '2026-1' ? 'selected' : '' }}>
-                                        {{ $ciclo }}
-                                    </option>
-                                @endforeach
-                            </select>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+
+                            {{-- Ciclo --}}
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                                    Ciclo
+                                </label>
+                                <select name="ciclo" x-model="ciclo"
+                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
+                                               outline-none transition-all duration-150 bg-white"
+                                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
+                                        onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                                    <option value="">Todos los ciclos</option>
+                                    @foreach ($ciclos as $c)
+                                        <option value="{{ $c }}">{{ $c }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- Cuatrimestre --}}
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                                    Cuatrimestre
+                                </label>
+                                <select name="cuatrimestre" x-model="cuatrimestre"
+                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
+                                               outline-none transition-all duration-150 bg-white"
+                                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
+                                        onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                                    <option value="">Todos</option>
+                                    @foreach (range(1, 9) as $n)
+                                        <option value="{{ $n }}">{{ $n }}°</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- Programa --}}
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                                    Programa
+                                </label>
+                                <select name="programa_id" x-model="programa_id"
+                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
+                                               outline-none transition-all duration-150 bg-white"
+                                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
+                                        onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                                    <option value="">Todos</option>
+                                    @foreach ($programas as $prog)
+                                        <option value="{{ $prog->id }}">{{ $prog->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- Grupo (filtrado por los demás selects vía Alpine) --}}
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                                    Grupo
+                                </label>
+                                <select name="grupo_id"
+                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
+                                               outline-none transition-all duration-150 bg-white"
+                                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
+                                        onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                                    <option value="">Seleccionar grupo</option>
+                                    <template x-for="g in gruposFiltrados" :key="g.id">
+                                        <option :value="g.id"
+                                                :selected="g.id == {{ request('grupo_id', 0) }}"
+                                                x-text="g.clave">
+                                        </option>
+                                    </template>
+                                </select>
+                            </div>
+
                         </div>
 
-                        {{-- Cuatrimestre --}}
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                Cuatrimestre
-                            </label>
-                            <select class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
-                                           outline-none transition-all duration-150 bg-white"
-                                    onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
-                                    onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
-                                <option value="">Seleccionar</option>
-                                @foreach (range(1, 9) as $n)
-                                    <option value="{{ $n }}" {{ $n === 1 ? 'selected' : '' }}>
-                                        {{ $n }}°
-                                    </option>
-                                @endforeach
-                            </select>
+                        {{-- Botón Cargar --}}
+                        <div class="flex justify-end">
+                            <button
+                                type="submit"
+                                :disabled="cargando"
+                                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white
+                                       shadow-sm transition-all duration-150"
+                                style="background-color: #0F4229;"
+                                onmouseover="if(!this.disabled) this.style.backgroundColor='#0a2e1c'"
+                                onmouseout="if(!this.disabled) this.style.backgroundColor='#0F4229'">
+
+                                <svg x-show="cargando" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"
+                                     style="display:none;">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                          d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"></path>
+                                </svg>
+
+                                <svg x-show="!cargando" class="w-4 h-4" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9
+                                             m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+
+                                <span x-text="cargando ? 'Cargando...' : 'Cargar información'"></span>
+                            </button>
                         </div>
 
-                        {{-- Programa --}}
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                Programa
-                            </label>
-                            <select class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
-                                           outline-none transition-all duration-150 bg-white"
-                                    onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
-                                    onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
-                                <option value="">Seleccionar</option>
-                                @foreach ($programas as $programa)
-                                    <option value="{{ $programa }}" {{ $programa === 'Ingeniería en Sistemas Computacionales' ? 'selected' : '' }}>
-                                        {{ $programa }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- Grupo --}}
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                Grupo
-                            </label>
-                            <select class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
-                                           outline-none transition-all duration-150 bg-white"
-                                    onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
-                                    onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
-                                <option value="">Seleccionar</option>
-                                @foreach ($grupos as $grupo)
-                                    <option value="{{ $grupo }}" {{ $grupo === 'IS-101' ? 'selected' : '' }}>
-                                        {{ $grupo }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                    </div>
-
-                    {{-- Botón Cargar --}}
-                    <div class="flex justify-end">
-                        <button
-                            @click="cargar()"
-                            :disabled="cargando"
-                            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white
-                                   shadow-sm transition-all duration-150"
-                            style="background-color: #0F4229;"
-                            onmouseover="if(!this.disabled) this.style.backgroundColor='#0a2e1c'"
-                            onmouseout="if(!this.disabled) this.style.backgroundColor='#0F4229'">
-
-                            {{-- Spinner --}}
-                            <svg x-show="cargando" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"
-                                 style="display:none;">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                      d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"></path>
-                            </svg>
-
-                            {{-- Ícono normal --}}
-                            <svg x-show="!cargando" class="w-4 h-4" fill="none" stroke="currentColor"
-                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9
-                                         m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                            </svg>
-
-                            <span x-text="cargando ? 'Cargando...' : 'Cargar información'"></span>
-                        </button>
-                    </div>
-
+                    </form>
                 </div>
             </div>
 
             {{-- ══════════════════════════════════════════
-                 INFO DEL GRUPO (visible tras cargar)
+                 INFO DEL GRUPO (visible si se seleccionó uno)
             ══════════════════════════════════════════ --}}
-            <div
-                x-show="cargado"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 translate-y-4"
-                x-transition:enter-end="opacity-100 translate-y-0"
-                class="space-y-6"
-                style="display: none;">
+            @if ($grupo)
 
                 {{-- Tarjeta resumen del grupo --}}
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden">
@@ -308,14 +251,22 @@ $materiasGrupo = [
                                          m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                             <h2 class="text-sm font-semibold text-gray-700">
-                                Grupo {{ $infoGrupo['grupo'] }} — {{ $infoGrupo['programa'] }}
+                                Grupo {{ $grupo->clave }} — {{ $grupo->programa->nombre }}
                             </h2>
                         </div>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white"
-                              style="background-color: #0F4229;">
-                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                            Listo para generar carga
-                        </span>
+                        @if ($carga->isNotEmpty())
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white"
+                                  style="background-color: #0F4229;">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                Carga configurada
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white"
+                                  style="background-color: #EFAD5A;">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                Sin carga asignada
+                            </span>
+                        @endif
                     </div>
 
                     <div class="px-6 py-5">
@@ -335,7 +286,7 @@ $materiasGrupo = [
                                 <div>
                                     <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Total alumnos</p>
                                     <p class="text-2xl font-extrabold" style="color: #0F4229;">
-                                        {{ $infoGrupo['alumnos'] }}
+                                        {{ $grupo->alumnos->count() }}
                                     </p>
                                 </div>
                             </div>
@@ -355,7 +306,7 @@ $materiasGrupo = [
                                 <div>
                                     <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Total materias</p>
                                     <p class="text-2xl font-extrabold" style="color: #D4AF37;">
-                                        {{ $infoGrupo['materias'] }}
+                                        {{ $carga->count() }}
                                     </p>
                                 </div>
                             </div>
@@ -372,7 +323,7 @@ $materiasGrupo = [
                                 <div>
                                     <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Total profesores</p>
                                     <p class="text-2xl font-extrabold" style="color: #EFAD5A;">
-                                        {{ $infoGrupo['profesores'] }}
+                                        {{ $carga->whereNotNull('profesor_id')->pluck('profesor_id')->unique()->count() }}
                                     </p>
                                 </div>
                             </div>
@@ -380,32 +331,29 @@ $materiasGrupo = [
                         </div>
 
                         {{-- Info adicional --}}
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             <div class="bg-uicm-gray rounded-xl p-3 text-center">
                                 <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Ciclo</p>
-                                <p class="text-sm font-bold text-gray-800">{{ $infoGrupo['ciclo'] }}</p>
+                                <p class="text-sm font-bold text-gray-800">{{ $grupo->ciclo }}</p>
                             </div>
                             <div class="bg-uicm-gray rounded-xl p-3 text-center">
                                 <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Cuatrimestre</p>
-                                <p class="text-sm font-bold" style="color: #0F4229;">{{ $infoGrupo['cuatrimestre'] }}</p>
+                                <p class="text-sm font-bold" style="color: #0F4229;">{{ $grupo->cuatrimestre }}°</p>
                             </div>
                             <div class="bg-uicm-gray rounded-xl p-3 text-center">
                                 <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Grupo</p>
-                                <p class="text-sm font-bold" style="color: #0F4229;">{{ $infoGrupo['grupo'] }}</p>
+                                <p class="text-sm font-bold" style="color: #0F4229;">{{ $grupo->clave }}</p>
                             </div>
                             <div class="bg-uicm-gray rounded-xl p-3 text-center">
-                                <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Estado</p>
-                                <span class="inline-flex items-center gap-1 text-xs font-bold"
-                                      style="color: #0F4229;">
-                                    <span class="w-1.5 h-1.5 rounded-full inline-block" style="background-color: #0F4229;"></span>
-                                    Activo
-                                </span>
+                                <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Capacidad</p>
+                                <p class="text-sm font-bold" style="color: #0F4229;">{{ $grupo->capacidad ?? '—' }}</p>
                             </div>
                         </div>
 
                     </div>
                 </div>
 
+                @if ($carga->isNotEmpty())
                 {{-- Tabla de materias del grupo --}}
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
@@ -421,7 +369,7 @@ $materiasGrupo = [
                             </svg>
                             <h2 class="text-sm font-semibold text-gray-700">Materias asignadas al grupo</h2>
                         </div>
-                        <span class="text-xs text-gray-400">{{ count($materiasGrupo) }} materias</span>
+                        <span class="text-xs text-gray-400">{{ $carga->count() }} materias</span>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -435,21 +383,21 @@ $materiasGrupo = [
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                @foreach ($materiasGrupo as $materia)
+                                @foreach ($carga as $entrada)
                                 <tr class="hover:bg-gray-50 transition-colors duration-100">
                                     <td class="px-6 py-3 font-mono text-xs font-semibold text-gray-500">
-                                        {{ $materia['clave'] }}
+                                        {{ $entrada->materia->clave ?? '—' }}
                                     </td>
                                     <td class="px-6 py-3 font-semibold text-gray-800">
-                                        {{ $materia['nombre'] }}
+                                        {{ $entrada->materia->nombre ?? '—' }}
                                     </td>
                                     <td class="px-6 py-3 text-gray-600">
-                                        {{ $materia['profesor'] }}
+                                        {{ $entrada->profesor->nombre ?? 'Sin asignar' }}
                                     </td>
                                     <td class="px-6 py-3 text-center">
                                         <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white"
                                               style="background-color: #D4AF37;">
-                                            {{ $materia['creditos'] }}
+                                            {{ $entrada->materia->creditos ?? '—' }}
                                         </span>
                                     </td>
                                 </tr>
@@ -458,10 +406,12 @@ $materiasGrupo = [
                         </table>
                     </div>
                 </div>
+                @endif
 
                 {{-- ══════════════════════════════════════════
                      ACCIÓN PRINCIPAL
                 ══════════════════════════════════════════ --}}
+                @if ($carga->isEmpty())
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
                     <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
@@ -487,35 +437,40 @@ $materiasGrupo = [
 
                         <h3 class="text-base font-extrabold text-gray-900 mb-1">Todo listo</h3>
                         <p class="text-sm text-gray-500 mb-6 max-w-xs">
-                            Se asignarán <strong>{{ count($materiasGrupo) }} materias</strong> y
-                            <strong>{{ $infoGrupo['profesores'] }} profesores</strong> al grupo
-                            <strong>{{ $infoGrupo['grupo'] }}</strong> para el ciclo
-                            <strong>{{ $infoGrupo['ciclo'] }}</strong>.
+                            Se generará la carga académica para el grupo
+                            <strong>{{ $grupo->clave }}</strong> ({{ $grupo->cuatrimestre }}° cuatrimestre)
+                            del ciclo <strong>{{ $grupo->ciclo }}</strong>, asignando las materias del programa
+                            <strong>{{ $grupo->programa->nombre }}</strong>.
                         </p>
 
-                        <button
-                            @click="generar()"
-                            class="inline-flex items-center gap-3 px-10 py-3.5 rounded-2xl text-base font-extrabold
-                                   text-white shadow-lg transition-all duration-150"
-                            style="background-color: #0F4229;"
-                            onmouseover="this.style.backgroundColor='#0a2e1c'; this.style.transform='scale(1.02)'"
-                            onmouseout="this.style.backgroundColor='#0F4229'; this.style.transform='scale(1)'">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                            </svg>
-                            Generar carga académica
-                        </button>
+                        <form method="POST"
+                              action="{{ route('admin.carga-academica.generar', $grupo->id) }}">
+                            @csrf
+                            <button
+                                type="submit"
+                                class="inline-flex items-center gap-3 px-10 py-3.5 rounded-2xl text-base font-extrabold
+                                       text-white shadow-lg transition-all duration-150"
+                                style="background-color: #0F4229;"
+                                onmouseover="this.style.backgroundColor='#0a2e1c'; this.style.transform='scale(1.02)'"
+                                onmouseout="this.style.backgroundColor='#0F4229'; this.style.transform='scale(1)'">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                Generar carga académica
+                            </button>
+                        </form>
 
                     </div>
                 </div>
+                @endif
 
-            </div>{{-- /cargado --}}
+            @endif
 
-        </div>{{-- /!generado --}}
+        </div>{{-- /space-y-6 --}}
 
         {{-- Volver --}}
-        <div class="mt-6" x-show="!generado">
+        <div class="mt-6">
             <a href="{{ route('dashboard') }}"
                class="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-150"
                style="color: #0F4229;"

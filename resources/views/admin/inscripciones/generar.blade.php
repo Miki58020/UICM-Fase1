@@ -4,19 +4,6 @@
 
 @section('content')
 
-@php
-// Datos simulados del alumno recién inscrito
-$alumno = [
-    'nombre'    => 'Juan Pérez García',
-    'programa'  => 'Ingeniería en Sistemas Computacionales',
-    'matricula' => 'UICM-2026-IS-001',
-    'grupo'     => 'IS-101',
-    'folio'     => 'UICM-2026-0001',
-    'email'     => 'juan.perez@uicm.edu.mx',
-    'password'  => 'Abc12345',
-];
-@endphp
-
 <section class="bg-uicm-gray min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4">
     <div class="w-full max-w-lg">
 
@@ -50,35 +37,40 @@ $alumno = [
 
                         <div class="sm:col-span-2">
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Nombre completo</dt>
-                            <dd class="font-bold text-gray-900">{{ $alumno['nombre'] }}</dd>
+                            <dd class="font-bold text-gray-900">{{ $alumno->nombre_completo }}</dd>
                         </div>
 
                         <div class="sm:col-span-2">
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Programa</dt>
-                            <dd class="font-semibold text-gray-800">{{ $alumno['programa'] }}</dd>
+                            <dd class="font-semibold text-gray-800">{{ $alumno->programa->nombre ?? '—' }}</dd>
                         </div>
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Matrícula</dt>
                             <dd class="font-bold font-mono tracking-widest text-sm" style="color: #0F4229;">
-                                {{ $alumno['matricula'] }}
+                                {{ $alumno->matricula }}
                             </dd>
                         </div>
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Grupo asignado</dt>
-                            <dd class="font-bold text-gray-900">{{ $alumno['grupo'] }}</dd>
+                            <dd class="font-bold text-gray-900">
+                                {{ $alumno->grupo->nombre ?? 'Sin asignar' }}
+                            </dd>
                         </div>
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Folio de admisión</dt>
-                            <dd class="font-mono text-xs text-gray-600">{{ $alumno['folio'] }}</dd>
+                            <dd class="font-mono text-xs text-gray-600">
+                                {{ $alumno->aspirante->folio ?? '—' }}
+                            </dd>
                         </div>
 
                     </dl>
                 </div>
 
-                {{-- Caja de credenciales — borde dorado --}}
+                {{-- Caja de credenciales --}}
+                @if ($temp_password)
                 <div class="rounded-xl p-5 border-l-4 mb-6"
                      style="border-color: #D4AF37; background-color: #fffdf0;">
 
@@ -97,37 +89,42 @@ $alumno = [
                     <dl class="space-y-3 text-sm">
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Usuario</dt>
-                            <dd class="font-bold font-mono text-gray-800 break-all">{{ $alumno['email'] }}</dd>
+                            <dd class="font-bold font-mono text-gray-800 break-all">{{ $alumno->email }}</dd>
                         </div>
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Contraseña temporal</dt>
-                            <dd class="font-bold font-mono text-gray-800 tracking-widest">{{ $alumno['password'] }}</dd>
+                            <dd class="font-bold font-mono text-gray-800 tracking-widest">{{ $temp_password }}</dd>
                         </div>
                     </dl>
 
                     <p class="text-xs text-gray-500 mt-4 leading-relaxed">
-                        Estas credenciales serán enviadas al correo del alumno.
-                        Se solicitará cambio de contraseña en el primer inicio de sesión.
+                        Anota estas credenciales. La contraseña temporal no se volverá a mostrar.
+                        Cuando integres el correo, se enviarán automáticamente al alumno.
                     </p>
                 </div>
+                @else
+                <div class="rounded-xl p-5 border-l-4 mb-6 bg-gray-50" style="border-color: #9ca3af;">
+                    <p class="text-sm text-gray-500">
+                        Las credenciales ya fueron generadas previamente para este alumno.
+                    </p>
+                </div>
+                @endif
 
                 {{-- Botones --}}
                 <div class="flex flex-col gap-3">
 
-                    {{-- Enviar credenciales (simulado) --}}
-                    <button type="button"
+                    {{-- Placeholder correo — se habilitará con SendGrid --}}
+                    <button type="button" disabled
                             class="w-full inline-flex items-center justify-center gap-2
-                                   py-3 rounded-xl text-sm font-bold text-white
-                                   transition-colors duration-200 shadow-sm"
+                                   py-3 rounded-xl text-sm font-bold text-white opacity-50 cursor-not-allowed"
                             style="background-color: #EFAD5A;"
-                            onmouseover="this.style.backgroundColor='#e09a3a'"
-                            onmouseout="this.style.backgroundColor='#EFAD5A'">
+                            title="Disponible cuando se integre SendGrid">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7
                                      a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
-                        Enviar credenciales
+                        Enviar credenciales por correo
                     </button>
 
                     {{-- Volver a la lista --}}

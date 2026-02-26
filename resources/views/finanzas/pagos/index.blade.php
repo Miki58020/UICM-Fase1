@@ -4,52 +4,6 @@
 
 @section('content')
 
-@php
-// Datos simulados
-$pagos = [
-    [
-        'folio'    => 'UICM-2026-0001',
-        'nombre'   => 'Juan Pérez García',
-        'programa' => 'Ingeniería en Sistemas',
-        'monto'    => '$3,500 MXN',
-        'fecha'    => '12/02/2026',
-        'estado'   => 'pago_en_revision',
-    ],
-    [
-        'folio'    => 'UICM-2026-0002',
-        'nombre'   => 'María López Torres',
-        'programa' => 'Derecho',
-        'monto'    => '$3,500 MXN',
-        'fecha'    => '13/02/2026',
-        'estado'   => 'pago_en_revision',
-    ],
-    [
-        'folio'    => 'UICM-2026-0003',
-        'nombre'   => 'Carlos Ruiz Mendoza',
-        'programa' => 'Administración de Empresas',
-        'monto'    => '$3,500 MXN',
-        'fecha'    => '10/02/2026',
-        'estado'   => 'pago_validado',
-    ],
-    [
-        'folio'    => 'UICM-2026-0004',
-        'nombre'   => 'Ana Martínez Soto',
-        'programa' => 'Psicología',
-        'monto'    => '$3,500 MXN',
-        'fecha'    => '09/02/2026',
-        'estado'   => 'rechazado',
-    ],
-    [
-        'folio'    => 'UICM-2026-0005',
-        'nombre'   => 'Roberto Hernández Luna',
-        'programa' => 'Contaduría Pública',
-        'monto'    => '$3,500 MXN',
-        'fecha'    => '14/02/2026',
-        'estado'   => 'pago_en_revision',
-    ],
-];
-@endphp
-
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
@@ -62,27 +16,34 @@ $pagos = [
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
+        {{-- Flash de éxito --}}
+        @if (session('success'))
+            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
+                <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
+            </div>
+        @endif
+
         {{-- Contadores --}}
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
 
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #EFAD5A;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">En revisión</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">
-                    {{ count(array_filter($pagos, fn($p) => $p['estado'] === 'pago_en_revision')) }}
+                    {{ $pagos->where('estado', 'pendiente')->count() }}
                 </p>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Validados</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">
-                    {{ count(array_filter($pagos, fn($p) => $p['estado'] === 'pago_validado')) }}
+                    {{ $pagos->where('estado', 'aprobado')->count() }}
                 </p>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 col-span-2 sm:col-span-1" style="border-color: #9ca3af;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazados</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
-                    {{ count(array_filter($pagos, fn($p) => $p['estado'] === 'rechazado')) }}
+                    {{ $pagos->where('estado', 'rechazado')->count() }}
                 </p>
             </div>
 
@@ -94,10 +55,8 @@ $pagos = [
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <h2 class="text-sm font-semibold text-gray-700">
-                    Comprobantes recibidos — Generación 2026
-                </h2>
-                <span class="text-xs text-gray-400">{{ count($pagos) }} registros</span>
+                <h2 class="text-sm font-semibold text-gray-700">Comprobantes recibidos</h2>
+                <span class="text-xs text-gray-400">{{ $pagos->count() }} registros</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -111,43 +70,43 @@ $pagos = [
                             <th class="px-6 py-3">Monto</th>
                             <th class="px-6 py-3">Fecha</th>
                             <th class="px-6 py-3">Estado</th>
-                            <th class="px-6 py-3 text-center">Acciones</th>
+                            <th class="px-6 py-3 text-center">Acción</th>
                         </tr>
                     </thead>
 
                     <tbody class="divide-y divide-gray-100">
-                        @foreach ($pagos as $pago)
+                        @forelse ($pagos as $pago)
                         <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-600 whitespace-nowrap">
-                                {{ $pago['folio'] }}
+                                {{ $pago->aspirante->folio ?? '—' }}
                             </td>
 
                             <td class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
-                                {{ $pago['nombre'] }}
+                                {{ $pago->aspirante->nombre_completo ?? '—' }}
                             </td>
 
                             <td class="px-6 py-4 text-gray-600">
-                                {{ $pago['programa'] }}
+                                {{ $pago->aspirante->programa->nombre ?? '—' }}
                             </td>
 
                             <td class="px-6 py-4 font-bold text-gray-800 whitespace-nowrap">
-                                {{ $pago['monto'] }}
+                                ${{ number_format($pago->monto, 0) }} MXN
                             </td>
 
                             <td class="px-6 py-4 text-gray-500 whitespace-nowrap text-xs">
-                                {{ $pago['fecha'] }}
+                                {{ $pago->fecha_pago->format('d/m/Y') }}
                             </td>
 
                             {{-- Badge estado --}}
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if ($pago['estado'] === 'pago_en_revision')
+                                @if ($pago->estado === 'pendiente')
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
                                           style="background-color: #EFAD5A;">
                                         <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                         En revisión
                                     </span>
-                                @elseif ($pago['estado'] === 'pago_validado')
+                                @elseif ($pago->estado === 'aprobado')
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
                                           style="background-color: #0F4229;">
                                         <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
@@ -163,7 +122,7 @@ $pagos = [
 
                             {{-- Acción --}}
                             <td class="px-6 py-4 text-center">
-                                <a href="{{ route('finanzas.pagos.show') }}"
+                                <a href="{{ route('finanzas.pagos.show', $pago->id) }}"
                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white
                                           transition-colors duration-150 whitespace-nowrap"
                                    style="background-color: #D4AF37;"
@@ -181,12 +140,17 @@ $pagos = [
                             </td>
 
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
+                                No hay comprobantes registrados.
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
 
                 </table>
             </div>
-            
 
         </div>{{-- /card --}}
 

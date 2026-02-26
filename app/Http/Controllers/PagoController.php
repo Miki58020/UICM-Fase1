@@ -9,6 +9,69 @@ use Illuminate\Http\Request;
 
 class PagoController extends Controller
 {
+    public function create(Request $request)
+    {
+        $folio = strtoupper($request->query('folio', ''));
+
+        if (!$folio) {
+            return redirect()->route('aspirantes.seguimiento')
+                ->withErrors(['folio' => 'Debes consultar tu folio primero.']);
+        }
+
+        $aspirante = Aspirante::with('programa')
+            ->where('folio', $folio)
+            ->where('estado', 'aprobado')
+            ->first();
+
+        if (!$aspirante) {
+            return redirect()->route('aspirantes.seguimiento')
+                ->withErrors(['folio' => 'Folio no encontrado o solicitud aún no aprobada.']);
+        }
+
+        return view('aspirantes.pago', compact('aspirante'));
+    }
+
+    public function index()
+    {
+        $pagos = Pago::with('aspirante.programa')->latest()->get();
+        return view('finanzas.pagos.index', compact('pagos'));
+    }
+
+    public function show(Pago $pago)
+    {
+        $pago->load('aspirante.programa');
+        return view('finanzas.pagos.show', compact('pago'));
+    }
+
+    public function aprobar(Pago $pago)
+    {
+        if ($pago->estado !== 'pendiente') {
+            abort(403, 'Este pago ya fue procesado.');
+        }
+
+        $pago->update(['estado' => 'aprobado']);
+
+        return redirect()->back()->with('success', 'Pago aprobado correctamente.');
+    }
+
+    public function rechazar(Request $request, Pago $pago)
+    {
+        $request->validate([
+            'observaciones' => 'required|string|max:500',
+        ]);
+
+        if ($pago->estado !== 'pendiente') {
+            abort(403, 'Este pago ya fue procesado.');
+        }
+
+        $pago->update([
+            'estado'        => 'rechazado',
+            'observaciones' => $request->observaciones,
+        ]);
+
+        return redirect()->back()->with('success', 'Pago rechazado correctamente.');
+    }
+
     public function store(Request $request)
     {
         $request->validate([

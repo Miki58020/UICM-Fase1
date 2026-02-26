@@ -4,20 +4,7 @@
 
 @section('content')
 
-{{--
-    Vista simulada — datos estáticos.
-    Al conectar el backend, reemplazar con variables del controlador:
-    $nombre, $programa, $folio, $estadoActual, $pasos
---}}
-
 @php
-    $nombre   = 'Juan Pérez';
-    $programa = 'Psicopedagogía';
-    $folio    = request('folio', 'UICM-2026-0001');
-
-    // Índice 0-4 del paso actual (0=enviada … 4=completada)
-    $pasoActual = 3; // "Pago en revisión"
-
     $pasos = [
         'Solicitud enviada',
         'Datos validados',
@@ -25,6 +12,28 @@
         'Pago en revisión',
         'Inscripción completada',
     ];
+
+    $badgeTexto = match(true) {
+        $pasoActual === 0 => 'En revisión',
+        $pasoActual === 1 => 'Rechazado',
+        $pasoActual === 2 => 'Pago pendiente',
+        $pasoActual === 3 => 'Pago en revisión',
+        default           => 'Inscripción completada',
+    };
+
+    $badgeColor = match(true) {
+        $pasoActual === 1 => '#9ca3af',
+        $pasoActual === 4 => '#0F4229',
+        default           => '#EFAD5A',
+    };
+
+    $notaTexto = match(true) {
+        $pasoActual === 0 => 'Tu solicitud fue recibida correctamente. El área de Control Escolar revisará tu expediente y documentos en los próximos días hábiles.',
+        $pasoActual === 1 => null,
+        $pasoActual === 2 => 'Tu solicitud ha sido aprobada. Por favor, realiza el pago de inscripción para continuar con el proceso.',
+        $pasoActual === 3 => 'Tu comprobante de pago está siendo revisado por el área de finanzas. El proceso de validación puede tardar hasta <strong>2 días hábiles</strong>. Te notificaremos por correo cuando haya una actualización.',
+        default           => '¡Felicidades! Tu inscripción ha sido completada exitosamente. Pronto recibirás información sobre tu acceso al portal del alumno.',
+    };
 @endphp
 
 <section class="bg-uicm-gray min-h-screen py-12">
@@ -49,24 +58,24 @@
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                         <div>
                             <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-0.5">Aspirante</p>
-                            <h2 class="text-xl font-extrabold text-gray-900">{{ $nombre }}</h2>
+                            <h2 class="text-xl font-extrabold text-gray-900">{{ $aspirante->nombre_completo }}</h2>
                         </div>
                         {{-- Badge estado --}}
                         <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-white self-start sm:self-auto"
-                              style="background-color: #EFAD5A;">
+                              style="background-color: {{ $badgeColor }};">
                             <span class="w-2 h-2 rounded-full bg-white opacity-80"></span>
-                            Pago en revisión
+                            {{ $badgeTexto }}
                         </span>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                         <div class="bg-uicm-gray rounded-xl p-4">
                             <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">Folio</p>
-                            <p class="font-bold text-uicm-green tracking-widest font-mono">{{ $folio }}</p>
+                            <p class="font-bold text-uicm-green tracking-widest font-mono">{{ $aspirante->folio }}</p>
                         </div>
                         <div class="bg-uicm-gray rounded-xl p-4">
                             <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">Programa</p>
-                            <p class="font-semibold text-gray-800">{{ $programa }}</p>
+                            <p class="font-semibold text-gray-800">{{ $aspirante->programa->nombre ?? '—' }}</p>
                         </div>
                     </div>
                 </div>
@@ -79,7 +88,6 @@
                 <div class="p-6 md:p-8">
                     <h3 class="text-base font-bold text-gray-800 mb-6">Progreso del proceso</h3>
 
-                    {{-- Stepper — horizontal en md+, vertical en móvil --}}
                     {{-- VERSIÓN ESCRITORIO --}}
                     <div class="hidden md:flex items-start justify-between relative">
 
@@ -88,9 +96,7 @@
 
                         @foreach($pasos as $i => $paso)
                         <div class="flex flex-col items-center flex-1 relative z-10">
-                            {{-- Círculo --}}
                             @if($i < $pasoActual)
-                                {{-- Completado --}}
                                 <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-sm mb-3"
                                      style="background-color: #0F4229;">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,21 +104,18 @@
                                     </svg>
                                 </div>
                             @elseif($i === $pasoActual)
-                                {{-- Actual --}}
                                 <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-sm mb-3 ring-4 ring-orange-200"
-                                     style="background-color: #EFAD5A;">
+                                     style="background-color: {{ $pasoActual === 1 ? '#9ca3af' : '#EFAD5A' }};">
                                     <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
                                 </div>
                             @else
-                                {{-- Pendiente --}}
                                 <div class="w-8 h-8 rounded-full flex items-center justify-center mb-3 bg-gray-100 border-2 border-gray-200">
                                     <div class="w-2 h-2 rounded-full bg-gray-300"></div>
                                 </div>
                             @endif
 
-                            {{-- Etiqueta --}}
                             <p class="text-center text-xs font-semibold leading-tight px-1
-                                {{ $i < $pasoActual ? 'text-uicm-green' : ($i === $pasoActual ? 'text-orange-500' : 'text-gray-400') }}">
+                                {{ $i < $pasoActual ? 'text-uicm-green' : ($i === $pasoActual ? ($pasoActual === 1 ? 'text-gray-500' : 'text-orange-500') : 'text-gray-400') }}">
                                 {{ $paso }}
                             </p>
                         </div>
@@ -123,7 +126,6 @@
                     <div class="flex flex-col gap-0 md:hidden">
                         @foreach($pasos as $i => $paso)
                         <div class="flex gap-4 items-start">
-                            {{-- Columna de ícono + línea --}}
                             <div class="flex flex-col items-center flex-shrink-0">
                                 @if($i < $pasoActual)
                                     <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-sm"
@@ -134,7 +136,7 @@
                                     </div>
                                 @elseif($i === $pasoActual)
                                     <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-sm ring-4 ring-orange-200"
-                                         style="background-color: #EFAD5A;">
+                                         style="background-color: {{ $pasoActual === 1 ? '#9ca3af' : '#EFAD5A' }};">
                                         <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
                                     </div>
                                 @else
@@ -142,16 +144,14 @@
                                         <div class="w-2 h-2 rounded-full bg-gray-300"></div>
                                     </div>
                                 @endif
-                                {{-- Conector vertical --}}
                                 @if(!$loop->last)
                                 <div class="w-0.5 flex-1 my-1"
                                      style="height: 28px; background-color: {{ $i < $pasoActual ? '#0F4229' : '#E5E7EB' }};"></div>
                                 @endif
                             </div>
 
-                            {{-- Texto --}}
                             <p class="pt-1.5 pb-6 text-sm font-semibold
-                                {{ $i < $pasoActual ? 'text-uicm-green' : ($i === $pasoActual ? 'text-orange-500' : 'text-gray-400') }}">
+                                {{ $i < $pasoActual ? 'text-uicm-green' : ($i === $pasoActual ? ($pasoActual === 1 ? 'text-gray-500' : 'text-orange-500') : 'text-gray-400') }}">
                                 {{ $paso }}
                             </p>
                         </div>
@@ -162,30 +162,43 @@
             </div>
 
             {{-- ══════════════════════════════════
-                 NOTA INFORMATIVA
+                 NOTA INFORMATIVA / MENSAJE RECHAZO
             ══════════════════════════════════ --}}
-            <div class="rounded-xl p-5 border-l-4 bg-yellow-50"
-                 style="border-color: #D4AF37;">
-                <div class="flex gap-3 items-start">
-                    <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="#D4AF37" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <p class="text-sm text-gray-700 leading-relaxed">
-                        Tu comprobante de pago está siendo revisado por el área de finanzas.
-                        El proceso de validación puede tardar hasta <strong>2 días hábiles</strong>.
-                        Te notificaremos por correo cuando haya una actualización.
-                    </p>
+            @if ($pasoActual === 1)
+                <div class="rounded-xl p-5 border-l-4 bg-gray-50" style="border-color: #9ca3af;">
+                    <div class="flex gap-3 items-start">
+                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-bold text-gray-700 mb-1">Solicitud rechazada</p>
+                            @if ($aspirante->observaciones)
+                                <p class="text-sm text-gray-600">{{ $aspirante->observaciones }}</p>
+                            @else
+                                <p class="text-sm text-gray-600">Tu solicitud no cumplió con los requisitos necesarios. Puedes contactar a Control Escolar para más información.</p>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @elseif ($notaTexto)
+                <div class="rounded-xl p-5 border-l-4 bg-yellow-50" style="border-color: #D4AF37;">
+                    <div class="flex gap-3 items-start">
+                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="#D4AF37" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="text-sm text-gray-700 leading-relaxed">{!! $notaTexto !!}</p>
+                    </div>
+                </div>
+            @endif
 
             {{-- ══════════════════════════════════
                  BOTONES
             ══════════════════════════════════ --}}
 
-            {{-- Botón de pago — visible solo cuando el estado es "Pago pendiente" (índice 2) --}}
             @if($pasoActual === 2)
-            <a href="{{ route('aspirantes.pago') }}"
+            <a href="{{ route('aspirantes.pago', ['folio' => $aspirante->folio]) }}"
                class="block w-full py-3.5 rounded-xl text-center text-white text-sm font-bold
                       transition-colors duration-200 shadow-md"
                style="background-color: #EFAD5A;"

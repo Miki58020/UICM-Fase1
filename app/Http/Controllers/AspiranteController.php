@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alumno;
 use App\Models\Aspirante;
 use App\Models\Programa;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
@@ -9,6 +10,96 @@ use Illuminate\Http\Request;
 
 class AspiranteController extends Controller
 {
+    public function index()
+    {
+        $aspirantes = Aspirante::with('programa')->latest()->get();
+        return view('admin.aspirantes.index', compact('aspirantes'));
+    }
+
+    public function show(Aspirante $aspirante)
+    {
+        $aspirante->load('programa');
+        return view('admin.aspirantes.show', compact('aspirante'));
+    }
+
+    public function aprobar(Aspirante $aspirante)
+    {
+        if ($aspirante->estado !== 'pendiente') {
+            abort(403, 'Este aspirante ya fue procesado.');
+        }
+
+        $matricula = $this->generarMatricula();
+
+        Alumno::create([
+            'matricula'          => $matricula,
+            'aspirante_id'       => $aspirante->id,
+            'programa_id'        => $aspirante->programa_id,
+            'nombre'             => $aspirante->nombre,
+            'apellido_paterno'   => $aspirante->apellido_paterno,
+            'apellido_materno'   => $aspirante->apellido_materno,
+            'email'              => $aspirante->email,
+            'cuatrimestre_actual'=> 1,
+            'estado'             => 'activo',
+        ]);
+
+        $aspirante->update(['estado' => 'aprobado']);
+
+        return redirect()->back()->with('success', "Aspirante aprobado. Matrícula generada: {$matricula}");
+    }
+
+    public function rechazar(Request $request, Aspirante $aspirante)
+    {
+        $request->validate([
+            'observaciones' => 'required|string|max:500',
+        ]);
+
+        if ($aspirante->estado !== 'pendiente') {
+            abort(403, 'Este aspirante ya fue procesado.');
+        }
+
+        $aspirante->update([
+            'estado'        => 'rechazado',
+            'observaciones' => $request->observaciones,
+        ]);
+
+        return redirect()->back()->with('success', 'Aspirante rechazado correctamente.');
+    }
+
+    public function resultado(Request $request)
+    {
+        $folio = $request->query('folio');
+
+        if (!$folio) {
+            return redirect()->route('aspirantes.seguimiento')
+                ->withErrors(['folio' => 'Debes ingresar un folio.']);
+        }
+
+        $aspirante = Aspirante::with(['programa', 'pagos'])
+            ->where('folio', strtoupper($folio))
+            ->first();
+
+        if (!$aspirante) {
+            return redirect()->route('aspirantes.seguimiento')
+                ->withErrors(['folio' => 'Folio no encontrado. Verifica e intenta de nuevo.']);
+        }
+
+        $pago = $aspirante->pagos->last();
+
+        if ($aspirante->estado === 'pendiente') {
+            $pasoActual = 0;
+        } elseif ($aspirante->estado === 'rechazado') {
+            $pasoActual = 1;
+        } elseif ($aspirante->estado === 'aprobado' && !$pago) {
+            $pasoActual = 2;
+        } elseif ($aspirante->estado === 'aprobado' && $pago && $pago->estado === 'pendiente') {
+            $pasoActual = 3;
+        } else {
+            $pasoActual = 4;
+        }
+
+        return view('aspirantes.resultado', compact('aspirante', 'pasoActual'));
+    }
+
     public function create()
     {
         return view('aspirantes.registro');
@@ -77,6 +168,13 @@ class AspiranteController extends Controller
     {
         $year = now()->year;
         $count = Aspirante::whereYear('created_at', $year)->count() + 1;
+        return 'UICM-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+    }
+
+    private function generarMatricula(): string
+    {
+        $year = now()->year;
+        $count = Alumno::whereYear('created_at', $year)->count() + 1;
         return 'UICM-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 }

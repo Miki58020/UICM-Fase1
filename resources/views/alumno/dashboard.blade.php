@@ -4,97 +4,6 @@
 
 @section('content')
 
-@php
-// Datos simulados del alumno
-$alumno = [
-    'nombre'        => 'Juan Pérez García',
-    'matricula'     => 'UICM-2026-IS-001',
-    'programa'      => 'Ingeniería en Sistemas Computacionales',
-    'grupo'         => 'IS-101',
-    'cuatrimestre'  => '1°',
-    'ciclo'         => '2026-1',
-    'email'         => 'juan.perez@uicm.edu.mx',
-    'estado'        => 'Activo',
-];
-
-$materias = [
-    [
-        'clave'    => 'IS-101',
-        'nombre'   => 'Programación I',
-        'profesor' => 'Dr. Alejandro Fuentes Mora',
-        'horario'  => 'Lun-Mié 8:00-10:00',
-        'aula'     => 'A-201',
-        'creditos' => 8,
-    ],
-    [
-        'clave'    => 'MAT-101',
-        'nombre'   => 'Cálculo Diferencial',
-        'profesor' => 'Dr. Luis Medina Torres',
-        'horario'  => 'Mar-Jue 10:00-12:00',
-        'aula'     => 'B-105',
-        'creditos' => 8,
-    ],
-    [
-        'clave'    => 'FIS-101',
-        'nombre'   => 'Física I',
-        'profesor' => 'Ing. Ricardo Vázquez Pérez',
-        'horario'  => 'Vie 8:00-10:00',
-        'aula'     => 'A-301',
-        'creditos' => 6,
-    ],
-    [
-        'clave'    => 'HUM-101',
-        'nombre'   => 'Habilidades del Pensamiento',
-        'profesor' => 'Mtra. Carmen Ortiz Salinas',
-        'horario'  => 'Lun 12:00-14:00',
-        'aula'     => 'C-102',
-        'creditos' => 4,
-    ],
-    [
-        'clave'    => 'ADM-101',
-        'nombre'   => 'Introducción a la Administración',
-        'profesor' => 'Lic. Patricia Herrera Ramos',
-        'horario'  => 'Mié 12:00-14:00',
-        'aula'     => 'B-203',
-        'creditos' => 4,
-    ],
-    [
-        'clave'    => 'ING-101',
-        'nombre'   => 'Inglés I',
-        'profesor' => 'Mtra. Sofía Ríos Castillo',
-        'horario'  => 'Jue 14:00-16:00',
-        'aula'     => 'A-105',
-        'creditos' => 4,
-    ],
-];
-
-$pagos = [
-    [
-        'concepto' => 'Inscripción',
-        'periodo'  => '2026-1',
-        'monto'    => '$3,500 MXN',
-        'fecha'    => '15/02/2026',
-        'estado'   => 'pagado',
-    ],
-    [
-        'concepto' => 'Reinscripción',
-        'periodo'  => '2025-2',
-        'monto'    => '$2,800 MXN',
-        'fecha'    => '18/10/2025',
-        'estado'   => 'pagado',
-    ],
-    [
-        'concepto' => 'Reinscripción',
-        'periodo'  => '2026-2',
-        'monto'    => '$2,800 MXN',
-        'fecha'    => '—',
-        'estado'   => 'pendiente',
-    ],
-];
-
-$totalCreditos = array_sum(array_column($materias, 'creditos'));
-@endphp
-
 <section class="bg-uicm-gray min-h-screen">
 
     {{-- ══════════════════════════════════════════
@@ -105,21 +14,21 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
                 <div class="flex items-center gap-5">
-                    {{-- Avatar grande --}}
+                    {{-- Avatar --}}
                     <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center
                                 text-2xl font-extrabold text-white border-2 border-white/30"
                          style="background-color: rgba(255,255,255,0.15);">
-                        {{ strtoupper(substr($alumno['nombre'], 0, 1)) }}
+                        {{ strtoupper(substr($alumno->nombre, 0, 1)) }}
                     </div>
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-widest text-white/60 mb-0.5">
                             Portal del Alumno
                         </p>
                         <h1 class="text-xl sm:text-2xl font-extrabold text-white leading-tight">
-                            Bienvenido, {{ explode(' ', $alumno['nombre'])[0] }} {{ explode(' ', $alumno['nombre'])[1] }}
+                            Bienvenido, {{ $alumno->nombre }} {{ $alumno->apellido_paterno }}
                         </h1>
                         <p class="text-sm font-mono text-white/70 mt-0.5">
-                            {{ $alumno['matricula'] }}
+                            {{ $alumno->matricula }}
                         </p>
                     </div>
                 </div>
@@ -128,9 +37,11 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                     <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold
                                  bg-white/15 text-white border border-white/20">
                         <span class="w-2 h-2 rounded-full bg-green-300 inline-block"></span>
-                        {{ $alumno['estado'] }}
+                        {{ ucfirst($alumno->estado) }}
                     </span>
-                    <p class="text-xs text-white/50">Ciclo {{ $alumno['ciclo'] }}</p>
+                    <p class="text-xs text-white/50">
+                        Ciclo {{ $alumno->grupo->ciclo ?? '—' }}
+                    </p>
                 </div>
 
             </div>
@@ -160,7 +71,7 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                     </div>
                     <p class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Matrícula</p>
                     <p class="text-xs font-extrabold font-mono leading-tight" style="color: #0F4229;">
-                        {{ $alumno['matricula'] }}
+                        {{ $alumno->matricula }}
                     </p>
                 </div>
 
@@ -179,7 +90,7 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                     </div>
                     <p class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Programa</p>
                     <p class="text-xs font-bold text-gray-800 leading-snug">
-                        {{ $alumno['programa'] }}
+                        {{ $alumno->programa->nombre ?? '—' }}
                     </p>
                 </div>
 
@@ -197,7 +108,9 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                         </svg>
                     </div>
                     <p class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Grupo</p>
-                    <p class="text-lg font-extrabold" style="color: #0F4229;">{{ $alumno['grupo'] }}</p>
+                    <p class="text-lg font-extrabold" style="color: #0F4229;">
+                        {{ $alumno->grupo->clave ?? 'Sin grupo' }}
+                    </p>
                 </div>
 
                 {{-- Cuatrimestre --}}
@@ -212,12 +125,14 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                         </svg>
                     </div>
                     <p class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Cuatrimestre</p>
-                    <p class="text-lg font-extrabold" style="color: #EFAD5A;">{{ $alumno['cuatrimestre'] }}</p>
+                    <p class="text-lg font-extrabold" style="color: #EFAD5A;">
+                        {{ $alumno->cuatrimestre_actual }}°
+                    </p>
                 </div>
 
             </div>
 
-            {{-- Fila 2: Estado + resumen créditos --}}
+            {{-- Fila 2: Estado + resumen --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
                 {{-- Estado administrativo --}}
@@ -243,7 +158,7 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                         <span class="inline-flex items-center gap-1.5 mt-1 px-3 py-1 rounded-full text-xs font-bold text-white"
                               style="background-color: #0F4229;">
                             <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                            {{ $alumno['estado'] }}
+                            {{ ucfirst($alumno->estado) }}
                         </span>
                     </div>
                 </div>
@@ -264,7 +179,7 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                     <div>
                         <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Materias inscritas</p>
                         <p class="text-2xl font-extrabold mt-0.5" style="color: #D4AF37;">
-                            {{ count($materias) }}
+                            {{ $carga->count() }}
                         </p>
                     </div>
                 </div>
@@ -310,10 +225,17 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                                  C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
                     <h2 class="text-sm font-semibold text-gray-700">Materias asignadas</h2>
-                    <span class="ml-auto text-xs text-gray-400">{{ count($materias) }} materias — Ciclo {{ $alumno['ciclo'] }}</span>
+                    <span class="ml-auto text-xs text-gray-400">
+                        {{ $carga->count() }} materias — Ciclo {{ $alumno->grupo->ciclo ?? '—' }}
+                    </span>
                 </div>
 
                 <div class="overflow-x-auto">
+                    @if ($carga->isEmpty())
+                        <div class="px-6 py-10 text-center text-sm text-gray-400">
+                            No hay materias asignadas. El grupo aún no tiene carga académica registrada.
+                        </div>
+                    @else
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -326,19 +248,19 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @foreach ($materias as $materia)
+                            @foreach ($carga as $c)
                             <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                                 <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-500 whitespace-nowrap">
-                                    {{ $materia['clave'] }}
+                                    {{ $c->materia->clave }}
                                 </td>
 
                                 <td class="px-6 py-4 font-semibold text-gray-800 whitespace-nowrap">
-                                    {{ $materia['nombre'] }}
+                                    {{ $c->materia->nombre }}
                                 </td>
 
                                 <td class="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                    {{ $materia['profesor'] }}
+                                    {{ $c->profesor->nombre }}
                                 </td>
 
                                 <td class="px-6 py-4 text-gray-600 whitespace-nowrap">
@@ -348,7 +270,7 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
-                                        {{ $materia['horario'] }}
+                                        {{ $c->horario ?? '—' }}
                                     </span>
                                 </td>
 
@@ -360,14 +282,14 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                                                   d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3
                                                      m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                         </svg>
-                                        {{ $materia['aula'] }}
+                                        {{ $c->aula ?? '—' }}
                                     </span>
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
                                     <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white"
                                           style="background-color: #D4AF37;">
-                                        {{ $materia['creditos'] }}
+                                        {{ $c->materia->creditos }}
                                     </span>
                                 </td>
 
@@ -375,6 +297,7 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                             @endforeach
                         </tbody>
                     </table>
+                    @endif
                 </div>
             </div>
 
@@ -393,10 +316,15 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                                  a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
                     <h2 class="text-sm font-semibold text-gray-700">Historial de pagos</h2>
-                    <span class="ml-auto text-xs text-gray-400">{{ count($pagos) }} registros</span>
+                    <span class="ml-auto text-xs text-gray-400">{{ $alumno->pagos->count() }} registros</span>
                 </div>
 
                 <div class="overflow-x-auto">
+                    @if ($alumno->pagos->isEmpty())
+                        <div class="px-6 py-10 text-center text-sm text-gray-400">
+                            Sin registros de pago.
+                        </div>
+                    @else
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -408,31 +336,31 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @foreach ($pagos as $pago)
+                            @foreach ($alumno->pagos as $pago)
                             <tr class="hover:bg-gray-50 transition-colors duration-100">
 
-                                <td class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
-                                    {{ $pago['concepto'] }}
+                                <td class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap capitalize">
+                                    {{ $pago->concepto }}
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600">
-                                        {{ $pago['periodo'] }}
+                                        {{ $pago->periodo }}
                                     </span>
                                 </td>
 
                                 <td class="px-6 py-4 font-bold text-gray-800 whitespace-nowrap">
-                                    {{ $pago['monto'] }}
+                                    ${{ number_format($pago->monto, 0) }} MXN
                                 </td>
 
                                 <td class="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">
-                                    @if ($pago['fecha'] !== '—')
+                                    @if ($pago->fecha_pago)
                                         <span class="inline-flex items-center gap-1">
                                             <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                             </svg>
-                                            {{ $pago['fecha'] }}
+                                            {{ $pago->fecha_pago->format('d/m/Y') }}
                                         </span>
                                     @else
                                         <span class="text-gray-300">—</span>
@@ -440,17 +368,22 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if ($pago['estado'] === 'pagado')
+                                    @if ($pago->estado === 'aprobado')
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
                                               style="background-color: #0F4229;">
                                             <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                             Pagado
                                         </span>
+                                    @elseif ($pago->estado === 'rechazado')
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block"></span>
+                                            Rechazado
+                                        </span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
                                               style="background-color: #EFAD5A;">
                                             <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                                            Pendiente
+                                            En revisión
                                         </span>
                                     @endif
                                 </td>
@@ -459,11 +392,12 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                             @endforeach
                         </tbody>
                     </table>
+                    @endif
                 </div>
             </div>
 
-            {{-- Volver --}}
-            <div>
+            {{-- Cerrar sesión --}}
+            <div class="flex items-center justify-between">
                 <a href="{{ route('home') }}"
                    class="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-150"
                    style="color: #0F4229;"
@@ -474,6 +408,18 @@ $totalCreditos = array_sum(array_column($materias, 'creditos'));
                     </svg>
                     Volver al inicio
                 </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Cerrar sesión
+                    </button>
+                </form>
             </div>
 
         </div>

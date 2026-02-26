@@ -4,14 +4,6 @@
 
 @section('content')
 
-@php
-// Datos simulados del aspirante
-$nombre   = 'Juan Pérez';
-$folio    = 'UICM-2026-0001';
-$programa = 'Ingeniería en Sistemas';
-$monto    = '$3,500 MXN';
-@endphp
-
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 max-w-2xl">
 
@@ -36,7 +28,7 @@ $monto    = '$3,500 MXN';
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
                             <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Aspirante</p>
-                            <h2 class="text-lg font-extrabold text-gray-900">{{ $nombre }}</h2>
+                            <h2 class="text-lg font-extrabold text-gray-900">{{ $aspirante->nombre_completo }}</h2>
                         </div>
                         {{-- Badge estado --}}
                         <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-white self-start sm:self-auto"
@@ -50,12 +42,12 @@ $monto    = '$3,500 MXN';
                         <div class="bg-uicm-gray rounded-xl p-4">
                             <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">Folio</p>
                             <p class="font-bold font-mono tracking-widest text-sm" style="color: #0F4229;">
-                                {{ $folio }}
+                                {{ $aspirante->folio }}
                             </p>
                         </div>
                         <div class="bg-uicm-gray rounded-xl p-4">
                             <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">Programa</p>
-                            <p class="font-semibold text-sm text-gray-800">{{ $programa }}</p>
+                            <p class="font-semibold text-sm text-gray-800">{{ $aspirante->programa->nombre ?? '—' }}</p>
                         </div>
                     </div>
                 </div>
@@ -80,7 +72,7 @@ $monto    = '$3,500 MXN';
                     {{-- Monto destacado --}}
                     <div class="text-center mb-5">
                         <p class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Monto a pagar</p>
-                        <p class="text-4xl font-extrabold" style="color: #0F4229;">{{ $monto }}</p>
+                        <p class="text-4xl font-extrabold" style="color: #0F4229;">$3,500 MXN</p>
                     </div>
 
                     {{-- Caja de datos bancarios — borde izquierdo dorado --}}
@@ -107,7 +99,7 @@ $monto    = '$3,500 MXN';
                             <div class="sm:col-span-2">
                                 <dt class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-0.5">Referencia</dt>
                                 <dd class="font-bold font-mono tracking-widest" style="color: #0F4229;">
-                                    {{ $folio }}
+                                    {{ $aspirante->folio }}
                                 </dd>
                             </div>
                         </dl>
@@ -141,7 +133,7 @@ $monto    = '$3,500 MXN';
                           x-data="{ archivo: null, subiendo: false }"
                           @submit="subiendo = true">
                         @csrf
-                        <input type="hidden" name="folio" value="{{ $folio }}">
+                        <input type="hidden" name="folio" value="{{ $aspirante->folio }}">
 
                         @error('comprobante')
                         <div class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-4 text-sm">
@@ -217,7 +209,7 @@ $monto    = '$3,500 MXN';
 
             {{-- Volver --}}
             <div class="text-center">
-                <a href="{{ route('aspirantes.seguimiento') }}"
+                <a href="{{ route('aspirantes.resultado', ['folio' => $aspirante->folio]) }}"
                    class="text-sm text-gray-400 hover:text-uicm-green transition-colors duration-150
                           inline-flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

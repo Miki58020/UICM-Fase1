@@ -1,9 +1,14 @@
 <?php
 
+use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AspiranteController;
+use App\Http\Controllers\CargaAcademicaController;
 use App\Http\Controllers\ContactoController;
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfesorController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home.index')->name('home');
@@ -15,36 +20,48 @@ Route::post('/registro', [AspiranteController::class, 'store'])->name('aspirante
 
 Route::view('/confirmacion', 'aspirantes.confirmacion')->name('aspirantes.confirmacion');
 Route::view('/seguimiento', 'aspirantes.seguimiento')->name('aspirantes.seguimiento');
-Route::view('/resultado', 'aspirantes.resultado')->name('aspirantes.resultado');
+Route::get('/resultado', [AspiranteController::class, 'resultado'])->name('aspirantes.resultado');
 
 // Portal del alumno
-Route::view('/alumno', 'alumno.dashboard')->name('alumno.dashboard');
+Route::get('/alumno', [AlumnoController::class, 'dashboard'])->name('alumno.dashboard')->middleware('auth');
 
 // Módulo pago de inscripción
-Route::view('/aspirante/pago', 'aspirantes.pago')->name('aspirantes.pago');
+Route::get('/aspirante/pago', [PagoController::class, 'create'])->name('aspirantes.pago');
 Route::post('/aspirante/pago', [PagoController::class, 'store'])->name('aspirantes.pago.enviar');
 Route::view('/aspirante/pago-confirmacion', 'aspirantes.pago_confirmacion')->name('aspirantes.pago.confirmacion');
 
 // Módulo finanzas — Validación de pagos
-Route::view('/finanzas/pagos', 'finanzas.pagos.index')->name('finanzas.pagos.index');
-Route::view('/finanzas/pagos/show', 'finanzas.pagos.show')->name('finanzas.pagos.show');
+Route::get('/finanzas/pagos', [PagoController::class, 'index'])->name('finanzas.pagos.index');
+Route::get('/finanzas/pagos/{pago}', [PagoController::class, 'show'])->name('finanzas.pagos.show');
+Route::patch('/finanzas/pagos/{pago}/aprobar', [PagoController::class, 'aprobar'])->name('finanzas.pagos.aprobar');
+Route::patch('/finanzas/pagos/{pago}/rechazar', [PagoController::class, 'rechazar'])->name('finanzas.pagos.rechazar');
 
 // Módulo admin — Generación de matrículas e inscripción
-Route::view('/admin/inscripciones', 'admin.inscripciones.index')->name('admin.inscripciones.index');
-Route::view('/admin/inscripciones/generar', 'admin.inscripciones.generar')->name('admin.inscripciones.generar');
+Route::get('/admin/inscripciones', [InscripcionController::class, 'index'])->name('admin.inscripciones.index');
+Route::post('/admin/inscripciones/{alumno}/inscribir', [InscripcionController::class, 'inscribir'])->name('admin.inscripciones.inscribir');
+Route::get('/admin/inscripciones/{alumno}/resultado', [InscripcionController::class, 'resultado'])->name('admin.inscripciones.generar');
 
 // Módulo admin — Gestión de materias (Coordinación Académica)
-Route::view('/admin/materias', 'admin.materias.index')->name('admin.materias.index');
+Route::get('/admin/materias', [MateriaController::class, 'index'])->name('admin.materias.index');
+Route::post('/admin/materias', [MateriaController::class, 'store'])->name('admin.materias.store');
+Route::patch('/admin/materias/{materia}', [MateriaController::class, 'update'])->name('admin.materias.update');
+Route::patch('/admin/materias/{materia}/toggle', [MateriaController::class, 'toggle'])->name('admin.materias.toggle');
 
 // Módulo admin — Gestión de profesores (Coordinación Académica)
-Route::view('/admin/profesores', 'admin.profesores.index')->name('admin.profesores.index');
+Route::get('/admin/profesores', [ProfesorController::class, 'index'])->name('admin.profesores.index');
+Route::post('/admin/profesores', [ProfesorController::class, 'store'])->name('admin.profesores.store');
+Route::patch('/admin/profesores/{profesor}', [ProfesorController::class, 'update'])->name('admin.profesores.update');
+Route::patch('/admin/profesores/{profesor}/toggle', [ProfesorController::class, 'toggle'])->name('admin.profesores.toggle');
 
 // Módulo admin — Carga académica por grupo (Coordinación Académica)
-Route::view('/admin/carga-academica', 'admin.carga-academica.index')->name('admin.carga-academica.index');
+Route::get('/admin/carga-academica', [CargaAcademicaController::class, 'index'])->name('admin.carga-academica.index');
+Route::post('/admin/carga-academica/{grupo}/generar', [CargaAcademicaController::class, 'generar'])->name('admin.carga-academica.generar');
 
 // Módulo admin — Validación de aspirantes (Control Escolar)
-Route::view('/admin/aspirantes', 'admin.aspirantes.index')->name('admin.aspirantes.index');
-Route::view('/admin/aspirantes/show', 'admin.aspirantes.show')->name('admin.aspirantes.show');
+Route::get('/admin/aspirantes', [AspiranteController::class, 'index'])->name('admin.aspirantes.index');
+Route::get('/admin/aspirantes/{aspirante}', [AspiranteController::class, 'show'])->name('admin.aspirantes.show');
+Route::patch('/admin/aspirantes/{aspirante}/aprobar', [AspiranteController::class, 'aprobar'])->name('admin.aspirantes.aprobar');
+Route::patch('/admin/aspirantes/{aspirante}/rechazar', [AspiranteController::class, 'rechazar'])->name('admin.aspirantes.rechazar');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
