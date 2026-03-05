@@ -7,7 +7,9 @@
       "Bash(php artisan tinker:*)",
       "Bash(php artisan migrate:status:*)",
       "Bash(php artisan db:seed:*)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(php:*)",
+      "Bash(curl:*)"
     ]
   }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BienvenidaAlumno;
 use App\Models\Alumno;
 use App\Models\Aspirante;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class InscripcionController extends Controller
@@ -37,9 +39,13 @@ class InscripcionController extends Controller
             'name'     => $alumno->nombre_completo,
             'email'    => $alumno->email,
             'password' => Hash::make($password),
+            'rol'      => 'alumno',
         ]);
 
         $alumno->update(['user_id' => $user->id]);
+
+        $alumno->load('programa');
+        Mail::to($alumno->email)->send(new BienvenidaAlumno($alumno, $password));
 
         return redirect()->route('admin.inscripciones.resultado', $alumno)
             ->with('temp_password', $password);

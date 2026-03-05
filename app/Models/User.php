@@ -24,9 +24,24 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'apellido_paterno',
+        'apellido_materno',
         'email',
         'password',
+        'rol',
     ];
+
+    /**
+     * Nombre completo: nombre(s) + apellido paterno + apellido materno.
+     */
+    public function getNombreCompletoAttribute(): string
+    {
+        return trim(implode(' ', array_filter([
+            $this->name,
+            $this->apellido_paterno,
+            $this->apellido_materno,
+        ])));
+    }
 
     /**
      * The attributes that should be hidden for serialization.

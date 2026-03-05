@@ -62,6 +62,7 @@
                                        placeholder="Nombre(s)"
                                        value="{{ old('nombre') }}"
                                        required
+                                       oninput="normalizarCampo(this)"
                                        class="w-full rounded-lg border {{ $errors->has('nombre') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
                                 @error('nombre')
@@ -81,6 +82,7 @@
                                        placeholder="Apellido paterno"
                                        value="{{ old('apellido_paterno') }}"
                                        required
+                                       oninput="normalizarCampo(this)"
                                        class="w-full rounded-lg border {{ $errors->has('apellido_paterno') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
                                 @error('apellido_paterno')
@@ -99,6 +101,7 @@
                                        name="apellido_materno"
                                        placeholder="Apellido materno"
                                        value="{{ old('apellido_materno') }}"
+                                       oninput="normalizarCampo(this)"
                                        class="w-full rounded-lg border {{ $errors->has('apellido_materno') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
                                 @error('apellido_materno')
@@ -246,8 +249,9 @@
                                         class="w-full rounded-lg border {{ $errors->has('generacion') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
                                         style="--tw-ring-color: #0F4229;">
                                     <option value="" disabled {{ old('generacion') ? '' : 'selected' }}>Selecciona una generación</option>
-                                    <option value="2026-1" {{ old('generacion') == '2026-1' ? 'selected' : '' }}>2026-1 (Enero – Junio)</option>
-                                    <option value="2026-2" {{ old('generacion') == '2026-2' ? 'selected' : '' }}>2026-2 (Agosto – Diciemb­re)</option>
+                                    <option value="2026-1" {{ old('generacion') == '2026-1' ? 'selected' : '' }}>2026-1 (Enero – Abril)</option>
+                                    <option value="2026-2" {{ old('generacion') == '2026-2' ? 'selected' : '' }}>2026-2 (Mayo – Agosto)</option>
+                                    <option value="2026-3" {{ old('generacion') == '2026-3' ? 'selected' : '' }}>2026-3 (Septiembre – Diciembre)</option>
                                 </select>
                                 @error('generacion')
                                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -402,5 +406,21 @@
 
     </div>
 </section>
+
+@push('scripts')
+<script>
+function normalizarCampo(input) {
+    const pos = input.selectionStart;
+    let val = input.value;
+    // Eliminar acentos y diacríticos
+    val = val.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    // Convertir a mayúsculas
+    val = val.toUpperCase();
+    input.value = val;
+    // Restaurar posición del cursor
+    input.setSelectionRange(pos, pos);
+}
+</script>
+@endpush
 
 @endsection

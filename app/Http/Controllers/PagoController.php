@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PagoAprobado;
+use App\Mail\PagoRechazado;
 use App\Models\Aspirante;
 use App\Models\Pago;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PagoController extends Controller
 {
@@ -51,6 +54,8 @@ class PagoController extends Controller
 
         $pago->update(['estado' => 'aprobado']);
 
+        Mail::to($pago->aspirante->email)->send(new PagoAprobado($pago));
+
         return redirect()->back()->with('success', 'Pago aprobado correctamente.');
     }
 
@@ -68,6 +73,8 @@ class PagoController extends Controller
             'estado'        => 'rechazado',
             'observaciones' => $request->observaciones,
         ]);
+
+        Mail::to($pago->aspirante->email)->send(new PagoRechazado($pago));
 
         return redirect()->back()->with('success', 'Pago rechazado correctamente.');
     }

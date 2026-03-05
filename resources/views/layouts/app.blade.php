@@ -3,15 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Universidad Internacional Cuba México')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- ===== SEGURIDAD DE SESIÓN POR PESTAÑA ===== --}}
+    {{-- Ejecuta antes de renderizar el contenido para evitar exponer datos si la sesión es inválida --}}
+    @auth
+    <script>
+    (function () {
+        var KEY = 'uicm_tab_alive';
+
+        @if(session('uicm_init'))
+        {{-- Acceso recién autenticado: inicializar la marca de pestaña activa --}}
+        sessionStorage.setItem(KEY, '1');
+        @else
+        {{-- Verificar si esta pestaña tiene una sesión activa marcada --}}
+        if (!sessionStorage.getItem(KEY)) {
+            {{-- No hay marca: pestaña cerrada y restaurada, o ventana nueva no autorizada --}}
+            document.documentElement.style.display = 'none';
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/session/terminate', true);
+            xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onloadend = function () { window.location.replace('/login'); };
+            xhr.onerror   = function () { window.location.replace('/login'); };
+            xhr.send();
+        }
+        @endif
+    })();
+    </script>
+    @endauth
 </head>
 <body class="bg-uicm-gray font-sans antialiased text-gray-800" x-data="{ sidebarOpen: false }">
 
     {{-- ===== NAVBAR ===== --}}
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md" id="main-navbar">
         <div class="px-4 lg:px-6">
-            <div class="flex items-center justify-between h-16">
+            <div class="relative flex items-center justify-between h-16">
 
                 {{-- Lado izquierdo: toggle (mobile) + logo --}}
                 <div class="flex items-center gap-3">
@@ -34,13 +63,40 @@
                     </a>
                 </div>
 
+                {{-- Rol y nombre del usuario autenticado --}}
+                @auth
+                @php
+                    $rolLabel = match(auth()->user()->rol) {
+                        'admin'           => 'ADMINISTRADOR',
+                        'control_escolar' => 'CONTROL ESCOLAR',
+                        'finanzas'        => 'FINANZAS',
+                        'coordinacion'    => 'COORDINACIÓN',
+                        'alumno'          => 'ALUMNO',
+                        default           => strtoupper(auth()->user()->rol),
+                    };
+                    // Normalizar: eliminar acentos y convertir a mayúsculas
+                    $norm = function (?string $t): string {
+                        if (!$t) return '';
+                        $t = normalizer_normalize($t, Normalizer::FORM_D);
+                        $t = preg_replace('/\p{Mn}/u', '', $t);
+                        return strtoupper($t);
+                    };
+                    // Solo primer nombre + apellido paterno
+                    $primerNombre = explode(' ', trim(auth()->user()->name ?? ''))[0];
+                    $nombreMostrado = trim($norm($primerNombre) . ' ' . $norm(auth()->user()->apellido_paterno));
+                @endphp
+                <span class="hidden md:block absolute left-64 pl-6 text-sm font-medium text-gray-600">
+                    <span class="font-bold" style="color: #0F4229;">{{ $rolLabel }}</span>
+                    <span class="text-gray-400 mx-1">—</span>
+                    {{ $nombreMostrado }}
+                </span>
+                @endauth
+
                 {{-- Lado derecho --}}
                 @auth
                 <div class="flex items-center gap-3">
-                    <span class="hidden sm:block text-xs text-gray-400 font-medium">
-                        {{ auth()->user()->email }}
-                    </span>
-                    <form method="POST" action="{{ route('logout') }}">
+                    <form method="POST" action="{{ route('logout') }}"
+                          onsubmit="localStorage.setItem('uicm_logout', Date.now()); sessionStorage.removeItem('uicm_tab_alive');">
                         @csrf
                         <button type="submit"
                                 class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold
@@ -130,69 +186,32 @@
         </div>
 
         {{-- Navegación --}}
-        <nav class="flex-1 px-3 py-4 space-y-0.5">
+        <nav class="flex-1 px-3 py-4">
 
-            {{-- Panel principal --}}
-            <a href="{{ route('dashboard') }}"
-               @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
-                      {{ request()->routeIs('dashboard') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3
-                             m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                Panel principal
-            </a>
+            @php $rol = auth()->user()->rol; @endphp
 
-            {{-- ── Control Escolar ── --}}
-            <div class="pt-4 pb-1 px-3">
-                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Control Escolar</p>
+            {{-- ══ ADMIN ══ --}}
+            @if($rol === 'admin')
+            <div class="pt-2 pb-1 px-3">
+                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Administración</p>
             </div>
 
-            <a href="{{ route('admin.aspirantes.index') }}"
+            <a href="{{ route('admin.usuarios.index') }}"
                @click="sidebarOpen = false"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.aspirantes.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                      {{ request()->routeIs('admin.usuarios.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
-                             a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
-                Aspirantes
+                Usuarios del sistema
             </a>
+            @endif
 
-            <a href="{{ route('admin.inscripciones.index') }}"
-               @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.inscripciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5
-                             m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4z"/>
-                </svg>
-                Inscripciones
-            </a>
-
-            {{-- ── Finanzas ── --}}
-            <div class="pt-4 pb-1 px-3">
-                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Finanzas</p>
-            </div>
-
-            <a href="{{ route('finanzas.pagos.index') }}"
-               @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
-                      {{ request()->routeIs('finanzas.pagos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10
-                             a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-                </svg>
-                Validación de pagos
-            </a>
-
-            {{-- ── Coordinación Académica ── --}}
-            <div class="pt-4 pb-1 px-3">
+            {{-- ══ COORDINACIÓN ACADÉMICA ══ --}}
+            @if($rol === 'coordinacion' || $rol === 'admin')
+            <div class="mt-7"></div>
+            <div class="pt-2 pb-1 px-3">
                 <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Coordinación Académica</p>
             </div>
 
@@ -232,9 +251,63 @@
                 </svg>
                 Carga académica
             </a>
+            @endif
 
-            {{-- ── Portal del alumno ── --}}
-            <div class="pt-4 pb-1 px-3">
+            {{-- ══ CONTROL ESCOLAR ══ --}}
+            @if($rol === 'control_escolar' || $rol === 'admin')
+            <div class="mt-7"></div>
+            <div class="pt-2 pb-1 px-3">
+                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Control Escolar</p>
+            </div>
+
+            <a href="{{ route('admin.aspirantes.index') }}"
+               @click="sidebarOpen = false"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.aspirantes.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
+                             a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Aspirantes
+            </a>
+
+            <a href="{{ route('admin.inscripciones.index') }}"
+               @click="sidebarOpen = false"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.inscripciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5
+                             m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4z"/>
+                </svg>
+                Inscripciones
+            </a>
+            @endif
+
+            {{-- ══ FINANZAS ══ --}}
+            @if($rol === 'finanzas' || $rol === 'admin')
+            <div class="mt-7"></div>
+            <div class="pt-2 pb-1 px-3">
+                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Finanzas</p>
+            </div>
+
+            <a href="{{ route('finanzas.pagos.index') }}"
+               @click="sidebarOpen = false"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                      {{ request()->routeIs('finanzas.pagos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10
+                             a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Validación de pagos
+            </a>
+            @endif
+
+            {{-- ══ ALUMNO ══ --}}
+            @if($rol === 'alumno')
+            <div class="pt-2 pb-1 px-3">
                 <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Portal del alumno</p>
             </div>
 
@@ -249,6 +322,7 @@
                 </svg>
                 Mi portal
             </a>
+            @endif
 
         </nav>
 
@@ -305,5 +379,32 @@
     </script>
 
     @stack('scripts')
+
+    {{-- ===== SINCRONIZACIÓN DE CIERRE DE SESIÓN ENTRE PESTAÑAS ===== --}}
+    @auth
+    <script>
+    (function () {
+        var KEY = 'uicm_tab_alive';
+
+        {{-- Marcar la pestaña como activa en cada página navegada --}}
+        sessionStorage.setItem(KEY, '1');
+
+        {{-- Escuchar cierre de sesión disparado por OTRA pestaña --}}
+        window.addEventListener('storage', function (e) {
+            if (e.key === 'uicm_logout' && e.newValue) {
+                sessionStorage.removeItem(KEY);
+                window.location.replace('/login');
+            }
+        });
+    })();
+    </script>
+    @endauth
+
+    @guest
+    <script>
+    {{-- En páginas públicas/login: limpiar la marca de sesión activa --}}
+    sessionStorage.removeItem('uicm_tab_alive');
+    </script>
+    @endguest
 </body>
 </html>

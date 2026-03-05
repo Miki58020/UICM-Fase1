@@ -28,7 +28,20 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $rol = Auth::user()->rol;
+
+        $destino = match ($rol) {
+            'admin'           => route('admin.usuarios.index'),
+            'control_escolar' => route('admin.aspirantes.index'),
+            'finanzas'        => route('finanzas.pagos.index'),
+            'coordinacion'    => route('admin.materias.index'),
+            'alumno'          => route('alumno.dashboard'),
+            default           => route('dashboard'),
+        };
+
+        session()->flash('uicm_init', true);
+
+        return redirect()->intended($destino);
     }
 
     /**
