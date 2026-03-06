@@ -147,11 +147,21 @@
                 <ul class="divide-y divide-gray-100">
 
                     @php
+                        $nivelPrograma = $aspirante->programa->nivel ?? 'licenciatura';
+                        $labelCert = match($nivelPrograma) {
+                            'maestria'  => 'Título de ingeniería o licenciatura',
+                            'doctorado' => 'Título de ingeniería o licenciatura',
+                            default     => 'Certificado de bachillerato',
+                        };
                         $documentos = [
-                            ['nombre' => 'Acta de nacimiento',     'url' => $aspirante->acta_nacimiento_url],
-                            ['nombre' => 'Certificado de estudios','url' => $aspirante->certificado_url],
-                            ['nombre' => 'Identificación oficial', 'url' => $aspirante->identificacion_url],
+                            ['nombre' => 'Acta de nacimiento',          'url' => $aspirante->acta_nacimiento_url],
+                            ['nombre' => 'CURP',                        'url' => $aspirante->curp_url],
+                            ['nombre' => $labelCert,                    'url' => $aspirante->certificado_url],
+                            ['nombre' => 'Identificación oficial (INE)','url' => $aspirante->identificacion_url],
                         ];
+                        if (!empty($aspirante->titulo_url)) {
+                            $documentos[] = ['nombre' => 'Título de maestría', 'url' => $aspirante->titulo_url];
+                        }
                         $subidos = collect($documentos)->filter(fn($d) => !empty($d['url']))->count();
                     @endphp
 

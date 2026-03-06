@@ -279,7 +279,8 @@
                             Tamaño máximo por archivo: 5 MB.
                         </p>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        {{-- Documentos comunes (todos los programas) --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
 
                             {{-- Acta de nacimiento --}}
                             <div x-data="{ archivo: null }">
@@ -311,14 +312,17 @@
                                        type="file" accept=".pdf,.jpg,.jpeg,.png"
                                        required class="sr-only"
                                        @change="archivo = $event.target.files[0]?.name ?? null">
+                                @error('acta_nacimiento')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
-                            {{-- Certificado --}}
+                            {{-- CURP (documento) --}}
                             <div x-data="{ archivo: null }">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Certificado de estudios <span class="text-red-500">*</span>
+                                    CURP (documento) <span class="text-red-500">*</span>
                                 </label>
-                                <label for="certificado"
+                                <label for="curp_doc"
                                        class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200"
                                        :class="archivo ? 'border-green-400 bg-green-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'">
                                     <template x-if="!archivo">
@@ -339,16 +343,19 @@
                                         </div>
                                     </template>
                                 </label>
-                                <input id="certificado" name="certificado"
+                                <input id="curp_doc" name="curp_doc"
                                        type="file" accept=".pdf,.jpg,.jpeg,.png"
                                        required class="sr-only"
                                        @change="archivo = $event.target.files[0]?.name ?? null">
+                                @error('curp_doc')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Identificación --}}
                             <div x-data="{ archivo: null }">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Identificación oficial <span class="text-red-500">*</span>
+                                    Identificación oficial (INE) <span class="text-red-500">*</span>
                                 </label>
                                 <label for="identificacion"
                                        class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200"
@@ -375,9 +382,98 @@
                                        type="file" accept=".pdf,.jpg,.jpeg,.png"
                                        required class="sr-only"
                                        @change="archivo = $event.target.files[0]?.name ?? null">
+                                @error('identificacion')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                         </div>
+
+                        {{-- Documentos académicos (aparecen al seleccionar programa) --}}
+                        <div id="seccion-doc-academico" style="display: none;">
+
+                            <div class="rounded-lg px-4 py-3 mb-4 border text-sm font-medium"
+                                 style="background-color: #f0f9f4; border-color: #0F4229; color: #0F4229;">
+                                <span id="aviso-doc-academico"></span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                                {{-- Certificado / Título académico (label dinámico según nivel) --}}
+                                <div x-data="{ archivo: null }">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <span id="label-certificado">Documento académico</span> <span class="text-red-500">*</span>
+                                    </label>
+                                    <label for="certificado"
+                                           class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200"
+                                           :class="archivo ? 'border-green-400 bg-green-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'">
+                                        <template x-if="!archivo">
+                                            <div class="flex flex-col items-center">
+                                                <svg class="w-7 h-7 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                                </svg>
+                                                <span class="text-xs text-gray-500">Haz clic para subir</span>
+                                            </div>
+                                        </template>
+                                        <template x-if="archivo">
+                                            <div class="flex flex-col items-center px-2">
+                                                <svg class="w-6 h-6 text-green-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span class="text-xs font-semibold text-green-700 text-center break-all" x-text="archivo"></span>
+                                            </div>
+                                        </template>
+                                    </label>
+                                    <input id="certificado" name="certificado"
+                                           type="file" accept=".pdf,.jpg,.jpeg,.png"
+                                           class="sr-only"
+                                           @change="archivo = $event.target.files[0]?.name ?? null">
+                                    @error('certificado')
+                                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                {{-- Título de maestría (exclusivo para doctorado) --}}
+                                <div id="seccion-titulo" style="display: none;">
+                                <div x-data="{ archivo: null }">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Título de maestría <span class="text-red-500">*</span>
+                                    </label>
+                                    <label for="titulo"
+                                           class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200"
+                                           :class="archivo ? 'border-green-400 bg-green-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'">
+                                        <template x-if="!archivo">
+                                            <div class="flex flex-col items-center">
+                                                <svg class="w-7 h-7 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                                </svg>
+                                                <span class="text-xs text-gray-500">Haz clic para subir</span>
+                                            </div>
+                                        </template>
+                                        <template x-if="archivo">
+                                            <div class="flex flex-col items-center px-2">
+                                                <svg class="w-6 h-6 text-green-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span class="text-xs font-semibold text-green-700 text-center break-all" x-text="archivo"></span>
+                                            </div>
+                                        </template>
+                                    </label>
+                                    <input id="titulo" name="titulo"
+                                           type="file" accept=".pdf,.jpg,.jpeg,.png"
+                                           class="sr-only"
+                                           @change="archivo = $event.target.files[0]?.name ?? null">
+                                    @error('titulo')
+                                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                </div>{{-- /x-show doctorado --}}
+
+                            </div>
+                        </div>
+
                     </div>
 
                     {{-- Nota informativa --}}
@@ -412,14 +508,76 @@
 function normalizarCampo(input) {
     const pos = input.selectionStart;
     let val = input.value;
-    // Eliminar acentos y diacríticos
     val = val.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    // Convertir a mayúsculas
     val = val.toUpperCase();
     input.value = val;
-    // Restaurar posición del cursor
     input.setSelectionRange(pos, pos);
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const tiposPrograma = {
+        'psicopedagogia':      'licenciatura',
+        'lengua_inglesa':      'licenciatura',
+        'administracion':      'licenciatura',
+        'lengua_literatura':   'licenciatura',
+        'mba':                 'maestria',
+        'maestria_educacion':  'maestria',
+        'negocios_logistica':  'maestria',
+        'doctorado_educacion': 'doctorado',
+    };
+
+    const labelesCert = {
+        'licenciatura': 'Certificado de bachillerato',
+        'maestria':     'Título de ingeniería o licenciatura',
+        'doctorado':    'Título de ingeniería o licenciatura',
+    };
+
+    const mensajes = {
+        'licenciatura': 'Para licenciatura se requiere el certificado de bachillerato.',
+        'maestria':     'Para maestría se requiere el título de ingeniería o licenciatura.',
+        'doctorado':    'Para doctorado se requieren el título de ingeniería o licenciatura y el título de maestría.',
+    };
+
+    const selectPrograma   = document.getElementById('programa_academico');
+    const seccionDoc       = document.getElementById('seccion-doc-academico');
+    const avisoTexto       = document.getElementById('aviso-doc-academico');
+    const labelCert        = document.getElementById('label-certificado');
+    const seccionTitulo    = document.getElementById('seccion-titulo');
+    const inputCertificado = document.getElementById('certificado');
+    const inputTitulo      = document.getElementById('titulo');
+
+    function actualizarDocs(valor) {
+        const tipo = tiposPrograma[valor] || '';
+
+        if (tipo) {
+            seccionDoc.style.display      = '';
+            avisoTexto.textContent        = mensajes[tipo];
+            labelCert.textContent         = labelesCert[tipo];
+            inputCertificado.required     = true;
+
+            if (tipo === 'doctorado') {
+                seccionTitulo.style.display = '';
+                inputTitulo.required        = true;
+            } else {
+                seccionTitulo.style.display = 'none';
+                inputTitulo.required        = false;
+            }
+        } else {
+            seccionDoc.style.display  = 'none';
+            inputCertificado.required = false;
+            inputTitulo.required      = false;
+        }
+    }
+
+    selectPrograma.addEventListener('change', function () {
+        actualizarDocs(this.value);
+    });
+
+    // Restaurar estado si el formulario fue rechazado con errores
+    if (selectPrograma.value) {
+        actualizarDocs(selectPrograma.value);
+    }
+});
 </script>
 @endpush
 

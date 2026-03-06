@@ -116,6 +116,9 @@ class AspiranteController extends Controller
 
     public function store(Request $request)
     {
+        $esDoctorado = Programa::where('clave', $request->programa_academico)
+            ->value('nivel') === 'doctorado';
+
         $request->validate([
             'nombre'            => 'required|string|max:100',
             'apellido_paterno'  => 'required|string|max:100',
@@ -127,8 +130,13 @@ class AspiranteController extends Controller
             'programa_academico'=> 'required|string',
             'generacion'        => 'required|string|max:10',
             'acta_nacimiento'   => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'certificado'       => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'curp_doc'          => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'identificacion'    => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'certificado'       => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'titulo'            => [
+                $esDoctorado ? 'required' : 'nullable',
+                'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120',
+            ],
         ]);
 
         $programa = Programa::where('clave', $request->programa_academico)
@@ -146,6 +154,11 @@ class AspiranteController extends Controller
             ['folder' => 'uicm/documentos', 'public_id' => $curp . '_acta_' . time(), 'resource_type' => 'auto']
         )['secure_url'];
 
+        $curpDocUrl = Cloudinary::uploadApi()->upload(
+            $request->file('curp_doc')->getRealPath(),
+            ['folder' => 'uicm/documentos', 'public_id' => $curp . '_curp_' . time(), 'resource_type' => 'auto']
+        )['secure_url'];
+
         $certificadoUrl = Cloudinary::uploadApi()->upload(
             $request->file('certificado')->getRealPath(),
             ['folder' => 'uicm/documentos', 'public_id' => $curp . '_cert_' . time(), 'resource_type' => 'auto']
@@ -155,6 +168,14 @@ class AspiranteController extends Controller
             $request->file('identificacion')->getRealPath(),
             ['folder' => 'uicm/documentos', 'public_id' => $curp . '_id_' . time(), 'resource_type' => 'auto']
         )['secure_url'];
+
+        $tituloUrl = null;
+        if ($request->hasFile('titulo')) {
+            $tituloUrl = Cloudinary::uploadApi()->upload(
+                $request->file('titulo')->getRealPath(),
+                ['folder' => 'uicm/documentos', 'public_id' => $curp . '_titulo_' . time(), 'resource_type' => 'auto']
+            )['secure_url'];
+        }
 
         Aspirante::create([
             'folio'              => $folio,
@@ -168,8 +189,10 @@ class AspiranteController extends Controller
             'programa_id'        => $programa->id,
             'generacion'         => $request->generacion,
             'acta_nacimiento_url'  => $actaUrl,
+            'curp_url'             => $curpDocUrl,
             'certificado_url'      => $certificadoUrl,
             'identificacion_url'   => $identificacionUrl,
+            'titulo_url'           => $tituloUrl,
             'estado'             => 'pendiente',
         ]);
 
