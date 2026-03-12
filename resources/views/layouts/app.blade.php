@@ -180,7 +180,7 @@
            style="background-color: #0F4229;">
 
         {{-- Nombre de usuario --}}
-        <div class="px-4 py-5 border-b border-white/10">
+        <div class="px-4 py-5 border-b border-white/10 text-center">
             <p class="text-xs text-green-300 uppercase tracking-widest font-semibold mb-0.5">Bienvenido</p>
             <p class="text-sm font-bold text-white truncate">{{ auth()->user()->name }}</p>
         </div>
@@ -326,10 +326,6 @@
 
         </nav>
 
-        {{-- Versión / pie del sidebar --}}
-        <div class="px-4 py-3 border-t border-white/10">
-            <p class="text-xs text-green-400 text-center">UICM · Sistema de Gestión</p>
-        </div>
 
     </aside>
     @endauth
@@ -341,13 +337,15 @@
         </main>
 
         {{-- ===== FOOTER ===== --}}
-        <footer class="text-white text-center py-5" style="background-color: #0F4229;">
-            <div class="container mx-auto px-8 lg:px-24">
-                <div class="mb-2">
-                    <span class="font-bold text-lg tracking-wide">UICM</span>
-                </div>
-                <p class="text-green-200 text-sm mb-1">Universidad Internacional Cuba México</p>
-                <p class="text-green-300 text-xs">&copy; {{ date('Y') }} Todos los derechos reservados.</p>
+        <footer class="text-white text-center py-3 border-t border-green-800" style="background-color: #0F4229;">
+            <div class="container mx-auto px-8">
+                <p class="text-green-300 text-xs tracking-wide">
+                    <span class="font-semibold text-white">UICM</span>
+                    <span class="mx-2 opacity-40">|</span>
+                    Universidad Internacional Cuba México
+                    <span class="mx-2 opacity-40">|</span>
+                    &copy; {{ date('Y') }} Todos los derechos reservados.
+                </p>
             </div>
         </footer>
     </div>
