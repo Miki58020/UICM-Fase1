@@ -3,42 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pago aprobado</title>
+    <title>Pago validado — UICM</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .header { background: #0F4229; padding: 32px 40px; text-align: center; }
-        .header h1 { color: #fff; margin: 0; font-size: 22px; }
-        .header p { color: #a7d7b8; margin: 6px 0 0; font-size: 14px; }
-        .badge { display: inline-block; background: #16a34a; color: #fff; font-weight: bold; border-radius: 20px; padding: 6px 20px; font-size: 14px; margin: 16px 0; }
-        .body { padding: 36px 40px; color: #333; font-size: 15px; line-height: 1.6; }
-        .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .info-row:last-child { border-bottom: none; }
-        .footer { background: #f9f9f9; padding: 20px 40px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Georgia', serif; background: #eef2ee; padding: 32px 16px; }
+        .wrapper { max-width: 600px; margin: 0 auto; }
+
+        .header { background: #0F4229; padding: 36px 40px 0; text-align: center; border-radius: 12px 12px 0 0; }
+        .header-logo { font-size: 11px; font-family: Arial, sans-serif; letter-spacing: 3px; color: #D4AF37; text-transform: uppercase; margin-bottom: 10px; }
+        .header h1 { color: #fff; font-size: 20px; font-weight: normal; letter-spacing: 0.5px; line-height: 1.4; }
+        .header-sub { font-family: Arial, sans-serif; color: #a7d7b8; font-size: 13px; margin-top: 6px; }
+        .header-band { height: 6px; background: linear-gradient(to right, #D4AF37, #f0d060, #D4AF37); margin-top: 24px; }
+
+        .body { background: #fff; padding: 40px; color: #333; font-size: 15px; line-height: 1.7; }
+        .greeting { font-size: 17px; color: #0F4229; font-weight: bold; margin-bottom: 16px; }
+        .divider { border: none; border-top: 1px solid #e8e8e8; margin: 24px 0; }
+
+        .badge-wrap { text-align: center; margin: 24px 0; }
+        .badge { display: inline-block; background: #0F4229; color: #D4AF37; font-family: Arial, sans-serif; font-weight: bold; font-size: 15px; letter-spacing: 2px; padding: 10px 28px; border-radius: 30px; border: 2px solid #D4AF37; }
+
+        /* Tabla de detalles */
+        .detail-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-family: Arial, sans-serif; font-size: 14px; }
+        .detail-table tr { border-bottom: 1px solid #eee; }
+        .detail-table tr:last-child { border-bottom: none; }
+        .detail-table td { padding: 12px 8px; }
+        .detail-table td:first-child { color: #888; width: 45%; }
+        .detail-table td:last-child { font-weight: bold; color: #1a1a1a; text-align: right; }
+        .detail-table .monto td:last-child { color: #0F4229; font-size: 18px; }
+        .detail-wrap { background: #f5faf7; border-radius: 10px; padding: 4px 16px; margin: 24px 0; }
+
+        .info-box { background: #fffbea; border-left: 4px solid #D4AF37; border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; font-family: Arial, sans-serif; font-size: 14px; color: #555; }
+
+        .signature { margin-top: 28px; font-family: Arial, sans-serif; font-size: 14px; color: #555; }
+        .signature strong { color: #0F4229; }
+
+        .footer { background: #0F4229; padding: 20px 40px; text-align: center; border-radius: 0 0 12px 12px; }
+        .footer p { font-family: Arial, sans-serif; font-size: 11px; color: #a7d7b8; line-height: 1.6; }
+        .footer span { color: #D4AF37; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Universidad Internacional Cuba México</h1>
-            <p>Confirmación de pago</p>
+<div class="wrapper">
+
+    <div class="header">
+        <div class="header-logo">Universidad Internacional Cuba México</div>
+        <h1>Confirmación de Pago</h1>
+        <p class="header-sub">Tu comprobante ha sido validado</p>
+        <div class="header-band"></div>
+    </div>
+
+    <div class="body">
+        <p class="greeting">Estimado/a {{ $pago->aspirante->nombre }} {{ $pago->aspirante->apellido_paterno }},</p>
+
+        <p>Tu comprobante de pago ha sido revisado y:</p>
+
+        <div class="badge-wrap">
+            <span class="badge">✓ &nbsp; PAGO VALIDADO</span>
         </div>
-        <div class="body">
-            <p>Hola, <strong>{{ $pago->aspirante->nombre }} {{ $pago->aspirante->apellido_paterno }}</strong>.</p>
-            <p>Tu pago de inscripción ha sido <span class="badge">APROBADO</span></p>
-            <p>Detalles del pago:</p>
-            <div style="background:#f9f9f9; border-radius:6px; padding:16px 20px; margin:16px 0;">
-                <div class="info-row"><span style="color:#666;">Concepto</span><strong>Pago de inscripción</strong></div>
-                <div class="info-row"><span style="color:#666;">Monto</span><strong>${{ number_format($pago->monto, 2) }} MXN</strong></div>
-                <div class="info-row"><span style="color:#666;">Fecha</span><strong>{{ \Carbon\Carbon::parse($pago->fecha_pago)->format('d/m/Y') }}</strong></div>
-                <div class="info-row"><span style="color:#666;">Folio</span><strong>{{ $pago->aspirante->folio }}</strong></div>
-            </div>
-            <p>El área de Control Escolar finalizará tu proceso de inscripción y recibirás tus credenciales de acceso al portal en los próximos días hábiles.</p>
-            <p>Atentamente,<br><strong>Finanzas — UICM</strong></p>
+
+        <div class="detail-wrap">
+            <table class="detail-table">
+                <tr>
+                    <td>Folio de solicitud</td>
+                    <td>{{ $pago->aspirante->folio }}</td>
+                </tr>
+                <tr>
+                    <td>Concepto</td>
+                    <td>Pago de inscripción</td>
+                </tr>
+                <tr>
+                    <td>Fecha de pago</td>
+                    <td>{{ \Carbon\Carbon::parse($pago->fecha_pago)->format('d/m/Y') }}</td>
+                </tr>
+                <tr class="monto">
+                    <td>Monto</td>
+                    <td>${{ number_format($pago->monto, 2) }} MXN</td>
+                </tr>
+            </table>
         </div>
-        <div class="footer">
-            Universidad Internacional Cuba México &bull; Todos los derechos reservados &copy; {{ date('Y') }}
+
+        <div class="info-box">
+            El área de <strong>Control Escolar</strong> finalizará tu proceso de inscripción. En los próximos días hábiles recibirás tus credenciales de acceso al portal estudiantil.
+        </div>
+
+        <hr class="divider">
+
+        <div class="signature">
+            Atentamente,<br>
+            <strong>Finanzas — UICM</strong>
         </div>
     </div>
+
+    <div class="footer">
+        <p>
+            <span>Universidad Internacional Cuba México</span><br>
+            &copy; {{ date('Y') }} Todos los derechos reservados.
+        </p>
+    </div>
+
+</div>
 </body>
 </html>
