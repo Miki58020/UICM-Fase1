@@ -8,9 +8,9 @@ use App\Mail\RegistroConfirmado;
 use App\Models\Alumno;
 use App\Models\Aspirante;
 use App\Models\Programa;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Normalizer;
 
 class AspiranteController extends Controller
@@ -149,32 +149,19 @@ class AspiranteController extends Controller
         $apMat  = $this->normalizarTexto($request->apellido_materno);
         $folio  = $this->generarFolio();
 
-        $actaUrl = Cloudinary::uploadApi()->upload(
-            $request->file('acta_nacimiento')->getRealPath(),
-            ['folder' => 'uicm/documentos', 'public_id' => $curp . '_acta_' . time(), 'resource_type' => 'auto']
-        )['secure_url'];
+        $carpetaCertificado = match($programa->nivel) {
+            'licenciatura' => 'documentos/certificados/bachillerato',
+            default        => 'documentos/certificados/titulo_licenciatura',
+        };
 
-        $curpDocUrl = Cloudinary::uploadApi()->upload(
-            $request->file('curp_doc')->getRealPath(),
-            ['folder' => 'uicm/documentos', 'public_id' => $curp . '_curp_' . time(), 'resource_type' => 'auto']
-        )['secure_url'];
-
-        $certificadoUrl = Cloudinary::uploadApi()->upload(
-            $request->file('certificado')->getRealPath(),
-            ['folder' => 'uicm/documentos', 'public_id' => $curp . '_cert_' . time(), 'resource_type' => 'auto']
-        )['secure_url'];
-
-        $identificacionUrl = Cloudinary::uploadApi()->upload(
-            $request->file('identificacion')->getRealPath(),
-            ['folder' => 'uicm/documentos', 'public_id' => $curp . '_id_' . time(), 'resource_type' => 'auto']
-        )['secure_url'];
+        $actaUrl           = $request->file('acta_nacimiento')->store('documentos/actas_nacimiento', 'local');
+        $curpDocUrl        = $request->file('curp_doc')->store('documentos/curp', 'local');
+        $certificadoUrl    = $request->file('certificado')->store($carpetaCertificado, 'local');
+        $identificacionUrl = $request->file('identificacion')->store('documentos/identificaciones', 'local');
 
         $tituloUrl = null;
         if ($request->hasFile('titulo')) {
-            $tituloUrl = Cloudinary::uploadApi()->upload(
-                $request->file('titulo')->getRealPath(),
-                ['folder' => 'uicm/documentos', 'public_id' => $curp . '_titulo_' . time(), 'resource_type' => 'auto']
-            )['secure_url'];
+            $tituloUrl = $request->file('titulo')->store('documentos/titulos/titulo_maestria', 'local');
         }
 
         Aspirante::create([

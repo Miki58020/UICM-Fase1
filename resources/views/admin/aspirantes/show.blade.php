@@ -181,7 +181,7 @@
                         </div>
 
                         @if (!empty($doc['url']))
-                            <a href="{{ $doc['url'] }}" target="_blank"
+                            <a href="{{ route('admin.archivo', ['path' => $doc['url']]) }}" target="_blank"
                                class="flex-shrink-0 text-xs font-semibold transition-colors duration-150"
                                style="color: #D4AF37;"
                                onmouseover="this.style.color='#b8962e'"

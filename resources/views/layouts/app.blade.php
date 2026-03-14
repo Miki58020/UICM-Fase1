@@ -144,11 +144,11 @@
         @unless(request()->routeIs('login'))
         <div id="nav-menu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 pb-4">
             <div class="flex flex-col gap-3 pt-3">
-                <a href="{{ route('home') }}" class="text-sm font-medium text-uicm-green">Inicio</a>
-                <a href="{{ route('home') }}#oferta" class="text-sm font-medium text-gray-600 hover:text-uicm-green">Oferta educativa</a>
-                <a href="{{ route('aspirantes.registro') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green">Inscripción</a>
-                <a href="{{ route('aspirantes.seguimiento') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green">Consultar estatus</a>
-                <a href="{{ route('home') }}#contacto" class="text-sm font-medium text-gray-600 hover:text-uicm-green">Contáctanos</a>
+                <a href="{{ route('home') }}" class="text-base font-medium text-uicm-green">Inicio</a>
+                <a href="{{ route('home') }}#oferta" class="text-base font-medium text-gray-600 hover:text-uicm-green">Oferta educativa</a>
+                <a href="{{ route('aspirantes.registro') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Inscripción</a>
+                <a href="{{ route('aspirantes.seguimiento') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Consultar estatus</a>
+                <a href="{{ route('home') }}#contacto" class="text-base font-medium text-gray-600 hover:text-uicm-green">Contáctanos</a>
             </div>
         </div>
         @endunless
@@ -180,25 +180,25 @@
            style="background-color: #0F4229;">
 
         {{-- Nombre de usuario --}}
-        <div class="px-4 py-5 border-b border-white/10 text-center">
-            <p class="text-xs text-green-300 uppercase tracking-widest font-semibold mb-0.5">Bienvenido</p>
-            <p class="text-sm font-bold text-white truncate">{{ auth()->user()->name }}</p>
+        <div class="px-4 py-3 border-b border-white/10 text-center">
+            <p class="text-xs text-green-400 uppercase tracking-widest mb-0.5">Bienvenido</p>
+            <p class="text-base font-semibold text-white truncate">{{ auth()->user()->name }}</p>
         </div>
 
         {{-- Navegación --}}
-        <nav class="flex-1 px-3 py-4">
+        <nav class="flex-1 px-3 py-3">
 
             @php $rol = auth()->user()->rol; @endphp
 
             {{-- ══ ADMIN ══ --}}
             @if($rol === 'admin')
-            <div class="pt-2 pb-1 px-3">
-                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Administración</p>
+            <div class="pt-1 pb-1 px-2">
+                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Administración</p>
             </div>
 
             <a href="{{ route('admin.usuarios.index') }}"
                @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.usuarios.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -210,14 +210,13 @@
 
             {{-- ══ COORDINACIÓN ACADÉMICA ══ --}}
             @if($rol === 'coordinacion' || $rol === 'admin')
-            <div class="mt-7"></div>
-            <div class="pt-2 pb-1 px-3">
-                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Coordinación Académica</p>
+            <div class="mt-4 border-t border-white/10 pt-3 pb-1 px-2">
+                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Coordinación Académica</p>
             </div>
 
             <a href="{{ route('admin.materias.index') }}"
                @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.materias.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -231,7 +230,7 @@
 
             <a href="{{ route('admin.profesores.index') }}"
                @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.profesores.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -242,7 +241,7 @@
 
             <a href="{{ route('admin.carga-academica.index') }}"
                @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.carga-academica.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -255,14 +254,13 @@
 
             {{-- ══ CONTROL ESCOLAR ══ --}}
             @if($rol === 'control_escolar' || $rol === 'admin')
-            <div class="mt-7"></div>
-            <div class="pt-2 pb-1 px-3">
-                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Control Escolar</p>
+            <div class="mt-4 border-t border-white/10 pt-3 pb-1 px-2">
+                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Control Escolar</p>
             </div>
 
             <a href="{{ route('admin.aspirantes.index') }}"
                @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.aspirantes.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -274,7 +272,7 @@
 
             <a href="{{ route('admin.inscripciones.index') }}"
                @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.inscripciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -287,14 +285,13 @@
 
             {{-- ══ FINANZAS ══ --}}
             @if($rol === 'finanzas' || $rol === 'admin')
-            <div class="mt-7"></div>
-            <div class="pt-2 pb-1 px-3">
-                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Finanzas</p>
+            <div class="mt-4 border-t border-white/10 pt-3 pb-1 px-2">
+                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Finanzas</p>
             </div>
 
             <a href="{{ route('finanzas.pagos.index') }}"
                @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('finanzas.pagos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -307,13 +304,13 @@
 
             {{-- ══ ALUMNO ══ --}}
             @if($rol === 'alumno')
-            <div class="pt-2 pb-1 px-3">
-                <p class="text-xs font-bold uppercase tracking-widest" style="color: #D4AF37;">Portal del alumno</p>
+            <div class="pt-1 pb-1 px-2">
+                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Portal del alumno</p>
             </div>
 
             <a href="{{ route('alumno.dashboard') }}"
                @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('alumno.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -339,9 +336,7 @@
         {{-- ===== FOOTER ===== --}}
         <footer class="text-white text-center py-3 border-t border-green-800" style="background-color: #0F4229;">
             <div class="container mx-auto px-8">
-                <p class="text-green-300 text-xs tracking-wide">
-                    <span class="font-semibold text-white">UICM</span>
-                    <span class="mx-2 opacity-40">|</span>
+                <p class="font-semibold text-white text-base tracking-wide">
                     Universidad Internacional Cuba México
                     <span class="mx-2 opacity-40">|</span>
                     &copy; {{ date('Y') }} Todos los derechos reservados.

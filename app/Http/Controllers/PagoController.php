@@ -6,9 +6,9 @@ use App\Mail\PagoAprobado;
 use App\Mail\PagoRechazado;
 use App\Models\Aspirante;
 use App\Models\Pago;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class PagoController extends Controller
 {
@@ -90,14 +90,7 @@ class PagoController extends Controller
             'comprobante.max'      => 'El archivo no debe superar los 5 MB.',
         ]);
 
-        // Subir comprobante a Cloudinary
-        $resultado = Cloudinary::upload($request->file('comprobante')->getRealPath(), [
-            'folder'          => 'uicm/comprobantes',
-            'public_id'       => 'pago_' . $request->folio . '_' . time(),
-            'resource_type'   => 'auto',
-        ]);
-
-        $urlComprobante = $resultado->getSecurePath();
+        $urlComprobante = $request->file('comprobante')->store('comprobantes', 'local');
 
         // Buscar aspirante por folio
         $aspirante = Aspirante::where('folio', $request->folio)->first();

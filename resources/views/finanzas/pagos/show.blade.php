@@ -148,7 +148,7 @@
                 <div class="px-6 py-5">
                     @if ($pago->comprobante)
                         <div class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-                            <img src="{{ $pago->comprobante }}"
+                            <img src="{{ route('admin.archivo', ['path' => $pago->comprobante]) }}"
                                  alt="Comprobante de pago"
                                  class="w-full object-contain max-h-64"
                                  onerror="this.style.display='none'; document.getElementById('fallback-{{ $pago->id }}').style.display='flex';">
@@ -165,7 +165,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <a href="{{ $pago->comprobante }}" target="_blank"
+                            <a href="{{ route('admin.archivo', ['path' => $pago->comprobante]) }}" target="_blank"
                                class="inline-flex items-center gap-2 text-xs font-semibold transition-colors duration-150"
                                style="color: #D4AF37;"
                                onmouseover="this.style.textDecoration='underline'"

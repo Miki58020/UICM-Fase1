@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfesorController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 // Terminar sesión vía AJAX (cuando se detecta restauración de pestaña cerrada)
 Route::post('/session/terminate', function (Illuminate\Http\Request $request) {
@@ -85,6 +86,14 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::get('/admin/carga-academica', [CargaAcademicaController::class, 'index'])->name('admin.carga-academica.index');
     Route::post('/admin/carga-academica/{grupo}/generar', [CargaAcademicaController::class, 'generar'])->name('admin.carga-academica.generar');
 });
+
+// Servir archivos privados — solo usuarios autenticados del sistema
+Route::get('/admin/archivo/{path}', function (string $path) {
+    if (!Storage::disk('local')->exists($path)) {
+        abort(404);
+    }
+    return Storage::disk('local')->response($path);
+})->middleware('auth')->where('path', '.*')->name('admin.archivo');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
