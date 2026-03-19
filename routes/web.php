@@ -35,8 +35,12 @@ Route::get('/resultado', [AspiranteController::class, 'resultado'])->name('aspir
 
 // Módulo pago de inscripción (público)
 Route::get('/aspirante/pago', [PagoController::class, 'create'])->name('aspirantes.pago');
-Route::post('/aspirante/pago', [PagoController::class, 'store'])->name('aspirantes.pago.enviar');
-Route::view('/aspirante/pago-confirmacion', 'aspirantes.pago_confirmacion')->name('aspirantes.pago.confirmacion');
+Route::post('/aspirante/pago/procesar', [PagoController::class, 'procesar'])->name('aspirantes.pago.procesar');
+Route::get('/aspirante/pago/retorno', [PagoController::class, 'retorno'])->name('aspirantes.pago.retorno');
+Route::get('/aspirante/pago-confirmacion', [PagoController::class, 'confirmacion'])->name('aspirantes.pago.confirmacion');
+
+// Webhook de Mercado Pago (excluido de CSRF en bootstrap/app.php)
+Route::post('/mp/webhook', [PagoController::class, 'webhook'])->name('mp.webhook');
 
 // Portal del alumno
 Route::middleware(['auth', 'rol:alumno'])->group(function () {
@@ -60,7 +64,7 @@ Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
 
     Route::get('/admin/inscripciones', [InscripcionController::class, 'index'])->name('admin.inscripciones.index');
     Route::post('/admin/inscripciones/{alumno}/inscribir', [InscripcionController::class, 'inscribir'])->name('admin.inscripciones.inscribir');
-    Route::get('/admin/inscripciones/{alumno}/resultado', [InscripcionController::class, 'resultado'])->name('admin.inscripciones.generar');
+    Route::get('/admin/inscripciones/{alumno}/resultado', [InscripcionController::class, 'resultado'])->name('admin.inscripciones.resultado');
 });
 
 // Módulo admin — Gestión de usuarios del sistema

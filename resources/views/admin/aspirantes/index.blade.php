@@ -121,76 +121,21 @@
                             </td>
 
                             {{-- Acciones --}}
-                            <td class="px-6 py-4">
-                                <div class="flex items-center justify-center gap-2 flex-wrap">
-
-                                    {{-- Ver --}}
-                                    <a href="{{ route('admin.aspirantes.show', $asp->id) }}"
-                                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150 whitespace-nowrap"
-                                       style="background-color: #D4AF37;"
-                                       onmouseover="this.style.backgroundColor='#b8962e'"
-                                       onmouseout="this.style.backgroundColor='#D4AF37'">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
-                                                     -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                        </svg>
-                                        Ver
-                                    </a>
-
-                                    @if ($asp->estado === 'pendiente')
-
-                                        {{-- Aprobar --}}
-                                        <form method="POST" action="{{ route('admin.aspirantes.aprobar', $asp->id) }}"
-                                              onsubmit="return confirm('¿Aprobar a {{ addslashes($asp->nombre_completo) }}?')">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit"
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150 whitespace-nowrap"
-                                                    style="background-color: #0F4229;"
-                                                    onmouseover="this.style.backgroundColor='#0a2e1c'"
-                                                    onmouseout="this.style.backgroundColor='#0F4229'">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                                </svg>
-                                                Aprobar
-                                            </button>
-                                        </form>
-
-                                        {{-- Rechazar (toggle modal inline) --}}
-                                        <button type="button"
-                                                onclick="document.getElementById('modal-rechazar-{{ $asp->id }}').classList.toggle('hidden')"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-gray-400 transition-colors duration-150 hover:bg-gray-500 whitespace-nowrap">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                            Rechazar
-                                        </button>
-
-                                    @endif
-
-                                </div>
-
-                                {{-- Modal inline de rechazo --}}
-                                @if ($asp->estado === 'pendiente')
-                                <div id="modal-rechazar-{{ $asp->id }}" class="hidden mt-3">
-                                    <form method="POST" action="{{ route('admin.aspirantes.rechazar', $asp->id) }}">
-                                        @csrf
-                                        @method('PATCH')
-                                        <textarea name="observaciones" required maxlength="500" rows="2"
-                                                  placeholder="Motivo del rechazo..."
-                                                  class="w-full text-xs rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 resize-none mb-2"
-                                                  style="--tw-ring-color: #9ca3af;"></textarea>
-                                        <button type="submit"
-                                                class="w-full px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-gray-500 hover:bg-gray-600 transition-colors">
-                                            Confirmar rechazo
-                                        </button>
-                                    </form>
-                                </div>
-                                @endif
-
+                            <td class="px-6 py-4 text-center">
+                                <a href="{{ route('admin.aspirantes.show', $asp->id) }}"
+                                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150 whitespace-nowrap"
+                                   style="background-color: #D4AF37;"
+                                   onmouseover="this.style.backgroundColor='#b8962e'"
+                                   onmouseout="this.style.backgroundColor='#D4AF37'">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                                                 -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                    Ver
+                                </a>
                             </td>
 
                         </tr>

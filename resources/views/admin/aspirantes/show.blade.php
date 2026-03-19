@@ -96,7 +96,7 @@
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Fecha de nacimiento</dt>
                             <dd class="text-sm text-gray-800">
-                                {{ \Carbon\Carbon::parse($aspirante->fecha_nacimiento)->format('d \d\e F \d\e Y') }}
+                                {{ \Carbon\Carbon::parse($aspirante->fecha_nacimiento)->locale('es')->isoFormat('D [de] MMMM [de] YYYY') }}
                             </dd>
                         </div>
 
@@ -113,7 +113,7 @@
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Fecha de registro</dt>
                             <dd class="text-sm text-gray-800">
-                                {{ $aspirante->created_at->format('d \d\e F \d\e Y') }}
+                                {{ $aspirante->created_at->locale('es')->isoFormat('D [de] MMMM [de] YYYY') }}
                             </dd>
                         </div>
 
@@ -226,7 +226,7 @@
 
                         {{-- Aprobar --}}
                         <form method="POST" action="{{ route('admin.aspirantes.aprobar', $aspirante->id) }}"
-                              onsubmit="return confirm('¿Confirmas la aprobación de este aspirante? Se generará una matrícula automáticamente.')">
+                              onsubmit="return confirm('¿Confirmas la aprobación del expediente de este aspirante?')">
                             @csrf
                             @method('PATCH')
                             <button type="submit"

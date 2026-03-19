@@ -9,6 +9,7 @@ class Pago extends Model
     protected $fillable = [
         'aspirante_id', 'alumno_id', 'concepto', 'periodo',
         'monto', 'comprobante', 'fecha_pago', 'estado', 'observaciones',
+        'mp_preference_id', 'mp_payment_id',
     ];
 
     protected $casts = [
