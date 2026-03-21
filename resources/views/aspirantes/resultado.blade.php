@@ -229,4 +229,23 @@
     </div>
 </section>
 
+@push('scripts')
+<script>
+    const TIMEOUT_MS = 30 * 60 * 1000; // 30 minutos
+
+    sessionStorage.setItem('resultado_ts', Date.now());
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') {
+            const ts = parseInt(sessionStorage.getItem('resultado_ts') || '0');
+            if (Date.now() - ts > TIMEOUT_MS) {
+                sessionStorage.removeItem('resultado_ts');
+                window.location.href = '{{ route('aspirantes.seguimiento') }}';
+            }
+            sessionStorage.setItem('resultado_ts', Date.now());
+        }
+    });
+</script>
+@endpush
+
 @endsection

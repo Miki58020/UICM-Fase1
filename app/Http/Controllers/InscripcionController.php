@@ -35,9 +35,11 @@ class InscripcionController extends Controller
 
         $password = Str::random(8);
 
+        $emailInstitucional = strtolower($alumno->matricula) . '@uicm.edu.mx';
+
         $user = User::create([
             'name'     => $alumno->nombre_completo,
-            'email'    => $alumno->email,
+            'email'    => $emailInstitucional,
             'password' => Hash::make($password),
             'rol'      => 'alumno',
         ]);

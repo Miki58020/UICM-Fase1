@@ -514,6 +514,23 @@ function normalizarCampo(input) {
     input.setSelectionRange(pos, pos);
 }
 
+const TIMEOUT_MS = 30 * 60 * 1000; // 30 minutos
+
+sessionStorage.setItem('registro_ts', Date.now());
+
+document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') {
+        const ts = parseInt(sessionStorage.getItem('registro_ts') || '0');
+        if (Date.now() - ts > TIMEOUT_MS) {
+            document.querySelectorAll('form input, form select, form textarea').forEach(el => {
+                if (el.type === 'file') return;
+                el.value = '';
+            });
+        }
+        sessionStorage.setItem('registro_ts', Date.now());
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     const tiposPrograma = {
         'psicopedagogia':      'licenciatura',

@@ -8,6 +8,8 @@
     showModal: false,
     editando: null,
     form: { nombre: '', correo: '', telefono: '', especialidad: '' },
+    busqueda: '',
+    filtroActivo: '',
     abrir() {
         this.editando = null;
         this.form = { nombre: '', correo: '', telefono: '', especialidad: '' };
@@ -22,6 +24,22 @@
         return this.editando
             ? '/admin/profesores/' + this.editando.id
             : '/admin/profesores';
+    },
+    filtrar() {
+        this.$nextTick(() => {
+            const filas = this.$refs.tbody.querySelectorAll('tr[data-nombre]');
+            let visibles = 0;
+            filas.forEach(f => {
+                const texto = this.busqueda.toLowerCase();
+                const pasaBusqueda = !texto || f.dataset.nombre.toLowerCase().includes(texto) || f.dataset.correo.toLowerCase().includes(texto);
+                const pasaActivo  = !this.filtroActivo || f.dataset.activo === this.filtroActivo;
+                const mostrar = pasaBusqueda && pasaActivo;
+                f.style.display = mostrar ? '' : 'none';
+                if (mostrar) visibles++;
+            });
+            this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
+            this.$refs.contadorVisible.textContent = visibles + ' profesor' + (visibles !== 1 ? 'es' : '');
+        });
     }
 }">
 
@@ -86,6 +104,37 @@
 
         </div>
 
+        {{-- Búsqueda y filtro --}}
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+            <div class="relative flex-1">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                </svg>
+                <input type="text" x-model="busqueda" @input="filtrar()"
+                       placeholder="Buscar por nombre o correo…"
+                       class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
+                       onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+            </div>
+            <div class="relative sm:w-48">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+                </svg>
+                <select x-model="filtroActivo" @change="filtrar()"
+                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <option value="">Todos</option>
+                    <option value="1">Activos</option>
+                    <option value="0">Inactivos</option>
+                </select>
+            </div>
+        </div>
+
         {{-- Card tabla --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
@@ -93,7 +142,7 @@
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Planta docente registrada</h2>
-                <span class="text-xs text-gray-400">{{ $profesores->count() }} profesores</span>
+                <span class="text-xs text-gray-400" x-ref="contadorVisible">{{ $profesores->count() }} profesores</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -111,9 +160,12 @@
                         </tr>
                     </thead>
 
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-gray-100" x-ref="tbody">
                         @forelse ($profesores as $profesor)
-                        <tr class="hover:bg-gray-50 transition-colors duration-100">
+                        <tr class="hover:bg-gray-50 transition-colors duration-100"
+                            data-nombre="{{ strtolower($profesor->nombre) }}"
+                            data-correo="{{ strtolower($profesor->correo) }}"
+                            data-activo="{{ $profesor->activo ? '1' : '0' }}">
 
                             {{-- ID --}}
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-500 whitespace-nowrap">
@@ -250,6 +302,11 @@
                             </td>
                         </tr>
                         @endforelse
+                        <tr x-ref="sinResultados" style="display:none;">
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">
+                                No se encontraron profesores con ese criterio.
+                            </td>
+                        </tr>
                     </tbody>
 
                 </table>

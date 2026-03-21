@@ -44,7 +44,9 @@
                                    id="folio"
                                    name="folio"
                                    placeholder="UICM-2026-0001"
+                                   maxlength="14"
                                    required
+                                   autocomplete="off"
                                    class="w-full rounded-lg border border-gray-200 px-4 py-3 text-sm tracking-widest font-mono uppercase focus:outline-none focus:ring-2 focus:border-transparent"
                                    style="--tw-ring-color: #0F4229;">
                             <p class="text-xs text-gray-400 mt-1.5">Ejemplo: UICM-2026-0001</p>
@@ -91,5 +93,44 @@
         </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+    const TIMEOUT_MS = 30 * 60 * 1000; // 30 minutos
+
+    sessionStorage.setItem('seguimiento_ts', Date.now());
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') {
+            const ts = parseInt(sessionStorage.getItem('seguimiento_ts') || '0');
+            if (Date.now() - ts > TIMEOUT_MS) {
+                document.getElementById('folio').value = '';
+            }
+            sessionStorage.setItem('seguimiento_ts', Date.now());
+        }
+    });
+
+    const folioInput = document.getElementById('folio');
+
+    folioInput.addEventListener('input', function (e) {
+        let raw = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+        let result = '';
+
+        // Parte 1: UICM (4 letras)
+        const p1 = raw.slice(0, 4);
+        // Parte 2: año (4 dígitos)
+        const p2 = raw.slice(4, 8);
+        // Parte 3: número (4 dígitos)
+        const p3 = raw.slice(8, 12);
+
+        result = p1;
+        if (raw.length > 4) result += '-' + p2;
+        if (raw.length > 8) result += '-' + p3;
+
+        this.value = result;
+    });
+</script>
+@endpush
 
 @endsection
