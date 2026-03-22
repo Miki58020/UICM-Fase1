@@ -262,7 +262,19 @@ class PagoController extends Controller
     public function show(Pago $pago)
     {
         $pago->load('aspirante.programa');
-        return view('finanzas.pagos.show', compact('pago'));
+
+        $mpPago = null;
+
+        if ($pago->mp_payment_id) {
+            try {
+                $this->configurarMP();
+                $mpPago = (new PaymentClient())->get((int) $pago->mp_payment_id);
+            } catch (\Exception $e) {
+                Log::error('MP show error: ' . $e->getMessage());
+            }
+        }
+
+        return view('finanzas.pagos.show', compact('pago', 'mpPago'));
     }
 
     // ─── Finanzas: aprobar/rechazar manual ────────────────────────────────────

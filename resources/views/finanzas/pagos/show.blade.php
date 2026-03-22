@@ -132,60 +132,126 @@
                 </div>
             </div>
 
-            {{-- Comprobante (2/5) --}}
+            {{-- Detalle Mercado Pago (2/5) --}}
             <div class="lg:col-span-2 bg-white rounded-2xl shadow-md overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                          style="color: #0F4229;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586
-                                 a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6
-                                 a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                              d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                     </svg>
-                    <h2 class="text-sm font-semibold text-gray-700">Comprobante</h2>
+                    <h2 class="text-sm font-semibold text-gray-700">Transacción Mercado Pago</h2>
                 </div>
 
                 <div class="px-6 py-5">
-                    @if ($pago->comprobante)
-                        <div class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-                            <img src="{{ route('admin.archivo', ['path' => $pago->comprobante]) }}"
-                                 alt="Comprobante de pago"
-                                 class="w-full object-contain max-h-64"
-                                 onerror="this.style.display='none'; document.getElementById('fallback-{{ $pago->id }}').style.display='flex';">
-                            <div id="fallback-{{ $pago->id }}"
-                                 class="hidden items-center justify-center flex-col gap-3 py-12 px-4 text-center">
-                                <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
-                                             a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                <p class="text-sm text-gray-400 font-medium">Archivo PDF</p>
-                                <p class="text-xs text-gray-300">Vista previa no disponible</p>
-                            </div>
-                        </div>
+                    @if ($mpPago)
+                        @php
+                            $metodosLabel = [
+                                'visa'           => 'Visa',
+                                'master'         => 'Mastercard',
+                                'amex'           => 'American Express',
+                                'oxxo'           => 'OXXO',
+                                'bancomer'       => 'BBVA Bancomer',
+                                'banamex'        => 'Citibanamex',
+                                'mercadopago'    => 'Mercado Pago',
+                                'debvisa'        => 'Visa Débito',
+                                'debmaster'      => 'Mastercard Débito',
+                            ];
+                            $tiposLabel = [
+                                'credit_card'    => 'Tarjeta de crédito',
+                                'debit_card'     => 'Tarjeta de débito',
+                                'ticket'         => 'Pago en efectivo',
+                                'bank_transfer'  => 'Transferencia bancaria',
+                                'account_money'  => 'Dinero en cuenta MP',
+                            ];
+                            $estadosMp = [
+                                'approved'     => ['label' => 'Aprobado',   'color' => '#0F4229', 'bg' => '#f0fdf4'],
+                                'pending'      => ['label' => 'Pendiente',  'color' => '#92400e', 'bg' => '#fffbeb'],
+                                'in_process'   => ['label' => 'En proceso', 'color' => '#1e40af', 'bg' => '#eff6ff'],
+                                'rejected'     => ['label' => 'Rechazado',  'color' => '#991b1b', 'bg' => '#fef2f2'],
+                            ];
+                            $estadoInfo = $estadosMp[$mpPago->status] ?? ['label' => $mpPago->status, 'color' => '#6b7280', 'bg' => '#f9fafb'];
+                            $metodo     = $metodosLabel[$mpPago->payment_method_id] ?? strtoupper($mpPago->payment_method_id ?? '—');
+                            $tipo       = $tiposLabel[$mpPago->payment_type_id]     ?? ($mpPago->payment_type_id ?? '—');
+                        @endphp
 
-                        <div class="mt-4">
-                            <a href="{{ route('admin.archivo', ['path' => $pago->comprobante]) }}" target="_blank"
-                               class="inline-flex items-center gap-2 text-xs font-semibold transition-colors duration-150"
-                               style="color: #D4AF37;"
-                               onmouseover="this.style.textDecoration='underline'"
-                               onmouseout="this.style.textDecoration='none'">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                                </svg>
-                                Ver comprobante completo
-                            </a>
+                        <dl class="space-y-4">
+
+                            <div>
+                                <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">ID de transacción</dt>
+                                <dd class="text-sm font-mono font-bold text-gray-800">{{ $mpPago->id }}</dd>
+                            </div>
+
+                            <div>
+                                <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Estado en MP</dt>
+                                <dd>
+                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-bold"
+                                          style="color: {{ $estadoInfo['color'] }}; background-color: {{ $estadoInfo['bg'] }};">
+                                        {{ $estadoInfo['label'] }}
+                                    </span>
+                                    @if ($mpPago->status_detail)
+                                        <p class="text-xs text-gray-400 mt-1">{{ $mpPago->status_detail }}</p>
+                                    @endif
+                                </dd>
+                            </div>
+
+                            <div>
+                                <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Método de pago</dt>
+                                <dd class="text-sm font-semibold text-gray-800">{{ $metodo }}</dd>
+                                <dd class="text-xs text-gray-400">{{ $tipo }}</dd>
+                            </div>
+
+                            @if (!empty($mpPago->card->last_four_digits))
+                            <div>
+                                <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Tarjeta</dt>
+                                <dd class="text-sm font-mono font-semibold text-gray-800">•••• •••• •••• {{ $mpPago->card->last_four_digits }}</dd>
+                                @if (!empty($mpPago->card->cardholder->name))
+                                    <dd class="text-xs text-gray-400">{{ $mpPago->card->cardholder->name }}</dd>
+                                @endif
+                            </div>
+                            @endif
+
+                            @if ($mpPago->installments && $mpPago->installments > 1)
+                            <div>
+                                <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Meses sin intereses</dt>
+                                <dd class="text-sm font-semibold text-gray-800">{{ $mpPago->installments }} meses</dd>
+                            </div>
+                            @endif
+
+                            @if ($mpPago->date_approved)
+                            <div>
+                                <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Fecha de aprobación</dt>
+                                <dd class="text-sm font-semibold text-gray-800">
+                                    {{ \Carbon\Carbon::parse($mpPago->date_approved)->setTimezone('America/Mexico_City')->format('d/m/Y H:i') }}
+                                </dd>
+                            </div>
+                            @endif
+
+                            @if (!empty($mpPago->payer->email))
+                            <div>
+                                <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">Email del pagador</dt>
+                                <dd class="text-sm text-gray-700 break-all">{{ $mpPago->payer->email }}</dd>
+                            </div>
+                            @endif
+
+                        </dl>
+
+                    @elseif ($pago->mp_payment_id)
+                        <div class="flex items-center justify-center flex-col gap-3 py-10 text-center">
+                            <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <p class="text-sm text-gray-400">No se pudo obtener el detalle de MP</p>
+                            <p class="text-xs text-gray-300 font-mono">ID: {{ $pago->mp_payment_id }}</p>
                         </div>
                     @else
-                        <div class="flex items-center justify-center flex-col gap-3 py-12 text-center">
-                            <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center justify-center flex-col gap-3 py-10 text-center">
+                            <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586
-                                         a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6
-                                         a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                             </svg>
-                            <p class="text-sm text-gray-400">Sin comprobante adjunto</p>
+                            <p class="text-sm text-gray-400">Sin transacción de MP registrada</p>
                         </div>
                     @endif
                 </div>
