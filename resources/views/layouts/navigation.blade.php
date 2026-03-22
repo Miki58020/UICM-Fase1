@@ -13,8 +13,70 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                        Panel
                     </x-nav-link>
+
+                    @auth
+                    @php $rol = auth()->user()->rol; @endphp
+
+                    {{-- Control Escolar + Admin --}}
+                    @if(in_array($rol, ['control_escolar', 'admin']))
+                        <x-nav-link :href="route('admin.aspirantes.index')" :active="request()->routeIs('admin.aspirantes.*')">
+                            Aspirantes
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.inscripciones.index')" :active="request()->routeIs('admin.inscripciones.*')">
+                            Inscripciones
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.alumnos.index')" :active="request()->routeIs('admin.alumnos.*')">
+                            Alumnos
+                        </x-nav-link>
+                        @php
+                            $pendientesContrasena = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
+                                ->when($rol === 'control_escolar', fn($q) => $q->whereHas('user', fn($u) => $u->where('rol', 'alumno')))
+                                ->when($rol === 'admin', fn($q) => $q->whereHas('user', fn($u) => $u->where('rol', '!=', 'alumno')))
+                                ->count();
+                        @endphp
+                        <x-nav-link :href="route('admin.solicitudes-contrasena.index')" :active="request()->routeIs('admin.solicitudes-contrasena.*')">
+                            <span class="flex items-center gap-1.5">
+                                Contraseñas
+                                @if($pendientesContrasena > 0)
+                                    <span class="inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white rounded-full"
+                                          style="background-color: #dc2626; font-size: 10px;">
+                                        {{ $pendientesContrasena }}
+                                    </span>
+                                @endif
+                            </span>
+                        </x-nav-link>
+                    @endif
+
+                    {{-- Finanzas + Admin --}}
+                    @if(in_array($rol, ['finanzas', 'admin']))
+                        <x-nav-link :href="route('finanzas.pagos.index')" :active="request()->routeIs('finanzas.pagos.*')">
+                            Pagos
+                        </x-nav-link>
+                    @endif
+
+                    {{-- Coordinación + Admin --}}
+                    @if(in_array($rol, ['coordinacion', 'admin']))
+                        <x-nav-link :href="route('admin.materias.index')" :active="request()->routeIs('admin.materias.*')">
+                            Materias
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.profesores.index')" :active="request()->routeIs('admin.profesores.*')">
+                            Profesores
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.carga-academica.index')" :active="request()->routeIs('admin.carga-academica.*')">
+                            Carga académica
+                        </x-nav-link>
+                    @endif
+
+                    {{-- Admin --}}
+                    @if($rol === 'admin')
+                        <x-nav-link :href="route('admin.usuarios.index')" :active="request()->routeIs('admin.usuarios.*')">
+                            Usuarios
+                        </x-nav-link>
+                    @endif
+
+                    @endauth
                 </div>
             </div>
 
@@ -68,8 +130,52 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+                Panel
             </x-responsive-nav-link>
+
+            @auth
+            @php $rol = auth()->user()->rol; @endphp
+
+            @if(in_array($rol, ['control_escolar', 'admin']))
+                <x-responsive-nav-link :href="route('admin.aspirantes.index')" :active="request()->routeIs('admin.aspirantes.*')">
+                    Aspirantes
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.inscripciones.index')" :active="request()->routeIs('admin.inscripciones.*')">
+                    Inscripciones
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.alumnos.index')" :active="request()->routeIs('admin.alumnos.*')">
+                    Alumnos
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.solicitudes-contrasena.index')" :active="request()->routeIs('admin.solicitudes-contrasena.*')">
+                    Contraseñas
+                </x-responsive-nav-link>
+            @endif
+
+            @if(in_array($rol, ['finanzas', 'admin']))
+                <x-responsive-nav-link :href="route('finanzas.pagos.index')" :active="request()->routeIs('finanzas.pagos.*')">
+                    Pagos
+                </x-responsive-nav-link>
+            @endif
+
+            @if(in_array($rol, ['coordinacion', 'admin']))
+                <x-responsive-nav-link :href="route('admin.materias.index')" :active="request()->routeIs('admin.materias.*')">
+                    Materias
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.profesores.index')" :active="request()->routeIs('admin.profesores.*')">
+                    Profesores
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.carga-academica.index')" :active="request()->routeIs('admin.carga-academica.*')">
+                    Carga académica
+                </x-responsive-nav-link>
+            @endif
+
+            @if($rol === 'admin')
+                <x-responsive-nav-link :href="route('admin.usuarios.index')" :active="request()->routeIs('admin.usuarios.*')">
+                    Usuarios
+                </x-responsive-nav-link>
+            @endif
+
+            @endauth
         </div>
 
         <!-- Responsive Settings Options -->

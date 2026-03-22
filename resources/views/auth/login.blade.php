@@ -6,7 +6,7 @@
 
 {{-- Alpine.js scope: controla la visibilidad del modal --}}
 <section
-    x-data="{ showModal: false }"
+    x-data="{ showModal: {{ session('status') || session('status_error') ? 'true' : 'false' }} }"
     class="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4">
 
     {{-- ============================================================
@@ -146,7 +146,22 @@
             </div>
 
             {{-- Body --}}
-            <form class="px-6 py-5">
+            <form method="POST" action="{{ route('password.email') }}" class="px-6 py-5">
+                @csrf
+
+                {{-- Feedback de éxito --}}
+                @if(session('status'))
+                    <div class="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3">
+                        <p class="text-sm font-medium text-green-800">{{ session('status') }}</p>
+                    </div>
+                @endif
+
+                {{-- Feedback de límite de tiempo --}}
+                @if(session('status_error'))
+                    <div class="mb-4 rounded-lg bg-yellow-50 border border-yellow-300 px-4 py-3">
+                        <p class="text-sm font-medium text-yellow-800">{{ session('status_error') }}</p>
+                    </div>
+                @endif
 
                 <p class="text-sm text-gray-600 mb-4">
                     Ingresa tu correo institucional y el área administrativa te apoyará
@@ -161,12 +176,16 @@
                     <input
                         type="email"
                         id="email_recuperacion"
-                        name="email_recuperacion"
+                        name="email"
+                        value="{{ old('email') }}"
                         placeholder="usuario@uicm.edu.mx"
                         class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg
                                focus:outline-none transition-colors duration-150"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.25)'"
                         onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    @error('email')
+                        <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <p class="text-xs text-gray-400 mb-5">
@@ -183,7 +202,7 @@
                         Cerrar
                     </button>
                     <button
-                        type="button"
+                        type="submit"
                         class="px-4 py-2 text-sm font-medium text-white rounded-lg
                                transition-colors duration-150"
                         style="background-color: #EFAD5A;"

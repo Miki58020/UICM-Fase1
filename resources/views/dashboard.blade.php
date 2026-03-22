@@ -154,6 +154,37 @@
                     </div>
                 </a>
 
+                {{-- Solicitudes de contraseña --}}
+                @if(in_array(auth()->user()->rol, ['admin', 'control_escolar']))
+                <a href="{{ route('admin.solicitudes-contrasena.index') }}"
+                   class="flex items-center gap-4 bg-white rounded-xl shadow-sm px-6 py-5
+                          border border-transparent hover:border-green-200 hover:shadow-md
+                          transition-all duration-200 group">
+                    <div class="flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center relative"
+                         style="background-color: #f0f9f4;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             style="color: #0F4229;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
+                                     a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964
+                                     A6 6 0 1121 9z"/>
+                        </svg>
+                        @if(($solicitudesPendientes ?? 0) > 0)
+                            <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold text-white"
+                                  style="background-color: #dc2626;">
+                                {{ $solicitudesPendientes }}
+                            </span>
+                        @endif
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold group-hover:underline" style="color: #0F4229;">
+                            Solicitudes de contraseña
+                        </p>
+                        <p class="text-xs text-gray-400 mt-0.5">Restablecer acceso de usuarios</p>
+                    </div>
+                </a>
+                @endif
+
             </div>
 
         </div>

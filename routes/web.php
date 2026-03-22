@@ -9,6 +9,7 @@ use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfesorController;
+use App\Http\Controllers\SolicitudContrasenaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +69,9 @@ Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
     Route::get('/admin/inscripciones', [InscripcionController::class, 'index'])->name('admin.inscripciones.index');
     Route::post('/admin/inscripciones/{alumno}/inscribir', [InscripcionController::class, 'inscribir'])->name('admin.inscripciones.inscribir');
     Route::get('/admin/inscripciones/{alumno}/resultado', [InscripcionController::class, 'resultado'])->name('admin.inscripciones.resultado');
+
+    Route::get('/admin/solicitudes-contrasena', [SolicitudContrasenaController::class, 'index'])->name('admin.solicitudes-contrasena.index');
+    Route::post('/admin/solicitudes-contrasena/{solicitud}/atender', [SolicitudContrasenaController::class, 'atender'])->name('admin.solicitudes-contrasena.atender');
 });
 
 // Módulo admin — Gestión de usuarios del sistema
@@ -103,7 +107,20 @@ Route::get('/admin/archivo/{path}', function (string $path) {
 })->middleware('auth')->where('path', '.*')->name('admin.archivo');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $solicitudesPendientes = 0;
+    if (auth()->check()) {
+        $rol = auth()->user()->rol;
+        if ($rol === 'admin') {
+            $solicitudesPendientes = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
+                ->whereHas('user', fn($q) => $q->where('rol', '!=', 'alumno'))
+                ->count();
+        } elseif ($rol === 'control_escolar') {
+            $solicitudesPendientes = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
+                ->whereHas('user', fn($q) => $q->where('rol', 'alumno'))
+                ->count();
+        }
+    }
+    return view('dashboard', compact('solicitudesPendientes'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SolicitudContrasenaNotificacion;
+use App\Models\SolicitudContrasena;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class PasswordResetLinkController extends Controller
@@ -20,8 +23,6 @@ class PasswordResetLinkController extends Controller
 
     /**
      * Handle an incoming password reset link request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
@@ -29,16 +30,43 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $genericMessage  = 'Tu solicitud fue recibida. Un administrador te enviará tu nueva contraseña en breve.';
+        $limiteMessage   = 'Ya tienes una solicitud reciente. Espera al menos 3 horas antes de enviar otra.';
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        $user = User::where('email', $request->email)->first();
+
+        if (! $user) {
+            return back()->with('status', $genericMessage);
+        }
+
+        // Bloquear si ya hay una solicitud en las últimas 3 horas
+        $reciente = SolicitudContrasena::where('user_id', $user->id)
+            ->where('created_at', '>=', now()->subHours(3))
+            ->exists();
+
+        if ($reciente) {
+            return back()->with('status_error', $limiteMessage);
+        }
+
+        $esAlumno = $user->rol === 'alumno';
+
+        SolicitudContrasena::create([
+            'user_id' => $user->id,
+            'estado'  => 'pendiente',
+        ]);
+
+        $recipients = $esAlumno
+            ? User::where('rol', 'control_escolar')->get()
+            : User::where('rol', 'admin')->get();
+
+        try {
+            foreach ($recipients as $recipient) {
+                Mail::to($recipient->email)->send(new SolicitudContrasenaNotificacion($user));
+            }
+        } catch (\Exception $e) {
+            // El mail falló pero la solicitud ya está guardada, mostrar éxito igual
+        }
+
+        return back()->with('status', $genericMessage);
     }
 }
