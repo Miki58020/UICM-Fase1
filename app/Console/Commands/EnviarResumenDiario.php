@@ -65,10 +65,7 @@ class EnviarResumenDiario extends Command
             ->whereNull('grupo_id')
             ->count();
 
-        $totalActivos = Alumno::where('estado', 'activo')->count();
-
         $datos = [
-            'Alumnos activos en el sistema'   => $totalActivos,
             'Alumnos activos sin grupo asignado' => $alumnosSinGrupo,
         ];
 
@@ -89,7 +86,6 @@ class EnviarResumenDiario extends Command
             'Alumnos activos sin grupo asignado'     => Alumno::where('estado', 'activo')
                 ->whereNull('grupo_id')
                 ->count(),
-            'Total de alumnos activos'               => Alumno::where('estado', 'activo')->count(),
         ];
 
         $this->enviarARol('admin', $datos);
