@@ -57,6 +57,9 @@ Route::middleware(['auth', 'rol:finanzas'])->group(function () {
 
 // Módulo Control Escolar — Aspirantes e inscripciones
 Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
+    Route::get('/admin/alumnos', [AlumnoController::class, 'listado'])->name('admin.alumnos.index');
+    Route::patch('/admin/alumnos/{alumno}', [AlumnoController::class, 'update'])->name('admin.alumnos.update');
+
     Route::get('/admin/aspirantes', [AspiranteController::class, 'index'])->name('admin.aspirantes.index');
     Route::get('/admin/aspirantes/{aspirante}', [AspiranteController::class, 'show'])->name('admin.aspirantes.show');
     Route::patch('/admin/aspirantes/{aspirante}/aprobar', [AspiranteController::class, 'aprobar'])->name('admin.aspirantes.aprobar');

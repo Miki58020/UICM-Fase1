@@ -13,7 +13,8 @@
       "Bash(cd \"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\" && composer remove cloudinary-labs/cloudinary-laravel 2>&1)",
       "Bash(cd \"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\" && composer dump-autoload 2>&1)",
       "Bash(composer require:*)",
-      "Bash(\"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\\\\storage\\\\logs\\\\laravel.log\")"
+      "Bash(\"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\\\\storage\\\\logs\\\\laravel.log\")",
+      "Bash(ls:*)"
     ]
   }
 }

@@ -1,0 +1,410 @@
+@extends('layouts.app')
+
+@section('title', 'Alumnos | UICM')
+
+@section('content')
+
+@php
+$gruposJson = $grupos->map(fn($g) => [
+    'id'          => $g->id,
+    'clave'       => $g->clave,
+    'ciclo'       => $g->ciclo,
+    'cuatrimestre'=> $g->cuatrimestre,
+    'programa_id' => $g->programa_id,
+])->values()->toJson();
+@endphp
+
+<section
+    x-data="{
+        showModal: false,
+        editando: null,
+        form: { estado: '', cuatrimestre_actual: '', password: '' },
+        busqueda: '',
+        filtroPrograma: '',
+        filtroEstado: '',
+        filtrar() {
+            this.$nextTick(() => {
+                const filas = this.$refs.tbody.querySelectorAll('tr[data-nombre]');
+                let visibles = 0;
+                filas.forEach(f => {
+                    const texto     = this.busqueda.toLowerCase();
+                    const nombre    = f.dataset.nombre.toLowerCase();
+                    const matricula = f.dataset.matricula.toLowerCase();
+                    const email     = f.dataset.email.toLowerCase();
+                    const programa  = f.dataset.programa;
+                    const estado    = f.dataset.estado;
+
+                    const pasaBusqueda = !texto || nombre.includes(texto) || matricula.includes(texto) || email.includes(texto);
+                    const pasaPrograma = !this.filtroPrograma || programa === this.filtroPrograma;
+                    const pasaEstado   = !this.filtroEstado   || estado   === this.filtroEstado;
+
+                    const mostrar = pasaBusqueda && pasaPrograma && pasaEstado;
+                    f.style.display = mostrar ? '' : 'none';
+                    if (mostrar) visibles++;
+                });
+                this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
+                this.$refs.contadorVisible.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
+            });
+        },
+        grupos: {!! $gruposJson !!},
+        gruposFiltrados() {
+            if (!this.editando) return [];
+            return this.grupos.filter(g => g.programa_id == this.editando.programa_id);
+        },
+        abrirEditar(a) {
+            this.editando = a;
+            this.form = { estado: a.estado, cuatrimestre_actual: a.cuatrimestre_actual, grupo_id: a.grupo_id, password: '' };
+            this.showModal = true;
+        }
+    }"
+    class="bg-uicm-gray min-h-screen py-12 px-4">
+
+    <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
+
+        {{-- Encabezado --}}
+        <div class="mb-8">
+            <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
+                Control Escolar
+            </p>
+            <h1 class="text-2xl font-extrabold text-gray-900">Alumnos registrados</h1>
+            <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
+        </div>
+
+        {{-- Flash success --}}
+        @if(session('success'))
+        <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
+            <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
+        </div>
+        @endif
+
+        {{-- Flash error --}}
+        @if(session('error'))
+        <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50 border-red-400">
+            <p class="text-sm font-semibold text-red-700">{{ session('error') }}</p>
+        </div>
+        @endif
+
+        @if($errors->any())
+        <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50 border-red-400">
+            @foreach($errors->all() as $error)
+                <p class="text-sm text-red-700">{{ $error }}</p>
+            @endforeach
+        </div>
+        @endif
+
+        {{-- Contadores --}}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total de alumnos</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $conteo['total'] }}</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #D4AF37;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Activos</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">{{ $conteo['activos'] }}</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #9ca3af;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Inactivos / baja</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-400">{{ $conteo['inactivos'] }}</p>
+            </div>
+        </div>
+
+        {{-- Búsqueda y filtros --}}
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+
+            <div class="relative flex-1">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                </svg>
+                <input type="text"
+                       x-model="busqueda"
+                       @input="filtrar()"
+                       placeholder="Buscar por nombre, matrícula o correo…"
+                       class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
+                       onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+            </div>
+
+            <div class="relative sm:w-60">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                <select x-model="filtroPrograma"
+                        @change="filtrar()"
+                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <option value="">Todos los programas</option>
+                    @foreach($programas as $programa)
+                        <option value="{{ $programa->id }}">{{ $programa->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="relative sm:w-44">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+                </svg>
+                <select x-model="filtroEstado"
+                        @change="filtrar()"
+                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                    <option value="baja">Baja</option>
+                </select>
+            </div>
+        </div>
+
+        {{-- Tabla --}}
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 class="text-sm font-semibold text-gray-700">Listado de alumnos</h2>
+                <span class="text-xs text-gray-400" x-ref="contadorVisible">{{ $alumnos->count() }} registros</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3">Alumno</th>
+                            <th class="px-6 py-3">Matrícula</th>
+                            <th class="px-6 py-3">Programa</th>
+                            <th class="px-6 py-3 text-center">Cuatrimestre</th>
+                            <th class="px-6 py-3">Estado</th>
+                            <th class="px-6 py-3 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100" x-ref="tbody">
+                        @forelse($alumnos as $alumno)
+                        <tr class="hover:bg-gray-50 transition-colors duration-100"
+                            data-nombre="{{ strtolower($alumno->nombre_completo) }}"
+                            data-matricula="{{ strtolower($alumno->matricula) }}"
+                            data-email="{{ strtolower($alumno->email) }}"
+                            data-programa="{{ $alumno->programa_id }}"
+                            data-estado="{{ $alumno->estado }}">
+
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                                         style="background-color: #0F4229;">
+                                        {{ strtoupper(substr($alumno->nombre, 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-800">{{ $alumno->nombre_completo }}</p>
+                                        <p class="text-xs text-gray-400">{{ $alumno->email }}</p>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="px-6 py-4 font-mono text-gray-700 text-xs">
+                                {{ $alumno->matricula }}
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-600">
+                                {{ $alumno->programa->nombre ?? '—' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-center text-gray-700">
+                                {{ $alumno->cuatrimestre_actual ?? '—' }}
+                            </td>
+
+                            <td class="px-6 py-4">
+                                @php
+                                    $estadoColor = match($alumno->estado) {
+                                        'activo'   => ['bg' => '#dcfce7', 'text' => '#15803d'],
+                                        'inactivo' => ['bg' => '#f3f4f6', 'text' => '#6b7280'],
+                                        'baja'     => ['bg' => '#fee2e2', 'text' => '#b91c1c'],
+                                        default    => ['bg' => '#f3f4f6', 'text' => '#6b7280'],
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize"
+                                      style="background-color: {{ $estadoColor['bg'] }}; color: {{ $estadoColor['text'] }};">
+                                    {{ $alumno->estado }}
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-4 text-center">
+                                <button type="button"
+                                        @click="abrirEditar({
+                                            id: {{ $alumno->id }},
+                                            nombre: '{{ addslashes($alumno->nombre_completo) }}',
+                                            matricula: '{{ $alumno->matricula }}',
+                                            estado: '{{ $alumno->estado }}',
+                                            cuatrimestre_actual: {{ $alumno->cuatrimestre_actual ?? 1 }},
+                                            grupo_id: {{ $alumno->grupo_id ?? 'null' }},
+                                            programa_id: {{ $alumno->programa_id ?? 'null' }},
+                                            tiene_usuario: {{ $alumno->user_id ? 'true' : 'false' }}
+                                        })"
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
+                                        style="background-color: #D4AF37;"
+                                        onmouseover="this.style.backgroundColor='#b8962e'"
+                                        onmouseout="this.style.backgroundColor='#D4AF37'">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5
+                                                 m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Editar
+                                </button>
+                            </td>
+
+                        </tr>
+                        @empty
+                        @endforelse
+
+                        <tr x-ref="sinResultados" style="display:none;">
+                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
+                                No se encontraron alumnos con ese criterio.
+                            </td>
+                        </tr>
+
+                        @if($alumnos->isEmpty())
+                        <tr>
+                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
+                                No hay alumnos registrados.
+                            </td>
+                        </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- ═══ MODAL EDITAR ALUMNO ═══ --}}
+    <div x-show="showModal"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto"
+         style="background-color: rgba(0,0,0,0.5);"
+         @keydown.escape.window="showModal = false"
+         x-cloak>
+
+        <div @click.outside="showModal = false"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="bg-white rounded-2xl shadow-xl w-full max-w-md my-auto">
+
+            {{-- Cabecera --}}
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div>
+                    <h2 class="text-base font-bold" style="color: #0F4229;">Editar alumno</h2>
+                    <p class="text-xs text-gray-400 mt-0.5" x-text="editando ? editando.nombre + ' · ' + editando.matricula : ''"></p>
+                </div>
+                <button type="button" @click="showModal = false"
+                        class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form method="POST"
+                  :action="editando ? '/admin/alumnos/' + editando.id : '#'"
+                  class="px-6 py-5 space-y-4">
+                @csrf
+                @method('PATCH')
+
+                {{-- Estado --}}
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                        Estado <span class="text-red-400">*</span>
+                    </label>
+                    <select name="estado" x-model="form.estado"
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none"
+                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                        <option value="baja">Baja</option>
+                    </select>
+                </div>
+
+                {{-- Cuatrimestre --}}
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                        Cuatrimestre actual <span class="text-red-400">*</span>
+                    </label>
+                    <input type="number" name="cuatrimestre_actual" x-model="form.cuatrimestre_actual"
+                           min="1" max="12"
+                           class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                </div>
+
+                {{-- Grupo --}}
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                        Grupo
+                        <span class="text-gray-400 font-normal normal-case">(del programa del alumno)</span>
+                    </label>
+                    <select name="grupo_id" x-model="form.grupo_id"
+                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none"
+                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                        <option value="">Sin grupo asignado</option>
+                        <template x-for="g in gruposFiltrados()" :key="g.id">
+                            <option :value="g.id" x-text="g.clave + ' · Cuatrimestre ' + g.cuatrimestre + ' · ' + g.ciclo"></option>
+                        </template>
+                    </select>
+                    <p x-show="gruposFiltrados().length === 0"
+                       class="mt-1 text-xs text-gray-400 italic">
+                        No hay grupos registrados para el programa de este alumno.
+                    </p>
+                </div>
+
+                {{-- Contraseña — solo si tiene usuario vinculado --}}
+                <div x-show="editando && editando.tiene_usuario">
+                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                        Nueva contraseña
+                        <span class="text-gray-400 font-normal normal-case">(dejar vacío para no cambiar)</span>
+                    </label>
+                    <input type="password" name="password" x-model="form.password"
+                           placeholder="Mínimo 6 caracteres"
+                           class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                </div>
+
+                <div x-show="editando && !editando.tiene_usuario">
+                    <p class="text-xs text-gray-400 italic">Este alumno aún no tiene credenciales de acceso al sistema.</p>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
+                    <button type="button" @click="showModal = false"
+                            class="px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="px-5 py-2 text-sm font-bold text-white rounded-lg transition-colors duration-200 shadow-sm"
+                            style="background-color: #0F4229;"
+                            onmouseover="this.style.backgroundColor='#0a2e1c'"
+                            onmouseout="this.style.backgroundColor='#0F4229'">
+                        Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</section>
+
+@endsection

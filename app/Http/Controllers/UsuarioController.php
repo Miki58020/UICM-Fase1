@@ -14,7 +14,7 @@ class UsuarioController extends Controller
 
     public function index()
     {
-        $usuarios = User::orderBy('rol')->orderBy('name')->get();
+        $usuarios = User::whereIn('rol', self::ROLES)->orderBy('rol')->orderBy('name')->get();
 
         $conteo = collect(self::ROLES)->mapWithKeys(
             fn($rol) => [$rol => $usuarios->where('rol', $rol)->count()]
