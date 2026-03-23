@@ -58,9 +58,19 @@
                     </button>
                     @endauth
 
-                    <a href="{{ auth()->check() ? route('dashboard') : route('home') }}">
+                    @auth
+                    <form method="POST" action="{{ route('logout') }}"
+                          onsubmit="localStorage.setItem('uicm_logout', Date.now()); sessionStorage.removeItem('uicm_tab_alive');">
+                        @csrf
+                        <button type="submit" class="p-0 border-0 bg-transparent cursor-pointer">
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo UICM" class="h-10 w-auto">
+                        </button>
+                    </form>
+                    @else
+                    <a href="{{ route('home') }}">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo UICM" class="h-10 w-auto">
                     </a>
+                    @endauth
                 </div>
 
                 {{-- Rol y nombre del usuario autenticado --}}
@@ -82,8 +92,14 @@
                         return strtoupper($t);
                     };
                     // Solo primer nombre + apellido paterno
-                    $primerNombre = explode(' ', trim(auth()->user()->name ?? ''))[0];
-                    $nombreMostrado = trim($norm($primerNombre) . ' ' . $norm(auth()->user()->apellido_paterno));
+                    if (auth()->user()->rol === 'alumno' && auth()->user()->alumno) {
+                        $primerNombre    = explode(' ', trim(auth()->user()->alumno->nombre ?? ''))[0];
+                        $apellidoPaterno = auth()->user()->alumno->apellido_paterno ?? '';
+                    } else {
+                        $primerNombre    = explode(' ', trim(auth()->user()->name ?? ''))[0];
+                        $apellidoPaterno = auth()->user()->apellido_paterno ?? '';
+                    }
+                    $nombreMostrado = trim($norm($primerNombre) . ' ' . $norm($apellidoPaterno));
                 @endphp
                 <span class="hidden md:block absolute left-64 pl-6 text-sm font-medium text-gray-600">
                     <span class="font-bold" style="color: #0F4229;">{{ $rolLabel }}</span>
@@ -132,6 +148,13 @@
                     <a href="{{ route('aspirantes.registro') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Inscripción</a>
                     <a href="{{ route('aspirantes.seguimiento') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Consultar estatus</a>
                     <a href="{{ route('home') }}#contacto" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Contáctanos</a>
+                    <a href="{{ route('login') }}"
+                       class="text-sm font-semibold text-white px-4 py-2 rounded-lg transition-colors duration-150"
+                       style="background-color: #0F4229;"
+                       onmouseover="this.style.backgroundColor='#0a2e1c'"
+                       onmouseout="this.style.backgroundColor='#0F4229'">
+                        Portal
+                    </a>
                 </div>
                 @endunless
                 @endauth
@@ -149,6 +172,8 @@
                 <a href="{{ route('aspirantes.registro') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Inscripción</a>
                 <a href="{{ route('aspirantes.seguimiento') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Consultar estatus</a>
                 <a href="{{ route('home') }}#contacto" class="text-base font-medium text-gray-600 hover:text-uicm-green">Contáctanos</a>
+                <a href="{{ route('login') }}" class="text-base font-semibold text-white px-4 py-2 rounded-lg text-center"
+                   style="background-color: #0F4229;">Portal</a>
             </div>
         </div>
         @endunless
@@ -182,7 +207,7 @@
         {{-- Nombre de usuario --}}
         <div class="px-4 py-3 border-b border-white/10 text-center">
             <p class="text-xs text-green-400 uppercase tracking-widest mb-0.5">Bienvenido</p>
-            <p class="text-base font-semibold text-white truncate">{{ auth()->user()->name }}</p>
+            <p class="text-base font-semibold text-white truncate">{{ $nombreMostrado }}</p>
         </div>
 
         {{-- Navegación --}}

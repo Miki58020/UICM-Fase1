@@ -46,6 +46,7 @@ Route::post('/mp/webhook', [PagoController::class, 'webhook'])->name('mp.webhook
 // Portal del alumno
 Route::middleware(['auth', 'rol:alumno'])->group(function () {
     Route::get('/alumno', [AlumnoController::class, 'dashboard'])->name('alumno.dashboard');
+    Route::get('/alumno/comprobante/{pago}', [AlumnoController::class, 'comprobante'])->name('alumno.comprobante');
 });
 
 // Módulo finanzas — Validación de pagos
@@ -107,20 +108,14 @@ Route::get('/admin/archivo/{path}', function (string $path) {
 })->middleware('auth')->where('path', '.*')->name('admin.archivo');
 
 Route::get('/dashboard', function () {
-    $solicitudesPendientes = 0;
-    if (auth()->check()) {
-        $rol = auth()->user()->rol;
-        if ($rol === 'admin') {
-            $solicitudesPendientes = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
-                ->whereHas('user', fn($q) => $q->where('rol', '!=', 'alumno'))
-                ->count();
-        } elseif ($rol === 'control_escolar') {
-            $solicitudesPendientes = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
-                ->whereHas('user', fn($q) => $q->where('rol', 'alumno'))
-                ->count();
-        }
-    }
-    return view('dashboard', compact('solicitudesPendientes'));
+    $rol = auth()->user()->rol;
+    return redirect()->route(match($rol) {
+        'alumno'          => 'alumno.dashboard',
+        'finanzas'        => 'finanzas.pagos.index',
+        'coordinacion'    => 'admin.materias.index',
+        'control_escolar' => 'admin.aspirantes.index',
+        default           => 'admin.aspirantes.index',
+    });
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

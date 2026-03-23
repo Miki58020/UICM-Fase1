@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Alumno;
 use App\Models\CargaAcademica;
+use App\Models\Pago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -74,5 +75,14 @@ class AlumnoController extends Controller
         $totalCreditos = $carga->sum(fn($c) => $c->materia->creditos ?? 0);
 
         return view('alumno.dashboard', compact('alumno', 'carga', 'totalCreditos'));
+    }
+
+    public function comprobante(Pago $pago)
+    {
+        $alumno = Alumno::where('user_id', Auth::id())->firstOrFail();
+
+        abort_if($pago->aspirante_id !== $alumno->aspirante_id, 403);
+
+        return view('alumno.comprobante', compact('pago', 'alumno'));
     }
 }

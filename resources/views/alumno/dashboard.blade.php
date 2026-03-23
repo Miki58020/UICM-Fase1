@@ -319,6 +319,27 @@
                     <span class="ml-auto text-xs text-gray-400">{{ $alumno->pagos->count() }} registros</span>
                 </div>
 
+                {{-- Banner de estado de pago --}}
+                @php $pagoInscripcion = $alumno->pagos->where('concepto', 'inscripcion')->first(); @endphp
+                @if($pagoInscripcion)
+                <div class="px-6 py-3 flex items-center gap-3 border-b border-gray-100
+                    {{ $pagoInscripcion->estado === 'aprobado' ? 'bg-green-50' : ($pagoInscripcion->estado === 'pendiente' ? 'bg-yellow-50' : 'bg-red-50') }}">
+                    <span class="w-2.5 h-2.5 rounded-full flex-shrink-0
+                        {{ $pagoInscripcion->estado === 'aprobado' ? 'bg-green-500' : ($pagoInscripcion->estado === 'pendiente' ? 'bg-yellow-500' : 'bg-red-500') }}">
+                    </span>
+                    <span class="text-sm font-medium
+                        {{ $pagoInscripcion->estado === 'aprobado' ? 'text-green-800' : ($pagoInscripcion->estado === 'pendiente' ? 'text-yellow-800' : 'text-red-800') }}">
+                        @if($pagoInscripcion->estado === 'aprobado')
+                            Pago de inscripción completado
+                        @elseif($pagoInscripcion->estado === 'pendiente')
+                            Pago de inscripción en revisión
+                        @else
+                            Pago de inscripción rechazado
+                        @endif
+                    </span>
+                </div>
+                @endif
+
                 <div class="overflow-x-auto">
                     @if ($alumno->pagos->isEmpty())
                         <div class="px-6 py-10 text-center text-sm text-gray-400">
@@ -333,6 +354,7 @@
                                 <th class="px-6 py-3">Monto</th>
                                 <th class="px-6 py-3">Fecha</th>
                                 <th class="px-6 py-3">Estado</th>
+                                <th class="px-6 py-3"></th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -388,6 +410,22 @@
                                     @endif
                                 </td>
 
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <a href="{{ route('alumno.comprobante', $pago) }}"
+                                       target="_blank"
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors"
+                                       style="background-color: #0F4229;"
+                                       onmouseover="this.style.backgroundColor='#0a2e1c'"
+                                       onmouseout="this.style.backgroundColor='#0F4229'">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
+                                                     a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        Comprobante
+                                    </a>
+                                </td>
+
                             </tr>
                             @endforeach
                         </tbody>
@@ -396,31 +434,6 @@
                 </div>
             </div>
 
-            {{-- Cerrar sesión --}}
-            <div class="flex items-center justify-between">
-                <a href="{{ route('home') }}"
-                   class="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-150"
-                   style="color: #0F4229;"
-                   onmouseover="this.style.textDecoration='underline'"
-                   onmouseout="this.style.textDecoration='none'">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                    Volver al inicio
-                </a>
-
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit"
-                            class="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
-                        Cerrar sesión
-                    </button>
-                </form>
-            </div>
 
         </div>
     </div>

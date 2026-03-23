@@ -34,7 +34,7 @@ class Alumno extends Model
 
     public function pagos()
     {
-        return $this->hasMany(Pago::class);
+        return $this->hasMany(Pago::class, 'aspirante_id', 'aspirante_id');
     }
 
     public function getNombreCompletoAttribute(): string
