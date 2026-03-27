@@ -306,6 +306,9 @@
                 <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Control Escolar</p>
             </div>
 
+            @php
+                $pendientesAspirantes = \App\Models\Aspirante::where('estado', 'pendiente')->count();
+            @endphp
             <a href="{{ route('admin.aspirantes.index') }}"
                @click="sidebarOpen = false"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
@@ -315,9 +318,21 @@
                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
                              a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
-                Aspirantes
+                <span class="flex-1">Aspirantes</span>
+                @if($pendientesAspirantes > 0)
+                    <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
+                          style="background-color: #dc2626; color: #fff;">
+                        {{ $pendientesAspirantes }}
+                    </span>
+                @endif
             </a>
 
+            @php
+                $pendientesInscripciones = \App\Models\Aspirante::where('estado', 'aprobado')
+                    ->whereHas('pagos', fn($q) => $q->where('estado', 'aprobado'))
+                    ->whereHas('alumno', fn($q) => $q->whereNull('user_id'))
+                    ->count();
+            @endphp
             <a href="{{ route('admin.inscripciones.index') }}"
                @click="sidebarOpen = false"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
@@ -327,7 +342,13 @@
                           d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5
                              m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4z"/>
                 </svg>
-                Inscripciones
+                <span class="flex-1">Inscripciones</span>
+                @if($pendientesInscripciones > 0)
+                    <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
+                          style="background-color: #dc2626; color: #fff;">
+                        {{ $pendientesInscripciones }}
+                    </span>
+                @endif
             </a>
 
             <a href="{{ route('admin.alumnos.index') }}"
