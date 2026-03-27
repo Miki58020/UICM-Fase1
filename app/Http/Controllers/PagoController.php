@@ -45,6 +45,8 @@ class PagoController extends Controller
         $sessionKey   = 'mp_preference_' . $folio;
         $preferenceId = session($sessionKey);
 
+        $monto = $this->calcularMonto($aspirante->programa);
+
         if (!$preferenceId) {
             try {
                 $this->configurarMP();
@@ -53,7 +55,7 @@ class PagoController extends Controller
                     'items' => [[
                         'title'       => 'Inscripción UICM — ' . ($aspirante->programa->nombre ?? 'Programa académico'),
                         'quantity'    => 1,
-                        'unit_price'  => 3500.00,
+                        'unit_price'  => $monto,
                         'currency_id' => 'MXN',
                     ]],
                     'payer' => [
@@ -92,6 +94,7 @@ class PagoController extends Controller
             'aspirante'    => $aspirante,
             'preferenceId' => $preferenceId,
             'publicKey'    => config('services.mercadopago.public_key'),
+            'monto'        => $monto,
         ]);
     }
 
@@ -111,8 +114,10 @@ class PagoController extends Controller
         try {
             $this->configurarMP();
 
+            $monto = $this->calcularMonto($aspirante->programa);
+
             $paymentData = [
-                'transaction_amount' => 3500.00,
+                'transaction_amount' => $monto,
                 'description'        => 'Inscripción UICM',
                 'payment_method_id'  => $data['payment_method_id'],
                 'payer'              => ['email' => $data['payer']['email'] ?? ''],
@@ -137,7 +142,7 @@ class PagoController extends Controller
                     'aspirante_id'     => $aspirante->id,
                     'concepto'         => 'inscripcion',
                     'periodo'          => date('Y') . '-1',
-                    'monto'            => 3500.00,
+                    'monto'            => $monto,
                     'fecha_pago'       => now()->toDateString(),
                     'estado'           => $estado,
                     'mp_preference_id' => $preferenceId,
@@ -326,6 +331,15 @@ class PagoController extends Controller
             'pending', 'in_process',
             'authorized', 'in_mediation'    => 'pendiente',
             default                         => 'rechazado',
+        };
+    }
+
+    private function calcularMonto(?\App\Models\Programa $programa): float
+    {
+        return match($programa?->nivel) {
+            'maestria'   => 4000.00,
+            'doctorado'  => 5000.00,
+            default      => 3000.00, // licenciatura
         };
     }
 }

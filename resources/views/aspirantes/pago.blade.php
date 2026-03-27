@@ -50,7 +50,7 @@
                         </div>
                         <div class="bg-uicm-gray rounded-xl p-4">
                             <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">Monto</p>
-                            <p class="text-xl font-extrabold" style="color: #0F4229;">$3,500 MXN</p>
+                            <p class="text-xl font-extrabold" style="color: #0F4229;">${{ number_format($monto, 0) }} MXN</p>
                         </div>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
 
     const settings = {
         initialization: {
-            amount:       3500,
+            amount:       {{ $monto }},
             preferenceId: '{{ $preferenceId }}',
         },
         customization: {
