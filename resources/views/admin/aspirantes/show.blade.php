@@ -181,13 +181,14 @@
                         </div>
 
                         @if (!empty($doc['url']))
-                            <a href="{{ route('admin.archivo', ['path' => $doc['url']]) }}" target="_blank"
-                               class="flex-shrink-0 text-xs font-semibold transition-colors duration-150"
-                               style="color: #D4AF37;"
-                               onmouseover="this.style.color='#b8962e'"
-                               onmouseout="this.style.color='#D4AF37'">
+                            <button type="button"
+                                    onclick="abrirVistaPrevia('{{ route('admin.archivo', ['path' => $doc['url']]) }}', '{{ $doc['nombre'] }}', '{{ pathinfo($doc['url'], PATHINFO_EXTENSION) }}')"
+                                    class="flex-shrink-0 text-xs font-semibold transition-colors duration-150"
+                                    style="color: #D4AF37;"
+                                    onmouseover="this.style.color='#b8962e'"
+                                    onmouseout="this.style.color='#D4AF37'">
                                 Ver
-                            </a>
+                            </button>
                         @else
                             <span class="flex-shrink-0 text-xs text-gray-400 italic">Pendiente</span>
                         @endif
@@ -306,5 +307,118 @@
 
     </div>
 </section>
+
+{{-- ══════════════════════════════════════
+     MODAL: Vista previa de documento
+══════════════════════════════════════ --}}
+<div id="modal-documento"
+     class="fixed inset-0 z-50 hidden flex items-center justify-center p-4"
+     style="background-color: rgba(0,0,0,0.6);"
+     onclick="cerrarVistaPrevia(event)">
+
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col overflow-hidden"
+         style="max-height: 90vh;"
+         onclick="event.stopPropagation()">
+
+        {{-- Encabezado del modal --}}
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-4 flex-shrink-0">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
+                     style="background-color: #f0f9f4;">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         style="color: #0F4229;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414
+                                 A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h3 id="modal-titulo" class="text-sm font-semibold text-gray-800 truncate"></h3>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <a id="modal-link-externo" href="#" target="_blank"
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors duration-150"
+                   style="border-color: #0F4229; color: #0F4229;"
+                   onmouseover="this.style.backgroundColor='#f0f9f4'"
+                   onmouseout="this.style.backgroundColor='transparent'">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4
+                                 M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                    Abrir en pestaña
+                </a>
+                <button type="button" onclick="cerrarVistaPrevia()"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400
+                               hover:text-gray-600 hover:bg-gray-100 transition-colors duration-150">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        {{-- Cuerpo del modal --}}
+        <div class="flex-1 overflow-auto bg-gray-50 flex items-center justify-center" style="min-height: 300px;">
+            <iframe id="modal-iframe"
+                    class="hidden w-full border-0"
+                    style="height: 70vh;"
+                    src=""></iframe>
+            <img id="modal-img"
+                 class="hidden max-w-full max-h-full object-contain p-4"
+                 style="max-height: 70vh;"
+                 src="" alt="">
+        </div>
+
+    </div>
+</div>
+
+@push('scripts')
+<script>
+const imagenes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+function abrirVistaPrevia(url, nombre, extension) {
+    const ext = extension.toLowerCase();
+
+    document.getElementById('modal-titulo').textContent   = nombre;
+    document.getElementById('modal-link-externo').href    = url;
+
+    const iframe = document.getElementById('modal-iframe');
+    const img    = document.getElementById('modal-img');
+
+    if (imagenes.includes(ext)) {
+        iframe.classList.add('hidden');
+        iframe.src = '';
+        img.src    = url;
+        img.classList.remove('hidden');
+    } else {
+        img.classList.add('hidden');
+        img.src    = '';
+        iframe.src = url;
+        iframe.classList.remove('hidden');
+    }
+
+    document.getElementById('modal-documento').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarVistaPrevia(event) {
+    if (event && event.target !== document.getElementById('modal-documento')) return;
+
+    document.getElementById('modal-documento').classList.add('hidden');
+    document.getElementById('modal-iframe').src = '';
+    document.getElementById('modal-img').src    = '';
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        document.getElementById('modal-documento').classList.add('hidden');
+        document.getElementById('modal-iframe').src = '';
+        document.getElementById('modal-img').src    = '';
+        document.body.style.overflow = '';
+    }
+});
+</script>
+@endpush
 
 @endsection
