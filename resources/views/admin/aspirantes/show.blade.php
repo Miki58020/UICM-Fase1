@@ -66,6 +66,133 @@
             </div>
         </div>
 
+        {{-- ── Línea de tiempo del proceso ── --}}
+        @php
+            $pago = $aspirante->pagos->last();
+
+            if ($aspirante->estado === 'pendiente') {
+                $pasoActual = 0;
+            } elseif ($aspirante->estado === 'rechazado') {
+                $pasoActual = -1;
+            } elseif ($aspirante->estado === 'aprobado' && !$pago) {
+                $pasoActual = 1;
+            } elseif ($aspirante->estado === 'aprobado' && $pago?->estado === 'pendiente') {
+                $pasoActual = 2;
+            } elseif ($aspirante->estado === 'aprobado' && $pago?->estado === 'aprobado' && !$aspirante->alumno?->user_id) {
+                $pasoActual = 3;
+            } else {
+                $pasoActual = 4;
+            }
+
+            $pasos = [
+                ['label' => 'Expediente recibido',  'sub' => 'Pendiente de validar'],
+                ['label' => 'Expediente aprobado',  'sub' => 'Esperando pago'],
+                ['label' => 'Pago en revisión',     'sub' => 'Finanzas validando'],
+                ['label' => 'Listo para inscribir', 'sub' => 'Pago aprobado'],
+                ['label' => 'Inscrito',              'sub' => 'Acceso generado'],
+            ];
+        @endphp
+
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
+            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+            <div class="px-6 py-5">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-5">Progreso del proceso de admisión</h3>
+
+                @if($pasoActual === -1)
+                    {{-- Estado rechazado --}}
+                    <div class="flex items-center gap-3 py-2">
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-200">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-gray-600">Expediente rechazado</p>
+                            <p class="text-xs text-gray-400">El proceso no continuará para este aspirante</p>
+                        </div>
+                    </div>
+                @else
+                    {{-- VERSIÓN ESCRITORIO --}}
+                    <div class="hidden md:flex items-start justify-between relative">
+                        <div class="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 z-0" style="margin: 0 2rem;"></div>
+
+                        @foreach($pasos as $i => $paso)
+                        <div class="flex flex-col items-center flex-1 relative z-10">
+                            @if($i < $pasoActual)
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-sm mb-3"
+                                     style="background-color: #0F4229;">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
+                            @elseif($i === $pasoActual)
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-sm mb-3 ring-4 ring-orange-200"
+                                     style="background-color: #EFAD5A;">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+                                </div>
+                            @else
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center mb-3 bg-gray-100 border-2 border-gray-200">
+                                    <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                                </div>
+                            @endif
+
+                            <p class="text-center text-xs font-semibold leading-tight px-1
+                                {{ $i < $pasoActual ? 'text-uicm-green' : ($i === $pasoActual ? 'text-orange-500' : 'text-gray-400') }}">
+                                {{ $paso['label'] }}
+                            </p>
+                            <p class="text-center text-xs leading-tight px-1 mt-0.5
+                                {{ $i < $pasoActual ? 'text-green-400' : ($i === $pasoActual ? 'text-orange-400' : 'text-gray-300') }}">
+                                {{ $paso['sub'] }}
+                            </p>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    {{-- VERSIÓN MÓVIL --}}
+                    <div class="flex flex-col gap-0 md:hidden">
+                        @foreach($pasos as $i => $paso)
+                        <div class="flex gap-4 items-start">
+                            <div class="flex flex-col items-center flex-shrink-0">
+                                @if($i < $pasoActual)
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-sm"
+                                         style="background-color: #0F4229;">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                @elseif($i === $pasoActual)
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center shadow-sm ring-4 ring-orange-200"
+                                         style="background-color: #EFAD5A;">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+                                    </div>
+                                @else
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 border-2 border-gray-200">
+                                        <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                                    </div>
+                                @endif
+                                @if(!$loop->last)
+                                <div class="w-0.5 flex-1 my-1"
+                                     style="height: 28px; background-color: {{ $i < $pasoActual ? '#0F4229' : '#E5E7EB' }};"></div>
+                                @endif
+                            </div>
+
+                            <div class="pb-5">
+                                <p class="text-sm font-semibold
+                                    {{ $i < $pasoActual ? 'text-uicm-green' : ($i === $pasoActual ? 'text-orange-500' : 'text-gray-400') }}">
+                                    {{ $paso['label'] }}
+                                </p>
+                                <p class="text-xs
+                                    {{ $i < $pasoActual ? 'text-green-400' : ($i === $pasoActual ? 'text-orange-400' : 'text-gray-300') }}">
+                                    {{ $paso['sub'] }}
+                                </p>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+
         {{-- ── Dos columnas: datos + documentos ── --}}
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
 

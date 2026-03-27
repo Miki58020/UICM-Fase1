@@ -23,7 +23,7 @@ class AspiranteController extends Controller
 
     public function show(Aspirante $aspirante)
     {
-        $aspirante->load('programa');
+        $aspirante->load(['programa', 'pagos', 'alumno']);
         return view('admin.aspirantes.show', compact('aspirante'));
     }
 
