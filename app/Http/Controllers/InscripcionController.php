@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\BienvenidaAlumno;
+use App\Mail\ReenvioCredenciales;
 use App\Models\Alumno;
 use App\Models\Aspirante;
 use App\Models\User;
@@ -23,7 +24,12 @@ class InscripcionController extends Controller
 
         $inscritos = Alumno::whereNotNull('user_id')->count();
 
-        return view('admin.inscripciones.index', compact('listos', 'inscritos'));
+        $generados = Alumno::whereNotNull('user_id')
+            ->with(['programa', 'aspirante', 'user'])
+            ->latest()
+            ->get();
+
+        return view('admin.inscripciones.index', compact('listos', 'inscritos', 'generados'));
     }
 
     public function inscribir(Alumno $alumno)
@@ -61,5 +67,21 @@ class InscripcionController extends Controller
             'alumno'        => $alumno,
             'temp_password' => session('temp_password'),
         ]);
+    }
+
+    public function reenviar(Alumno $alumno)
+    {
+        if (!$alumno->user_id) {
+            return redirect()->back()->with('error', 'Este alumno no tiene acceso al portal aún.');
+        }
+
+        $password = Str::random(8);
+
+        $alumno->user->update(['password' => Hash::make($password)]);
+
+        $alumno->load('programa');
+        Mail::to($alumno->email)->send(new ReenvioCredenciales($alumno, $password));
+
+        return redirect()->back()->with('success', "Credenciales reenviadas a {$alumno->user->email}.");
     }
 }

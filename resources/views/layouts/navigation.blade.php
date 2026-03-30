@@ -51,8 +51,19 @@
 
                     {{-- Finanzas + Admin --}}
                     @if(in_array($rol, ['finanzas', 'admin']))
+                        @php
+                            $pagosPendientes = \App\Models\Pago::where('estado', 'pendiente')->count();
+                        @endphp
                         <x-nav-link :href="route('finanzas.pagos.index')" :active="request()->routeIs('finanzas.pagos.*')">
-                            Pagos
+                            <span class="flex items-center gap-1.5">
+                                Pagos
+                                @if($pagosPendientes > 0)
+                                    <span class="inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white rounded-full"
+                                          style="background-color: #dc2626; font-size: 10px;">
+                                        {{ $pagosPendientes }}
+                                    </span>
+                                @endif
+                            </span>
                         </x-nav-link>
                     @endif
 

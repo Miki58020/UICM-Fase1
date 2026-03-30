@@ -77,6 +77,21 @@ class AlumnoController extends Controller
         return view('alumno.dashboard', compact('alumno', 'carga', 'totalCreditos'));
     }
 
+    public function cambiarPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'password.required'  => 'Ingresa la nueva contraseña.',
+            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+        ]);
+
+        Auth::user()->update(['password' => Hash::make($request->password)]);
+
+        return back()->with('password_success', 'Contraseña actualizada correctamente.');
+    }
+
     public function comprobante(Pago $pago)
     {
         $alumno = Alumno::where('user_id', Auth::id())->firstOrFail();

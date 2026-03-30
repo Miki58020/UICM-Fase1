@@ -45,28 +45,52 @@
         @endif
 
         {{-- Contadores --}}
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
 
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #EFAD5A;">
+            <button type="button"
+                    @click="filtroEstado = ''; filtrar()"
+                    :class="filtroEstado === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #6B7280;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-500">
+                    {{ $pagos->count() }}
+                </p>
+            </button>
+
+            <button type="button"
+                    @click="filtroEstado = 'pendiente'; filtrar()"
+                    :class="filtroEstado === 'pendiente' ? 'ring-2' : 'hover:shadow-md'"
+                    :style="filtroEstado === 'pendiente' ? 'ring-color: #EFAD5A;' : ''"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #EFAD5A;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">En revisión</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">
                     {{ $pagos->where('estado', 'pendiente')->count() }}
                 </p>
-            </div>
+            </button>
 
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
+            <button type="button"
+                    @click="filtroEstado = 'aprobado'; filtrar()"
+                    :class="filtroEstado === 'aprobado' ? 'ring-2 ring-green-700' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Validados</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">
                     {{ $pagos->where('estado', 'aprobado')->count() }}
                 </p>
-            </div>
+            </button>
 
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 col-span-2 sm:col-span-1" style="border-color: #9ca3af;">
+            <button type="button"
+                    @click="filtroEstado = 'rechazado'; filtrar()"
+                    :class="filtroEstado === 'rechazado' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #9ca3af;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazados</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
                     {{ $pagos->where('estado', 'rechazado')->count() }}
                 </p>
-            </div>
+            </button>
 
         </div>
 

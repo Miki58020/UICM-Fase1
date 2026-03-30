@@ -293,7 +293,7 @@
             </div>
             <div class="divider-v"></div>
             <div class="header-stat">
-                <span>5</span>
+                <span>6</span>
                 <small>Roles</small>
             </div>
             <div class="divider-v"></div>
@@ -303,7 +303,7 @@
             </div>
             <div class="divider-v"></div>
             <div class="header-stat">
-                <span>17</span>
+                <span>24</span>
                 <small>Vistas</small>
             </div>
         </div>
@@ -370,17 +370,19 @@
             <div class="step-body">
                 <div class="step-header">
                     <span class="step-role role-aspirante">Aspirante</span>
-                    <span class="step-title">Pago de inscripción</span>
+                    <span class="step-title">Pago de inscripción — MercadoPago</span>
                 </div>
                 <div class="step-card">
-                    <p>El aspirante aprobado consulta su resultado y encuentra disponible el acceso al módulo de pago. Realiza la transferencia bancaria y sube el comprobante.</p>
+                    <p>El aspirante aprobado consulta su resultado y encuentra disponible el botón de pago. El pago se realiza en línea a través del <strong>Payment Brick de MercadoPago</strong> integrado directamente en la plataforma (tarjeta de crédito/débito, transferencia SPEI, efectivo, etc.). Ya no se requiere subir comprobante.</p>
                     <ul class="action-list">
-                        <li>Consulta su resultado en <span class="url-tag">/resultado</span> — aparece botón <em>"Realizar pago"</em></li>
-                        <li>Accede a <span class="url-tag">/aspirante/pago</span> — ve datos bancarios (BBVA, CLABE, referencia)</li>
-                        <li>Sube su comprobante de transferencia (imagen o PDF)</li>
-                        <li>Recibe confirmación en <span class="url-tag">/aspirante/pago-confirmacion</span></li>
+                        <li>Consulta su estado en <span class="url-tag">/resultado</span> — línea de tiempo + botón <em>"Realizar pago"</em></li>
+                        <li>Accede a <span class="url-tag">/aspirante/pago</span> — ve sus datos y el Payment Brick de MercadoPago embebido</li>
+                        <li>Completa el pago en el brick; MercadoPago redirige a <span class="url-tag">/aspirante/pago/retorno</span></li>
+                        <li>El sistema evalúa el resultado y muestra la pantalla final en <span class="url-tag">/aspirante/pago-confirmacion</span></li>
+                        <li>Simultáneamente MercadoPago notifica al sistema vía <span class="url-tag">POST /mp/webhook</span> (IPN)</li>
                     </ul>
-                    <div class="result-info" style="margin-top:10px;">Estado: <strong>Comprobante en revisión</strong> · Tiempo estimado 24–48 hrs</div>
+                    <div class="result-ok" style="margin-top:10px;">Si el pago es aprobado: el registro se crea automáticamente en la tabla <strong>pagos</strong> con estado <em>pendiente</em> (en espera de validación de Finanzas)</div>
+                    <div class="result-warn" style="margin-top:6px;">Si el pago es rechazado o pendiente: el aspirante puede reintentar</div>
                 </div>
             </div>
         </div>
@@ -394,15 +396,15 @@
             <div class="step-body">
                 <div class="step-header">
                     <span class="step-role role-finanzas">Finanzas</span>
-                    <span class="step-title">Validación del pago</span>
+                    <span class="step-title">Revisión y validación del pago</span>
                 </div>
                 <div class="step-card">
-                    <p>El área de Finanzas revisa los comprobantes de pago recibidos, verifica que el monto y los datos sean correctos y emite su validación.</p>
+                    <p>El pago queda registrado automáticamente en la base de datos al confirmarse por MercadoPago (vía webhook). El área de Finanzas revisa el listado de pagos recibidos, verifica los datos y emite la validación final para autorizar la inscripción.</p>
                     <ul class="action-list">
-                        <li>Accede al listado de comprobantes en <span class="url-tag">/finanzas/pagos</span></li>
-                        <li>Revisa el detalle e imagen del comprobante en <span class="url-tag">/finanzas/pagos/show</span></li>
-                        <li>Aprueba el pago → estado cambia a <strong>"Pago validado"</strong></li>
-                        <li>O rechaza → solicita nuevo comprobante al aspirante</li>
+                        <li>Accede al listado de pagos en <span class="url-tag">/finanzas/pagos</span> — ve folio, aspirante, monto, estado MP y fecha</li>
+                        <li>Revisa el detalle del pago en <span class="url-tag">/finanzas/pagos/{id}</span> — datos del pago y del aspirante</li>
+                        <li>Aprueba manualmente → estado cambia a <strong>"Pago validado"</strong></li>
+                        <li>O rechaza → el aspirante puede reintentar el pago</li>
                     </ul>
                     <div class="result-ok" style="margin-top:10px;">Si valida: el aspirante queda listo para ser inscrito y recibir su matrícula</div>
                 </div>
@@ -503,9 +505,9 @@
                     </tr>
                     <tr>
                         <td>pagos</td>
-                        <td>Comprobantes de inscripción</td>
-                        <td>aspirante_id, monto, comprobante_path, estado</td>
-                        <td>aspirantes</td>
+                        <td>Pagos de inscripción vía MercadoPago</td>
+                        <td>aspirante_id, alumno_id, monto, mp_preference_id, mp_payment_id, estado, concepto</td>
+                        <td>aspirantes, alumnos</td>
                     </tr>
                     <tr>
                         <td>users</td>

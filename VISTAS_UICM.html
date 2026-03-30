@@ -231,17 +231,17 @@
         <p class="header-sub">Referencia de rutas y módulos implementados · Laravel 12 + Tailwind CSS + Alpine.js</p>
         <div class="header-bar">
             <div class="header-stat">
-                <span>17</span>
+                <span>24</span>
                 <small>Vistas totales</small>
             </div>
             <div class="divider-v"></div>
             <div class="header-stat">
-                <span>7</span>
+                <span>8</span>
                 <small>Módulos</small>
             </div>
             <div class="divider-v"></div>
             <div class="header-stat">
-                <span>4</span>
+                <span>5</span>
                 <small>Roles</small>
             </div>
             <div class="divider-v"></div>
@@ -332,21 +332,28 @@
                     <tr>
                         <td><span class="url">/resultado</span></td>
                         <td>
-                            <p class="desc"><strong>Resultado de solicitud.</strong> Muestra si la solicitud fue aprobada, rechazada o si tiene un pago pendiente. Cuando hay pago pendiente aparece el botón "Realizar pago".</p>
+                            <p class="desc"><strong>Estado de inscripción.</strong> Muestra una <strong>línea de tiempo de 5 pasos</strong> (Solicitud enviada → Datos validados → Pago pendiente → Pago en revisión → Inscripción completada) con el paso actual resaltado. Si el estado es "Pago pendiente" aparece el botón "Realizar pago".</p>
                             <span class="tag tag-public">Público</span>
                         </td>
                     </tr>
                     <tr>
                         <td><span class="url">/aspirante/pago</span></td>
                         <td>
-                            <p class="desc"><strong>Pago de inscripción.</strong> El aspirante visualiza los datos bancarios (BBVA, CLABE, referencia) y sube su comprobante de pago mediante zona de carga de archivo.</p>
+                            <p class="desc"><strong>Pago de inscripción — MercadoPago.</strong> Muestra los datos del aspirante (folio, programa, monto) y el <strong>Payment Brick de MercadoPago</strong> embebido para pagar en línea (tarjeta, SPEI, efectivo). Ya no se sube comprobante manual.</p>
+                            <span class="tag tag-public">Público</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/aspirante/pago/retorno</span><span class="method">GET</span></td>
+                        <td>
+                            <p class="desc"><strong>Retorno desde MercadoPago.</strong> URL de retorno tras completar el pago en el brick. El sistema evalúa el parámetro <code>status</code> de MP y redirige a la pantalla de confirmación correspondiente.</p>
                             <span class="tag tag-public">Público</span>
                         </td>
                     </tr>
                     <tr>
                         <td><span class="url">/aspirante/pago-confirmacion</span></td>
                         <td>
-                            <p class="desc"><strong>Confirmación de pago.</strong> Pantalla tras enviar el comprobante. Indica que el pago está en revisión y tiene un tiempo estimado de 24–48 horas.</p>
+                            <p class="desc"><strong>Confirmación del pago.</strong> Pantalla final con tres estados posibles: <em>Pago confirmado</em> (verde, inscripción en proceso), <em>Pago en revisión</em> (naranja, MP aún procesando) o <em>Pago rechazado</em> (gris, puede reintentar).</p>
                             <span class="tag tag-public">Público</span>
                         </td>
                     </tr>
@@ -372,6 +379,13 @@
                         <td><span class="url">/alumno</span></td>
                         <td>
                             <p class="desc"><strong>Panel personal del alumno.</strong> Muestra saludo de bienvenida, cards con matrícula, programa, grupo, cuatrimestre y estado administrativo. Tabla de materias (clave, profesor, horario, aula, créditos) e historial de pagos con estados Pagado / Pendiente.</p>
+                            <span class="tag tag-alumno">Alumno</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/alumno/comprobante/{pago}</span></td>
+                        <td>
+                            <p class="desc"><strong>Comprobante de pago.</strong> Muestra el detalle del pago seleccionado: concepto, monto, período, fecha y estado. Accesible desde el historial de pagos del portal del alumno.</p>
                             <span class="tag tag-alumno">Alumno</span>
                         </td>
                     </tr>
@@ -415,9 +429,23 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><span class="url">/admin/inscripciones/generar</span></td>
+                        <td><span class="url">/admin/inscripciones/{alumno}/resultado</span></td>
                         <td>
                             <p class="desc"><strong>Confirmación de inscripción.</strong> Muestra la matrícula generada (ej. UICM-2026-IS-001), el grupo asignado y las credenciales de acceso (correo institucional y contraseña temporal) del nuevo alumno.</p>
+                            <span class="tag tag-admin">Admin / Control Escolar</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/admin/alumnos</span></td>
+                        <td>
+                            <p class="desc"><strong>Listado de alumnos activos.</strong> Tabla de alumnos inscritos con matrícula, nombre, programa, grupo, cuatrimestre y estado. Permite editar grupo y estado directamente desde la tabla.</p>
+                            <span class="tag tag-admin">Admin / Control Escolar</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="url">/admin/solicitudes-contrasena</span></td>
+                        <td>
+                            <p class="desc"><strong>Solicitudes de contraseña.</strong> Listado de solicitudes de reseteo de contraseña enviadas por alumnos. Control Escolar puede atender cada solicitud y enviar la nueva contraseña por correo.</p>
                             <span class="tag tag-admin">Admin / Control Escolar</span>
                         </td>
                     </tr>
@@ -442,14 +470,14 @@
                     <tr>
                         <td><span class="url">/finanzas/pagos</span></td>
                         <td>
-                            <p class="desc"><strong>Lista de pagos en revisión.</strong> Tabla de comprobantes enviados por los aspirantes con folio, nombre, programa, monto, fecha y estado (En revisión / Validado / Rechazado).</p>
+                            <p class="desc"><strong>Lista de pagos.</strong> Tabla de pagos registrados vía MercadoPago con folio del aspirante, nombre, programa, monto, fecha y estado (Pendiente / Validado / Rechazado). Los pagos llegan automáticamente al confirmarse por el webhook de MP.</p>
                             <span class="tag tag-finance">Finanzas</span>
                         </td>
                     </tr>
                     <tr>
-                        <td><span class="url">/finanzas/pagos/show</span></td>
+                        <td><span class="url">/finanzas/pagos/{id}</span></td>
                         <td>
-                            <p class="desc"><strong>Detalle de comprobante.</strong> Vista del comprobante subido (imagen con fallback), datos del aspirante y monto. Botones: Aprobar pago (verde), Rechazar pago (gris).</p>
+                            <p class="desc"><strong>Detalle del pago.</strong> Datos completos del pago: aspirante, concepto, monto, ID de pago de MercadoPago y estado actual. Botones: Aprobar pago (verde), Rechazar pago (gris).</p>
                             <span class="tag tag-finance">Finanzas</span>
                         </td>
                     </tr>
@@ -490,6 +518,31 @@
                         <td>
                             <p class="desc"><strong>Generación de carga académica.</strong> Filtros por ciclo, cuatrimestre, programa y grupo. Al cargar: muestra resumen del grupo (alumnos, materias, profesores) y tabla de materias asignadas. Botón principal "Generar carga académica" con pantalla de éxito al finalizar.</p>
                             <span class="tag tag-coord">Coordinación Académica</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ── 7. ADMINISTRADOR ── -->
+        <div class="section no-break">
+            <div class="section-title">
+                <span class="section-badge badge-gray">Administrador del sistema</span>
+                <div class="section-line"></div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36%">URL</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="url">/admin/usuarios</span></td>
+                        <td>
+                            <p class="desc"><strong>Gestión de usuarios del sistema.</strong> Listado de todos los usuarios con rol, correo y estado. Permite crear nuevos usuarios administrativos (finanzas, coordinación, control escolar), editar datos y eliminar cuentas. Accesible solo para el rol <em>admin</em>.</p>
+                            <span class="tag tag-admin">Admin</span>
                         </td>
                     </tr>
                 </tbody>

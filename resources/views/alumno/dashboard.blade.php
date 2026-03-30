@@ -4,7 +4,7 @@
 
 @section('content')
 
-<section class="bg-uicm-gray min-h-screen">
+<section class="bg-uicm-gray min-h-screen" x-data="{ modalContrasena: false }">
 
     {{-- ══════════════════════════════════════════
          BANNER de bienvenida
@@ -184,29 +184,38 @@
                     </div>
                 </div>
 
-                {{-- Total créditos --}}
-                <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex items-center gap-4 px-5 py-4">
+                {{-- Cambiar contraseña --}}
+                <button type="button" @click="modalContrasena = true"
+                        class="bg-white rounded-2xl shadow-sm overflow-hidden flex items-center gap-4 px-5 py-4
+                               w-full text-left hover:shadow-md transition-shadow duration-150 cursor-pointer">
                     <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
                          style="background-color: #fef4e8;">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                              style="color: #EFAD5A;">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915
-                                     c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674
-                                     c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888
-                                     c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888
-                                     c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
+                                     a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                         </svg>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Créditos totales</p>
-                        <p class="text-2xl font-extrabold mt-0.5" style="color: #EFAD5A;">
-                            {{ $totalCreditos }}
-                        </p>
+                        <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Contraseña</p>
+                        <p class="text-sm font-bold mt-0.5" style="color: #EFAD5A;">Cambiar</p>
                     </div>
-                </div>
+                </button>
 
             </div>
+
+            {{-- Flash contraseña actualizada --}}
+            @if (session('password_success'))
+            <div class="rounded-xl px-5 py-3 border-l-4 bg-green-50 flex items-center gap-3"
+                 style="border-color: #0F4229;">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                     style="color: #0F4229;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <p class="text-sm font-semibold text-green-800">{{ session('password_success') }}</p>
+            </div>
+            @endif
 
             {{-- ══════════════════════════════════════════
                  TABLA: Materias asignadas
@@ -434,6 +443,94 @@
                 </div>
             </div>
 
+
+        </div>
+    </div>
+
+    {{-- ══════════════════════════════════════════
+         MODAL: Cambiar contraseña
+    ══════════════════════════════════════════ --}}
+    <div x-show="modalContrasena"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4"
+         style="background-color: rgba(0,0,0,0.5); display: none;"
+         @click.self="modalContrasena = false">
+
+        <div x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+
+            <div class="h-1.5 w-full" style="background-color: #EFAD5A;"></div>
+
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         style="color: #EFAD5A;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
+                                 a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                    </svg>
+                    <h2 class="text-sm font-bold text-gray-800">Cambiar contraseña</h2>
+                </div>
+                <button type="button" @click="modalContrasena = false"
+                        class="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400
+                               hover:text-gray-600 hover:bg-gray-100 transition-colors duration-150">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form method="POST" action="{{ route('alumno.cambiar-password') }}" class="px-6 py-5 space-y-4">
+                @csrf
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                        Nueva contraseña <span class="normal-case font-normal text-gray-400">(mín. 8 caracteres)</span>
+                    </label>
+                    <input type="password" name="password" required
+                           class="w-full px-4 py-2.5 text-sm border rounded-xl bg-white focus:outline-none
+                                  @error('password') border-red-400 @else border-gray-300 @enderror"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.15)'"
+                           onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                    @error('password')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                        Confirmar contraseña
+                    </label>
+                    <input type="password" name="password_confirmation" required
+                           class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.15)'"
+                           onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                </div>
+
+                <div class="flex gap-3 pt-1">
+                    <button type="button" @click="modalContrasena = false"
+                            class="flex-1 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors duration-150"
+                            style="border-color: #0F4229; color: #0F4229;"
+                            onmouseover="this.style.backgroundColor='#f0f9f4'"
+                            onmouseout="this.style.backgroundColor='transparent'">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-200"
+                            style="background-color: #0F4229;"
+                            onmouseover="this.style.backgroundColor='#0a2e1c'"
+                            onmouseout="this.style.backgroundColor='#0F4229'">
+                        Guardar
+                    </button>
+                </div>
+            </form>
 
         </div>
     </div>

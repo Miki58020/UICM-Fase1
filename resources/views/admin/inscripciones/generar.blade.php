@@ -89,7 +89,7 @@
                     <dl class="space-y-3 text-sm">
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Usuario</dt>
-                            <dd class="font-bold font-mono text-gray-800 break-all">{{ $alumno->email }}</dd>
+                            <dd class="font-bold font-mono text-gray-800 break-all">{{ $alumno->user->email }}</dd>
                         </div>
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Contraseña temporal</dt>
@@ -98,8 +98,7 @@
                     </dl>
 
                     <p class="text-xs text-gray-500 mt-4 leading-relaxed">
-                        Anota estas credenciales. La contraseña temporal no se volverá a mostrar.
-                        Cuando integres el correo, se enviarán automáticamente al alumno.
+                        Anota estas credenciales como respaldo. El correo de bienvenida ya fue enviado automáticamente al alumno.
                     </p>
                 </div>
                 @else
@@ -110,22 +109,46 @@
                 </div>
                 @endif
 
+                {{-- Flash reenvío --}}
+                @if (session('success'))
+                <div class="mb-4 rounded-xl px-4 py-3 border-l-4 bg-green-50 text-sm font-semibold text-green-800"
+                     style="border-color: #0F4229;">
+                    {{ session('success') }}
+                </div>
+                @endif
+
+                {{-- Aviso correo enviado --}}
+                <div class="flex items-center gap-2 mb-4 px-4 py-3 rounded-xl bg-blue-50 border border-blue-100">
+                    <svg class="w-4 h-4 flex-shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <p class="text-xs text-blue-700">
+                        Correo de bienvenida enviado automáticamente a <strong>{{ $alumno->user->email }}</strong>
+                    </p>
+                </div>
+
                 {{-- Botones --}}
                 <div class="flex flex-col gap-3">
 
-                    {{-- Placeholder correo — se habilitará con SendGrid --}}
-                    <button type="button" disabled
-                            class="w-full inline-flex items-center justify-center gap-2
-                                   py-3 rounded-xl text-sm font-bold text-white opacity-50 cursor-not-allowed"
-                            style="background-color: #EFAD5A;"
-                            title="Disponible cuando se integre SendGrid">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7
-                                     a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                        Enviar credenciales por correo
-                    </button>
+                    {{-- Reenviar acceso --}}
+                    <form method="POST" action="{{ route('admin.inscripciones.reenviar', $alumno) }}"
+                          onsubmit="return confirm('¿Generar nueva contraseña y reenviar el correo a {{ addslashes($alumno->user->email) }}?')">
+                        @csrf
+                        <button type="submit"
+                                class="w-full inline-flex items-center justify-center gap-2
+                                       py-3 rounded-xl text-sm font-bold text-white transition-colors duration-200"
+                                style="background-color: #EFAD5A;"
+                                onmouseover="this.style.backgroundColor='#d4923a'"
+                                onmouseout="this.style.backgroundColor='#EFAD5A'">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7
+                                         a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            Reenviar acceso al alumno
+                        </button>
+                    </form>
 
                     {{-- Volver a la lista --}}
                     <a href="{{ route('admin.inscripciones.index') }}"

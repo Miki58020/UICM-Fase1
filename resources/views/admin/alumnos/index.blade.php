@@ -36,7 +36,7 @@ $gruposJson = $grupos->map(fn($g) => [
 
                     const pasaBusqueda = !texto || nombre.includes(texto) || matricula.includes(texto) || email.includes(texto);
                     const pasaPrograma = !this.filtroPrograma || programa === this.filtroPrograma;
-                    const pasaEstado   = !this.filtroEstado   || estado   === this.filtroEstado;
+                    const pasaEstado   = !this.filtroEstado || (this.filtroEstado === 'inactivo' ? estado !== 'activo' : estado === this.filtroEstado);
 
                     const mostrar = pasaBusqueda && pasaPrograma && pasaEstado;
                     f.style.display = mostrar ? '' : 'none';
@@ -94,18 +94,30 @@ $gruposJson = $grupos->map(fn($g) => [
 
         {{-- Contadores --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
+            <button type="button"
+                    @click="filtroEstado = ''; filtrar()"
+                    :class="filtroEstado === '' ? 'ring-2 ring-green-700' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total de alumnos</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $conteo['total'] }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #D4AF37;">
+            </button>
+            <button type="button"
+                    @click="filtroEstado = 'activo'; filtrar()"
+                    :class="filtroEstado === 'activo' ? 'ring-2 ring-yellow-500' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #D4AF37;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Activos</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">{{ $conteo['activos'] }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #9ca3af;">
+            </button>
+            <button type="button"
+                    @click="filtroEstado = 'inactivo'; filtrar()"
+                    :class="filtroEstado === 'inactivo' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #9ca3af;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Inactivos / baja</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-400">{{ $conteo['inactivos'] }}</p>
-            </div>
+            </button>
         </div>
 
         {{-- Búsqueda y filtros --}}

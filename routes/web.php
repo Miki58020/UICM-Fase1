@@ -47,6 +47,7 @@ Route::post('/mp/webhook', [PagoController::class, 'webhook'])->name('mp.webhook
 Route::middleware(['auth', 'rol:alumno'])->group(function () {
     Route::get('/alumno', [AlumnoController::class, 'dashboard'])->name('alumno.dashboard');
     Route::get('/alumno/comprobante/{pago}', [AlumnoController::class, 'comprobante'])->name('alumno.comprobante');
+    Route::post('/alumno/cambiar-password', [AlumnoController::class, 'cambiarPassword'])->name('alumno.cambiar-password');
 });
 
 // Módulo finanzas — Validación de pagos
@@ -70,6 +71,7 @@ Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
     Route::get('/admin/inscripciones', [InscripcionController::class, 'index'])->name('admin.inscripciones.index');
     Route::post('/admin/inscripciones/{alumno}/inscribir', [InscripcionController::class, 'inscribir'])->name('admin.inscripciones.inscribir');
     Route::get('/admin/inscripciones/{alumno}/resultado', [InscripcionController::class, 'resultado'])->name('admin.inscripciones.resultado');
+    Route::post('/admin/inscripciones/{alumno}/reenviar', [InscripcionController::class, 'reenviar'])->name('admin.inscripciones.reenviar');
 
     Route::get('/admin/solicitudes-contrasena', [SolicitudContrasenaController::class, 'index'])->name('admin.solicitudes-contrasena.index');
     Route::post('/admin/solicitudes-contrasena/{solicitud}/atender', [SolicitudContrasenaController::class, 'atender'])->name('admin.solicitudes-contrasena.atender');
