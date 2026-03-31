@@ -8,7 +8,7 @@ class CargaAcademica extends Model
 {
     protected $table = 'carga_academica';
 
-    protected $fillable = ['grupo_id', 'materia_id', 'profesor_id', 'horario', 'aula', 'ciclo'];
+    protected $fillable = ['grupo_id', 'materia_id', 'profesor_id', 'horario', 'aula', 'periodo_id'];
 
     public function grupo()
     {
@@ -23,5 +23,10 @@ class CargaAcademica extends Model
     public function profesor()
     {
         return $this->belongsTo(Profesor::class);
+    }
+
+    public function periodo()
+    {
+        return $this->belongsTo(Periodo::class);
     }
 }

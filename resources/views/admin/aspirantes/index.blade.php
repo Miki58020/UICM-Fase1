@@ -237,19 +237,6 @@
 
         </div>{{-- /card --}}
 
-        {{-- Volver al dashboard --}}
-        <div class="mt-6">
-            <a href="{{ route('dashboard') }}"
-               class="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-150"
-               style="color: #0F4229;"
-               onmouseover="this.style.textDecoration='underline'"
-               onmouseout="this.style.textDecoration='none'">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Volver al panel
-            </a>
-        </div>
 
     </div>
 </section>

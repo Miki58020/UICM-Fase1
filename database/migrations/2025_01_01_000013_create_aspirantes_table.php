@@ -17,7 +17,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('telefono', 20)->nullable();
             $table->string('curp', 18)->nullable();
+            $table->date('fecha_nacimiento')->nullable();
             $table->foreignId('programa_id')->constrained('programas');
+            $table->string('generacion', 10)->nullable();
+            $table->string('acta_nacimiento_url')->nullable();
+            $table->string('certificado_url')->nullable();
+            $table->string('identificacion_url')->nullable();
+            $table->string('curp_url')->nullable();
+            $table->string('titulo_url')->nullable();
             $table->enum('estado', ['pendiente', 'aprobado', 'rechazado'])->default('pendiente');
             $table->text('observaciones')->nullable();
             $table->timestamps();

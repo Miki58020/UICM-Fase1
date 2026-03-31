@@ -49,9 +49,13 @@
     </div>
 
     <div class="body">
-        <p class="greeting">Estimado/a {{ $pago->aspirante->nombre }} {{ $pago->aspirante->apellido_paterno }},</p>
+        @php
+            $persona = $pago->aspirante ?? $pago->alumno;
+            $esReinscripcion = $pago->concepto === 'reinscripcion';
+        @endphp
+        <p class="greeting">Estimado/a {{ $persona?->nombre }} {{ $persona?->apellido_paterno }},</p>
 
-        <p>Hemos revisado tu comprobante de pago y lamentamos informarte que:</p>
+        <p>Hemos revisado tu comprobante de {{ $esReinscripcion ? 'reinscripción' : 'inscripción' }} y lamentamos informarte que:</p>
 
         <div class="badge-wrap">
             <span class="badge">✕ &nbsp; COMPROBANTE NO VALIDADO</span>
@@ -64,11 +68,15 @@
         </div>
         @endif
 
+        @if (!$esReinscripcion && $pago->aspirante)
         <p>Para continuar con tu proceso de inscripción, por favor sube un nuevo comprobante de pago:</p>
 
         <div class="btn-wrap">
             <a href="{{ route('aspirantes.pago', ['folio' => $pago->aspirante->folio]) }}" class="btn">Subir nuevo comprobante</a>
         </div>
+        @else
+        <p>Por favor comunícate con el área de <strong>Control Escolar</strong> para regularizar tu situación.</p>
+        @endif
 
         <div class="info-box">
             Si tienes dudas sobre el proceso de pago o necesitas orientación, comunícate con el área de <strong>Finanzas</strong> de la universidad.

@@ -7,6 +7,13 @@
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-4xl">
 
+        @php
+            $personaNombre   = $pago->aspirante?->nombre_completo ?? $pago->alumno?->nombre_completo ?? '—';
+            $personaRef      = $pago->aspirante?->folio ?? ($pago->alumno ? 'MAT-'.$pago->alumno->matricula : "Pago #{$pago->id}");
+            $personaPrograma = $pago->aspirante?->programa?->nombre ?? $pago->alumno?->programa?->nombre ?? '—';
+            $esReinscripcion = $pago->concepto === 'reinscripcion';
+        @endphp
+
         {{-- Migas de navegación --}}
         <nav class="flex items-center gap-2 text-xs text-gray-400 mb-6">
             <a href="{{ route('dashboard') }}" class="hover:text-uicm-green transition-colors">Panel</a>
@@ -17,7 +24,7 @@
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
-            <span class="font-medium text-gray-600">{{ $pago->aspirante->folio ?? "Pago #{$pago->id}" }}</span>
+            <span class="font-medium text-gray-600">{{ $personaRef }}</span>
         </nav>
 
         {{-- Flash de éxito --}}
@@ -34,13 +41,13 @@
             <div class="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-                        Comprobante de pago
+                        {{ $esReinscripcion ? 'Reinscripción' : 'Inscripción' }} — Comprobante de pago
                     </p>
                     <h1 class="text-xl font-extrabold text-gray-900">
-                        {{ $pago->aspirante->nombre_completo ?? '—' }}
+                        {{ $personaNombre }}
                     </h1>
                     <p class="text-sm text-gray-500 mt-0.5 font-mono">
-                        {{ $pago->aspirante->folio ?? "Pago #{$pago->id}" }}
+                        {{ $personaRef }}
                     </p>
                 </div>
 
@@ -69,7 +76,7 @@
         {{-- Dos columnas: datos + comprobante --}}
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
 
-            {{-- Datos del aspirante (3/5) --}}
+            {{-- Datos del solicitante (3/5) --}}
             <div class="lg:col-span-3 bg-white rounded-2xl shadow-md overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -77,7 +84,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
-                    <h2 class="text-sm font-semibold text-gray-700">Datos del aspirante</h2>
+                    <h2 class="text-sm font-semibold text-gray-700">
+                        {{ $esReinscripcion ? 'Datos del alumno' : 'Datos del aspirante' }}
+                    </h2>
                 </div>
 
                 <div class="px-6 py-5">
@@ -85,23 +94,21 @@
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Nombre completo</dt>
-                            <dd class="text-sm font-semibold text-gray-800">
-                                {{ $pago->aspirante->nombre_completo ?? '—' }}
-                            </dd>
+                            <dd class="text-sm font-semibold text-gray-800">{{ $personaNombre }}</dd>
                         </div>
 
                         <div>
-                            <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Folio</dt>
+                            <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">
+                                {{ $esReinscripcion ? 'Matrícula' : 'Folio' }}
+                            </dt>
                             <dd class="text-sm font-mono font-bold tracking-widest" style="color: #0F4229;">
-                                {{ $pago->aspirante->folio ?? '—' }}
+                                {{ $personaRef }}
                             </dd>
                         </div>
 
                         <div class="sm:col-span-2">
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Programa</dt>
-                            <dd class="text-sm font-semibold text-gray-800">
-                                {{ $pago->aspirante->programa->nombre ?? '—' }}
-                            </dd>
+                            <dd class="text-sm font-semibold text-gray-800">{{ $personaPrograma }}</dd>
                         </div>
 
                         <div>
@@ -114,7 +121,7 @@
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Fecha de pago</dt>
                             <dd class="text-sm font-semibold text-gray-800">
-                                {{ $pago->fecha_pago->format('d/m/Y') }}
+                                {{ $pago->fecha_pago?->format('d/m/Y') ?? 'Pendiente' }}
                             </dd>
                         </div>
 

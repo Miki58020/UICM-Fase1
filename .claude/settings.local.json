@@ -28,7 +28,18 @@
       "Bash(grep \"^\\\\.env$\\\\|^\\\\*\\\\.env\" /c/Users/Angel/Desktop/UICM-Fase1/.gitignore)",
       "Bash(git -C /c/Users/Angel/Desktop/UICM-Fase1 ls-files --error-unmatch .env)",
       "Bash(git -C /c/Users/Angel/Desktop/UICM-Fase1 show --name-only HEAD)",
-      "Bash(sqlite3:*)"
+      "Bash(sqlite3:*)",
+      "Bash(for f:*)",
+      "Bash(do)",
+      "Bash(echo \"=== $f ===\")",
+      "Read(//c/Users/Miguel Ángel/Desktop/UICM-Fase1/database/migrations/**)",
+      "Bash(done)",
+      "Bash(cd:*)",
+      "Bash(mv 2025_01_01_000011_create_profesores_table.php 2025_01_01_000012_create_profesores_table.php)",
+      "Bash(mv 2025_01_01_000012_create_aspirantes_table.php 2025_01_01_000013_create_aspirantes_table.php)",
+      "Bash(mv 2025_01_01_000013_create_grupos_table.php 2025_01_01_000014_create_grupos_table.php)",
+      "Bash(mv 2025_01_01_000014_create_alumnos_table.php 2025_01_01_000015_create_alumnos_table.php)",
+      "Bash(mv 2025_01_01_000015_create_materias_table.php 2025_01_01_000016_create_materias_table.php)"
     ]
   }
 }

@@ -4,11 +4,15 @@ use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AspiranteController;
 use App\Http\Controllers\CargaAcademicaController;
 use App\Http\Controllers\ContactoController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\PeriodoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfesorController;
+use App\Http\Controllers\ReinscripcionController;
 use App\Http\Controllers\SolicitudContrasenaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +27,7 @@ Route::post('/session/terminate', function (Illuminate\Http\Request $request) {
     return response()->json(['status' => 'ok']);
 })->name('session.terminate');
 
-Route::view('/', 'home.index')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/contacto', [ContactoController::class, 'store'])->name('contacto.store');
 
 // Módulo de aspirantes (público)
@@ -75,6 +79,10 @@ Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
 
     Route::get('/admin/solicitudes-contrasena', [SolicitudContrasenaController::class, 'index'])->name('admin.solicitudes-contrasena.index');
     Route::post('/admin/solicitudes-contrasena/{solicitud}/atender', [SolicitudContrasenaController::class, 'atender'])->name('admin.solicitudes-contrasena.atender');
+
+    Route::get('/admin/reinscripciones', [ReinscripcionController::class, 'index'])->name('admin.reinscripciones.index');
+    Route::post('/admin/reinscripciones/{alumno}/generar-pago', [ReinscripcionController::class, 'generarPago'])->name('admin.reinscripciones.generar-pago');
+    Route::post('/admin/reinscripciones/{alumno}/completar', [ReinscripcionController::class, 'completar'])->name('admin.reinscripciones.completar');
 });
 
 // Módulo admin — Gestión de usuarios del sistema
@@ -99,6 +107,18 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
 
     Route::get('/admin/carga-academica', [CargaAcademicaController::class, 'index'])->name('admin.carga-academica.index');
     Route::post('/admin/carga-academica/{grupo}/generar', [CargaAcademicaController::class, 'generar'])->name('admin.carga-academica.generar');
+    Route::patch('/admin/carga-academica/{carga}/actualizar', [CargaAcademicaController::class, 'actualizar'])->name('admin.carga-academica.actualizar');
+
+    Route::get('/admin/periodos', [PeriodoController::class, 'index'])->name('admin.periodos.index');
+    Route::post('/admin/periodos', [PeriodoController::class, 'store'])->name('admin.periodos.store');
+    Route::patch('/admin/periodos/{periodo}', [PeriodoController::class, 'update'])->name('admin.periodos.update');
+    Route::patch('/admin/periodos/{periodo}/activar', [PeriodoController::class, 'activar'])->name('admin.periodos.activar');
+    Route::patch('/admin/periodos/{periodo}/cerrar', [PeriodoController::class, 'cerrar'])->name('admin.periodos.cerrar');
+
+    Route::get('/admin/grupos', [GrupoController::class, 'index'])->name('admin.grupos.index');
+    Route::post('/admin/grupos', [GrupoController::class, 'store'])->name('admin.grupos.store');
+    Route::patch('/admin/grupos/{grupo}', [GrupoController::class, 'update'])->name('admin.grupos.update');
+    Route::delete('/admin/grupos/{grupo}', [GrupoController::class, 'destroy'])->name('admin.grupos.destroy');
 });
 
 // Servir archivos privados — solo usuarios autenticados del sistema

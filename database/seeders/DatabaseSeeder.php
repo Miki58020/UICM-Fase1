@@ -34,6 +34,9 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        $this->call([ProgramasSeeder::class]);
+        $this->call([
+            ProgramasSeeder::class,
+            PeriodosSeeder::class,
+        ]);
     }
 }

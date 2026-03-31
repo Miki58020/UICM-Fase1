@@ -40,7 +40,7 @@
                         {{ ucfirst($alumno->estado) }}
                     </span>
                     <p class="text-xs text-white/50">
-                        Ciclo {{ $alumno->grupo->ciclo ?? '—' }}
+                        Periodo {{ $alumno->grupo->periodo->nombre ?? '—' }}
                     </p>
                 </div>
 
@@ -235,7 +235,7 @@
                     </svg>
                     <h2 class="text-sm font-semibold text-gray-700">Materias asignadas</h2>
                     <span class="ml-auto text-xs text-gray-400">
-                        {{ $carga->count() }} materias — Ciclo {{ $alumno->grupo->ciclo ?? '—' }}
+                        {{ $carga->count() }} materias — Periodo {{ $alumno->grupo->periodo->nombre ?? '—' }}
                     </span>
                 </div>
 
@@ -325,11 +325,11 @@
                                  a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
                     <h2 class="text-sm font-semibold text-gray-700">Historial de pagos</h2>
-                    <span class="ml-auto text-xs text-gray-400">{{ $alumno->pagos->count() }} registros</span>
+                    <span class="ml-auto text-xs text-gray-400">{{ $pagos->count() }} registros</span>
                 </div>
 
                 {{-- Banner de estado de pago --}}
-                @php $pagoInscripcion = $alumno->pagos->where('concepto', 'inscripcion')->first(); @endphp
+                @php $pagoInscripcion = $pagos->where('concepto', 'inscripcion')->first(); @endphp
                 @if($pagoInscripcion)
                 <div class="px-6 py-3 flex items-center gap-3 border-b border-gray-100
                     {{ $pagoInscripcion->estado === 'aprobado' ? 'bg-green-50' : ($pagoInscripcion->estado === 'pendiente' ? 'bg-yellow-50' : 'bg-red-50') }}">
@@ -350,7 +350,7 @@
                 @endif
 
                 <div class="overflow-x-auto">
-                    @if ($alumno->pagos->isEmpty())
+                    @if ($pagos->isEmpty())
                         <div class="px-6 py-10 text-center text-sm text-gray-400">
                             Sin registros de pago.
                         </div>
@@ -367,7 +367,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @foreach ($alumno->pagos as $pago)
+                            @foreach ($pagos as $pago)
                             <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                                 <td class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap capitalize">
@@ -420,6 +420,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap">
+                                    @if ($pago->aspirante_id)
                                     <a href="{{ route('alumno.comprobante', $pago) }}"
                                        target="_blank"
                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors"
@@ -433,6 +434,9 @@
                                         </svg>
                                         Comprobante
                                     </a>
+                                    @else
+                                    <span class="text-xs text-gray-300">—</span>
+                                    @endif
                                 </td>
 
                             </tr>

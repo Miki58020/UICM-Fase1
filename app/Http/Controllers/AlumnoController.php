@@ -63,7 +63,7 @@ class AlumnoController extends Controller
     public function dashboard()
     {
         $alumno = Alumno::where('user_id', Auth::id())
-            ->with(['programa', 'grupo', 'pagos'])
+            ->with(['programa', 'grupo.periodo', 'pagos'])
             ->firstOrFail();
 
         $carga = $alumno->grupo_id
@@ -74,7 +74,13 @@ class AlumnoController extends Controller
 
         $totalCreditos = $carga->sum(fn($c) => $c->materia->creditos ?? 0);
 
-        return view('alumno.dashboard', compact('alumno', 'carga', 'totalCreditos'));
+        // Merge inscripción pagos (via aspirante_id) with reinscripción pagos (via alumno_id)
+        $pagosReinscripcion = Pago::where('alumno_id', $alumno->id)
+            ->where('concepto', 'reinscripcion')
+            ->get();
+        $pagos = $alumno->pagos->merge($pagosReinscripcion)->sortByDesc('created_at');
+
+        return view('alumno.dashboard', compact('alumno', 'carga', 'totalCreditos', 'pagos'));
     }
 
     public function cambiarPassword(Request $request)

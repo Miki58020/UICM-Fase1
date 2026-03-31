@@ -71,13 +71,6 @@
                        onmouseout="this.style.backgroundColor='transparent'; this.style.color='#0F4229'">
                         Generar otra carga
                     </a>
-                    <a href="{{ route('dashboard') }}"
-                       class="px-6 py-2.5 rounded-xl text-sm font-bold text-white text-center transition-colors duration-150"
-                       style="background-color: #D4AF37;"
-                       onmouseover="this.style.backgroundColor='#b8972e'"
-                       onmouseout="this.style.backgroundColor='#D4AF37'">
-                        Volver al panel
-                    </a>
                 </div>
 
             </div>
@@ -107,13 +100,13 @@
 
                 <div class="px-6 py-5"
                      x-data="{
-                         ciclo: '{{ request('ciclo', '') }}',
+                         periodo_id: '{{ request('periodo_id', '') }}',
                          programa_id: '{{ request('programa_id', '') }}',
                          cuatrimestre: '{{ request('cuatrimestre', '') }}',
-                         grupos: @js($grupos->map(fn($g) => ['id' => $g->id, 'clave' => $g->clave, 'ciclo' => $g->ciclo, 'programa_id' => $g->programa_id, 'cuatrimestre' => $g->cuatrimestre])),
+                         grupos: @js($grupos->map(fn($g) => ['id' => $g->id, 'clave' => $g->clave, 'periodo_id' => $g->periodo_id, 'programa_id' => $g->programa_id, 'cuatrimestre' => $g->cuatrimestre])),
                          get gruposFiltrados() {
                              return this.grupos.filter(g =>
-                                 (!this.ciclo        || g.ciclo         === this.ciclo) &&
+                                 (!this.periodo_id   || g.periodo_id    == this.periodo_id) &&
                                  (!this.programa_id  || g.programa_id   == this.programa_id) &&
                                  (!this.cuatrimestre || g.cuatrimestre  == this.cuatrimestre)
                              );
@@ -124,19 +117,19 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
 
-                            {{-- Ciclo --}}
+                            {{-- Periodo --}}
                             <div>
                                 <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                    Ciclo
+                                    Periodo
                                 </label>
-                                <select name="ciclo" x-model="ciclo"
+                                <select name="periodo_id" x-model="periodo_id"
                                         class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
                                                outline-none transition-all duration-150 bg-white"
                                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
                                         onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
-                                    <option value="">Todos los ciclos</option>
-                                    @foreach ($ciclos as $c)
-                                        <option value="{{ $c }}">{{ $c }}</option>
+                                    <option value="">Todos los periodos</option>
+                                    @foreach ($periodos as $p)
+                                        <option value="{{ $p->id }}">{{ $p->label }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -333,8 +326,8 @@
                         {{-- Info adicional --}}
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             <div class="bg-uicm-gray rounded-xl p-3 text-center">
-                                <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Ciclo</p>
-                                <p class="text-sm font-bold text-gray-800">{{ $grupo->ciclo }}</p>
+                                <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Periodo</p>
+                                <p class="text-sm font-bold text-gray-800">{{ $grupo->periodo->nombre ?? '—' }}</p>
                             </div>
                             <div class="bg-uicm-gray rounded-xl p-3 text-center">
                                 <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Cuatrimestre</p>
@@ -379,7 +372,10 @@
                                     <th class="px-6 py-3">Clave</th>
                                     <th class="px-6 py-3">Materia</th>
                                     <th class="px-6 py-3">Profesor asignado</th>
+                                    <th class="px-6 py-3">Horario</th>
+                                    <th class="px-6 py-3">Aula</th>
                                     <th class="px-6 py-3 text-center">Créditos</th>
+                                    <th class="px-6 py-3 text-right">Acción</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
@@ -391,14 +387,29 @@
                                     <td class="px-6 py-3 font-semibold text-gray-800">
                                         {{ $entrada->materia->nombre ?? '—' }}
                                     </td>
-                                    <td class="px-6 py-3 text-gray-600">
-                                        {{ $entrada->profesor->nombre ?? 'Sin asignar' }}
+                                    <td class="px-6 py-3">
+                                        @if($entrada->profesor)
+                                            <span class="text-gray-700">{{ $entrada->profesor->nombre }}</span>
+                                        @else
+                                            <span class="text-orange-500 font-medium text-xs">Sin asignar</span>
+                                        @endif
                                     </td>
+                                    <td class="px-6 py-3 text-gray-500 text-xs">{{ $entrada->horario ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-gray-500 text-xs">{{ $entrada->aula ?? '—' }}</td>
                                     <td class="px-6 py-3 text-center">
                                         <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white"
                                               style="background-color: #D4AF37;">
                                             {{ $entrada->materia->creditos ?? '—' }}
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-3 text-right">
+                                        <button onclick="abrirAsignacion({{ $entrada->id }}, '{{ addslashes($entrada->materia->nombre ?? '') }}', {{ $entrada->profesor_id ?? 'null' }}, '{{ addslashes($entrada->horario ?? '') }}', '{{ addslashes($entrada->aula ?? '') }}')"
+                                                class="text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors duration-150"
+                                                style="border-color: #0F4229; color: #0F4229;"
+                                                onmouseover="this.style.backgroundColor='#0F4229'; this.style.color='white'"
+                                                onmouseout="this.style.backgroundColor='transparent'; this.style.color='#0F4229'">
+                                            Asignar
+                                        </button>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -439,7 +450,7 @@
                         <p class="text-sm text-gray-500 mb-6 max-w-xs">
                             Se generará la carga académica para el grupo
                             <strong>{{ $grupo->clave }}</strong> ({{ $grupo->cuatrimestre }}° cuatrimestre)
-                            del ciclo <strong>{{ $grupo->ciclo }}</strong>, asignando las materias del programa
+                            del periodo <strong>{{ $grupo->periodo->label ?? '—' }}</strong>, asignando las materias del programa
                             <strong>{{ $grupo->programa->nombre }}</strong>.
                         </p>
 
@@ -469,23 +480,81 @@
 
         </div>{{-- /space-y-6 --}}
 
-        {{-- Volver --}}
-        <div class="mt-6">
-            <a href="{{ route('dashboard') }}"
-               class="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-150"
-               style="color: #0F4229;"
-               onmouseover="this.style.textDecoration='underline'"
-               onmouseout="this.style.textDecoration='none'">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Volver al panel
-            </a>
-        </div>
 
     </div>
 </section>
 
 </div>{{-- /x-data --}}
 
+{{-- Modal asignación de profesor/horario/aula --}}
+<div id="modal-asignacion" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-gray-800">Asignar profesor y horario</h3>
+                <p id="modal-materia-nombre" class="text-xs text-gray-400 mt-0.5"></p>
+            </div>
+            <button onclick="document.getElementById('modal-asignacion').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <form id="form-asignacion" method="POST" class="px-6 py-5 space-y-4">
+            @csrf @method('PATCH')
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Profesor</label>
+                <select id="asig-profesor" name="profesor_id"
+                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                    <option value="">— Sin asignar —</option>
+                    @foreach($profesores as $prof)
+                        <option value="{{ $prof->id }}">{{ $prof->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Horario</label>
+                    <input type="text" id="asig-horario" name="horario"
+                           placeholder="ej: Lun-Mié 08:00-10:00"
+                           class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Aula</label>
+                    <input type="text" id="asig-aula" name="aula"
+                           placeholder="ej: A-101"
+                           class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button" onclick="document.getElementById('modal-asignacion').classList.add('hidden')"
+                        class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                        style="background-color: #0F4229;"
+                        onmouseover="this.style.backgroundColor='#0a2f1c'"
+                        onmouseout="this.style.backgroundColor='#0F4229'">
+                    Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
+
+@push('scripts')
+<script>
+function abrirAsignacion(cargaId, materiaNombre, profesorId, horario, aula) {
+    document.getElementById('form-asignacion').action = '/admin/carga-academica/' + cargaId + '/actualizar';
+    document.getElementById('modal-materia-nombre').textContent = materiaNombre;
+    document.getElementById('asig-profesor').value = profesorId ?? '';
+    document.getElementById('asig-horario').value = horario;
+    document.getElementById('asig-aula').value = aula;
+    document.getElementById('modal-asignacion').classList.remove('hidden');
+}
+</script>
+@endpush

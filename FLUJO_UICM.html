@@ -16,7 +16,7 @@
         }
 
         .page {
-            max-width: 900px;
+            max-width: 960px;
             margin: 32px auto;
             background: white;
             border-radius: 12px;
@@ -65,6 +65,27 @@
         /* ── Contenido ── */
         .content { padding: 36px 40px 44px; }
 
+        /* ── Sección separator ── */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0 20px 60px;
+        }
+        .section-label span {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #9ca3af;
+        }
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
         /* ── Paso ── */
         .step {
             display: flex;
@@ -106,6 +127,15 @@
                 to bottom,
                 #d1fae5 0px,
                 #d1fae5 6px,
+                transparent 6px,
+                transparent 12px
+            );
+        }
+        .step-line.dashed-blue {
+            background: repeating-linear-gradient(
+                to bottom,
+                #bfdbfe 0px,
+                #bfdbfe 6px,
                 transparent 6px,
                 transparent 12px
             );
@@ -206,13 +236,13 @@
         .result-ok   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
         .result-warn { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
         .result-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .result-cycle{ background: #fdf4ff; color: #7e22ce; border: 1px solid #e9d5ff; }
 
-        .result-box::before {
-            font-size: 13px;
-        }
-        .result-ok::before   { content: '✓'; }
-        .result-warn::before { content: '⚠'; }
-        .result-info::before { content: 'ℹ'; }
+        .result-box::before { font-size: 13px; }
+        .result-ok::before    { content: '✓'; }
+        .result-warn::before  { content: '⚠'; }
+        .result-info::before  { content: 'ℹ'; }
+        .result-cycle::before { content: '↻'; }
 
         /* Tabla de BD */
         .db-table {
@@ -259,6 +289,56 @@
             font-size: 11px;
         }
 
+        /* Roles table */
+        .roles-table {
+            margin-top: 28px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        .roles-table-header {
+            background: #1e1b4b;
+            color: white;
+            padding: 10px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+        }
+        .roles-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .roles-table thead tr { background: #f9fafb; }
+        .roles-table thead th {
+            text-align: left;
+            padding: 8px 14px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .roles-table tbody td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #374151;
+            vertical-align: top;
+        }
+        .roles-table tbody tr:last-child td { border-bottom: none; }
+        .role-badge {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 20px;
+            color: white;
+        }
+
         /* Footer */
         .footer {
             background: #f9fafb;
@@ -285,10 +365,10 @@
     <div class="header">
         <p class="header-label">Universidad Internacional Cuba México — UICM</p>
         <h1>Flujo del Sistema — Fase 1</h1>
-        <p class="header-sub">Cadena de procesos institucionales · Desde el registro del aspirante hasta el portal del alumno</p>
+        <p class="header-sub">Cadena de procesos institucionales · Desde el registro del aspirante hasta la reinscripción del alumno</p>
         <div class="header-bar">
             <div class="header-stat">
-                <span>7</span>
+                <span>8</span>
                 <small>Etapas</small>
             </div>
             <div class="divider-v"></div>
@@ -298,12 +378,12 @@
             </div>
             <div class="divider-v"></div>
             <div class="header-stat">
-                <span>6</span>
+                <span>11</span>
                 <small>Tablas BD</small>
             </div>
             <div class="divider-v"></div>
             <div class="header-stat">
-                <span>24</span>
+                <span>26</span>
                 <small>Vistas</small>
             </div>
         </div>
@@ -311,6 +391,8 @@
 
     <!-- FLUJO -->
     <div class="content">
+
+        <div class="section-label"><span>Admisión inicial</span></div>
 
         <!-- PASO 1 -->
         <div class="step">
@@ -324,14 +406,14 @@
                     <span class="step-title">Registro e inicio del proceso</span>
                 </div>
                 <div class="step-card">
-                    <p>El aspirante accede al portal público y completa el formulario de solicitud de ingreso con sus datos personales y académicos.</p>
+                    <p>El aspirante accede al portal público y completa el formulario de solicitud de ingreso con sus datos personales, académicos y documentos requeridos.</p>
                     <ul class="action-list">
-                        <li>Ingresa a <span class="url-tag">/registro</span> y llena el formulario completo</li>
+                        <li>Ingresa a <span class="url-tag">/registro</span> y llena el formulario completo (datos, documentos, programa)</li>
                         <li>El sistema genera un <strong>folio único</strong> de seguimiento</li>
-                        <li>Recibe confirmación en <span class="url-tag">/confirmacion</span> con su número de folio</li>
-                        <li>Puede consultar el estado de su solicitud en <span class="url-tag">/seguimiento</span></li>
+                        <li>Recibe confirmación en <span class="url-tag">/confirmacion</span> con su folio</li>
+                        <li>Puede consultar el estado de su solicitud y la línea de tiempo en <span class="url-tag">/seguimiento</span> y <span class="url-tag">/resultado</span></li>
                     </ul>
-                    <div class="result-info" style="margin-top: 10px;">Estado inicial del aspirante: <strong>Pendiente de revisión</strong></div>
+                    <div class="result-info" style="margin-top: 10px;">Estado inicial: <strong>pendiente</strong> — en espera de revisión por Control Escolar</div>
                 </div>
             </div>
         </div>
@@ -348,15 +430,15 @@
                     <span class="step-title">Validación del expediente</span>
                 </div>
                 <div class="step-card">
-                    <p>El personal de Control Escolar revisa los expedientes recibidos, valida la documentación entregada y decide si el aspirante puede continuar al siguiente paso.</p>
+                    <p>Control Escolar revisa el expediente completo del aspirante (datos y documentos) y toma una decisión sobre su admisión.</p>
                     <ul class="action-list">
-                        <li>Accede al listado en <span class="url-tag">/admin/aspirantes</span></li>
-                        <li>Revisa la ficha completa y documentos en <span class="url-tag">/admin/aspirantes/show</span></li>
-                        <li>Aprueba el expediente → estado cambia a <strong>"Pago pendiente"</strong></li>
-                        <li>O rechaza el expediente → estado cambia a <strong>"Rechazado"</strong></li>
+                        <li>Accede al listado de aspirantes en <span class="url-tag">/admin/aspirantes</span></li>
+                        <li>Revisa la ficha y documentos del aspirante en <span class="url-tag">/admin/aspirantes/{id}</span></li>
+                        <li><strong>Aprueba</strong> el expediente → el aspirante puede proceder al pago</li>
+                        <li><strong>Rechaza</strong> el expediente → proceso detenido, aspirante notificado por correo</li>
                     </ul>
-                    <div class="result-ok" style="margin-top:10px;">Si aprueba: el aspirante puede avanzar al pago de inscripción</div>
-                    <div class="result-warn" style="margin-top:6px;">Si rechaza: el proceso se detiene y se notifica al aspirante</div>
+                    <div class="result-ok" style="margin-top:10px;">Si aprueba: estado cambia a <strong>aprobado</strong> — botón de pago habilitado para el aspirante</div>
+                    <div class="result-warn" style="margin-top:6px;">Si rechaza: estado cambia a <strong>rechazado</strong> — flujo terminado</div>
                 </div>
             </div>
         </div>
@@ -373,16 +455,16 @@
                     <span class="step-title">Pago de inscripción — MercadoPago</span>
                 </div>
                 <div class="step-card">
-                    <p>El aspirante aprobado consulta su resultado y encuentra disponible el botón de pago. El pago se realiza en línea a través del <strong>Payment Brick de MercadoPago</strong> integrado directamente en la plataforma (tarjeta de crédito/débito, transferencia SPEI, efectivo, etc.). Ya no se requiere subir comprobante.</p>
+                    <p>El aspirante aprobado realiza su pago de inscripción en línea a través del <strong>Payment Brick de MercadoPago</strong> integrado en la plataforma. Se aceptan tarjeta de crédito/débito, transferencia SPEI, OXXO y más.</p>
                     <ul class="action-list">
                         <li>Consulta su estado en <span class="url-tag">/resultado</span> — línea de tiempo + botón <em>"Realizar pago"</em></li>
-                        <li>Accede a <span class="url-tag">/aspirante/pago</span> — ve sus datos y el Payment Brick de MercadoPago embebido</li>
-                        <li>Completa el pago en el brick; MercadoPago redirige a <span class="url-tag">/aspirante/pago/retorno</span></li>
-                        <li>El sistema evalúa el resultado y muestra la pantalla final en <span class="url-tag">/aspirante/pago-confirmacion</span></li>
-                        <li>Simultáneamente MercadoPago notifica al sistema vía <span class="url-tag">POST /mp/webhook</span> (IPN)</li>
+                        <li>Accede a <span class="url-tag">/aspirante/pago</span> — datos personales + Payment Brick embebido</li>
+                        <li>Completa el pago; MercadoPago redirige a <span class="url-tag">/aspirante/pago/retorno</span></li>
+                        <li>Pantalla de confirmación en <span class="url-tag">/aspirante/pago-confirmacion</span></li>
+                        <li>MercadoPago notifica automáticamente al sistema vía <span class="url-tag">POST /mp/webhook</span> (IPN)</li>
                     </ul>
-                    <div class="result-ok" style="margin-top:10px;">Si el pago es aprobado: el registro se crea automáticamente en la tabla <strong>pagos</strong> con estado <em>pendiente</em> (en espera de validación de Finanzas)</div>
-                    <div class="result-warn" style="margin-top:6px;">Si el pago es rechazado o pendiente: el aspirante puede reintentar</div>
+                    <div class="result-ok" style="margin-top:10px;">Si aprobado: se crea registro en <strong>pagos</strong> con <em>concepto=inscripcion</em>, listo para revisión de Finanzas</div>
+                    <div class="result-warn" style="margin-top:6px;">Si rechazado o pendiente (ej. OXXO): el aspirante puede reintentar</div>
                 </div>
             </div>
         </div>
@@ -399,14 +481,15 @@
                     <span class="step-title">Revisión y validación del pago</span>
                 </div>
                 <div class="step-card">
-                    <p>El pago queda registrado automáticamente en la base de datos al confirmarse por MercadoPago (vía webhook). El área de Finanzas revisa el listado de pagos recibidos, verifica los datos y emite la validación final para autorizar la inscripción.</p>
+                    <p>Finanzas recibe el listado de pagos registrados (inscripción y reinscripción). Revisa los datos, verifica contra el sistema de MercadoPago cuando aplica, y emite la validación final.</p>
                     <ul class="action-list">
-                        <li>Accede al listado de pagos en <span class="url-tag">/finanzas/pagos</span> — ve folio, aspirante, monto, estado MP y fecha</li>
-                        <li>Revisa el detalle del pago en <span class="url-tag">/finanzas/pagos/{id}</span> — datos del pago y del aspirante</li>
-                        <li>Aprueba manualmente → estado cambia a <strong>"Pago validado"</strong></li>
-                        <li>O rechaza → el aspirante puede reintentar el pago</li>
+                        <li>Accede al listado en <span class="url-tag">/finanzas/pagos</span> — folio/matrícula, nombre, tipo (inscripción/reinscripción), monto, estado</li>
+                        <li>Revisa el detalle en <span class="url-tag">/finanzas/pagos/{id}</span> — incluye detalle de transacción de MP si aplica</li>
+                        <li><strong>Aprueba</strong> manualmente → estado cambia a <em>aprobado</em>, fecha_pago registrada</li>
+                        <li><strong>Rechaza</strong> con motivo → estado cambia a <em>rechazado</em>, aspirante/alumno notificado</li>
                     </ul>
-                    <div class="result-ok" style="margin-top:10px;">Si valida: el aspirante queda listo para ser inscrito y recibir su matrícula</div>
+                    <div class="result-ok" style="margin-top:10px;">Si valida inscripción: el aspirante queda listo para recibir su matrícula</div>
+                    <div class="result-ok" style="margin-top:6px;">Si valida reinscripción: Control Escolar puede completar el proceso de reingreso</div>
                 </div>
             </div>
         </div>
@@ -420,21 +503,23 @@
             <div class="step-body">
                 <div class="step-header">
                     <span class="step-role role-control">Control Escolar</span>
-                    <span class="step-title">Generación de matrícula y cuenta</span>
+                    <span class="step-title">Generación de matrícula y acceso al portal</span>
                 </div>
                 <div class="step-card">
-                    <p>Con el pago validado, Control Escolar procede a inscribir formalmente al alumno: genera su número de matrícula institucional y crea sus credenciales de acceso al sistema.</p>
+                    <p>Con el pago de inscripción validado, Control Escolar formaliza la inscripción: genera la matrícula institucional y crea las credenciales de acceso al portal estudiantil.</p>
                     <ul class="action-list">
-                        <li>Accede al listado de inscritos en <span class="url-tag">/admin/inscripciones</span></li>
-                        <li>Ejecuta la inscripción en <span class="url-tag">/admin/inscripciones/generar</span></li>
-                        <li>El sistema genera matrícula tipo <strong>UICM-2026-IS-001</strong></li>
-                        <li>Se crean credenciales: correo institucional y contraseña temporal</li>
-                        <li>El aspirante deja de existir como aspirante y pasa a ser <strong>alumno</strong></li>
+                        <li>Accede al listado de inscritos listos en <span class="url-tag">/admin/inscripciones</span></li>
+                        <li>Genera el acceso — el sistema asigna matrícula tipo <strong>UICM-2026-IS-001</strong></li>
+                        <li>Se crea cuenta de usuario con correo <strong>matricula@uicm.edu.mx</strong> y contraseña temporal</li>
+                        <li>El alumno recibe sus credenciales por correo electrónico automáticamente</li>
+                        <li>También puede reenviar credenciales desde <span class="url-tag">/admin/inscripciones</span> si es necesario</li>
                     </ul>
-                    <div class="result-ok" style="margin-top:10px;">El alumno queda registrado en el sistema con acceso al portal estudiantil</div>
+                    <div class="result-ok" style="margin-top:10px;">El aspirante pasa a ser <strong>alumno activo</strong> con acceso al portal estudiantil</div>
                 </div>
             </div>
         </div>
+
+        <div class="section-label"><span>Operación académica</span></div>
 
         <!-- PASO 6 -->
         <div class="step">
@@ -445,17 +530,18 @@
             <div class="step-body">
                 <div class="step-header">
                     <span class="step-role role-coord">Coordinación Académica</span>
-                    <span class="step-title">Configuración académica del ciclo</span>
+                    <span class="step-title">Configuración del período académico</span>
                 </div>
                 <div class="step-card">
-                    <p>La Coordinación Académica prepara la estructura del ciclo escolar: registra las materias, asigna a los profesores y genera la carga académica por grupo.</p>
+                    <p>Coordinación gestiona toda la estructura académica del período: abre el período, crea los grupos, registra materias y profesores, y genera la carga académica asignando materias a cada grupo con su profesor, horario y aula.</p>
                     <ul class="action-list">
-                        <li>Gestiona el catálogo de materias en <span class="url-tag">/admin/materias</span></li>
-                        <li>Registra y actualiza la planta docente en <span class="url-tag">/admin/profesores</span></li>
-                        <li>Genera la carga académica por grupo y ciclo en <span class="url-tag">/admin/carga-academica</span></li>
-                        <li>Asigna materias, profesores, horarios y aulas a cada grupo</li>
+                        <li>Crea y activa el <strong>período académico</strong> en <span class="url-tag">/admin/periodos</span> (ej: 2026-1 — Primer Cuatrimestre 2026)</li>
+                        <li>Crea los <strong>grupos</strong> del período en <span class="url-tag">/admin/grupos</span> — asociados a programa, período y cuatrimestre</li>
+                        <li>Gestiona el catálogo de <strong>materias</strong> en <span class="url-tag">/admin/materias</span> por programa y cuatrimestre</li>
+                        <li>Registra y actualiza la <strong>planta docente</strong> en <span class="url-tag">/admin/profesores</span></li>
+                        <li>Genera y configura la <strong>carga académica</strong> en <span class="url-tag">/admin/carga-academica</span> — asigna profesor, horario y aula por materia y grupo</li>
                     </ul>
-                    <div class="result-ok" style="margin-top:10px;">Una vez generada la carga, el alumno puede ver sus materias en su portal</div>
+                    <div class="result-ok" style="margin-top:10px;">Una vez generada la carga, los alumnos asignados al grupo pueden ver sus materias en su portal</div>
                 </div>
             </div>
         </div>
@@ -464,6 +550,7 @@
         <div class="step">
             <div class="step-timeline">
                 <div class="step-circle" style="background-color: #0ea5e9;">7</div>
+                <div class="step-line dashed-blue"></div>
             </div>
             <div class="step-body">
                 <div class="step-header">
@@ -471,22 +558,97 @@
                     <span class="step-title">Acceso al portal estudiantil</span>
                 </div>
                 <div class="step-card">
-                    <p>El alumno ya inscrito accede al sistema con sus credenciales institucionales y puede consultar toda su información académica y administrativa.</p>
+                    <p>El alumno accede al sistema con sus credenciales institucionales y consulta toda su información académica y financiera del período activo.</p>
                     <ul class="action-list">
-                        <li>Inicia sesión en <span class="url-tag">/login</span> con su correo y contraseña institucional</li>
+                        <li>Inicia sesión en <span class="url-tag">/login</span> con su correo <em>matricula@uicm.edu.mx</em> y contraseña</li>
                         <li>Accede a su portal en <span class="url-tag">/alumno</span></li>
-                        <li>Consulta: matrícula, programa, grupo, cuatrimestre y estado</li>
-                        <li>Revisa sus materias asignadas: clave, profesor, horario y aula</li>
-                        <li>Consulta su historial de pagos con estados Pagado / Pendiente</li>
+                        <li>Consulta: matrícula, programa, grupo actual, cuatrimestre y estado administrativo</li>
+                        <li>Revisa materias asignadas: clave, nombre, profesor, horario y aula</li>
+                        <li>Consulta historial de pagos — inscripción y reinscripciones con sus estados</li>
+                        <li>Puede cambiar su contraseña desde el portal</li>
                     </ul>
-                    <div class="result-ok" style="margin-top:10px;">El alumno tiene acceso completo a su información académica y financiera</div>
+                    <div class="result-cycle" style="margin-top:10px;">Al concluir el período → el ciclo se repite para el siguiente cuatrimestre vía <strong>reinscripción</strong></div>
                 </div>
             </div>
         </div>
 
+        <div class="section-label"><span>Ciclo de reinscripción</span></div>
+
+        <!-- PASO 8 -->
+        <div class="step">
+            <div class="step-timeline">
+                <div class="step-circle" style="background-color: #0F4229;">8</div>
+            </div>
+            <div class="step-body">
+                <div class="step-header">
+                    <span class="step-role role-control">Control Escolar</span>
+                    <span class="step-role role-finanzas">Finanzas</span>
+                    <span class="step-title">Reinscripción al siguiente período</span>
+                </div>
+                <div class="step-card">
+                    <p>Para cada nuevo período, los alumnos activos pasan por un proceso de reinscripción que incluye el cobro correspondiente y la asignación a un nuevo grupo. El cuatrimestre avanza automáticamente al completar el proceso.</p>
+                    <ul class="action-list">
+                        <li><strong>[Control Escolar]</strong> Genera el cobro de reinscripción en <span class="url-tag">/admin/reinscripciones</span> — crea pago con <em>concepto=reinscripcion</em> ligado al alumno</li>
+                        <li><strong>[Finanzas]</strong> Valida el pago en <span class="url-tag">/finanzas/pagos</span> — aparece con badge <em>"Reinscripción"</em></li>
+                        <li><strong>[Control Escolar]</strong> Con pago aprobado, ejecuta <em>"Completar reinscripción"</em> — selecciona el nuevo grupo del período activo</li>
+                        <li>El sistema actualiza <strong>grupo_id</strong> del alumno y avanza <strong>cuatrimestre_actual + 1</strong></li>
+                        <li>El alumno ya verá las nuevas materias en su portal al consultar <span class="url-tag">/alumno</span></li>
+                    </ul>
+                    <div class="result-ok" style="margin-top:10px;">Reinscripción completada → el alumno continúa en el siguiente cuatrimestre con su nuevo grupo y carga académica</div>
+                    <div class="result-cycle" style="margin-top:6px;">Este ciclo (pasos 6 → 7 → 8) se repite cada cuatrimestre durante toda la trayectoria del alumno</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA DE ROLES -->
+        <div class="roles-table">
+            <div class="roles-table-header">Roles del sistema y accesos</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rol</th>
+                        <th>Módulos accesibles</th>
+                        <th>Tipo de acceso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="role-badge" style="background:#EFAD5A;">aspirante</span></td>
+                        <td>/registro, /seguimiento, /resultado, /aspirante/pago</td>
+                        <td>Público (sin login)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="role-badge" style="background:#0F4229;">control_escolar</span></td>
+                        <td>Aspirantes, Inscripciones, Alumnos, Reinscripciones, Solicitudes de contraseña</td>
+                        <td>Autenticado</td>
+                    </tr>
+                    <tr>
+                        <td><span class="role-badge" style="background:#D4AF37; color:#1a1a2e;">finanzas</span></td>
+                        <td>Pagos (inscripción + reinscripción)</td>
+                        <td>Autenticado</td>
+                    </tr>
+                    <tr>
+                        <td><span class="role-badge" style="background:#6366f1;">coordinacion</span></td>
+                        <td>Periodos, Grupos, Materias, Profesores, Carga académica</td>
+                        <td>Autenticado</td>
+                    </tr>
+                    <tr>
+                        <td><span class="role-badge" style="background:#374151;">admin</span></td>
+                        <td>Todos los módulos anteriores + Gestión de usuarios del sistema</td>
+                        <td>Autenticado</td>
+                    </tr>
+                    <tr>
+                        <td><span class="role-badge" style="background:#0ea5e9;">alumno</span></td>
+                        <td>Portal estudiantil — materias, pagos, cambio de contraseña</td>
+                        <td>Autenticado</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
         <!-- TABLA DE BD -->
         <div class="db-table">
-            <div class="db-table-header">Tablas de base de datos requeridas para el backend</div>
+            <div class="db-table-header">Tablas de base de datos — esquema actual</div>
             <table>
                 <thead>
                     <tr>
@@ -498,46 +660,70 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td>users</td>
+                        <td>Cuentas de acceso al sistema</td>
+                        <td>name, apellido_paterno, apellido_materno, email, password, rol</td>
+                        <td>alumnos</td>
+                    </tr>
+                    <tr>
                         <td>aspirantes</td>
-                        <td>Solicitudes de ingreso</td>
-                        <td>folio, nombre, programa, estado, documentos</td>
-                        <td>pagos, users</td>
+                        <td>Solicitudes de ingreso con documentos</td>
+                        <td>folio, nombre, programa_id, estado, fecha_nacimiento, documentos (urls)</td>
+                        <td>pagos, alumnos, programas</td>
                     </tr>
                     <tr>
                         <td>pagos</td>
-                        <td>Pagos de inscripción vía MercadoPago</td>
-                        <td>aspirante_id, alumno_id, monto, mp_preference_id, mp_payment_id, estado, concepto</td>
+                        <td>Pagos de inscripción y reinscripción</td>
+                        <td>aspirante_id, alumno_id, concepto (inscripcion/reinscripcion), periodo, monto, estado, mp_preference_id, mp_payment_id</td>
                         <td>aspirantes, alumnos</td>
                     </tr>
                     <tr>
-                        <td>users</td>
-                        <td>Cuentas de acceso al sistema</td>
-                        <td>name, email, password, role</td>
-                        <td>alumnos, admins</td>
+                        <td>alumnos</td>
+                        <td>Perfil académico del estudiante inscrito</td>
+                        <td>user_id, aspirante_id, matricula, programa_id, grupo_id, cuatrimestre_actual, estado</td>
+                        <td>users, aspirantes, programas, grupos, pagos</td>
                     </tr>
                     <tr>
-                        <td>alumnos</td>
-                        <td>Perfil académico del estudiante</td>
-                        <td>user_id, matricula, programa, grupo, cuatrimestre</td>
-                        <td>users, grupos, materias</td>
+                        <td>programas</td>
+                        <td>Catálogo de programas académicos</td>
+                        <td>nombre, nivel (licenciatura/maestria/doctorado), clave</td>
+                        <td>aspirantes, alumnos, materias, grupos</td>
+                    </tr>
+                    <tr>
+                        <td>periodos</td>
+                        <td>Períodos académicos (cuatrimestres)</td>
+                        <td>nombre (2026-1), label, fecha_inicio, fecha_fin, estado (proximo/activo/cerrado)</td>
+                        <td>grupos, carga_academica</td>
+                    </tr>
+                    <tr>
+                        <td>grupos</td>
+                        <td>Grupos de alumnos por período y programa</td>
+                        <td>clave, programa_id, periodo_id, cuatrimestre, capacidad</td>
+                        <td>alumnos, carga_academica, periodos, programas</td>
+                    </tr>
+                    <tr>
+                        <td>materias</td>
+                        <td>Catálogo de materias por programa</td>
+                        <td>clave, nombre, programa_id, cuatrimestre, creditos, activo</td>
+                        <td>carga_academica, programas</td>
                     </tr>
                     <tr>
                         <td>profesores</td>
                         <td>Planta docente</td>
-                        <td>nombre, correo, telefono, especialidad, estado</td>
-                        <td>carga_academica</td>
-                    </tr>
-                    <tr>
-                        <td>materias</td>
-                        <td>Catálogo de materias</td>
-                        <td>clave, nombre, programa, cuatrimestre, creditos, estado</td>
+                        <td>nombre, correo, telefono, especialidad, activo</td>
                         <td>carga_academica</td>
                     </tr>
                     <tr>
                         <td>carga_academica</td>
-                        <td>Asignación de materias por ciclo y grupo</td>
-                        <td>ciclo, grupo, materia_id, profesor_id, horario, aula</td>
-                        <td>materias, profesores, alumnos</td>
+                        <td>Asignación materia-grupo-período</td>
+                        <td>grupo_id, materia_id, periodo_id, profesor_id, horario, aula</td>
+                        <td>grupos, materias, profesores, periodos</td>
+                    </tr>
+                    <tr>
+                        <td>solicitudes_contrasena</td>
+                        <td>Solicitudes de recuperación de contraseña</td>
+                        <td>user_id, token, estado, atendida_en</td>
+                        <td>users</td>
                     </tr>
                 </tbody>
             </table>
@@ -547,8 +733,8 @@
 
     <!-- FOOTER -->
     <div class="footer">
-        <p><strong>UICM — Sistema de Gestión Universitaria</strong> · Fase 1 · Laravel 12 + Tailwind CSS + Alpine.js</p>
-        <p>Base URL: <strong>http://localhost:8000</strong></p>
+        <p><strong>UICM — Sistema de Gestión Universitaria</strong> · Fase 1 · Laravel 11 + Tailwind CSS + Alpine.js + MercadoPago</p>
+        <p>Actualizado: <strong>Marzo 2026</strong></p>
     </div>
 
 </div>

@@ -8,7 +8,7 @@
 $gruposJson = $grupos->map(fn($g) => [
     'id'          => $g->id,
     'clave'       => $g->clave,
-    'ciclo'       => $g->ciclo,
+    'periodo'     => $g->periodo->nombre ?? '',
     'cuatrimestre'=> $g->cuatrimestre,
     'programa_id' => $g->programa_id,
 ])->values()->toJson();
@@ -374,7 +374,7 @@ $gruposJson = $grupos->map(fn($g) => [
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                         <option value="">Sin grupo asignado</option>
                         <template x-for="g in gruposFiltrados()" :key="g.id">
-                            <option :value="g.id" x-text="g.clave + ' · Cuatrimestre ' + g.cuatrimestre + ' · ' + g.ciclo"></option>
+                            <option :value="g.id" x-text="g.clave + ' · Cuatrimestre ' + g.cuatrimestre + ' · ' + g.periodo"></option>
                         </template>
                     </select>
                     <p x-show="gruposFiltrados().length === 0"

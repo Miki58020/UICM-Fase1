@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('grupos', function (Blueprint $table) {
             $table->id();
-            $table->string('clave', 20)->unique();  // ej: IS-101
+            $table->string('clave', 20)->unique();
             $table->foreignId('programa_id')->constrained('programas');
-            $table->string('ciclo', 10);             // ej: 2026-1
+            $table->foreignId('periodo_id')->constrained('periodos');
             $table->unsignedTinyInteger('cuatrimestre');
             $table->unsignedSmallInteger('capacidad')->default(30);
             $table->timestamps();

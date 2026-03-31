@@ -260,13 +260,13 @@ class PagoController extends Controller
 
     public function index()
     {
-        $pagos = Pago::with('aspirante.programa')->latest()->get();
+        $pagos = Pago::with(['aspirante.programa', 'alumno.programa'])->latest()->get();
         return view('finanzas.pagos.index', compact('pagos'));
     }
 
     public function show(Pago $pago)
     {
-        $pago->load('aspirante.programa');
+        $pago->load(['aspirante.programa', 'alumno.programa']);
 
         $mpPago = null;
 
@@ -290,9 +290,15 @@ class PagoController extends Controller
             abort(403, 'Este pago ya fue procesado.');
         }
 
-        $pago->update(['estado' => 'aprobado']);
+        $pago->update([
+            'estado'     => 'aprobado',
+            'fecha_pago' => $pago->fecha_pago ?? now()->toDateString(),
+        ]);
 
-        Mail::to($pago->aspirante->email)->send(new PagoAprobado($pago));
+        $email = $pago->aspirante?->email ?? $pago->alumno?->email;
+        if ($email) {
+            Mail::to($email)->send(new PagoAprobado($pago));
+        }
 
         return redirect()->back()->with('success', 'Pago aprobado correctamente.');
     }
@@ -312,7 +318,10 @@ class PagoController extends Controller
             'observaciones' => $request->observaciones,
         ]);
 
-        Mail::to($pago->aspirante->email)->send(new PagoRechazado($pago));
+        $email = $pago->aspirante?->email ?? $pago->alumno?->email;
+        if ($email) {
+            Mail::to($email)->send(new PagoRechazado($pago));
+        }
 
         return redirect()->back()->with('success', 'Pago rechazado correctamente.');
     }

@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Grupo extends Model
 {
-    protected $fillable = ['clave', 'programa_id', 'ciclo', 'cuatrimestre', 'capacidad'];
+    protected $fillable = ['clave', 'programa_id', 'periodo_id', 'cuatrimestre', 'capacidad'];
 
     public function programa()
     {
         return $this->belongsTo(Programa::class);
+    }
+
+    public function periodo()
+    {
+        return $this->belongsTo(Periodo::class);
     }
 
     public function alumnos()

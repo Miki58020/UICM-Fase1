@@ -53,9 +53,14 @@
     </div>
 
     <div class="body">
-        <p class="greeting">Estimado/a {{ $pago->aspirante->nombre }} {{ $pago->aspirante->apellido_paterno }},</p>
+        @php
+            $persona = $pago->aspirante ?? $pago->alumno;
+            $ref = $pago->aspirante?->folio ?? ($pago->alumno ? 'MAT-'.$pago->alumno->matricula : '—');
+            $esReinscripcion = $pago->concepto === 'reinscripcion';
+        @endphp
+        <p class="greeting">Estimado/a {{ $persona?->nombre }} {{ $persona?->apellido_paterno }},</p>
 
-        <p>Tu comprobante de pago ha sido revisado y:</p>
+        <p>Tu comprobante de {{ $esReinscripcion ? 'reinscripción' : 'inscripción' }} ha sido revisado y:</p>
 
         <div class="badge-wrap">
             <span class="badge">✓ &nbsp; PAGO VALIDADO</span>
@@ -64,16 +69,16 @@
         <div class="detail-wrap">
             <table class="detail-table">
                 <tr>
-                    <td>Folio de solicitud</td>
-                    <td>{{ $pago->aspirante->folio }}</td>
+                    <td>{{ $esReinscripcion ? 'Matrícula' : 'Folio de solicitud' }}</td>
+                    <td>{{ $ref }}</td>
                 </tr>
                 <tr>
                     <td>Concepto</td>
-                    <td>Pago de inscripción</td>
+                    <td>Pago de {{ $esReinscripcion ? 'reinscripción' : 'inscripción' }}</td>
                 </tr>
                 <tr>
                     <td>Fecha de pago</td>
-                    <td>{{ \Carbon\Carbon::parse($pago->fecha_pago)->format('d/m/Y') }}</td>
+                    <td>{{ $pago->fecha_pago ? \Carbon\Carbon::parse($pago->fecha_pago)->format('d/m/Y') : '—' }}</td>
                 </tr>
                 <tr class="monto">
                     <td>Monto</td>
@@ -83,7 +88,11 @@
         </div>
 
         <div class="info-box">
-            El área de <strong>Control Escolar</strong> finalizará tu proceso de inscripción. En los próximos días hábiles recibirás tus credenciales de acceso al portal estudiantil.
+            @if ($esReinscripcion)
+                El área de <strong>Control Escolar</strong> finalizará tu proceso de reinscripción y te asignará grupo para el nuevo período.
+            @else
+                El área de <strong>Control Escolar</strong> finalizará tu proceso de inscripción. En los próximos días hábiles recibirás tus credenciales de acceso al portal estudiantil.
+            @endif
         </div>
 
         <hr class="divider">

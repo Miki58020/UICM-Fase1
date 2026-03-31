@@ -12,14 +12,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('grupo_id')->constrained('grupos');
             $table->foreignId('materia_id')->constrained('materias');
-            $table->foreignId('profesor_id')->constrained('profesores');
-            $table->string('horario', 50)->nullable();  // ej: Lun-Mié 08:00-10:00
-            $table->string('aula', 20)->nullable();     // ej: A-101
-            $table->string('ciclo', 10);                // ej: 2026-1
+            $table->foreignId('profesor_id')->nullable()->constrained('profesores')->nullOnDelete();
+            $table->string('horario', 50)->nullable();
+            $table->string('aula', 20)->nullable();
+            $table->foreignId('periodo_id')->constrained('periodos');
             $table->timestamps();
 
-            // Un grupo no puede tener la misma materia dos veces en el mismo ciclo
-            $table->unique(['grupo_id', 'materia_id', 'ciclo']);
+            $table->unique(['grupo_id', 'materia_id', 'periodo_id']);
         });
     }
 

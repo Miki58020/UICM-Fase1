@@ -37,6 +37,11 @@ class Alumno extends Model
         return $this->hasMany(Pago::class, 'aspirante_id', 'aspirante_id');
     }
 
+    public function reinscripciones()
+    {
+        return $this->hasMany(Pago::class);
+    }
+
     public function getNombreCompletoAttribute(): string
     {
         return "{$this->nombre} {$this->apellido_paterno} {$this->apellido_materno}";

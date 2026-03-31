@@ -30,6 +30,9 @@
                         <x-nav-link :href="route('admin.alumnos.index')" :active="request()->routeIs('admin.alumnos.*')">
                             Alumnos
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.reinscripciones.index')" :active="request()->routeIs('admin.reinscripciones.*')">
+                            Reinscripciones
+                        </x-nav-link>
                         @php
                             $pendientesContrasena = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
                                 ->when($rol === 'control_escolar', fn($q) => $q->whereHas('user', fn($u) => $u->where('rol', 'alumno')))
@@ -69,6 +72,12 @@
 
                     {{-- Coordinación + Admin --}}
                     @if(in_array($rol, ['coordinacion', 'admin']))
+                        <x-nav-link :href="route('admin.periodos.index')" :active="request()->routeIs('admin.periodos.*')">
+                            Periodos
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.grupos.index')" :active="request()->routeIs('admin.grupos.*')">
+                            Grupos
+                        </x-nav-link>
                         <x-nav-link :href="route('admin.materias.index')" :active="request()->routeIs('admin.materias.*')">
                             Materias
                         </x-nav-link>
@@ -157,6 +166,9 @@
                 <x-responsive-nav-link :href="route('admin.alumnos.index')" :active="request()->routeIs('admin.alumnos.*')">
                     Alumnos
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.reinscripciones.index')" :active="request()->routeIs('admin.reinscripciones.*')">
+                    Reinscripciones
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.solicitudes-contrasena.index')" :active="request()->routeIs('admin.solicitudes-contrasena.*')">
                     Contraseñas
                 </x-responsive-nav-link>
@@ -169,6 +181,12 @@
             @endif
 
             @if(in_array($rol, ['coordinacion', 'admin']))
+                <x-responsive-nav-link :href="route('admin.periodos.index')" :active="request()->routeIs('admin.periodos.*')">
+                    Periodos
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.grupos.index')" :active="request()->routeIs('admin.grupos.*')">
+                    Grupos
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.materias.index')" :active="request()->routeIs('admin.materias.*')">
                     Materias
                 </x-responsive-nav-link>

@@ -141,9 +141,10 @@
 
                     <thead>
                         <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            <th class="px-6 py-3">Folio</th>
+                            <th class="px-6 py-3">Referencia</th>
                             <th class="px-6 py-3">Nombre</th>
                             <th class="px-6 py-3">Programa</th>
+                            <th class="px-6 py-3">Tipo</th>
                             <th class="px-6 py-3">Monto</th>
                             <th class="px-6 py-3">Fecha</th>
                             <th class="px-6 py-3">Estado</th>
@@ -153,21 +154,34 @@
 
                     <tbody class="divide-y divide-gray-100" x-ref="tbody">
                         @forelse ($pagos as $pago)
+                        @php
+                            $refTexto     = $pago->aspirante?->folio ?? ($pago->alumno ? 'MAT-'.$pago->alumno->matricula : '—');
+                            $nombreTexto  = $pago->aspirante?->nombre_completo ?? $pago->alumno?->nombre_completo ?? '—';
+                            $programaNombre = $pago->aspirante?->programa?->nombre ?? $pago->alumno?->programa?->nombre ?? '—';
+                        @endphp
                         <tr class="hover:bg-gray-50 transition-colors duration-100"
-                            data-folio="{{ strtolower($pago->aspirante->folio ?? '') }}"
-                            data-nombre="{{ strtolower($pago->aspirante->nombre_completo ?? '') }}"
+                            data-folio="{{ strtolower($refTexto) }}"
+                            data-nombre="{{ strtolower($nombreTexto) }}"
                             data-estado="{{ $pago->estado }}">
 
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-600 whitespace-nowrap">
-                                {{ $pago->aspirante->folio ?? '—' }}
+                                {{ $refTexto }}
                             </td>
 
                             <td class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
-                                {{ $pago->aspirante->nombre_completo ?? '—' }}
+                                {{ $nombreTexto }}
                             </td>
 
                             <td class="px-6 py-4 text-gray-600">
-                                {{ $pago->aspirante->programa->nombre ?? '—' }}
+                                {{ $programaNombre }}
+                            </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if ($pago->concepto === 'reinscripcion')
+                                    <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Reinscripción</span>
+                                @else
+                                    <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">Inscripción</span>
+                                @endif
                             </td>
 
                             <td class="px-6 py-4 font-bold text-gray-800 whitespace-nowrap">
@@ -175,7 +189,7 @@
                             </td>
 
                             <td class="px-6 py-4 text-gray-500 whitespace-nowrap text-xs">
-                                {{ $pago->fecha_pago->format('d/m/Y') }}
+                                {{ $pago->fecha_pago?->format('d/m/Y') ?? '—' }}
                             </td>
 
                             {{-- Badge estado --}}
@@ -222,13 +236,13 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
+                            <td colspan="8" class="px-6 py-10 text-center text-sm text-gray-400">
                                 No hay comprobantes registrados.
                             </td>
                         </tr>
                         @endforelse
                         <tr x-ref="sinResultados" style="display:none;">
-                            <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
+                            <td colspan="8" class="px-6 py-10 text-center text-sm text-gray-400">
                                 No se encontraron pagos con ese criterio.
                             </td>
                         </tr>
@@ -239,19 +253,6 @@
 
         </div>{{-- /card --}}
 
-        {{-- Volver --}}
-        <div class="mt-6">
-            <a href="{{ route('dashboard') }}"
-               class="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-150"
-               style="color: #0F4229;"
-               onmouseover="this.style.textDecoration='underline'"
-               onmouseout="this.style.textDecoration='none'">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Volver al panel
-            </a>
-        </div>
 
     </div>
 </section>

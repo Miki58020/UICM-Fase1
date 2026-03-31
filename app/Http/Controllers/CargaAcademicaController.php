@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CargaAcademica;
 use App\Models\Grupo;
 use App\Models\Materia;
+use App\Models\Periodo;
+use App\Models\Profesor;
 use App\Models\Programa;
 use Illuminate\Http\Request;
 
@@ -13,8 +15,8 @@ class CargaAcademicaController extends Controller
     public function index(Request $request)
     {
         $programas = Programa::where('activo', true)->orderBy('nombre')->get();
-        $grupos    = Grupo::with('programa')->orderBy('clave')->get();
-        $ciclos    = Grupo::distinct()->orderByDesc('ciclo')->pluck('ciclo');
+        $periodos  = Periodo::orderByDesc('fecha_inicio')->get();
+        $grupos    = Grupo::with('programa', 'periodo')->orderBy('clave')->get();
 
         $grupo = null;
         $carga = collect();
@@ -22,6 +24,7 @@ class CargaAcademicaController extends Controller
         if ($request->filled('grupo_id')) {
             $grupo = Grupo::with([
                 'programa',
+                'periodo',
                 'alumnos',
                 'cargaAcademica.materia',
                 'cargaAcademica.profesor',
@@ -30,7 +33,9 @@ class CargaAcademicaController extends Controller
             $carga = $grupo->cargaAcademica;
         }
 
-        return view('admin.carga-academica.index', compact('programas', 'grupos', 'ciclos', 'grupo', 'carga'));
+        $profesores = Profesor::where('activo', true)->orderBy('nombre')->get();
+
+        return view('admin.carga-academica.index', compact('programas', 'grupos', 'periodos', 'grupo', 'carga', 'profesores'));
     }
 
     public function generar(Grupo $grupo)
@@ -42,13 +47,32 @@ class CargaAcademicaController extends Controller
 
         foreach ($materias as $materia) {
             CargaAcademica::firstOrCreate(
-                ['grupo_id' => $grupo->id, 'materia_id' => $materia->id],
-                ['ciclo' => $grupo->ciclo, 'profesor_id' => null, 'horario' => null, 'aula' => null]
+                ['grupo_id' => $grupo->id, 'materia_id' => $materia->id, 'periodo_id' => $grupo->periodo_id],
+                ['profesor_id' => null, 'horario' => null, 'aula' => null]
             );
         }
 
         return redirect()
             ->route('admin.carga-academica.index', ['grupo_id' => $grupo->id])
             ->with('success', "Carga académica generada para el grupo {$grupo->clave}.");
+    }
+
+    public function actualizar(Request $request, CargaAcademica $carga)
+    {
+        $request->validate([
+            'profesor_id' => 'nullable|exists:profesores,id',
+            'horario'     => 'nullable|string|max:50',
+            'aula'        => 'nullable|string|max:20',
+        ]);
+
+        $carga->update([
+            'profesor_id' => $request->profesor_id ?: null,
+            'horario'     => $request->horario,
+            'aula'        => $request->aula,
+        ]);
+
+        return redirect()
+            ->route('admin.carga-academica.index', ['grupo_id' => $carga->grupo_id])
+            ->with('success', "Asignación actualizada correctamente.");
     }
 }
