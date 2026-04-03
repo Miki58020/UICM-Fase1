@@ -279,13 +279,19 @@
                         Asegúrate de tener toda tu documentación lista y digitalizada antes de iniciar el trámite.
                     </p>
                 </div>
-                <a href="{{ route('aspirantes.registro') }}"
-                   class="flex-shrink-0 px-6 py-3 rounded-lg font-semibold text-white text-sm text-center transition-colors duration-200"
-                   style="background-color: #0F4229;"
-                   onmouseover="this.style.backgroundColor='#0a2f1c'"
-                   onmouseout="this.style.backgroundColor='#0F4229'">
-                    Iniciar inscripción
-                </a>
+                <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+                    <a href="{{ route('aspirantes.registro') }}"
+                       class="px-6 py-3 rounded-lg font-semibold text-white text-sm text-center transition-colors duration-200"
+                       style="background-color: #0F4229;"
+                       onmouseover="this.style.backgroundColor='#0a2f1c'"
+                       onmouseout="this.style.backgroundColor='#0F4229'">
+                        Iniciar inscripción
+                    </a>
+                    <a href="{{ route('aspirantes.seguimiento') }}"
+                       class="px-6 py-3 rounded-lg font-semibold text-sm text-center border-2 border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors duration-200">
+                        Consultar estatus
+                    </a>
+                </div>
             </div>
         </div>
     </section>
