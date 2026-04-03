@@ -7,6 +7,7 @@ use App\Mail\AspiranteRechazado;
 use App\Mail\RegistroConfirmado;
 use App\Models\Alumno;
 use App\Models\Aspirante;
+use App\Models\Periodo;
 use App\Models\Programa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -111,7 +112,18 @@ class AspiranteController extends Controller
 
     public function create()
     {
-        return view('aspirantes.registro');
+        $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $periodos = Periodo::where('estado', 'activo')->orderBy('fecha_inicio')->get()
+            ->map(function ($p) use ($meses) {
+                $p->rango = $meses[(int) $p->fecha_inicio->format('n')] . ' ' . $p->fecha_inicio->format('Y')
+                          . ' – '
+                          . $meses[(int) $p->fecha_fin->format('n')] . ' ' . $p->fecha_fin->format('Y');
+                return $p;
+            });
+
+        return view('aspirantes.registro', compact('periodos'));
     }
 
     public function store(Request $request)
@@ -128,7 +140,7 @@ class AspiranteController extends Controller
             'telefono'          => 'required|digits:10',
             'email'             => 'required|email:rfc,filter|unique:aspirantes,email',
             'programa_academico'=> 'required|string',
-            'generacion'        => 'required|string|max:10',
+            'generacion'        => 'required|string|exists:periodos,nombre',
             'acta_nacimiento'   => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'curp_doc'          => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'identificacion'    => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',

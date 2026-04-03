@@ -237,22 +237,31 @@
                                 @enderror
                             </div>
 
-                            {{-- Generación --}}
+                            {{-- Periodo de inscripción --}}
                             <div>
                                 <label for="generacion"
                                        class="block text-sm font-medium text-gray-700 mb-1">
-                                    Generación <span class="text-red-500">*</span>
+                                    Periodo de inscripción <span class="text-red-500">*</span>
                                 </label>
+                                @if($periodos->isEmpty())
+                                <div class="w-full rounded-lg border border-yellow-300 bg-yellow-50 px-4 py-2.5 text-sm text-yellow-700">
+                                    Las inscripciones no están abiertas en este momento.
+                                </div>
+                                <input type="hidden" name="generacion" value="">
+                                @else
                                 <select id="generacion"
                                         name="generacion"
                                         required
                                         class="w-full rounded-lg border {{ $errors->has('generacion') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
                                         style="--tw-ring-color: #0F4229;">
-                                    <option value="" disabled {{ old('generacion') ? '' : 'selected' }}>Selecciona una generación</option>
-                                    <option value="2026-1" {{ old('generacion') == '2026-1' ? 'selected' : '' }}>2026-1 (Enero – Abril)</option>
-                                    <option value="2026-2" {{ old('generacion') == '2026-2' ? 'selected' : '' }}>2026-2 (Mayo – Agosto)</option>
-                                    <option value="2026-3" {{ old('generacion') == '2026-3' ? 'selected' : '' }}>2026-3 (Septiembre – Diciembre)</option>
+                                    <option value="" disabled {{ old('generacion') ? '' : 'selected' }}>Selecciona un periodo</option>
+                                    @foreach($periodos as $periodo)
+                                    <option value="{{ $periodo->nombre }}" {{ old('generacion') == $periodo->nombre ? 'selected' : '' }}>
+                                        {{ $periodo->rango }}
+                                    </option>
+                                    @endforeach
                                 </select>
+                                @endif
                                 @error('generacion')
                                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                 @enderror
