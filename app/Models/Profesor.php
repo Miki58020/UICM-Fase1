@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Profesor extends Model
 {
+    protected $table = 'profesores';
+
     protected $fillable = ['nombre', 'correo', 'telefono', 'especialidad', 'activo'];
 
     public function cargaAcademica()
