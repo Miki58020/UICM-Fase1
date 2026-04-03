@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NuevaContrasena;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 class UsuarioController extends Controller
@@ -95,6 +97,10 @@ class UsuarioController extends Controller
         }
 
         $usuario->update($datos);
+
+        if ($request->filled('password')) {
+            Mail::to($usuario->email)->send(new NuevaContrasena($usuario, $request->password));
+        }
 
         return redirect()->route('admin.usuarios.index')
             ->with('success', 'Usuario actualizado correctamente.');
