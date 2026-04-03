@@ -128,6 +128,12 @@ class AspiranteController extends Controller
 
     public function store(Request $request)
     {
+        if (Periodo::where('estado', 'activo')->doesntExist()) {
+            return back()->withInput()->withErrors([
+                'generacion' => 'Las inscripciones no están abiertas en este momento. No es posible enviar el formulario.',
+            ]);
+        }
+
         $esDoctorado = Programa::where('clave', $request->programa_academico)
             ->value('nivel') === 'doctorado';
 
