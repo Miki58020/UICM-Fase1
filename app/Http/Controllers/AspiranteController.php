@@ -84,7 +84,7 @@ class AspiranteController extends Controller
                 ->withErrors(['folio' => 'Debes ingresar un folio.']);
         }
 
-        $aspirante = Aspirante::with(['programa', 'pagos'])
+        $aspirante = Aspirante::with(['programa', 'pagos', 'alumno'])
             ->where('folio', strtoupper($folio))
             ->first();
 
@@ -101,10 +101,12 @@ class AspiranteController extends Controller
             $pasoActual = 1;
         } elseif ($aspirante->estado === 'aprobado' && !$pago) {
             $pasoActual = 2;
-        } elseif ($aspirante->estado === 'aprobado' && $pago && $pago->estado === 'pendiente') {
+        } elseif ($aspirante->estado === 'aprobado' && $pago?->estado === 'pendiente') {
             $pasoActual = 3;
-        } else {
+        } elseif ($aspirante->estado === 'aprobado' && $pago?->estado === 'aprobado' && !$aspirante->alumno?->user_id) {
             $pasoActual = 4;
+        } else {
+            $pasoActual = 5;
         }
 
         return view('aspirantes.resultado', compact('aspirante', 'pasoActual'));

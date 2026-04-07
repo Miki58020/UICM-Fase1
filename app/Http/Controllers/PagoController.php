@@ -137,32 +137,28 @@ class PagoController extends Controller
 
             Log::info('MP payment response', ['status' => $payment->status, 'detail' => $payment->status_detail, 'id' => $payment->id]);
 
-            $estado       = $this->mapearEstado($payment->status);
+            $mpEstado     = $payment->status;
             $preferenceId = session('mp_preference_' . $folio);
 
-            // Solo crear el Pago si fue aprobado o está pendiente (ej. OXXO)
-            if (in_array($estado, ['aprobado', 'pendiente'])) {
-                $pago = Pago::create([
+            // Guardar el pago si MP lo procesó (aprobado o pendiente como OXXO)
+            // El estado interno siempre queda 'pendiente' hasta que Finanzas lo valide manualmente
+            if (in_array($mpEstado, ['approved', 'pending', 'in_process', 'authorized'])) {
+                Pago::create([
                     'aspirante_id'     => $aspirante->id,
                     'concepto'         => 'inscripcion',
                     'periodo'          => date('Y') . '-1',
                     'monto'            => $monto,
                     'fecha_pago'       => now()->toDateString(),
-                    'estado'           => $estado,
+                    'estado'           => 'pendiente',
                     'mp_preference_id' => $preferenceId,
                     'mp_payment_id'    => $payment->id,
                 ]);
-
-                if ($estado === 'aprobado') {
-                    Mail::to($aspirante->email)->send(new PagoAprobado($pago));
-                }
+                // El correo de aprobación lo envía Finanzas al validar manualmente
             }
 
-            $redirectUrl = match($estado) {
-                'aprobado'  => route('aspirantes.pago.confirmacion', ['status' => 'aprobado']),
-                'pendiente' => route('aspirantes.pago.confirmacion', ['status' => 'pendiente']),
-                default     => null,
-            };
+            $redirectUrl = in_array($mpEstado, ['approved', 'pending', 'in_process', 'authorized'])
+                ? route('aspirantes.pago.confirmacion', ['status' => 'pendiente'])
+                : null;
 
             return response()->json([
                 'status'       => $payment->status,
@@ -234,16 +230,10 @@ class PagoController extends Controller
             }
 
             if ($pago) {
-                $estadoAnterior = $pago->estado;
-
+                // Solo actualizar el ID de MP — el estado interno lo decide Finanzas manualmente
                 $pago->update([
                     'mp_payment_id' => $payment->id,
-                    'estado'        => $estado,
                 ]);
-
-                if ($estado === 'aprobado' && $estadoAnterior !== 'aprobado') {
-                    Mail::to($pago->aspirante->email)->send(new PagoAprobado($pago));
-                }
             }
         } catch (\Exception $e) {
             Log::error('MP Webhook error: ' . $e->getMessage());

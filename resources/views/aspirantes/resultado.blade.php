@@ -10,6 +10,7 @@
         'Datos validados',
         'Pago pendiente',
         'Pago en revisión',
+        'Generando acceso',
         'Inscripción completada',
     ];
 
@@ -18,12 +19,13 @@
         $pasoActual === 1 => 'Rechazado',
         $pasoActual === 2 => 'Pago pendiente',
         $pasoActual === 3 => 'Pago en revisión',
+        $pasoActual === 4 => 'Generando acceso',
         default           => 'Inscripción completada',
     };
 
     $badgeColor = match(true) {
         $pasoActual === 1 => '#9ca3af',
-        $pasoActual === 4 => '#0F4229',
+        $pasoActual === 5 => '#0F4229',
         default           => '#EFAD5A',
     };
 
@@ -32,7 +34,8 @@
         $pasoActual === 1 => null,
         $pasoActual === 2 => 'Tu solicitud ha sido aprobada. Por favor, realiza el pago de inscripción para continuar con el proceso.',
         $pasoActual === 3 => 'Tu comprobante de pago está siendo revisado por el área de finanzas. El proceso de validación puede tardar hasta <strong>2 días hábiles</strong>. Te notificaremos por correo cuando haya una actualización.',
-        default           => '¡Felicidades! Tu inscripción ha sido completada exitosamente. Pronto recibirás información sobre tu acceso al portal del alumno.',
+        $pasoActual === 4 => 'Tu pago fue validado. Control Escolar está preparando tus credenciales de acceso al portal. Te notificaremos por correo en cuanto estén listas.',
+        default           => '¡Felicidades! Tu inscripción ha sido completada exitosamente. Ya puedes acceder al portal del alumno con las credenciales que recibiste.',
     };
 @endphp
 
@@ -197,7 +200,7 @@
                  BOTONES
             ══════════════════════════════════ --}}
 
-            @if($pasoActual === 2)
+            @if($pasoActual === 2 && !$aspirante->pagos->count())
             <a href="{{ route('aspirantes.pago', ['folio' => $aspirante->folio]) }}"
                class="block w-full py-3.5 rounded-xl text-center text-white text-sm font-bold
                       transition-colors duration-200 shadow-md"

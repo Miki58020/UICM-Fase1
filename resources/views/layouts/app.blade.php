@@ -416,6 +416,9 @@
                 <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Finanzas</p>
             </div>
 
+            @php
+                $pagosPendientes = \App\Models\Pago::where('estado', 'pendiente')->count();
+            @endphp
             <a href="{{ route('finanzas.pagos.index') }}"
                @click="sidebarOpen = false"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
@@ -425,7 +428,13 @@
                           d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10
                              a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
-                Validación de pagos
+                <span class="flex-1">Validación de pagos</span>
+                @if($pagosPendientes > 0)
+                    <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
+                          style="background-color: #dc2626; color: #fff;">
+                        {{ $pagosPendientes }}
+                    </span>
+                @endif
             </a>
             @endif
 
