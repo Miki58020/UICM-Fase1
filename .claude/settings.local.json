@@ -39,7 +39,8 @@
       "Bash(mv 2025_01_01_000012_create_aspirantes_table.php 2025_01_01_000013_create_aspirantes_table.php)",
       "Bash(mv 2025_01_01_000013_create_grupos_table.php 2025_01_01_000014_create_grupos_table.php)",
       "Bash(mv 2025_01_01_000014_create_alumnos_table.php 2025_01_01_000015_create_alumnos_table.php)",
-      "Bash(mv 2025_01_01_000015_create_materias_table.php 2025_01_01_000016_create_materias_table.php)"
+      "Bash(mv 2025_01_01_000015_create_materias_table.php 2025_01_01_000016_create_materias_table.php)",
+      "Bash(xargs cat:*)"
     ]
   }
 }

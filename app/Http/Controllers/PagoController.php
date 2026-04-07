@@ -118,7 +118,7 @@ class PagoController extends Controller
 
             $paymentData = [
                 'transaction_amount' => $monto,
-                'description'        => 'Inscripción UICM',
+                'description'        => 'Inscripcion UICM',
                 'payment_method_id'  => $data['payment_method_id'],
                 'payer'              => ['email' => $data['payer']['email'] ?? ''],
             ];
@@ -127,11 +127,15 @@ class PagoController extends Controller
             if (!empty($data['token'])) {
                 $paymentData['token']        = $data['token'];
                 $paymentData['installments'] = (int) ($data['installments'] ?? 1);
-                $paymentData['issuer_id']    = $data['issuer_id'] ?? null;
+                $paymentData['issuer_id']    = isset($data['issuer_id']) ? (int) $data['issuer_id'] : null;
             }
+
+            Log::info('MP payment data', $paymentData);
 
             $client  = new PaymentClient();
             $payment = $client->create($paymentData);
+
+            Log::info('MP payment response', ['status' => $payment->status, 'detail' => $payment->status_detail, 'id' => $payment->id]);
 
             $estado       = $this->mapearEstado($payment->status);
             $preferenceId = session('mp_preference_' . $folio);

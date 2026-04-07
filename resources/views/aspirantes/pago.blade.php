@@ -112,6 +112,7 @@
 </section>
 
 @push('scripts')
+<audio id="mp-success-sound" src="{{ asset('sounds/mp-success.mp3') }}" preload="auto"></audio>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script>
 (async () => {
@@ -151,7 +152,11 @@
                     .then(r => r.json())
                     .then(data => {
                         if (data.redirect_url) {
-                            window.location.href = data.redirect_url;
+                            const sound = document.getElementById('mp-success-sound');
+                            sound.play().catch(() => {});
+                            setTimeout(() => {
+                                window.location.href = data.redirect_url;
+                            }, 1500);
                             resolve();
                         } else if (data.status === 'rejected') {
                             errorBox.classList.remove('hidden');
