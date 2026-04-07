@@ -26,6 +26,23 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        // Verificar estado del alumno antes de permitir el acceso
+        if (Auth::user()->rol === 'alumno') {
+            $alumno = \App\Models\Alumno::where('user_id', Auth::id())->first();
+
+            if ($alumno && $alumno->estado !== 'activo') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                $mensaje = $alumno->estado === 'baja'
+                    ? 'Tu cuenta ha sido dada de baja. Comunícate con Control Escolar para más información.'
+                    : 'Tu cuenta está inactiva temporalmente. Comunícate con Control Escolar para reactivarla.';
+
+                return redirect()->route('login')->withErrors(['email' => $mensaje]);
+            }
+        }
+
         $request->session()->regenerate();
 
         $rol = Auth::user()->rol;

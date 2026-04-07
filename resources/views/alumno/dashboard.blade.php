@@ -34,10 +34,11 @@
                 </div>
 
                 <div class="flex flex-col items-start sm:items-end gap-1">
-                    <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold
+                    <span id="estado-badge-banner"
+                          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold
                                  bg-white/15 text-white border border-white/20">
-                        <span class="w-2 h-2 rounded-full bg-green-300 inline-block"></span>
-                        {{ ucfirst($alumno->estado) }}
+                        <span id="estado-dot-banner" class="w-2 h-2 rounded-full bg-green-300 inline-block"></span>
+                        <span id="estado-text-banner">{{ ucfirst($alumno->estado) }}</span>
                     </span>
                     <p class="text-xs text-white/50">
                         Periodo {{ $alumno->grupo->periodo->nombre ?? '—' }}
@@ -155,10 +156,11 @@
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Estado administrativo</p>
-                        <span class="inline-flex items-center gap-1.5 mt-1 px-3 py-1 rounded-full text-xs font-bold text-white"
+                        <span id="estado-badge-card"
+                              class="inline-flex items-center gap-1.5 mt-1 px-3 py-1 rounded-full text-xs font-bold text-white"
                               style="background-color: #0F4229;">
                             <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                            {{ ucfirst($alumno->estado) }}
+                            <span id="estado-text-card">{{ ucfirst($alumno->estado) }}</span>
                         </span>
                     </div>
                 </div>
@@ -540,5 +542,75 @@
     </div>
 
 </section>
+
+{{-- Overlay de cuenta suspendida/baja --}}
+<div id="estado-overlay"
+     class="hidden fixed inset-0 z-[9999] flex items-center justify-center px-4"
+     style="background-color: rgba(0,0,0,0.75);">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center">
+        <div id="estado-overlay-bar" class="h-1.5 w-full"></div>
+        <div class="px-8 py-8">
+            <div id="estado-overlay-icon"
+                 class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h2 class="text-base font-extrabold text-gray-900 mb-2">Acceso restringido</h2>
+            <p id="estado-overlay-msg" class="text-sm text-gray-500 mb-6"></p>
+            <p class="text-xs text-gray-400">Serás redirigido al inicio de sesión en unos segundos...</p>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+(function poll() {
+    setTimeout(function () {
+        fetch('{{ route('alumno.check-estado') }}', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.ok ? r.json() : null)
+        .then(function (data) {
+            if (!data) { poll(); return; }
+
+            if (data.estado !== 'activo') {
+                // Actualizar badges
+                const textos  = ['estado-text-banner', 'estado-text-card'];
+                const label   = data.estado === 'baja' ? 'Baja' : 'Inactivo';
+                textos.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = label;
+                });
+
+                const cardBadge = document.getElementById('estado-badge-card');
+                if (cardBadge) cardBadge.style.backgroundColor = data.estado === 'baja' ? '#b91c1c' : '#854d0e';
+
+                // Mostrar overlay
+                const msg = data.estado === 'baja'
+                    ? 'Tu cuenta ha sido dada de baja. Comunícate con Control Escolar para más información.'
+                    : 'Tu cuenta está inactiva temporalmente. Comunícate con Control Escolar para reactivarla.';
+
+                const color = data.estado === 'baja' ? '#b91c1c' : '#854d0e';
+                document.getElementById('estado-overlay-bar').style.backgroundColor   = color;
+                document.getElementById('estado-overlay-icon').style.backgroundColor  = color;
+                document.getElementById('estado-overlay-msg').textContent             = msg;
+                document.getElementById('estado-overlay').classList.remove('hidden');
+
+                setTimeout(() => {
+                    window.close();
+                    // Fallback si el navegador bloquea el cierre de pestaña
+                    setTimeout(() => { window.location.replace('{{ route('login') }}'); }, 400);
+                }, 5000);
+            } else {
+                poll(); // Seguir revisando
+            }
+        })
+        .catch(function () { poll(); }); // Reintentar si hay error de red
+    }, 30000); // Verificar cada 30 segundos
+})();
+</script>
+@endpush
 
 @endsection

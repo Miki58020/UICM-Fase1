@@ -233,7 +233,7 @@ $gruposJson = $grupos->map(fn($g) => [
                                 @php
                                     $estadoColor = match($alumno->estado) {
                                         'activo'   => ['bg' => '#dcfce7', 'text' => '#15803d'],
-                                        'inactivo' => ['bg' => '#f3f4f6', 'text' => '#6b7280'],
+                                        'inactivo' => ['bg' => '#fef9c3', 'text' => '#854d0e'],
                                         'baja'     => ['bg' => '#fee2e2', 'text' => '#b91c1c'],
                                         default    => ['bg' => '#f3f4f6', 'text' => '#6b7280'],
                                     };

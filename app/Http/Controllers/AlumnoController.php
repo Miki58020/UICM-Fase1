@@ -98,6 +98,12 @@ class AlumnoController extends Controller
         return back()->with('password_success', 'Contraseña actualizada correctamente.');
     }
 
+    public function checkEstado(): \Illuminate\Http\JsonResponse
+    {
+        $alumno = Alumno::where('user_id', Auth::id())->first();
+        return response()->json(['estado' => $alumno?->estado ?? 'activo']);
+    }
+
     public function comprobante(Pago $pago)
     {
         $alumno = Alumno::where('user_id', Auth::id())->firstOrFail();

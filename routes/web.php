@@ -54,6 +54,11 @@ Route::middleware(['auth', 'rol:alumno'])->group(function () {
     Route::post('/alumno/cambiar-password', [AlumnoController::class, 'cambiarPassword'])->name('alumno.cambiar-password');
 });
 
+// Polling de estado del alumno — solo requiere auth (sin CheckRol para no entrar en bucle de kick)
+Route::get('/alumno/check-estado', [AlumnoController::class, 'checkEstado'])
+    ->middleware('auth')
+    ->name('alumno.check-estado');
+
 // Módulo finanzas — Validación de pagos
 Route::middleware(['auth', 'rol:finanzas'])->group(function () {
     Route::get('/finanzas/pagos', [PagoController::class, 'index'])->name('finanzas.pagos.index');
