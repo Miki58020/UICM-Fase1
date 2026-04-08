@@ -16,10 +16,12 @@ class PeriodoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre'       => 'required|string|max:10|unique:periodos,nombre',
+            'nombre'       => ['required', 'string', 'max:10', 'unique:periodos,nombre', 'regex:/^\d{4}-\d+$/'],
             'label'        => 'required|string|max:80',
             'fecha_inicio' => 'required|date',
             'fecha_fin'    => 'required|date|after:fecha_inicio',
+        ], [
+            'nombre.regex' => 'La clave debe tener el formato año-número (ej: 2026-2).',
         ]);
 
         Periodo::create([
@@ -37,10 +39,12 @@ class PeriodoController extends Controller
     public function update(Request $request, Periodo $periodo)
     {
         $request->validate([
-            'nombre'       => 'required|string|max:10|unique:periodos,nombre,' . $periodo->id,
+            'nombre'       => ['required', 'string', 'max:10', 'unique:periodos,nombre,' . $periodo->id, 'regex:/^\d{4}-\d+$/'],
             'label'        => 'required|string|max:80',
             'fecha_inicio' => 'required|date',
             'fecha_fin'    => 'required|date|after:fecha_inicio',
+        ], [
+            'nombre.regex' => 'La clave debe tener el formato año-número (ej: 2026-2).',
         ]);
 
         $periodo->update([
@@ -72,5 +76,19 @@ class PeriodoController extends Controller
 
         return redirect()->route('admin.periodos.index')
             ->with('success', "El periodo \"{$periodo->label}\" fue cerrado.");
+    }
+
+    public function destroy(Periodo $periodo)
+    {
+        if ($periodo->grupos()->exists()) {
+            return redirect()->route('admin.periodos.index')
+                ->with('error', "No se puede eliminar el periodo \"{$periodo->label}\" porque tiene grupos asociados.");
+        }
+
+        $label = $periodo->label;
+        $periodo->delete();
+
+        return redirect()->route('admin.periodos.index')
+            ->with('success', "Periodo \"{$label}\" eliminado correctamente.");
     }
 }
