@@ -509,6 +509,36 @@
 
     @stack('scripts')
 
+    {{-- ===== AUTO-DISMISS DE NOTIFICACIONES ===== --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Éxito → 4 s | Error / validación → 6 s
+        var rules = [
+            { selector: 'div.bg-green-50.rounded-xl', delay: 4000 },
+            { selector: 'div.bg-red-50.rounded-xl',   delay: 6000 },
+        ];
+
+        rules.forEach(function (rule) {
+            document.querySelectorAll(rule.selector).forEach(function (el) {
+                setTimeout(function () {
+                    el.style.transition = 'opacity 0.5s ease, max-height 0.5s ease, margin 0.5s ease, padding 0.5s ease';
+                    el.style.overflow   = 'hidden';
+                    el.style.opacity    = '0';
+                    el.style.maxHeight  = el.offsetHeight + 'px';
+                    // Forzar reflow para que la transición arranque desde el valor actual
+                    el.offsetHeight;
+                    el.style.maxHeight  = '0';
+                    el.style.marginTop  = '0';
+                    el.style.marginBottom = '0';
+                    el.style.paddingTop   = '0';
+                    el.style.paddingBottom = '0';
+                    setTimeout(function () { el.remove(); }, 520);
+                }, rule.delay);
+            });
+        });
+    });
+    </script>
+
     {{-- ===== SINCRONIZACIÓN DE CIERRE DE SESIÓN ENTRE PESTAÑAS ===== --}}
     @auth
     <script>
