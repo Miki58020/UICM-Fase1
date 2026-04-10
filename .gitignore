@@ -25,6 +25,3 @@ Thumbs.db
 
 # Claude
 .claude/
-
-# Ngrok
-ngrok-output.txt
