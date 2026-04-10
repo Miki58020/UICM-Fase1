@@ -274,8 +274,8 @@
                     <h3 class="text-xl font-bold text-gray-800 mb-1">{{ $periodoActivo->label }}</h3>
                     <p class="text-gray-600 text-sm leading-relaxed">
                         El proceso de admisión para el periodo <strong>{{ $periodoActivo->nombre }}</strong>
-                        está disponible del {{ $periodoActivo->fecha_inicio->format('d/m/Y') }}
-                        al {{ $periodoActivo->fecha_fin->format('d/m/Y') }}.
+                        está disponible del {{ $periodoActivo->fecha_inicio_registro->format('d/m/Y') }}
+                        al {{ $periodoActivo->fecha_fin_registro->format('d/m/Y') }}.
                         Asegúrate de tener toda tu documentación lista y digitalizada antes de iniciar el trámite.
                     </p>
                 </div>

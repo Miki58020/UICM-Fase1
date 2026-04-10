@@ -12,7 +12,7 @@ class GrupoController extends Controller
     public function index()
     {
         $grupos   = Grupo::with('programa', 'periodo')->withCount('alumnos')->orderBy('clave')->get();
-        $periodos = Periodo::orderByDesc('fecha_inicio')->get();
+        $periodos = Periodo::orderByDesc('fecha_inicio_registro')->get();
         $programas = Programa::where('activo', true)->orderBy('nombre')->get();
         return view('admin.grupos.index', compact('grupos', 'periodos', 'programas'));
     }

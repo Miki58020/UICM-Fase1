@@ -15,7 +15,7 @@ class CargaAcademicaController extends Controller
     public function index(Request $request)
     {
         $programas = Programa::where('activo', true)->orderBy('nombre')->get();
-        $periodos  = Periodo::orderByDesc('fecha_inicio')->get();
+        $periodos  = Periodo::orderByDesc('fecha_inicio_registro')->get();
         $grupos    = Grupo::with('programa', 'periodo')->orderBy('clave')->get();
 
         $grupo = null;

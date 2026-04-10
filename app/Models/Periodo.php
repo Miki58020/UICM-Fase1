@@ -6,11 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Periodo extends Model
 {
-    protected $fillable = ['nombre', 'label', 'fecha_inicio', 'fecha_fin', 'estado'];
+    protected $fillable = [
+        'nombre', 'label', 'estado', 'auto',
+        'fecha_inicio_registro', 'fecha_fin_registro',
+        'fecha_inicio_clases',   'fecha_fin_clases',
+    ];
 
     protected $casts = [
-        'fecha_inicio' => 'date',
-        'fecha_fin'    => 'date',
+        'auto'                  => 'boolean',
+        'fecha_inicio_registro' => 'date',
+        'fecha_fin_registro'    => 'date',
+        'fecha_inicio_clases'   => 'date',
+        'fecha_fin_clases'      => 'date',
     ];
 
     public function grupos()

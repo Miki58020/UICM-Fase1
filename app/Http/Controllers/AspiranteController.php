@@ -117,11 +117,11 @@ class AspiranteController extends Controller
         $meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-        $periodos = Periodo::where('estado', 'activo')->orderBy('fecha_inicio')->get()
+        $periodos = Periodo::where('estado', 'activo')->orderBy('fecha_inicio_registro')->get()
             ->map(function ($p) use ($meses) {
-                $p->rango = $meses[(int) $p->fecha_inicio->format('n')] . ' ' . $p->fecha_inicio->format('Y')
+                $p->rango = $meses[(int) $p->fecha_inicio_registro->format('n')] . ' ' . $p->fecha_inicio_registro->format('Y')
                           . ' – '
-                          . $meses[(int) $p->fecha_fin->format('n')] . ' ' . $p->fecha_fin->format('Y');
+                          . $meses[(int) $p->fecha_fin_registro->format('n')] . ' ' . $p->fecha_fin_registro->format('Y');
                 return $p;
             });
 

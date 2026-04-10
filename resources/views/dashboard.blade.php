@@ -86,7 +86,7 @@
                     </div>
                 </a>
 
-                {{-- Periodos académicos --}}
+                {{-- Periodos de registro --}}
                 <a href="{{ route('admin.periodos.index') }}"
                    class="flex items-center gap-4 bg-white rounded-xl shadow-sm px-6 py-5
                           border border-transparent hover:border-green-200 hover:shadow-md
@@ -101,9 +101,9 @@
                     </div>
                     <div>
                         <p class="text-sm font-bold group-hover:underline" style="color: #0F4229;">
-                            Periodos académicos
+                            Periodos de registro
                         </p>
-                        <p class="text-xs text-gray-400 mt-0.5">Ciclos escolares y sus fechas</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Convocatorias de inscripción</p>
                     </div>
                 </a>
 

@@ -73,7 +73,7 @@
                     {{-- Coordinación + Admin --}}
                     @if(in_array($rol, ['coordinacion', 'admin']))
                         <x-nav-link :href="route('admin.periodos.index')" :active="request()->routeIs('admin.periodos.*')">
-                            Periodos
+                            Periodos de registro
                         </x-nav-link>
                         <x-nav-link :href="route('admin.grupos.index')" :active="request()->routeIs('admin.grupos.*')">
                             Grupos
@@ -182,7 +182,7 @@
 
             @if(in_array($rol, ['coordinacion', 'admin']))
                 <x-responsive-nav-link :href="route('admin.periodos.index')" :active="request()->routeIs('admin.periodos.*')">
-                    Periodos
+                    Periodos de registro
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.grupos.index')" :active="request()->routeIs('admin.grupos.*')">
                     Grupos

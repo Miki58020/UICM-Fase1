@@ -69,7 +69,7 @@
                 <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #0F4229;"></span>
                 <span class="text-sm font-medium text-gray-700">
                     Período activo: <strong>{{ $periodoActivo->label }}</strong>
-                    ({{ $periodoActivo->fecha_inicio->format('d/m/Y') }} — {{ $periodoActivo->fecha_fin->format('d/m/Y') }})
+                    ({{ $periodoActivo->fecha_inicio_registro->format('d/m/Y') }} — {{ $periodoActivo->fecha_fin_registro->format('d/m/Y') }})
                 </span>
             </div>
         @endif

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Periodos académicos | UICM')
+@section('title', 'Periodos de registro | UICM')
 
 @section('content')
 
@@ -13,7 +13,7 @@
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
                 Control Escolar
             </p>
-            <h1 class="text-2xl font-extrabold text-gray-900">Periodos académicos</h1>
+            <h1 class="text-2xl font-extrabold text-gray-900">Periodos de registro</h1>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
         <button onclick="document.getElementById('modal-crear').classList.remove('hidden')"
@@ -60,8 +60,8 @@
             <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">{{ $periodos->where('estado','activo')->count() }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #EFAD5A;">
-            <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Próximos</p>
-            <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $periodos->where('estado','proximo')->count() }}</p>
+            <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Inactivos</p>
+            <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $periodos->where('estado','inactivo')->count() }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #9ca3af;">
             <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Cerrados</p>
@@ -83,9 +83,9 @@
                     <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         <th class="px-6 py-3">Clave</th>
                         <th class="px-6 py-3">Nombre completo</th>
-                        <th class="px-6 py-3">Inicio</th>
-                        <th class="px-6 py-3">Fin</th>
-                        <th class="px-6 py-3 text-center">Grupos</th>
+                        <th class="px-6 py-3">Apertura</th>
+                        <th class="px-6 py-3">Cierre</th>
+                        <th class="px-6 py-3 text-center">Modo</th>
                         <th class="px-6 py-3">Estado</th>
                         <th class="px-6 py-3 text-center">Acciones</th>
                     </tr>
@@ -97,14 +97,37 @@
                             {{ $periodo->nombre }}
                         </td>
                         <td class="px-6 py-4 font-semibold text-gray-800">{{ $periodo->label }}</td>
-                        <td class="px-6 py-4 text-gray-600 text-xs">{{ $periodo->fecha_inicio->format('d/m/Y') }}</td>
-                        <td class="px-6 py-4 text-gray-600 text-xs">{{ $periodo->fecha_fin->format('d/m/Y') }}</td>
+                        <td class="px-6 py-4 text-gray-600 text-xs">{{ $periodo->fecha_inicio_registro->format('d/m/Y') }}</td>
+                        <td class="px-6 py-4 text-gray-600 text-xs">{{ $periodo->fecha_fin_registro->format('d/m/Y') }}</td>
+                        {{-- Modo --}}
                         <td class="px-6 py-4 text-center">
-                            <span class="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold"
-                                  style="background-color: #f0f9f4; color: #0F4229;">
-                                {{ $periodo->grupos_count }}
-                            </span>
+                            <form method="POST" action="{{ route('admin.periodos.toggleAuto', $periodo->id) }}">
+                                @csrf @method('PATCH')
+                                @if($periodo->auto)
+                                    <button type="submit" title="Modo automático — clic para cambiar a manual"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-white transition-colors duration-150"
+                                            style="background-color: #0F4229;"
+                                            onmouseover="this.style.backgroundColor='#0a2e1c'"
+                                            onmouseout="this.style.backgroundColor='#0F4229'">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Auto
+                                    </button>
+                                @else
+                                    <button type="submit" title="Modo manual — clic para cambiar a automático"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200 hover:bg-gray-300 transition-colors duration-150">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        </svg>
+                                        Manual
+                                    </button>
+                                @endif
+                            </form>
                         </td>
+                        {{-- Estado --}}
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($periodo->estado === 'activo')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
@@ -112,11 +135,11 @@
                                     <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                     Activo
                                 </span>
-                            @elseif($periodo->estado === 'proximo')
+                            @elseif($periodo->estado === 'inactivo')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
                                       style="background-color: #EFAD5A;">
                                     <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                                    Próximo
+                                    Inactivo
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200">
@@ -128,7 +151,7 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-2">
                                 {{-- Editar --}}
-                                <button onclick="abrirEditar({{ $periodo->id }}, '{{ $periodo->nombre }}', '{{ addslashes($periodo->label) }}', '{{ $periodo->fecha_inicio->format('Y-m-d') }}', '{{ $periodo->fecha_fin->format('Y-m-d') }}')"
+                                <button onclick="abrirEditar({{ $periodo->id }}, '{{ $periodo->nombre }}', '{{ addslashes($periodo->label) }}', '{{ $periodo->fecha_inicio_registro->format('Y-m-d') }}', '{{ $periodo->fecha_fin_registro->format('Y-m-d') }}')"
                                         class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
                                         style="background-color: #D4AF37;"
                                         onmouseover="this.style.backgroundColor='#b8962e'"
@@ -140,11 +163,11 @@
                                     Editar
                                 </button>
 
-                                {{-- Activar --}}
+                                {{-- Forzar apertura --}}
                                 @if($periodo->estado !== 'activo')
                                 <form method="POST" action="{{ route('admin.periodos.activar', $periodo->id) }}">
                                     @csrf @method('PATCH')
-                                    <button type="submit"
+                                    <button type="submit" title="Abrir manualmente (cambia a modo manual)"
                                             class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
                                             style="background-color: #EFAD5A;"
                                             onmouseover="this.style.backgroundColor='#e09a3a'"
@@ -153,16 +176,16 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
-                                        Activar
+                                        Abrir
                                     </button>
                                 </form>
                                 @endif
 
-                                {{-- Cerrar --}}
+                                {{-- Forzar cierre --}}
                                 @if($periodo->estado === 'activo')
                                 <form method="POST" action="{{ route('admin.periodos.cerrar', $periodo->id) }}">
                                     @csrf @method('PATCH')
-                                    <button type="submit"
+                                    <button type="submit" title="Cerrar manualmente (cambia a modo manual)"
                                             class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-gray-400 hover:bg-gray-500 transition-colors duration-150">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -242,16 +265,16 @@
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha inicio <span class="text-red-500">*</span></label>
-                    <input type="date" name="fecha_inicio"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Apertura <span class="text-red-500">*</span></label>
+                    <input type="date" name="fecha_inicio_registro"
                            class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                            required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha fin <span class="text-red-500">*</span></label>
-                    <input type="date" name="fecha_fin"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Cierre <span class="text-red-500">*</span></label>
+                    <input type="date" name="fecha_fin_registro"
                            class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
@@ -310,16 +333,16 @@
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha inicio <span class="text-red-500">*</span></label>
-                    <input type="date" id="edit-fecha-inicio" name="fecha_inicio"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Apertura <span class="text-red-500">*</span></label>
+                    <input type="date" id="edit-fecha-inicio-registro" name="fecha_inicio_registro"
                            class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                            required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha fin <span class="text-red-500">*</span></label>
-                    <input type="date" id="edit-fecha-fin" name="fecha_fin"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Cierre <span class="text-red-500">*</span></label>
+                    <input type="date" id="edit-fecha-fin-registro" name="fecha_fin_registro"
                            class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
@@ -347,12 +370,12 @@
 
 @push('scripts')
 <script>
-function abrirEditar(id, nombre, label, fechaInicio, fechaFin) {
+function abrirEditar(id, nombre, label, fechaInicioRegistro, fechaFinRegistro) {
     document.getElementById('form-editar').action = '/admin/periodos/' + id;
     document.getElementById('edit-nombre').value = nombre;
     document.getElementById('edit-label').value = label;
-    document.getElementById('edit-fecha-inicio').value = fechaInicio;
-    document.getElementById('edit-fecha-fin').value = fechaFin;
+    document.getElementById('edit-fecha-inicio-registro').value = fechaInicioRegistro;
+    document.getElementById('edit-fecha-fin-registro').value = fechaFinRegistro;
     document.getElementById('modal-editar').classList.remove('hidden');
 }
 
@@ -379,11 +402,11 @@ document.querySelector('#modal-crear input[name="nombre"]').value = '{{ old('nom
 @if(old('label'))
 document.querySelector('#modal-crear input[name="label"]').value = '{{ old('label') }}';
 @endif
-@if(old('fecha_inicio'))
-document.querySelector('#modal-crear input[name="fecha_inicio"]').value = '{{ old('fecha_inicio') }}';
+@if(old('fecha_inicio_registro'))
+document.querySelector('#modal-crear input[name="fecha_inicio_registro"]').value = '{{ old('fecha_inicio_registro') }}';
 @endif
-@if(old('fecha_fin'))
-document.querySelector('#modal-crear input[name="fecha_fin"]').value = '{{ old('fecha_fin') }}';
+@if(old('fecha_fin_registro'))
+document.querySelector('#modal-crear input[name="fecha_fin_registro"]').value = '{{ old('fecha_fin_registro') }}';
 @endif
 @endif
 </script>

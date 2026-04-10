@@ -119,6 +119,7 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::patch('/admin/periodos/{periodo}', [PeriodoController::class, 'update'])->name('admin.periodos.update');
     Route::patch('/admin/periodos/{periodo}/activar', [PeriodoController::class, 'activar'])->name('admin.periodos.activar');
     Route::patch('/admin/periodos/{periodo}/cerrar', [PeriodoController::class, 'cerrar'])->name('admin.periodos.cerrar');
+    Route::patch('/admin/periodos/{periodo}/toggle-auto', [PeriodoController::class, 'toggleAuto'])->name('admin.periodos.toggleAuto');
     Route::delete('/admin/periodos/{periodo}', [PeriodoController::class, 'destroy'])->name('admin.periodos.destroy');
 
     Route::get('/admin/grupos', [GrupoController::class, 'index'])->name('admin.grupos.index');
