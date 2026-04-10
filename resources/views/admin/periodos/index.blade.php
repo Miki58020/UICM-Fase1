@@ -248,7 +248,8 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Clave <span class="text-red-500">*</span></label>
                 <input type="text" id="crear-nombre" name="nombre" placeholder="ej: 2026-2"
-                       pattern="\d{4}-\d+" title="Formato: año-número (ej: 2026-2)" maxlength="10"
+                       pattern="\d{4}-\d{1}" title="Formato: año-número (ej: 2026-2)" maxlength="6"
+                       autocomplete="off" inputmode="numeric"
                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
@@ -317,7 +318,8 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Clave <span class="text-red-500">*</span></label>
                 <input type="text" id="edit-nombre" name="nombre"
-                       pattern="\d{4}-\d+" title="Formato: año-número (ej: 2026-2)" maxlength="10"
+                       pattern="\d{4}-\d{1}" title="Formato: año-número (ej: 2026-2)" maxlength="6"
+                       autocomplete="off" inputmode="numeric"
                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
@@ -381,6 +383,7 @@ function abrirEditar(id, nombre, label, fechaInicioRegistro, fechaFinRegistro) {
 
 function formatearClave(input) {
     let val = input.value.replace(/[^\d]/g, '');
+    val = val.slice(0, 5); // máximo 4 año + 1 número
     if (val.length > 4) {
         val = val.slice(0, 4) + '-' + val.slice(4);
     }
