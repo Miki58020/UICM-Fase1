@@ -115,60 +115,56 @@
 <audio id="mp-success-sound" src="{{ asset('sounds/mp-success.mp3') }}" preload="auto"></audio>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script>
-(async () => {
-    const mp            = new MercadoPago('{{ $publicKey }}', { locale: 'es-MX' });
-    const bricksBuilder = mp.bricks();
+const mp            = new MercadoPago('{{ $publicKey }}', { locale: 'es-MX' });
+const bricksBuilder = mp.bricks();
 
+const renderPaymentBrick = async (bricksBuilder) => {
     const settings = {
         initialization: {
-            amount:       {{ $monto }},
-            preferenceId: '{{ $preferenceId }}',
+            amount: {{ (int) $monto }},
         },
         customization: {
             paymentMethods: {
-                ticket:       'all',
-                bankTransfer: 'all',
-                creditCard:   'all',
-                debitCard:    'all',
-                mercadoPago:  'all',
+                atm:         'all',
+                ticket:      'all',
+                creditCard:  'all',
+                prepaidCard: 'all',
+                debitCard:   'all',
             },
         },
         callbacks: {
             onReady: () => {},
 
-            onSubmit: ({ formData }) => {
+            onSubmit: ({ selectedPaymentMethod, formData }) => {
                 return new Promise((resolve, reject) => {
-                    const errorBox = document.getElementById('mp-error');
-                    errorBox.classList.add('hidden');
+                    document.getElementById('mp-error').classList.add('hidden');
 
                     fetch('{{ route('aspirantes.pago.procesar') }}', {
                         method:  'POST',
                         headers: {
-                            'Content-Type':  'application/json',
-                            'X-CSRF-TOKEN':  document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         },
-                        body: JSON.stringify({ ...formData, folio: '{{ $aspirante->folio }}' }),
+                        body: JSON.stringify(Object.assign({}, formData, { folio: '{{ $aspirante->folio }}' })),
                     })
                     .then(r => r.json())
                     .then(data => {
                         if (data.redirect_url) {
-                            const sound = document.getElementById('mp-success-sound');
-                            sound.play().catch(() => {});
-                            setTimeout(() => {
-                                window.location.href = data.redirect_url;
-                            }, 1500);
+                            document.getElementById('mp-success-sound').play().catch(() => {});
+                            setTimeout(() => { window.location.href = data.redirect_url; }, 1200);
                             resolve();
-                        } else if (data.status === 'rejected') {
-                            errorBox.classList.remove('hidden');
-                            document.getElementById('mp-error-msg').textContent =
-                                'Tu pago fue rechazado. Verifica los datos de tu tarjeta e intenta de nuevo.';
-                            reject();
                         } else {
+                            const msg = data.status === 'rejected'
+                                ? 'Tu pago fue rechazado. Verifica los datos e intenta de nuevo.'
+                                : 'Error al procesar el pago: ' + (data.detail || data.status || 'intenta de nuevo');
+                            document.getElementById('mp-error-msg').textContent = msg;
+                            document.getElementById('mp-error').classList.remove('hidden');
                             reject();
                         }
                     })
                     .catch(() => {
-                        errorBox.classList.remove('hidden');
+                        document.getElementById('mp-error-msg').textContent = 'Error de conexión. Intenta de nuevo.';
+                        document.getElementById('mp-error').classList.remove('hidden');
                         reject();
                     });
                 });
@@ -176,12 +172,26 @@
 
             onError: (error) => {
                 console.error('MP Brick error:', error);
+                if (error.type === 'non_critical') return;
+                document.getElementById('mp-error-msg').textContent =
+                    'Error al cargar el formulario de pago. Recarga la página.';
+                document.getElementById('mp-error').classList.remove('hidden');
             },
         },
     };
 
-    await bricksBuilder.create('payment', 'paymentBrick_container', settings);
-})();
+    window.paymentBrickController = await bricksBuilder.create(
+        'payment',
+        'paymentBrick_container',
+        settings
+    );
+};
+
+renderPaymentBrick(bricksBuilder).catch(() => {
+    document.getElementById('mp-error-msg').textContent =
+        'No se pudo inicializar el formulario de pago. Recarga la página.';
+    document.getElementById('mp-error').classList.remove('hidden');
+});
 </script>
 @endpush
 

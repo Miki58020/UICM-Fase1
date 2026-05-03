@@ -34,7 +34,10 @@
       "Bash(mv 2025_01_01_000013_create_grupos_table.php 2025_01_01_000014_create_grupos_table.php)",
       "Bash(mv 2025_01_01_000014_create_alumnos_table.php 2025_01_01_000015_create_alumnos_table.php)",
       "Bash(mv 2025_01_01_000015_create_materias_table.php 2025_01_01_000016_create_materias_table.php)",
-      "Bash(xargs cat:*)"
+      "Bash(xargs cat:*)",
+      "Bash(claude mcp:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs"
     ]
   }
 }

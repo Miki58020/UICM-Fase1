@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfesorController;
 use App\Http\Controllers\ReinscripcionController;
 use App\Http\Controllers\SolicitudContrasenaController;
+use App\Http\Controllers\TarifaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -90,12 +91,15 @@ Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
     Route::post('/admin/reinscripciones/{alumno}/completar', [ReinscripcionController::class, 'completar'])->name('admin.reinscripciones.completar');
 });
 
-// Módulo admin — Gestión de usuarios del sistema
+// Módulo admin — Gestión de usuarios del sistema y tarifas
 Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::get('/admin/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios.index');
     Route::post('/admin/usuarios', [UsuarioController::class, 'store'])->name('admin.usuarios.store');
     Route::patch('/admin/usuarios/{usuario}', [UsuarioController::class, 'update'])->name('admin.usuarios.update');
     Route::delete('/admin/usuarios/{usuario}', [UsuarioController::class, 'destroy'])->name('admin.usuarios.destroy');
+
+    Route::get('/admin/tarifas', [TarifaController::class, 'index'])->name('admin.tarifas.index');
+    Route::patch('/admin/tarifas/{tarifa}', [TarifaController::class, 'update'])->name('admin.tarifas.update');
 });
 
 // Módulo coordinación — Materias, profesores y carga académica

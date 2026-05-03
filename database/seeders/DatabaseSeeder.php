@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProgramasSeeder::class,
             PeriodosSeeder::class,
+            TarifaInscripcionSeeder::class,
         ]);
     }
 }

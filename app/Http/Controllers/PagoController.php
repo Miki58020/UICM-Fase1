@@ -9,9 +9,12 @@ use App\Models\Pago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use MercadoPago\Client\Common\RequestOptions;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\MercadoPagoConfig;
+
 
 class PagoController extends Controller
 {
@@ -53,7 +56,7 @@ class PagoController extends Controller
 
                 $preferenceData = [
                     'items' => [[
-                        'title'       => 'Inscripción UICM — ' . ($aspirante->programa->nombre ?? 'Programa académico'),
+                        'title'       => 'Inscripcion UICM — ' . ($aspirante->programa->nombre ?? 'Programa academico'),
                         'quantity'    => 1,
                         'unit_price'  => $monto,
                         'currency_id' => 'MXN',
@@ -67,8 +70,8 @@ class PagoController extends Controller
                     'statement_descriptor' => 'UICM Inscripcion',
                 ];
 
-                // back_urls y notification_url solo en producción (MP rechaza localhost)
-                if (!app()->environment('local')) {
+                // back_urls y notification_url solo en producción (MP rechaza localhost/staging)
+                if (app()->environment('production')) {
                     $preferenceData['back_urls'] = [
                         'success' => route('aspirantes.pago.retorno'),
                         'failure' => route('aspirantes.pago.retorno'),
@@ -82,11 +85,10 @@ class PagoController extends Controller
 
                 session([$sessionKey => $preferenceId]);
 
-            } catch (\MercadoPago\Exceptions\MPApiException $e) {
-                Log::error('MP preference error: ' . $e->getMessage(), [
-                    'response' => $e->getApiResponse()?->getContent(),
-                ]);
-                return back()->withErrors(['pago' => 'Error al conectar con Mercado Pago: ' . $e->getMessage()]);
+            } catch (\Exception $e) {
+                // La preferencia es opcional — el Brick funciona solo con amount.
+                // Registramos el error pero no bloqueamos la vista de pago.
+                Log::error('MP preference error (no bloqueante): ' . $e->getMessage());
             }
         }
 
@@ -132,8 +134,11 @@ class PagoController extends Controller
 
             Log::info('MP payment data', $paymentData);
 
+            $requestOptions = new RequestOptions();
+            $requestOptions->setCustomHeaders(['X-Idempotency-Key: ' . (string) Str::uuid()]);
+
             $client  = new PaymentClient();
-            $payment = $client->create($paymentData);
+            $payment = $client->create($paymentData, $requestOptions);
 
             Log::info('MP payment response', ['status' => $payment->status, 'detail' => $payment->status_detail, 'id' => $payment->id]);
 
@@ -339,10 +344,13 @@ class PagoController extends Controller
 
     private function calcularMonto(?\App\Models\Programa $programa): float
     {
-        return match($programa?->nivel) {
-            'maestria'   => 4000.00,
-            'doctorado'  => 5000.00,
-            default      => 3000.00, // licenciatura
+        $nivel  = $programa?->nivel ?? 'licenciatura';
+        $tarifa = \App\Models\TarifaInscripcion::where('nivel', $nivel)->first();
+
+        return $tarifa ? (float) $tarifa->monto : match($nivel) {
+            'maestria'  => 4000.00,
+            'doctorado' => 5000.00,
+            default     => 3000.00,
         };
     }
 }
