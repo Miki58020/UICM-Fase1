@@ -34,7 +34,7 @@ class AspiranteController extends Controller
             abort(403, 'Este aspirante ya fue procesado.');
         }
 
-        $matricula = $this->generarMatricula();
+        $matricula = $this->generarMatricula($aspirante->generacion);
 
         Alumno::create([
             'matricula'          => $matricula,
@@ -167,7 +167,7 @@ class AspiranteController extends Controller
         $nombre = $this->normalizarTexto($request->nombre);
         $apPat  = $this->normalizarTexto($request->apellido_paterno);
         $apMat  = $this->normalizarTexto($request->apellido_materno);
-        $folio  = $this->generarFolio();
+        $folio  = $this->generarFolio($request->generacion);
 
         $carpetaCertificado = match($programa->nivel) {
             'licenciatura' => 'documentos/certificados/bachillerato',
@@ -209,18 +209,22 @@ class AspiranteController extends Controller
         return redirect()->route('aspirantes.confirmacion')->with('folio', $folio);
     }
 
-    private function generarFolio(): string
+    private function generarFolio(string $generacion): string
     {
-        $year = now()->year;
-        $count = Aspirante::whereYear('created_at', $year)->count() + 1;
-        return 'UICM-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        $periodo = Periodo::where('nombre', $generacion)->first();
+        $year = $periodo ? $periodo->fecha_inicio_registro->year : now()->year;
+        $prefix = 'UICM-' . $year . '-';
+        $count = Aspirante::where('folio', 'like', $prefix . '%')->count() + 1;
+        return $prefix . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
-    private function generarMatricula(): string
+    private function generarMatricula(string $generacion): string
     {
-        $year = now()->year;
-        $count = Alumno::whereYear('created_at', $year)->count() + 1;
-        return 'UICM-' . $year . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+        $periodo = Periodo::where('nombre', $generacion)->first();
+        $year = $periodo ? $periodo->fecha_inicio_registro->year : now()->year;
+        $prefix = 'UICM-' . $year . '-';
+        $count = Alumno::where('matricula', 'like', $prefix . '%')->count() + 1;
+        return $prefix . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
     private function normalizarTexto(?string $texto): ?string
