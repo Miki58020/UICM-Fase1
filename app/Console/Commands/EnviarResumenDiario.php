@@ -6,6 +6,7 @@ use App\Mail\ResumenDiario;
 use App\Models\Alumno;
 use App\Models\Aspirante;
 use App\Models\Pago;
+use App\Models\SolicitudContrasena;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -36,9 +37,12 @@ class EnviarResumenDiario extends Command
             ->whereHas('alumno', fn($q) => $q->whereNull('user_id'))
             ->count();
 
+        $solicitudesContrasena = SolicitudContrasena::where('estado', 'pendiente')->count();
+
         $datos = [
-            'Aspirantes pendientes de revisión' => $aspirantesPendientes,
+            'Aspirantes pendientes de revisión'     => $aspirantesPendientes,
             'Listos para inscribir (pago aprobado)' => $listosParaInscribir,
+            'Solicitudes de contraseña pendientes'  => $solicitudesContrasena,
         ];
 
         $this->enviarARol('control_escolar', $datos);
@@ -86,6 +90,7 @@ class EnviarResumenDiario extends Command
             'Alumnos activos sin grupo asignado'     => Alumno::where('estado', 'activo')
                 ->whereNull('grupo_id')
                 ->count(),
+            'Solicitudes de contraseña pendientes'   => SolicitudContrasena::where('estado', 'pendiente')->count(),
         ];
 
         $this->enviarARol('admin', $datos);
