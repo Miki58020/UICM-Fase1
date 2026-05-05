@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NuevaContrasena;
 use App\Models\Alumno;
 use App\Models\CargaAcademica;
 use App\Models\Pago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AlumnoController extends Controller
 {
@@ -54,6 +56,7 @@ class AlumnoController extends Controller
 
         if ($request->filled('password') && $alumno->user_id) {
             $alumno->user->update(['password' => Hash::make($request->password)]);
+            Mail::to($alumno->user->email)->send(new NuevaContrasena($alumno->user, $request->password));
         }
 
         return redirect()->route('admin.alumnos.index')
