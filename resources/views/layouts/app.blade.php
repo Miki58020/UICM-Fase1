@@ -526,7 +526,7 @@
         // Éxito → 4 s | Error / validación → 6 s
         var rules = [
             { selector: 'div.bg-green-50.rounded-xl', delay: 4000 },
-            { selector: 'div.bg-red-50.rounded-xl',   delay: 6000 },
+            { selector: 'div.bg-red-50.rounded-xl:not(#mp-error)',   delay: 6000 },
         ];
 
         rules.forEach(function (rule) {

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarjetas de Prueba — MercadoPago UICM</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: #eef2ee; padding: 40px 16px; color: #333; }
+    .wrapper { max-width: 700px; margin: 0 auto; }
+
+    /* Header */
+    .header { background: #0F4229; padding: 36px 40px 0; text-align: center; border-radius: 12px 12px 0 0; }
+    .header-logo { font-size: 11px; font-family: Arial, sans-serif; letter-spacing: 3px; color: #D4AF37; text-transform: uppercase; margin-bottom: 10px; }
+    .header h1 { color: #fff; font-size: 22px; font-weight: normal; letter-spacing: 0.5px; line-height: 1.4; }
+    .header-sub { font-family: Arial, sans-serif; color: #a7d7b8; font-size: 13px; margin-top: 6px; }
+    .header-band { height: 6px; background: linear-gradient(to right, #D4AF37, #f0d060, #D4AF37); margin-top: 24px; }
+
+    /* Body */
+    .body { background: #fff; padding: 40px; font-size: 15px; line-height: 1.7; }
+
+    .section-label { font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #D4AF37; margin-bottom: 14px; margin-top: 36px; }
+    .section-label:first-of-type { margin-top: 0; }
+
+    .notice { background: #fffbea; border-left: 4px solid #D4AF37; border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 32px; font-family: Arial, sans-serif; font-size: 13px; color: #555; line-height: 1.6; }
+    .notice strong { color: #0F4229; display: block; margin-bottom: 2px; }
+
+    /* Tablas */
+    table { width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 14px; }
+    thead tr { background: #0F4229; }
+    thead th { padding: 11px 16px; text-align: left; color: #D4AF37; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    tbody tr { border-bottom: 1px solid #f0f0f0; transition: background .1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f9faf9; }
+    tbody td { padding: 13px 16px; }
+
+    .card-name { font-weight: 600; color: #0F4229; }
+    .card-number { font-family: 'Courier New', monospace; font-size: 15px; font-weight: 700; letter-spacing: 2px; color: #111; }
+    .card-cvv { font-family: 'Courier New', monospace; font-weight: 700; background: #f3f4f6; padding: 3px 10px; border-radius: 5px; font-size: 13px; }
+    .card-exp { color: #0F4229; font-weight: 700; font-family: 'Courier New', monospace; }
+
+    .copy-btn { cursor: pointer; background: none; border: 1px solid #d1d5db; border-radius: 5px; padding: 3px 9px; font-size: 11px; color: #888; margin-left: 10px; font-family: Arial, sans-serif; transition: all .15s; vertical-align: middle; }
+    .copy-btn:hover { border-color: #0F4229; color: #0F4229; }
+    .copy-btn.copied { border-color: #0F4229; color: #0F4229; background: #f0fdf4; }
+
+    .code { font-family: 'Courier New', monospace; font-size: 14px; font-weight: 800; background: #f5faf7; border: 1px solid #c6dece; color: #0F4229; padding: 4px 12px; border-radius: 6px; letter-spacing: 1px; }
+    .result-aprobado { color: #166534; font-weight: 600; }
+    .result-pendiente { color: #92400e; font-weight: 600; }
+    .result-rechazado { color: #991b1b; }
+
+    .divider { border: none; border-top: 1px solid #e8e8e8; margin: 32px 0; }
+
+    .tip { background: #f5faf7; border: 1px solid #c6dece; border-radius: 10px; padding: 16px 20px; font-family: Arial, sans-serif; font-size: 13px; color: #2d5a3d; line-height: 1.7; margin-top: 32px; }
+    .tip strong { font-weight: 700; color: #0F4229; }
+
+    /* Footer */
+    .footer { background: #0F4229; padding: 20px 40px; text-align: center; border-radius: 0 0 12px 12px; }
+    .footer p { font-family: Arial, sans-serif; font-size: 11px; color: #a7d7b8; line-height: 1.6; }
+    .footer span { color: #D4AF37; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+    <div class="header">
+        <div class="header-logo">Universidad Internacional Cuba México</div>
+        <h1>Tarjetas de Prueba — MercadoPago</h1>
+        <p class="header-sub">Referencia interna de desarrollo · Sandbox México</p>
+        <div class="header-band"></div>
+    </div>
+
+    <div class="body">
+
+        <div class="notice">
+            <strong>Solo para entorno de prueba</strong>
+            Usa únicamente las tarjetas que se listan aquí. Las tarjetas reales o inventadas generan errores en el sandbox y no deben usarse durante el desarrollo.
+        </div>
+
+        <!-- Tarjetas -->
+        <div class="section-label">Números de tarjeta — México</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tarjeta</th>
+                    <th>Número</th>
+                    <th>CVV</th>
+                    <th>Vencimiento</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="card-name">Mastercard Crédito</span></td>
+                    <td>
+                        <span class="card-number">5474 9254 3267 0366</span>
+                        <button class="copy-btn" onclick="copiar(this,'5474925432670366')">copiar</button>
+                    </td>
+                    <td><span class="card-cvv">123</span></td>
+                    <td><span class="card-exp">11/30</span></td>
+                </tr>
+                <tr>
+                    <td><span class="card-name">Visa Crédito</span></td>
+                    <td>
+                        <span class="card-number">4075 5957 1648 3764</span>
+                        <button class="copy-btn" onclick="copiar(this,'4075595716483764')">copiar</button>
+                    </td>
+                    <td><span class="card-cvv">123</span></td>
+                    <td><span class="card-exp">11/30</span></td>
+                </tr>
+                <tr>
+                    <td><span class="card-name">Mastercard Débito</span></td>
+                    <td>
+                        <span class="card-number">5579 0534 6148 2647</span>
+                        <button class="copy-btn" onclick="copiar(this,'5579053461482647')">copiar</button>
+                    </td>
+                    <td><span class="card-cvv">1234</span></td>
+                    <td><span class="card-exp">11/30</span></td>
+                </tr>
+                <tr>
+                    <td><span class="card-name">Visa Débito</span></td>
+                    <td>
+                        <span class="card-number">4189 1412 2126 7633</span>
+                        <button class="copy-btn" onclick="copiar(this,'4189141221267633')">copiar</button>
+                    </td>
+                    <td><span class="card-cvv">123</span></td>
+                    <td><span class="card-exp">11/30</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr class="divider">
+
+        <!-- Nombres / estados -->
+        <div class="section-label">Nombre del titular — simular resultado</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre del titular</th>
+                    <th>Resultado simulado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="code">APRO</span></td>
+                    <td><span class="result-aprobado">Pago aprobado</span></td>
+                </tr>
+                <tr>
+                    <td><span class="code">CONT</span></td>
+                    <td><span class="result-pendiente">Pendiente de pago</span></td>
+                </tr>
+                <tr>
+                    <td><span class="code">OTHE</span></td>
+                    <td><span class="result-rechazado">Rechazado por error general</span></td>
+                </tr>
+                <tr>
+                    <td><span class="code">CALL</span></td>
+                    <td><span class="result-rechazado">Rechazado con validación para autorizar</span></td>
+                </tr>
+                <tr>
+                    <td><span class="code">FUND</span></td>
+                    <td><span class="result-rechazado">Rechazado por importe insuficiente</span></td>
+                </tr>
+                <tr>
+                    <td><span class="code">SECU</span></td>
+                    <td><span class="result-rechazado">Rechazado por código de seguridad inválido</span></td>
+                </tr>
+                <tr>
+                    <td><span class="code">EXPI</span></td>
+                    <td><span class="result-rechazado">Rechazado por fecha de vencimiento</span></td>
+                </tr>
+                <tr>
+                    <td><span class="code">FORM</span></td>
+                    <td><span class="result-rechazado">Rechazado por error de formulario</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+
+    <div class="footer">
+        <p>
+            <span>Universidad Internacional Cuba México</span><br>
+            Referencia interna &mdash; Solo entorno de desarrollo
+        </p>
+    </div>
+
+</div>
+<script>
+    function copiar(btn, numero) {
+        navigator.clipboard.writeText(numero).then(() => {
+            btn.textContent = 'copiado';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'copiar'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+</script>
+</body>
+</html>

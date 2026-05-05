@@ -39,18 +39,17 @@ class PagoController extends Controller
                 ->withErrors(['folio' => 'Folio no encontrado o solicitud aún no aprobada.']);
         }
 
-        // Si ya tiene un pago aprobado, redirigir a confirmación
         if (Pago::where('aspirante_id', $aspirante->id)->where('estado', 'aprobado')->exists()) {
             return redirect()->route('aspirantes.pago.confirmacion', ['status' => 'aprobado']);
         }
 
-        // Reutilizar preference de sesión para no crear una nueva en cada visita
-        $sessionKey   = 'mp_preference_' . $folio;
-        $preferenceId = session($sessionKey);
+        $monto          = $this->calcularMonto($aspirante->programa);
+        $sessionKeyPref = 'mp_preference_' . $folio . '_' . (int) $monto;
+        $sessionKeyUrl  = 'mp_checkout_url_' . $folio . '_' . (int) $monto;
+        $preferenceId   = session($sessionKeyPref);
+        $checkoutUrl    = session($sessionKeyUrl);
 
-        $monto = $this->calcularMonto($aspirante->programa);
-
-        if (!$preferenceId) {
+        if (!$preferenceId || !$checkoutUrl) {
             try {
                 $this->configurarMP();
 
@@ -70,33 +69,47 @@ class PagoController extends Controller
                     'statement_descriptor' => 'UICM Inscripcion',
                 ];
 
-                // back_urls y notification_url solo en producción (MP rechaza localhost/staging)
-                if (app()->environment('production')) {
+                // back_urls solo cuando APP_URL es público (https://).
+                // MP rechaza back_urls con localhost/127.0.0.1.
+                // Con ngrok (https) esto se activa automáticamente.
+                $appUrl = rtrim(config('app.url', ''), '/');
+                if (str_starts_with($appUrl, 'https://')) {
+                    $retornoUrl = $appUrl . '/aspirante/pago/retorno';
                     $preferenceData['back_urls'] = [
-                        'success' => route('aspirantes.pago.retorno'),
-                        'failure' => route('aspirantes.pago.retorno'),
-                        'pending' => route('aspirantes.pago.retorno'),
+                        'success' => $retornoUrl,
+                        'failure' => $retornoUrl,
+                        'pending' => $retornoUrl,
                     ];
-                    $preferenceData['notification_url'] = route('mp.webhook');
+                    $preferenceData['auto_return']      = 'approved';
+                    $preferenceData['notification_url'] = $appUrl . '/mp/webhook';
                 }
 
                 $preference   = (new PreferenceClient())->create($preferenceData);
                 $preferenceId = $preference->id;
+                $checkoutUrl  = app()->environment('production')
+                    ? $preference->init_point
+                    : $preference->sandbox_init_point;
 
-                session([$sessionKey => $preferenceId]);
+                session([
+                    $sessionKeyPref => $preferenceId,
+                    $sessionKeyUrl  => $checkoutUrl,
+                ]);
 
+            } catch (\MercadoPago\Exceptions\MPApiException $e) {
+                Log::error('MP preference MPApiException', [
+                    'message'  => $e->getMessage(),
+                    'httpCode' => $e->getApiResponse()?->getStatusCode(),
+                    'body'     => $e->getApiResponse()?->getContent(),
+                ]);
             } catch (\Exception $e) {
-                // La preferencia es opcional — el Brick funciona solo con amount.
-                // Registramos el error pero no bloqueamos la vista de pago.
-                Log::error('MP preference error (no bloqueante): ' . $e->getMessage());
+                Log::error('MP preference error: ' . $e->getMessage());
             }
         }
 
         return view('aspirantes.pago', [
-            'aspirante'    => $aspirante,
-            'preferenceId' => $preferenceId,
-            'publicKey'    => config('services.mercadopago.public_key'),
-            'monto'        => $monto,
+            'aspirante'   => $aspirante,
+            'checkoutUrl' => $checkoutUrl,
+            'monto'       => $monto,
         ]);
     }
 
@@ -119,17 +132,19 @@ class PagoController extends Controller
             $monto = $this->calcularMonto($aspirante->programa);
 
             $paymentData = [
-                'transaction_amount' => $monto,
+                'transaction_amount' => (float) $monto,
                 'description'        => 'Inscripcion UICM',
-                'payment_method_id'  => $data['payment_method_id'],
-                'payer'              => ['email' => $data['payer']['email'] ?? ''],
+                'payment_method_id'  => (string) ($data['payment_method_id'] ?? ''),
+                'payer'              => ['email' => (string) ($data['payer']['email'] ?? '')],
             ];
 
             // Datos adicionales solo para pagos con tarjeta
             if (!empty($data['token'])) {
                 $paymentData['token']        = $data['token'];
                 $paymentData['installments'] = (int) ($data['installments'] ?? 1);
-                $paymentData['issuer_id']    = isset($data['issuer_id']) ? (int) $data['issuer_id'] : null;
+                if (!empty($data['issuer_id'])) {
+                    $paymentData['issuer_id'] = (int) $data['issuer_id'];
+                }
             }
 
             Log::info('MP payment data', $paymentData);
@@ -171,11 +186,17 @@ class PagoController extends Controller
                 'redirect_url' => $redirectUrl,
             ]);
         } catch (\MercadoPago\Exceptions\MPApiException $e) {
-            Log::error('MP procesar error: ' . $e->getMessage(), [
-                'response' => $e->getApiResponse()?->getContent(),
-                'status'   => $e->getApiResponse()?->getStatusCode(),
+            $apiContent = $e->getApiResponse()?->getContent();
+            Log::error('MP procesar MPApiException', [
+                'message'  => $e->getMessage(),
+                'httpCode' => $e->getApiResponse()?->getStatusCode(),
+                'body'     => $apiContent,
             ]);
-            return response()->json(['status' => 'error', 'detail' => $e->getMessage()], 500);
+            $detail = $e->getMessage();
+            if (is_array($apiContent) && !empty($apiContent['cause'])) {
+                $detail .= ' | cause: ' . json_encode($apiContent['cause']);
+            }
+            return response()->json(['status' => 'error', 'detail' => $detail], 500);
         } catch (\Exception $e) {
             Log::error('MP procesar error: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'detail' => $e->getMessage()], 500);
@@ -186,7 +207,39 @@ class PagoController extends Controller
 
     public function retorno(Request $request)
     {
-        $status = $request->query('payment_status', $request->query('status', 'pendiente'));
+        $status    = $request->query('payment_status', $request->query('status', 'pendiente'));
+        $paymentId = $request->query('payment_id');
+        $extRef    = $request->query('external_reference');
+
+        // Crear el registro de pago cuando MP redirige de vuelta (Checkout Pro).
+        // El webhook hace lo mismo en producción; firstOrCreate evita duplicados.
+        if ($paymentId && $extRef) {
+            try {
+                $this->configurarMP();
+                $aspirante = Aspirante::where('folio', strtoupper($extRef))->first();
+
+                if ($aspirante) {
+                    $payment = (new PaymentClient())->get((int) $paymentId);
+
+                    if (in_array($payment->status, ['approved', 'pending', 'in_process', 'authorized'])) {
+                        Pago::firstOrCreate(
+                            ['mp_payment_id' => (string) $payment->id],
+                            [
+                                'aspirante_id'     => $aspirante->id,
+                                'concepto'         => 'inscripcion',
+                                'periodo'          => date('Y') . '-1',
+                                'monto'            => $payment->transaction_amount,
+                                'fecha_pago'       => now()->toDateString(),
+                                'estado'           => 'pendiente',
+                                'mp_preference_id' => $payment->preference_id ?? null,
+                            ]
+                        );
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::error('MP retorno error: ' . $e->getMessage());
+            }
+        }
 
         $estadoMapa = [
             'approved' => 'aprobado',
@@ -195,9 +248,9 @@ class PagoController extends Controller
             'rejected' => 'rechazado',
         ];
 
-        $estado = $estadoMapa[$status] ?? 'pendiente';
-
-        return redirect()->route('aspirantes.pago.confirmacion', ['status' => $estado]);
+        return redirect()->route('aspirantes.pago.confirmacion', [
+            'status' => $estadoMapa[$status] ?? 'pendiente',
+        ]);
     }
 
     // ─── Webhook IPN de Mercado Pago ──────────────────────────────────────────
@@ -216,11 +269,10 @@ class PagoController extends Controller
         try {
             $this->configurarMP();
 
-            $client  = new PaymentClient();
-            $payment = $client->get((int) $id);
-            $estado  = $this->mapearEstado($payment->status);
+            $client    = new PaymentClient();
+            $payment   = $client->get((int) $id);
+            $aspirante = null;
 
-            // Buscar el pago por mp_payment_id o por folio (external_reference)
             $pago = Pago::where('mp_payment_id', $payment->id)->first();
 
             if (!$pago && $payment->external_reference) {
@@ -235,10 +287,20 @@ class PagoController extends Controller
             }
 
             if ($pago) {
-                // Solo actualizar el ID de MP — el estado interno lo decide Finanzas manualmente
-                $pago->update([
-                    'mp_payment_id' => $payment->id,
-                ]);
+                $pago->update(['mp_payment_id' => $payment->id]);
+            } elseif ($aspirante && in_array($payment->status, ['approved', 'pending', 'in_process', 'authorized'])) {
+                Pago::firstOrCreate(
+                    ['mp_payment_id' => (string) $payment->id],
+                    [
+                        'aspirante_id'     => $aspirante->id,
+                        'concepto'         => 'inscripcion',
+                        'periodo'          => date('Y') . '-1',
+                        'monto'            => $payment->transaction_amount,
+                        'fecha_pago'       => now()->toDateString(),
+                        'estado'           => 'pendiente',
+                        'mp_preference_id' => $payment->preference_id ?? null,
+                    ]
+                );
             }
         } catch (\Exception $e) {
             Log::error('MP Webhook error: ' . $e->getMessage());

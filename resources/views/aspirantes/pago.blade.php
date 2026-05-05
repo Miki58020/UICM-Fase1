@@ -57,7 +57,7 @@
             </div>
 
             {{-- ══════════════════════════════════════
-                 CARD: Payment Brick
+                 CARD: Checkout Pro
             ══════════════════════════════════════ --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
@@ -66,24 +66,39 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                     </svg>
-                    <h3 class="text-sm font-semibold text-gray-700">Selecciona tu método de pago</h3>
+                    <h3 class="text-sm font-semibold text-gray-700">Pago seguro con Mercado Pago</h3>
                 </div>
 
-                <div class="px-6 py-5">
+                <div class="px-6 py-8 flex flex-col items-center gap-5 text-center">
+                    <p class="text-sm text-gray-500 max-w-sm">
+                        Al dar clic serás redirigido al sitio seguro de Mercado Pago para completar
+                        tu pago de <span class="font-bold text-gray-800">${{ number_format($monto, 0) }} MXN</span>.
+                    </p>
 
-                    {{-- Mensaje de error al procesar --}}
-                    <div id="mp-error"
-                         class="hidden mb-4 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
-                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @if($checkoutUrl)
+                        <a href="{{ $checkoutUrl }}"
+                           class="inline-flex items-center gap-3 px-8 py-3.5 rounded-xl text-white font-bold text-sm shadow-md transition-all duration-150 hover:opacity-90 active:scale-95"
+                           style="background-color: #009ee3;">
+                            <svg class="w-5 h-5" viewBox="0 0 40 26" fill="none">
+                                <path d="M20 0C9 0 0 5.82 0 13s9 13 20 13 20-5.82 20-13S31 0 20 0z" fill="white" fill-opacity="0.25"/>
+                                <path d="M11 13a9 9 0 0118 0" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                                <circle cx="20" cy="13" r="2.5" fill="white"/>
+                            </svg>
+                            Pagar con Mercado Pago
+                        </a>
+                    @else
+                        <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3 w-full max-w-sm">
+                            No se pudo generar el enlace de pago. Por favor, recarga la página.
+                        </p>
+                    @endif
+
+                    <p class="text-xs text-gray-400 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
-                        <span id="mp-error-msg">Ocurrió un error al procesar tu pago. Intenta de nuevo.</span>
-                    </div>
-
-                    {{-- Contenedor del brick --}}
-                    <div id="paymentBrick_container"></div>
-
+                        Pago procesado de forma segura por Mercado Pago
+                    </p>
                 </div>
             </div>
 
@@ -111,88 +126,5 @@
     </div>
 </section>
 
-@push('scripts')
-<audio id="mp-success-sound" src="{{ asset('sounds/mp-success.mp3') }}" preload="auto"></audio>
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-<script>
-const mp            = new MercadoPago('{{ $publicKey }}', { locale: 'es-MX' });
-const bricksBuilder = mp.bricks();
-
-const renderPaymentBrick = async (bricksBuilder) => {
-    const settings = {
-        initialization: {
-            amount: {{ (int) $monto }},
-        },
-        customization: {
-            paymentMethods: {
-                atm:         'all',
-                ticket:      'all',
-                creditCard:  'all',
-                prepaidCard: 'all',
-                debitCard:   'all',
-            },
-        },
-        callbacks: {
-            onReady: () => {},
-
-            onSubmit: ({ selectedPaymentMethod, formData }) => {
-                return new Promise((resolve, reject) => {
-                    document.getElementById('mp-error').classList.add('hidden');
-
-                    fetch('{{ route('aspirantes.pago.procesar') }}', {
-                        method:  'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        },
-                        body: JSON.stringify(Object.assign({}, formData, { folio: '{{ $aspirante->folio }}' })),
-                    })
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data.redirect_url) {
-                            document.getElementById('mp-success-sound').play().catch(() => {});
-                            setTimeout(() => { window.location.href = data.redirect_url; }, 1200);
-                            resolve();
-                        } else {
-                            const msg = data.status === 'rejected'
-                                ? 'Tu pago fue rechazado. Verifica los datos e intenta de nuevo.'
-                                : 'Error al procesar el pago: ' + (data.detail || data.status || 'intenta de nuevo');
-                            document.getElementById('mp-error-msg').textContent = msg;
-                            document.getElementById('mp-error').classList.remove('hidden');
-                            reject();
-                        }
-                    })
-                    .catch(() => {
-                        document.getElementById('mp-error-msg').textContent = 'Error de conexión. Intenta de nuevo.';
-                        document.getElementById('mp-error').classList.remove('hidden');
-                        reject();
-                    });
-                });
-            },
-
-            onError: (error) => {
-                console.error('MP Brick error:', error);
-                if (error.type === 'non_critical') return;
-                document.getElementById('mp-error-msg').textContent =
-                    'Error al cargar el formulario de pago. Recarga la página.';
-                document.getElementById('mp-error').classList.remove('hidden');
-            },
-        },
-    };
-
-    window.paymentBrickController = await bricksBuilder.create(
-        'payment',
-        'paymentBrick_container',
-        settings
-    );
-};
-
-renderPaymentBrick(bricksBuilder).catch(() => {
-    document.getElementById('mp-error-msg').textContent =
-        'No se pudo inicializar el formulario de pago. Recarga la página.';
-    document.getElementById('mp-error').classList.remove('hidden');
-});
-</script>
-@endpush
 
 @endsection
