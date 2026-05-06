@@ -277,10 +277,11 @@
                             default     => 'Certificado de bachillerato',
                         };
                         $documentos = [
-                            ['nombre' => 'Acta de nacimiento',          'url' => $aspirante->acta_nacimiento_url],
-                            ['nombre' => 'CURP',                        'url' => $aspirante->curp_url],
-                            ['nombre' => $labelCert,                    'url' => $aspirante->certificado_url],
-                            ['nombre' => 'Identificación oficial (INE)','url' => $aspirante->identificacion_url],
+                            ['nombre' => 'Acta de nacimiento',           'url' => $aspirante->acta_nacimiento_url],
+                            ['nombre' => 'CURP',                         'url' => $aspirante->curp_url],
+                            ['nombre' => $labelCert,                     'url' => $aspirante->certificado_url],
+                            ['nombre' => 'Identificación oficial (INE)', 'url' => $aspirante->identificacion_url],
+                            ['nombre' => 'Comprobante de domicilio',     'url' => $aspirante->comprobante_domicilio_url],
                         ];
                         if (!empty($aspirante->titulo_url)) {
                             $documentos[] = ['nombre' => 'Título de maestría', 'url' => $aspirante->titulo_url];

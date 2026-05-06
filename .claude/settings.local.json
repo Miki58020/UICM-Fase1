@@ -68,7 +68,8 @@
       "WebFetch(domain:es.stackoverflow.com)",
       "Bash(composer show *)",
       "Bash(composer outdated *)",
-      "Bash(Remove-Item *)"
+      "Bash(Remove-Item *)",
+      "Bash(git *)"
     ]
   }
 }

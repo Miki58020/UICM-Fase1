@@ -149,10 +149,11 @@ class AspiranteController extends Controller
             'email'             => 'required|email:rfc,filter|unique:aspirantes,email',
             'programa_academico'=> 'required|string',
             'generacion'        => 'required|string|exists:periodos,nombre',
-            'acta_nacimiento'   => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'curp_doc'          => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'identificacion'    => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'certificado'       => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'acta_nacimiento'        => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'curp_doc'               => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'identificacion'         => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'comprobante_domicilio'  => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'certificado'            => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'titulo'            => [
                 $esDoctorado ? 'required' : 'nullable',
                 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120',
@@ -174,10 +175,11 @@ class AspiranteController extends Controller
             default        => 'documentos/certificados/titulo_licenciatura',
         };
 
-        $actaUrl           = $request->file('acta_nacimiento')->store('documentos/actas_nacimiento', 'local');
-        $curpDocUrl        = $request->file('curp_doc')->store('documentos/curp', 'local');
-        $certificadoUrl    = $request->file('certificado')->store($carpetaCertificado, 'local');
-        $identificacionUrl = $request->file('identificacion')->store('documentos/identificaciones', 'local');
+        $actaUrl                  = $request->file('acta_nacimiento')->store('documentos/actas_nacimiento', 'local');
+        $curpDocUrl               = $request->file('curp_doc')->store('documentos/curp', 'local');
+        $certificadoUrl           = $request->file('certificado')->store($carpetaCertificado, 'local');
+        $identificacionUrl        = $request->file('identificacion')->store('documentos/identificaciones', 'local');
+        $comprobanteDomicilioUrl  = $request->file('comprobante_domicilio')->store('documentos/comprobantes_domicilio', 'local');
 
         $tituloUrl = null;
         if ($request->hasFile('titulo')) {
@@ -195,11 +197,12 @@ class AspiranteController extends Controller
             'email'              => $request->email,
             'programa_id'        => $programa->id,
             'generacion'         => $request->generacion,
-            'acta_nacimiento_url'  => $actaUrl,
-            'curp_url'             => $curpDocUrl,
-            'certificado_url'      => $certificadoUrl,
-            'identificacion_url'   => $identificacionUrl,
-            'titulo_url'           => $tituloUrl,
+            'acta_nacimiento_url'       => $actaUrl,
+            'curp_url'                  => $curpDocUrl,
+            'certificado_url'           => $certificadoUrl,
+            'identificacion_url'        => $identificacionUrl,
+            'comprobante_domicilio_url' => $comprobanteDomicilioUrl,
+            'titulo_url'                => $tituloUrl,
             'estado'             => 'pendiente',
         ]);
 
