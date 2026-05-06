@@ -86,12 +86,18 @@
     {{-- ===== CIFRAS ===== --}}
     <section class="bg-uicm-gray py-12">
         <div class="container mx-auto px-8 lg:px-12">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @foreach([['4','Licenciaturas'],['3','Maestrías'],['1','Doctorado'],['1+','Campus digital']] as $stat)
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                @foreach([
+                    ['nivel' => 'licenciatura', 'label' => 'Licenciaturas'],
+                    ['nivel' => 'maestria',     'label' => 'Maestrías'],
+                    ['nivel' => 'doctorado',    'label' => 'Doctorado'],
+                ] as $item)
+                @if(($conteoProgramas[$item['nivel']] ?? 0) > 0)
                 <div class="bg-white rounded-xl shadow-sm p-6 text-center hover:shadow-md transition-shadow duration-200">
-                    <div class="text-4xl font-extrabold text-uicm-green mb-1">{{ $stat[0] }}</div>
-                    <div class="text-gray-500 text-sm font-medium">{{ $stat[1] }}</div>
+                    <div class="text-4xl font-extrabold text-uicm-green mb-1">{{ $conteoProgramas[$item['nivel']] }}</div>
+                    <div class="text-gray-500 text-sm font-medium">{{ $item['label'] }}</div>
                 </div>
+                @endif
                 @endforeach
             </div>
         </div>
@@ -151,58 +157,43 @@
                 <p class="text-gray-500">Programas académicos estructurados en distintos niveles educativos.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {{-- Licenciaturas --}}
+            <div class="grid gap-6" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))">
+                @php
+                $nivelesConfig = [
+                    'licenciatura' => ['label' => 'Licenciaturas', 'icon' => 'M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z'],
+                    'maestria'     => ['label' => 'Maestrías',     'icon' => 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'],
+                    'doctorado'    => ['label' => 'Doctorado',     'icon' => 'M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z'],
+                ];
+                @endphp
+                @foreach($nivelesConfig as $nivel => $cfg)
+                @if(isset($ofertaHome[$nivel]) && $ofertaHome[$nivel]->count())
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 border-t-4 border-uicm-gold">
                     <div class="p-6">
                         <div class="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center mb-4">
-                            <svg class="w-5 h-5 text-uicm-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+                            <svg class="w-5 h-5 text-uicm-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $cfg['icon'] }}"/>
+                            </svg>
                         </div>
-                        <h5 class="font-bold text-gray-800 text-lg mb-2">Licenciaturas</h5>
-                        <p class="text-gray-500 text-sm mb-4 leading-relaxed">Programas enfocados en la formación profesional inicial, combinando fundamentos teóricos con prácticas y experiencias de campo.</p>
+                        <h5 class="font-bold text-gray-800 text-lg mb-2">{{ $cfg['label'] }}</h5>
                         <ul class="space-y-1">
-                            @foreach(['Psicopedagogía','Lengua Inglesa','Administración','Lengua y Literatura'] as $p)
+                            @foreach($ofertaHome[$nivel] as $prog)
                             <li class="flex items-center gap-2 text-sm text-gray-600">
-                                <span class="w-1.5 h-1.5 rounded-full bg-uicm-green flex-shrink-0"></span>{{ $p }}
+                                <span class="w-1.5 h-1.5 rounded-full bg-uicm-green flex-shrink-0"></span>
+                                {{ str_replace(['Licenciatura en ', 'Maestría en ', 'Doctorado en '], '', $prog->nombre) }}
                             </li>
                             @endforeach
                         </ul>
                     </div>
                 </div>
-
-                {{-- Maestrías --}}
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 border-t-4 border-uicm-gold">
-                    <div class="p-6">
-                        <div class="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center mb-4">
-                            <svg class="w-5 h-5 text-uicm-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                        </div>
-                        <h5 class="font-bold text-gray-800 text-lg mb-2">Maestrías</h5>
-                        <p class="text-gray-500 text-sm mb-4 leading-relaxed">Estudios de posgrado orientados a la especialización y actualización profesional en áreas clave del conocimiento.</p>
-                        <ul class="space-y-1">
-                            @foreach(['Administración y Negocios','Educación','Negocios y Logística Internacional'] as $p)
-                            <li class="flex items-center gap-2 text-sm text-gray-600">
-                                <span class="w-1.5 h-1.5 rounded-full bg-uicm-green flex-shrink-0"></span>{{ $p }}
-                            </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-
-                {{-- Doctorado --}}
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 border-t-4 border-uicm-gold">
-                    <div class="p-6">
-                        <div class="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center mb-4">
-                            <svg class="w-5 h-5 text-uicm-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                        </div>
-                        <h5 class="font-bold text-gray-800 text-lg mb-2">Doctorado</h5>
-                        <p class="text-gray-500 text-sm mb-4 leading-relaxed">Formación avanzada en investigación, con énfasis en la generación de conocimiento y propuestas de mejora para el sector educativo.</p>
-                        <ul class="space-y-1">
-                            <li class="flex items-center gap-2 text-sm text-gray-600">
-                                <span class="w-1.5 h-1.5 rounded-full bg-uicm-green flex-shrink-0"></span>Doctorado en Educación
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                @endif
+                @endforeach
+            </div>
+            <div class="text-center mt-8">
+                <a href="{{ route('oferta-educativa') }}"
+                   class="inline-flex items-center gap-2 text-sm font-semibold text-uicm-green hover:text-green-800 transition-colors">
+                    Ver oferta educativa completa
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
             </div>
         </div>
     </section>
@@ -220,6 +211,14 @@
             <div class="relative overflow-hidden rounded-2xl shadow-lg" id="carrusel">
                 {{-- Track --}}
                 <div class="flex transition-transform duration-500 ease-in-out" id="carrusel-track">
+                    @forelse($imagenes as $img)
+                    <div class="min-w-full">
+                        <img src="{{ $img->url }}"
+                             alt="Evento UICM"
+                             class="w-full object-cover"
+                             style="height: 420px; object-position: center;">
+                    </div>
+                    @empty
                     @foreach(['evento1','evento2','evento3','evento4','evento5'] as $ev)
                     <div class="min-w-full">
                         <img src="{{ asset('images/' . $ev . '.jpg') }}"
@@ -228,6 +227,7 @@
                              style="height: 420px; object-position: center;">
                     </div>
                     @endforeach
+                    @endforelse
                 </div>
 
                 {{-- Botón anterior --}}
@@ -250,11 +250,12 @@
 
                 {{-- Indicadores (dots) --}}
                 <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2" id="carrusel-dots">
-                    @foreach(['evento1','evento2','evento3','evento4','evento5'] as $i => $ev)
+                    @php $total = $imagenes->count() ?: 5; @endphp
+                    @for($i = 0; $i < $total; $i++)
                     <button class="w-2.5 h-2.5 rounded-full transition-all duration-200 carrusel-dot {{ $i === 0 ? 'bg-white scale-125' : 'bg-white bg-opacity-50' }}"
                             data-index="{{ $i }}"
                             aria-label="Slide {{ $i + 1 }}"></button>
-                    @endforeach
+                    @endfor
                 </div>
             </div>
         </div>
@@ -313,15 +314,15 @@
                     <ul class="space-y-3 text-sm">
                         <li class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-uicm-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            <span class="text-gray-600">contacto@uicm.edu.mx</span>
+                            <span class="text-gray-600">{{ $contacto['correo'] }}</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-uicm-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                            <span class="text-gray-600">(55) 0000 0000</span>
+                            <span class="text-gray-600">{{ $contacto['telefono'] }}</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-uicm-green flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span class="text-gray-600">Lunes a viernes de 9:00 a 18:00 hrs.</span>
+                            <span class="text-gray-600">{{ $contacto['horario'] }}</span>
                         </li>
                     </ul>
                 </div>

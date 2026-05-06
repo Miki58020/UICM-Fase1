@@ -9,6 +9,7 @@ use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\PaginaPrincipalController;
 use App\Http\Controllers\PeriodoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfesorController;
@@ -29,6 +30,7 @@ Route::post('/session/terminate', function (Illuminate\Http\Request $request) {
 })->name('session.terminate');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/oferta-educativa', [HomeController::class, 'ofertaEducativa'])->name('oferta-educativa');
 Route::post('/contacto', [ContactoController::class, 'store'])->name('contacto.store');
 
 // Módulo de aspirantes (público)
@@ -100,6 +102,17 @@ Route::middleware(['auth', 'rol:admin'])->group(function () {
 
     Route::get('/admin/tarifas', [TarifaController::class, 'index'])->name('admin.tarifas.index');
     Route::patch('/admin/tarifas/{tarifa}', [TarifaController::class, 'update'])->name('admin.tarifas.update');
+
+    // Página principal (CMS)
+    Route::get('/admin/pagina-principal', [PaginaPrincipalController::class, 'index'])->name('admin.pagina-principal.index');
+    Route::post('/admin/pagina-principal/contacto', [PaginaPrincipalController::class, 'updateContacto'])->name('admin.pagina-principal.contacto');
+    Route::post('/admin/pagina-principal/carrusel', [PaginaPrincipalController::class, 'storeImagen'])->name('admin.pagina-principal.carrusel.store');
+    Route::delete('/admin/pagina-principal/carrusel/{imagen}', [PaginaPrincipalController::class, 'destroyImagen'])->name('admin.pagina-principal.carrusel.destroy');
+    Route::patch('/admin/pagina-principal/carrusel/{imagen}/toggle', [PaginaPrincipalController::class, 'toggleImagen'])->name('admin.pagina-principal.carrusel.toggle');
+    Route::post('/admin/pagina-principal/oferta', [PaginaPrincipalController::class, 'storePrograma'])->name('admin.pagina-principal.oferta.store');
+    Route::put('/admin/pagina-principal/oferta/{programa}', [PaginaPrincipalController::class, 'updatePrograma'])->name('admin.pagina-principal.oferta.update');
+    Route::delete('/admin/pagina-principal/oferta/{programa}', [PaginaPrincipalController::class, 'destroyPrograma'])->name('admin.pagina-principal.oferta.destroy');
+    Route::patch('/admin/pagina-principal/oferta/{programa}/toggle', [PaginaPrincipalController::class, 'togglePrograma'])->name('admin.pagina-principal.oferta.toggle');
 });
 
 // Módulo coordinación — Materias, profesores y carga académica

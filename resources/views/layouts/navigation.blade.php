@@ -94,6 +94,9 @@
                         <x-nav-link :href="route('admin.usuarios.index')" :active="request()->routeIs('admin.usuarios.*')">
                             Usuarios
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.pagina-principal.index')" :active="request()->routeIs('admin.pagina-principal.*')">
+                            Página principal
+                        </x-nav-link>
                     @endif
 
                     @endauth
@@ -201,6 +204,9 @@
             @if($rol === 'admin')
                 <x-responsive-nav-link :href="route('admin.usuarios.index')" :active="request()->routeIs('admin.usuarios.*')">
                     Usuarios
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.pagina-principal.index')" :active="request()->routeIs('admin.pagina-principal.*')">
+                    Página principal
                 </x-responsive-nav-link>
             @endif
 

@@ -144,7 +144,7 @@
                 </button>
                 <div class="hidden md:flex items-center gap-6">
                     <a href="{{ route('home') }}" class="text-sm font-medium text-uicm-green hover:text-green-800 transition-colors">Inicio</a>
-                    <a href="{{ route('home') }}#oferta" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Oferta educativa</a>
+                    <a href="{{ route('oferta-educativa') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Oferta educativa</a>
                     <a href="{{ route('aspirantes.registro') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Inscripción</a>
                     <a href="{{ route('aspirantes.seguimiento') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Consultar estatus</a>
                     <a href="{{ route('home') }}#contacto" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Contáctanos</a>
@@ -168,7 +168,7 @@
         <div id="nav-menu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 pb-4">
             <div class="flex flex-col gap-3 pt-3">
                 <a href="{{ route('home') }}" class="text-base font-medium text-uicm-green">Inicio</a>
-                <a href="{{ route('home') }}#oferta" class="text-base font-medium text-gray-600 hover:text-uicm-green">Oferta educativa</a>
+                <a href="{{ route('oferta-educativa') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Oferta educativa</a>
                 <a href="{{ route('aspirantes.registro') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Inscripción</a>
                 <a href="{{ route('aspirantes.seguimiento') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Consultar estatus</a>
                 <a href="{{ route('home') }}#contacto" class="text-base font-medium text-gray-600 hover:text-uicm-green">Contáctanos</a>
@@ -241,6 +241,17 @@
                           d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 Tarifas de inscripción
+            </a>
+
+            <a href="{{ route('admin.pagina-principal.index') }}"
+               @click="sidebarOpen = false"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.pagina-principal.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                Página principal
             </a>
 
             @php

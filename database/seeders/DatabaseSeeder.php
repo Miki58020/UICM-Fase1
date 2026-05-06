@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             ProgramasSeeder::class,
             PeriodosSeeder::class,
             TarifaInscripcionSeeder::class,
+            PaginaPrincipalSeeder::class,
         ]);
     }
 }
