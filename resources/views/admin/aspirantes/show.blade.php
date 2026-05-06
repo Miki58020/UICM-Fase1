@@ -282,6 +282,7 @@
                             ['nombre' => $labelCert,                     'url' => $aspirante->certificado_url],
                             ['nombre' => 'Identificación oficial (INE)', 'url' => $aspirante->identificacion_url],
                             ['nombre' => 'Comprobante de domicilio',     'url' => $aspirante->comprobante_domicilio_url],
+                            ['nombre' => 'Fotografía',                   'url' => $aspirante->foto_url],
                         ];
                         if (!empty($aspirante->titulo_url)) {
                             $documentos[] = ['nombre' => 'Título de maestría', 'url' => $aspirante->titulo_url];

@@ -153,6 +153,7 @@ class AspiranteController extends Controller
             'curp_doc'               => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'identificacion'         => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'comprobante_domicilio'  => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'foto'                   => 'required|file|mimes:jpg,jpeg,png|max:5120',
             'certificado'            => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'titulo'            => [
                 $esDoctorado ? 'required' : 'nullable',
@@ -180,6 +181,7 @@ class AspiranteController extends Controller
         $certificadoUrl           = $request->file('certificado')->store($carpetaCertificado, 'local');
         $identificacionUrl        = $request->file('identificacion')->store('documentos/identificaciones', 'local');
         $comprobanteDomicilioUrl  = $request->file('comprobante_domicilio')->store('documentos/comprobantes_domicilio', 'local');
+        $fotoUrl                  = $request->file('foto')->store('documentos/fotografias', 'local');
 
         $tituloUrl = null;
         if ($request->hasFile('titulo')) {
@@ -202,6 +204,7 @@ class AspiranteController extends Controller
             'certificado_url'           => $certificadoUrl,
             'identificacion_url'        => $identificacionUrl,
             'comprobante_domicilio_url' => $comprobanteDomicilioUrl,
+            'foto_url'                  => $fotoUrl,
             'titulo_url'                => $tituloUrl,
             'estado'             => 'pendiente',
         ]);

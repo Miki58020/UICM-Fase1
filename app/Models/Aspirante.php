@@ -10,7 +10,7 @@ class Aspirante extends Model
         'folio', 'nombre', 'apellido_paterno', 'apellido_materno',
         'email', 'telefono', 'curp', 'fecha_nacimiento', 'programa_id',
         'generacion', 'acta_nacimiento_url', 'certificado_url', 'identificacion_url',
-        'curp_url', 'titulo_url', 'comprobante_domicilio_url',
+        'curp_url', 'titulo_url', 'comprobante_domicilio_url', 'foto_url',
         'estado', 'observaciones',
     ];
 

@@ -288,11 +288,11 @@
                             Tamaño máximo por archivo: 5 MB.
                         </p>
 
-                        {{-- Documentos comunes (todos los programas) --}}
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
+                        {{-- Documentos comunes + fotografía (3 + 2 centrados) --}}
+                        <div class="grid grid-cols-1 md:grid-cols-6 gap-5 mb-5">
 
                             {{-- Acta de nacimiento --}}
-                            <div x-data="{ archivo: null }">
+                            <div x-data="{ archivo: null }" class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Acta de nacimiento <span class="text-red-500">*</span>
                                 </label>
@@ -327,7 +327,7 @@
                             </div>
 
                             {{-- CURP (documento) --}}
-                            <div x-data="{ archivo: null }">
+                            <div x-data="{ archivo: null }" class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     CURP (documento) <span class="text-red-500">*</span>
                                 </label>
@@ -362,7 +362,7 @@
                             </div>
 
                             {{-- Identificación --}}
-                            <div x-data="{ archivo: null }">
+                            <div x-data="{ archivo: null }" class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Identificación oficial (INE) <span class="text-red-500">*</span>
                                 </label>
@@ -397,7 +397,7 @@
                             </div>
 
                             {{-- Comprobante de domicilio --}}
-                            <div x-data="{ archivo: null }">
+                            <div x-data="{ archivo: null }" class="md:col-span-3">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Comprobante de domicilio <span class="text-red-500">*</span>
                                 </label>
@@ -427,6 +427,42 @@
                                        required class="sr-only"
                                        @change="archivo = $event.target.files[0]?.name ?? null">
                                 @error('comprobante_domicilio')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Fotografía (fondo blanco) --}}
+                            <div x-data="{ archivo: null }" class="md:col-span-3">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Fotografía <span class="text-red-500">*</span>
+                                    <span class="text-gray-400 font-normal">(fondo blanco, JPG o PNG)</span>
+                                </label>
+                                <label for="foto"
+                                       class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200"
+                                       :class="archivo ? 'border-green-400 bg-green-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'">
+                                    <template x-if="!archivo">
+                                        <div class="flex flex-col items-center">
+                                            <svg class="w-7 h-7 text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            <span class="text-xs text-gray-500">Haz clic para subir</span>
+                                        </div>
+                                    </template>
+                                    <template x-if="archivo">
+                                        <div class="flex flex-col items-center px-2">
+                                            <svg class="w-6 h-6 text-green-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span class="text-xs font-semibold text-green-700 text-center break-all" x-text="archivo"></span>
+                                        </div>
+                                    </template>
+                                </label>
+                                <input id="foto" name="foto"
+                                       type="file" accept=".jpg,.jpeg,.png"
+                                       required class="sr-only"
+                                       @change="archivo = $event.target.files[0]?.name ?? null">
+                                @error('foto')
                                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                 @enderror
                             </div>
