@@ -14,12 +14,20 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
                 <div class="flex items-center gap-5">
-                    {{-- Avatar --}}
-                    <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center
-                                text-2xl font-extrabold text-white border-2 border-white/30"
-                         style="background-color: rgba(255,255,255,0.15);">
-                        {{ strtoupper(substr($alumno->nombre, 0, 1)) }}
-                    </div>
+                    {{-- Avatar / Fotografía --}}
+                    @if (!empty($alumno->aspirante->foto_url))
+                        <div class="flex-shrink-0 w-16 h-16 rounded-2xl border-2 border-white/30 overflow-hidden">
+                            <img src="{{ route('admin.archivo', ['path' => $alumno->aspirante->foto_url]) }}"
+                                 alt="Foto {{ $alumno->nombre }}"
+                                 class="w-full h-full object-cover">
+                        </div>
+                    @else
+                        <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center
+                                    text-2xl font-extrabold text-white border-2 border-white/30"
+                             style="background-color: rgba(255,255,255,0.15);">
+                            {{ strtoupper(substr($alumno->nombre, 0, 1)) }}
+                        </div>
+                    @endif
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-widest text-white/60 mb-0.5">
                             Portal del Alumno
