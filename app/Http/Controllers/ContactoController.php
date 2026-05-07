@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactoRecibido;
+use App\Mail\ContactoRespuesta;
 use App\Models\Contacto;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,6 +11,27 @@ use Illuminate\Support\Facades\Mail;
 
 class ContactoController extends Controller
 {
+    public function index()
+    {
+        $contactos = Contacto::orderByRaw('atendido ASC, created_at DESC')->get();
+        return view('admin.contactos.index', compact('contactos'));
+    }
+
+    public function responder(Request $request, Contacto $contacto)
+    {
+        $request->validate([
+            'respuesta' => ['required', 'string', 'max:2000'],
+        ], [
+            'respuesta.required' => 'La respuesta no puede estar vacía.',
+        ]);
+
+        Mail::to($contacto->correo)->send(new ContactoRespuesta($contacto, $request->respuesta));
+
+        $contacto->update(['atendido' => true]);
+
+        return back()->with('success', 'Respuesta enviada a ' . $contacto->correo . '.');
+    }
+
     public function store(Request $request)
     {
         $request->validate([

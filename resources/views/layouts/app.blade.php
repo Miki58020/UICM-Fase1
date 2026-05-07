@@ -255,6 +255,26 @@
             </a>
 
             @php
+                $mensajesPendientes = \App\Models\Contacto::where('atendido', false)->count();
+            @endphp
+            <a href="{{ route('admin.contactos.index') }}"
+               @click="sidebarOpen = false"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.contactos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span class="flex-1">Mensajes de contacto</span>
+                @if($mensajesPendientes > 0)
+                    <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
+                          style="background-color: #dc2626; color: #fff;">
+                        {{ $mensajesPendientes }}
+                    </span>
+                @endif
+            </a>
+
+            @php
                 $pendientesAdmins = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
                     ->whereHas('user', fn($u) => $u->where('rol', '!=', 'alumno'))
                     ->count();

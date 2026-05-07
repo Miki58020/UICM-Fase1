@@ -113,6 +113,9 @@ Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::put('/admin/pagina-principal/oferta/{programa}', [PaginaPrincipalController::class, 'updatePrograma'])->name('admin.pagina-principal.oferta.update');
     Route::delete('/admin/pagina-principal/oferta/{programa}', [PaginaPrincipalController::class, 'destroyPrograma'])->name('admin.pagina-principal.oferta.destroy');
     Route::patch('/admin/pagina-principal/oferta/{programa}/toggle', [PaginaPrincipalController::class, 'togglePrograma'])->name('admin.pagina-principal.oferta.toggle');
+
+    Route::get('/admin/contactos', [ContactoController::class, 'index'])->name('admin.contactos.index');
+    Route::post('/admin/contactos/{contacto}/responder', [ContactoController::class, 'responder'])->name('admin.contactos.responder');
 });
 
 // Módulo coordinación — Materias, profesores y carga académica
