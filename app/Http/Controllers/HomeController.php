@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CarruselImagen;
 use App\Models\ConfiguracionSitio;
+use App\Models\ContactoInteres;
 use App\Models\OfertaPrograma;
 use App\Models\Periodo;
 
@@ -24,7 +25,9 @@ class HomeController extends Controller
             ->groupBy('nivel')
             ->pluck('total', 'nivel');
 
-        return view('home.index', compact('periodoActivo', 'imagenes', 'ofertaHome', 'contacto', 'conteoProgramas'));
+        $interesesContacto = ContactoInteres::where('activo', true)->orderBy('orden')->get();
+
+        return view('home.index', compact('periodoActivo', 'imagenes', 'ofertaHome', 'contacto', 'conteoProgramas', 'interesesContacto'));
     }
 
     public function ofertaEducativa()

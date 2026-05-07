@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use App\Mail\ContactoRecibido;
 use App\Mail\ContactoRespuesta;
 use App\Models\Contacto;
+use App\Models\ContactoInteres;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 class ContactoController extends Controller
 {
     public function index()
     {
         $contactos = Contacto::orderByRaw('atendido ASC, created_at DESC')->get();
-        return view('admin.contactos.index', compact('contactos'));
+        $intereses = ContactoInteres::orderBy('orden')->get();
+        return view('admin.contactos.index', compact('contactos', 'intereses'));
     }
 
     public function responder(Request $request, Contacto $contacto)
@@ -38,7 +41,7 @@ class ContactoController extends Controller
             'nombre'   => ['required', 'string', 'max:100'],
             'correo'   => ['required', 'email:rfc,filter', 'max:150'],
             'telefono' => ['required', 'digits:10'],
-            'interes'  => ['required', 'in:oferta,admisiones,estatus,plataforma,otros'],
+            'interes'  => ['required', Rule::in(ContactoInteres::where('activo', true)->pluck('etiqueta'))],
             'mensaje'  => ['nullable', 'string', 'max:1000'],
         ], [
             'nombre.required'   => 'El nombre es obligatorio.',

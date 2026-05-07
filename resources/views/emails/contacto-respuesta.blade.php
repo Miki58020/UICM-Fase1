@@ -47,17 +47,7 @@
 
     <div class="body">
 
-        @php
-            $interesLabels = [
-                'oferta'     => 'Oferta educativa',
-                'admisiones' => 'Proceso de admisión',
-                'estatus'    => 'Estatus de solicitud',
-                'plataforma' => 'Plataforma académica',
-                'otros'      => 'Otros',
-            ];
-        @endphp
-
-        <span class="interes-badge">{{ $interesLabels[$contacto->interes] ?? $contacto->interes }}</span>
+        <span class="interes-badge">{{ $contacto->interes }}</span>
 
         <p class="greeting">Hola, {{ $contacto->nombre }}.</p>
 

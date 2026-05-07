@@ -114,6 +114,11 @@ Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::delete('/admin/pagina-principal/oferta/{programa}', [PaginaPrincipalController::class, 'destroyPrograma'])->name('admin.pagina-principal.oferta.destroy');
     Route::patch('/admin/pagina-principal/oferta/{programa}/toggle', [PaginaPrincipalController::class, 'togglePrograma'])->name('admin.pagina-principal.oferta.toggle');
 
+    Route::post('/admin/pagina-principal/intereses', [PaginaPrincipalController::class, 'storeInteres'])->name('admin.pagina-principal.intereses.store');
+    Route::put('/admin/pagina-principal/intereses/{interes}', [PaginaPrincipalController::class, 'updateInteres'])->name('admin.pagina-principal.intereses.update');
+    Route::delete('/admin/pagina-principal/intereses/{interes}', [PaginaPrincipalController::class, 'destroyInteres'])->name('admin.pagina-principal.intereses.destroy');
+    Route::patch('/admin/pagina-principal/intereses/{interes}/toggle', [PaginaPrincipalController::class, 'toggleInteres'])->name('admin.pagina-principal.intereses.toggle');
+
     Route::get('/admin/contactos', [ContactoController::class, 'index'])->name('admin.contactos.index');
     Route::post('/admin/contactos/{contacto}/responder', [ContactoController::class, 'responder'])->name('admin.contactos.responder');
 });

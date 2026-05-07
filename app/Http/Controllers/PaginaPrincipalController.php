@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CarruselImagen;
 use App\Models\ConfiguracionSitio;
+use App\Models\ContactoInteres;
 use App\Models\OfertaPrograma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -14,13 +15,14 @@ class PaginaPrincipalController extends Controller
     {
         $imagenes  = CarruselImagen::orderBy('orden')->get();
         $programas = OfertaPrograma::orderBy('orden')->get();
+        $intereses = ContactoInteres::orderBy('orden')->get();
         $contacto  = [
             'correo'   => ConfiguracionSitio::get('correo',   'contacto@uicm.edu.mx'),
             'telefono' => ConfiguracionSitio::get('telefono', '(55) 0000 0000'),
             'horario'  => ConfiguracionSitio::get('horario',  'Lunes a viernes de 9:00 a 18:00 hrs.'),
         ];
 
-        return view('admin.pagina-principal.index', compact('imagenes', 'programas', 'contacto'));
+        return view('admin.pagina-principal.index', compact('imagenes', 'programas', 'contacto', 'intereses'));
     }
 
     // ── Contacto ─────────────────────────────────────────────────────────────
@@ -152,6 +154,51 @@ class PaginaPrincipalController extends Controller
     {
         $programa->update(['activo' => !$programa->activo]);
         return back()->with('success_oferta', 'Estado del programa actualizado.')->with('tab_activo', 'oferta');
+    }
+
+    // ── Intereses de contacto ─────────────────────────────────────────────────
+
+    public function storeInteres(Request $request)
+    {
+        $request->validate([
+            'etiqueta' => 'required|string|max:100|unique:contacto_intereses,etiqueta',
+        ], [
+            'etiqueta.required' => 'La etiqueta es obligatoria.',
+            'etiqueta.unique'   => 'Ya existe un interés con esa etiqueta.',
+        ]);
+
+        $orden = ContactoInteres::max('orden') + 1;
+        ContactoInteres::create([
+            'etiqueta' => $request->etiqueta,
+            'orden'    => $orden,
+        ]);
+
+        return back()->with('success_contacto', 'Interés agregado correctamente.')->with('tab_activo', 'contacto');
+    }
+
+    public function updateInteres(Request $request, ContactoInteres $interes)
+    {
+        $request->validate([
+            'etiqueta' => 'required|string|max:100',
+        ], [
+            'etiqueta.required' => 'La etiqueta es obligatoria.',
+        ]);
+
+        $interes->update(['etiqueta' => $request->etiqueta]);
+
+        return back()->with('success_contacto', 'Interés actualizado.')->with('tab_activo', 'contacto');
+    }
+
+    public function destroyInteres(ContactoInteres $interes)
+    {
+        $interes->delete();
+        return back()->with('success_contacto', 'Interés eliminado.')->with('tab_activo', 'contacto');
+    }
+
+    public function toggleInteres(ContactoInteres $interes)
+    {
+        $interes->update(['activo' => !$interes->activo]);
+        return back()->with('success_contacto', 'Estado del interés actualizado.')->with('tab_activo', 'contacto');
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

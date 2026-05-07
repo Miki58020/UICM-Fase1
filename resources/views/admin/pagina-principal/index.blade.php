@@ -494,8 +494,183 @@
                 </div>
             </div>
         </div>
-    </div>
 
+        {{-- Intereses del formulario de contacto --}}
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden mt-6"
+             x-data="{ modalInteres: false, editId: null, editEtiqueta: '' }">
+            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-700">Intereses del formulario de contacto</h2>
+                    <p class="text-xs text-gray-400 mt-0.5">Opciones del dropdown "Interés principal" en el formulario público.</p>
+                </div>
+                <button @click="modalInteres = true; editId = null; editEtiqueta = ''"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-colors duration-200"
+                        style="background-color: #0F4229;"
+                        onmouseover="this.style.backgroundColor='#0a2e1c'"
+                        onmouseout="this.style.backgroundColor='#0F4229'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Nuevo interés
+                </button>
+            </div>
+
+            @if($intereses->isEmpty())
+            <div class="px-6 py-12 text-center">
+                <p class="text-sm font-semibold text-gray-500">No hay intereses registrados</p>
+                <p class="text-xs text-gray-400 mt-1">Agrega el primero con el botón de arriba.</p>
+            </div>
+            @else
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3">Etiqueta</th>
+                            <th class="px-6 py-3">Estado</th>
+                            <th class="px-6 py-3 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @foreach($intereses as $item)
+                        <tr class="hover:bg-gray-50 transition-colors duration-100">
+                            <td class="px-6 py-4 font-medium text-gray-800">{{ $item->etiqueta }}</td>
+                            <td class="px-6 py-4">
+                                @if($item->activo)
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                          style="background-color: #0F4229;">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80"></span>
+                                        Activo
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                        Inactivo
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button type="button"
+                                            @click="modalInteres = true; editId = {{ $item->id }}; editEtiqueta = {{ json_encode($item->etiqueta) }}"
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
+                                            style="background-color: #D4AF37;"
+                                            onmouseover="this.style.backgroundColor='#b8962e'"
+                                            onmouseout="this.style.backgroundColor='#D4AF37'">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                        Editar
+                                    </button>
+                                    <form method="POST" action="{{ route('admin.pagina-principal.intereses.toggle', $item) }}">
+                                        @csrf @method('PATCH')
+                                        <button type="submit"
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors duration-150
+                                                       {{ $item->activo ? 'border-yellow-300 text-yellow-700 hover:bg-yellow-50' : 'border-green-300 text-green-700 hover:bg-green-50' }}">
+                                            {{ $item->activo ? 'Desactivar' : 'Activar' }}
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ route('admin.pagina-principal.intereses.destroy', $item) }}"
+                                          onsubmit="return confirm('¿Eliminar el interés «{{ addslashes($item->etiqueta) }}»?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit"
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-200 text-red-500 hover:bg-red-50 transition-colors duration-150">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @endif
+
+            {{-- Modal nuevo/editar interés --}}
+            <div x-show="modalInteres" x-cloak
+                 class="fixed inset-0 z-50 flex items-center justify-center px-4"
+                 style="background-color: rgba(0,0,0,0.5);"
+                 @click.self="modalInteres = false">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+                    <div class="h-1.5 w-full rounded-t-2xl"
+                         :style="editId ? 'background-color:#D4AF37' : 'background-color:#0F4229'"></div>
+                    <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                        <h3 class="font-bold text-gray-800" x-text="editId ? 'Editar interés' : 'Nuevo interés'"></h3>
+                        <button @click="modalInteres = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Formulario crear --}}
+                    <form x-show="!editId"
+                          method="POST" action="{{ route('admin.pagina-principal.intereses.store') }}"
+                          class="px-6 py-5 space-y-4">
+                        @csrf
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Etiqueta <span class="text-red-500">*</span></label>
+                            <input type="text" name="etiqueta" required
+                                   class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                                   onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                                   onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
+                                   placeholder="ej: Información de titulación">
+                            @error('etiqueta')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="flex justify-end gap-3 pt-2">
+                            <button type="button" @click="modalInteres = false"
+                                    class="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                                    style="background-color: #0F4229;"
+                                    onmouseover="this.style.backgroundColor='#0a2e1c'"
+                                    onmouseout="this.style.backgroundColor='#0F4229'">
+                                Guardar
+                            </button>
+                        </div>
+                    </form>
+
+                    {{-- Formularios editar (uno por cada interés) --}}
+                    @foreach($intereses as $item)
+                    <form x-show="editId === {{ $item->id }}"
+                          method="POST" action="{{ route('admin.pagina-principal.intereses.update', $item) }}"
+                          class="px-6 py-5 space-y-4">
+                        @csrf @method('PUT')
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Etiqueta <span class="text-red-500">*</span></label>
+                            <input type="text" name="etiqueta" required x-model="editEtiqueta"
+                                   class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                                   onfocus="this.style.borderColor='#D4AF37'; this.style.boxShadow='0 0 0 2px rgba(212,175,55,0.25)'"
+                                   onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                        </div>
+                        <div class="flex justify-end gap-3 pt-2">
+                            <button type="button" @click="modalInteres = false"
+                                    class="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                                    style="background-color: #D4AF37;"
+                                    onmouseover="this.style.backgroundColor='#b8962e'"
+                                    onmouseout="this.style.backgroundColor='#D4AF37'">
+                                Guardar cambios
+                            </button>
+                        </div>
+                    </form>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 </section>
 

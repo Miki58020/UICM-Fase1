@@ -5,16 +5,9 @@
 @section('content')
 
 @php
-    $interesLabels = [
-        'oferta'     => 'Oferta educativa',
-        'admisiones' => 'Proceso de admisión',
-        'estatus'    => 'Estatus de solicitud',
-        'plataforma' => 'Plataforma académica',
-        'otros'      => 'Otros',
-    ];
-    $totalContactos     = $contactos->count();
-    $totalPendientes    = $contactos->where('atendido', false)->count();
-    $totalAtendidos     = $contactos->where('atendido', true)->count();
+    $totalContactos  = $contactos->count();
+    $totalPendientes = $contactos->where('atendido', false)->count();
+    $totalAtendidos  = $contactos->where('atendido', true)->count();
 @endphp
 
 <section
@@ -129,8 +122,8 @@
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                         onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                     <option value="">Todos los intereses</option>
-                    @foreach($interesLabels as $clave => $etiqueta)
-                        <option value="{{ $clave }}">{{ $etiqueta }}</option>
+                    @foreach($intereses as $interes)
+                        <option value="{{ $interes->etiqueta }}">{{ $interes->etiqueta }}</option>
                     @endforeach
                 </select>
             </div>
@@ -189,7 +182,7 @@
                                 <div class="flex items-center gap-2 mt-1.5 flex-wrap">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
                                           style="background-color: #fef9ec; color: #92670b;">
-                                        {{ $interesLabels[$contacto->interes] ?? $contacto->interes }}
+                                        {{ $contacto->interes }}
                                     </span>
                                     <span class="text-xs text-gray-400">{{ $contacto->telefono }}</span>
                                     <span class="text-xs text-gray-400">{{ $contacto->created_at->format('d/m/Y H:i') }}</span>

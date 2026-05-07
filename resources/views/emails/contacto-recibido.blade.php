@@ -51,17 +51,7 @@
 
     <div class="body">
 
-        @php
-            $interesLabels = [
-                'oferta'     => 'Oferta educativa',
-                'admisiones' => 'Proceso de admisión',
-                'estatus'    => 'Estatus de solicitud',
-                'plataforma' => 'Plataforma académica',
-                'otros'      => 'Otros',
-            ];
-        @endphp
-
-        <span class="interes-badge">{{ $interesLabels[$contacto->interes] ?? $contacto->interes }}</span>
+        <span class="interes-badge">{{ $contacto->interes }}</span>
 
         <p class="greeting">Se ha recibido un nuevo mensaje desde el formulario de contacto.</p>
 
@@ -81,7 +71,7 @@
                 </tr>
                 <tr>
                     <td>Interés principal</td>
-                    <td>{{ $interesLabels[$contacto->interes] ?? $contacto->interes }}</td>
+                    <td>{{ $contacto->interes }}</td>
                 </tr>
             </table>
         </div>

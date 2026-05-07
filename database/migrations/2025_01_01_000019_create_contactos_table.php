@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('correo');
             $table->string('telefono', 10);
-            $table->enum('interes', ['oferta', 'admisiones', 'estatus', 'plataforma', 'otros']);
+            $table->string('interes');
             $table->text('mensaje')->nullable();
             $table->boolean('atendido')->default(false);
             $table->timestamps();

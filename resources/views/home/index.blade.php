@@ -377,11 +377,11 @@
                                     <select name="interes"
                                             class="w-full rounded-lg border @error('interes') border-red-400 bg-red-50 @else border-gray-200 bg-white @enderror px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent">
                                         <option value="">Selecciona una opción</option>
-                                        <option value="oferta"     {{ old('interes') == 'oferta'     ? 'selected' : '' }}>Oferta educativa</option>
-                                        <option value="admisiones" {{ old('interes') == 'admisiones' ? 'selected' : '' }}>Información de admisiones</option>
-                                        <option value="estatus"    {{ old('interes') == 'estatus'    ? 'selected' : '' }}>Dudas sobre estatus</option>
-                                        <option value="plataforma" {{ old('interes') == 'plataforma' ? 'selected' : '' }}>Plataforma digital</option>
-                                        <option value="otros"      {{ old('interes') == 'otros'      ? 'selected' : '' }}>Otros</option>
+                                        @foreach($interesesContacto as $interes)
+                                        <option value="{{ $interes->etiqueta }}" {{ old('interes') == $interes->etiqueta ? 'selected' : '' }}>
+                                            {{ $interes->etiqueta }}
+                                        </option>
+                                        @endforeach
                                     </select>
                                     @error('interes')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
