@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactoRecibido;
 use App\Models\Contacto;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ContactoController extends Controller
 {
@@ -24,7 +27,12 @@ class ContactoController extends Controller
             'interes.required'  => 'Selecciona un interés principal.',
         ]);
 
-        Contacto::create($request->only(['nombre', 'correo', 'telefono', 'interes', 'mensaje']));
+        $contacto = Contacto::create($request->only(['nombre', 'correo', 'telefono', 'interes', 'mensaje']));
+
+        $admins = User::where('rol', 'admin')->get();
+        foreach ($admins as $admin) {
+            Mail::to($admin->email)->send(new ContactoRecibido($contacto));
+        }
 
         return redirect()->route('home', ['#contacto'])->with('contacto_enviado', true);
     }
