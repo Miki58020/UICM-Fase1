@@ -31,6 +31,8 @@
 
         .mensaje-box { background: #f9f9f9; border-left: 4px solid #0F4229; border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; font-family: Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.6; white-space: pre-line; }
 
+        .btn-panel { display: inline-block; margin-top: 24px; background-color: #0F4229; color: #fff !important; font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; text-decoration: none; padding: 12px 28px; border-radius: 8px; letter-spacing: 0.3px; }
+
         .signature { margin-top: 28px; font-family: Arial, sans-serif; font-size: 14px; color: #555; }
         .signature strong { color: #0F4229; }
 
@@ -80,6 +82,12 @@
             <p style="font-family: Arial, sans-serif; font-size: 14px; color: #555; margin-bottom: 8px;">Mensaje:</p>
             <div class="mensaje-box">{{ $contacto->mensaje }}</div>
         @endif
+
+        <div style="text-align: center; margin-top: 28px;">
+            <a href="{{ url(route('admin.contactos.index', [], false)) }}" class="btn-panel">
+                Ver mensajes de contacto
+            </a>
+        </div>
 
         <hr class="divider">
 
