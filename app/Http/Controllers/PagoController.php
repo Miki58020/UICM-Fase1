@@ -60,11 +60,6 @@ class PagoController extends Controller
                         'unit_price'  => $monto,
                         'currency_id' => 'MXN',
                     ]],
-                    'payer' => [
-                        'name'    => $aspirante->nombre,
-                        'surname' => trim($aspirante->apellido_paterno . ' ' . $aspirante->apellido_materno),
-                        'email'   => $aspirante->email,
-                    ],
                     'external_reference'   => $aspirante->folio,
                     'statement_descriptor' => 'UICM Inscripcion',
                 ];

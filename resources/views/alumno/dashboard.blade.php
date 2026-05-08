@@ -4,7 +4,7 @@
 
 @section('content')
 
-<section class="bg-uicm-gray min-h-screen" x-data="{ modalContrasena: false }">
+<section class="bg-uicm-gray min-h-screen" x-data="{ modalContrasena: {{ $errors->has('password') ? 'true' : 'false' }} }">
 
     {{-- ══════════════════════════════════════════
          BANNER de bienvenida
