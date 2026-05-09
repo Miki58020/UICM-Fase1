@@ -98,7 +98,7 @@ class AlumnoController extends Controller
 
         Auth::user()->update(['password' => Hash::make($request->password)]);
 
-        return back()->with('password_success', 'Contraseña actualizada correctamente.');
+        return redirect()->route('alumno.dashboard')->with('password_success', 'Contraseña actualizada correctamente.');
     }
 
     public function checkEstado(): \Illuminate\Http\JsonResponse
