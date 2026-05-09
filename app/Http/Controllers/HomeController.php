@@ -38,7 +38,8 @@ class HomeController extends Controller
             'telefono' => ConfiguracionSitio::get('telefono', '(55) 0000 0000'),
             'horario'  => ConfiguracionSitio::get('horario',  'Lunes a viernes de 9:00 a 18:00 hrs.'),
         ];
+        $interesesContacto = ContactoInteres::where('activo', true)->orderBy('orden')->get();
 
-        return view('home.oferta-educativa', compact('programas', 'contacto'));
+        return view('home.oferta-educativa', compact('programas', 'contacto', 'interesesContacto'));
     }
 }
