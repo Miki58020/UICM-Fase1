@@ -147,7 +147,7 @@
                     <a href="{{ route('oferta-educativa') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Oferta educativa</a>
                     <a href="{{ route('aspirantes.registro') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Inscripción</a>
                     <a href="{{ route('aspirantes.seguimiento') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Consultar estatus</a>
-                    <a href="{{ route('home') }}#contacto" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Contáctanos</a>
+                    <a href="{{ request()->routeIs('oferta-educativa') ? '#contacto' : route('home').'#contacto' }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Contáctanos</a>
                     <a href="{{ route('login') }}"
                        class="text-sm font-semibold text-white px-4 py-2 rounded-lg transition-colors duration-150"
                        style="background-color: #0F4229;"
@@ -171,7 +171,7 @@
                 <a href="{{ route('oferta-educativa') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Oferta educativa</a>
                 <a href="{{ route('aspirantes.registro') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Inscripción</a>
                 <a href="{{ route('aspirantes.seguimiento') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Consultar estatus</a>
-                <a href="{{ route('home') }}#contacto" class="text-base font-medium text-gray-600 hover:text-uicm-green">Contáctanos</a>
+                <a href="{{ request()->routeIs('oferta-educativa') ? '#contacto' : route('home').'#contacto' }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Contáctanos</a>
                 <a href="{{ route('login') }}" class="text-base font-semibold text-white px-4 py-2 rounded-lg text-center"
                    style="background-color: #0F4229;">Portal</a>
             </div>

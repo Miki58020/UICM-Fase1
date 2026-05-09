@@ -116,27 +116,9 @@ $titulos = [
 @endif
 @endforeach
 
-{{-- CTA --}}
-<section class="bg-uicm-gray py-12">
-    <div class="container mx-auto px-8 lg:px-12">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <div>
-                <h3 class="text-xl font-bold text-gray-900 mb-1">¿Te interesa algún programa?</h3>
-                <p class="text-gray-500 text-sm">Ponte en contacto con nosotros para conocer requisitos de ingreso, costos y calendario de admisión.</p>
-            </div>
-            <a href="{{ route('home') }}#contacto"
-               class="inline-flex items-center justify-center px-6 py-3 border-2 font-semibold rounded-lg text-sm transition-colors duration-150 flex-shrink-0"
-               style="border-color: #0F4229; color: #0F4229;"
-               onmouseover="this.style.background='#0F4229'; this.style.color='#fff'"
-               onmouseout="this.style.background='transparent'; this.style.color='#0F4229'">
-                Enviar una consulta
-            </a>
-        </div>
-    </div>
-</section>
 
 {{-- Info de contacto --}}
-<section class="bg-white py-16">
+<section id="contacto" class="bg-uicm-gray py-16">
     <div class="container mx-auto px-8 lg:px-12">
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
             <div class="lg:col-span-2">
