@@ -14,21 +14,6 @@
         <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
     </div>
 
-    {{-- Mensajes --}}
-    @if(session('success'))
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-        <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
-    </div>
-    @endif
-
-    @if($errors->any())
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50 border-red-400">
-        @foreach($errors->all() as $error)
-            <p class="text-sm text-red-700">{{ $error }}</p>
-        @endforeach
-    </div>
-    @endif
-
     {{-- ═══ CARD 1: CREDENCIALES ═══ --}}
     <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
         <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>

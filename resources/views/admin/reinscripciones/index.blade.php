@@ -74,17 +74,6 @@
             </div>
         @endif
 
-        {{-- Flash messages --}}
-        @if (session('success'))
-            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-                <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50 border-red-400">
-                <p class="text-sm font-semibold text-red-700">{{ session('error') }}</p>
-            </div>
-        @endif
 
         {{-- Contadores --}}
         @php

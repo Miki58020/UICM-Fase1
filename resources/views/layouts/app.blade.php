@@ -7,6 +7,39 @@
     <title>@yield('title', 'Universidad Internacional Cuba México')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <style>
+    @keyframes toastIn {
+        from { transform: translateX(380px); opacity: 0; }
+        to   { transform: translateX(0);     opacity: 1; }
+    }
+    .toast-item {
+        animation: toastIn 0.35s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+        box-sizing: border-box;
+    }
+    .toast-item.toast-out {
+        animation: none !important;
+        transition: transform 0.28s ease-in, opacity 0.28s ease-in !important;
+        transform: translateX(380px) !important;
+        opacity: 0 !important;
+    }
+    /* Móvil: ocupa todo el ancho con margen a los lados */
+    @media (max-width: 480px) {
+        #toast-container {
+            left: 0.75rem !important;
+            right: 0.75rem !important;
+            width: auto !important;
+            top: 0.75rem !important;
+        }
+        @keyframes toastIn {
+            from { transform: translateY(-80px); opacity: 0; }
+            to   { transform: translateY(0);     opacity: 1; }
+        }
+        .toast-item.toast-out {
+            transform: translateY(-80px) !important;
+        }
+    }
+    </style>
+
     {{-- ===== SEGURIDAD DE SESIÓN POR PESTAÑA ===== --}}
     {{-- Ejecuta antes de renderizar el contenido para evitar exponer datos si la sesión es inválida --}}
     @auth
@@ -562,32 +595,65 @@
 
     @stack('scripts')
 
-    {{-- ===== AUTO-DISMISS DE NOTIFICACIONES ===== --}}
+    {{-- ===== TOAST NOTIFICATIONS ===== --}}
+    @php
+        $toasts = [];
+        if (session('success'))          $toasts[] = ['ok', session('success')];
+        if (session('password_success')) $toasts[] = ['ok', session('password_success')];
+        if (session('success_oferta'))   $toasts[] = ['ok', session('success_oferta')];
+        if (session('success_carrusel')) $toasts[] = ['ok', session('success_carrusel')];
+        if (session('success_contacto')) $toasts[] = ['ok', session('success_contacto')];
+        if (session('contacto_enviado')) $toasts[] = ['ok', '¡Mensaje enviado! Un asesor se pondrá en contacto a la brevedad.'];
+        if (session('error'))            $toasts[] = ['err', session('error')];
+        if ($errors->any()) {
+            $allErrs = $errors->all();
+            $shown   = min(count($allErrs), 3);
+            for ($i = 0; $i < $shown; $i++) $toasts[] = ['err', $allErrs[$i]];
+            if (count($allErrs) > 3) $toasts[] = ['err', 'Y ' . (count($allErrs) - 3) . ' error(es) más...'];
+        }
+    @endphp
+
+    @if(count($toasts) > 0)
+    {{-- Posición y z-index en style inline para no depender del build de Tailwind --}}
+    <div id="toast-container" aria-live="polite"
+         style="position:fixed; top:1.25rem; right:1.25rem; z-index:9999; display:flex; flex-direction:column; gap:0.625rem; width:20rem; pointer-events:none;">
+        @foreach($toasts as [$type, $msg])
+        <div class="toast-item pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg bg-white"
+             style="border-left: 4px solid {{ $type === 'ok' ? '#0F4229' : '#ef4444' }};"
+             data-delay="{{ $type === 'ok' ? 5000 : 7000 }}">
+            <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 style="color: {{ $type === 'ok' ? '#0F4229' : '#ef4444' }}; flex-shrink:0;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                      d="{{ $type === 'ok' ? 'M5 13l4 4L19 7' : 'M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' }}"/>
+            </svg>
+            <p class="text-sm font-semibold flex-1 leading-snug {{ $type === 'ok' ? 'text-green-800' : 'text-red-700' }}"
+               style="flex:1;">
+                {{ $msg }}
+            </p>
+            <button type="button" class="toast-close text-gray-400 hover:text-gray-600 transition-colors"
+                    style="flex-shrink:0; padding:2px; margin-left:4px;"
+                    aria-label="Cerrar">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        @endforeach
+    </div>
+    @endif
+
+    {{-- ===== AUTO-DISMISS DE TOASTS ===== --}}
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Éxito → 4 s | Error / validación → 6 s
-        var rules = [
-            { selector: 'div.bg-green-50.rounded-xl', delay: 4000 },
-            { selector: 'div.bg-red-50.rounded-xl:not(#mp-error)',   delay: 6000 },
-        ];
-
-        rules.forEach(function (rule) {
-            document.querySelectorAll(rule.selector).forEach(function (el) {
-                setTimeout(function () {
-                    el.style.transition = 'opacity 0.5s ease, max-height 0.5s ease, margin 0.5s ease, padding 0.5s ease';
-                    el.style.overflow   = 'hidden';
-                    el.style.opacity    = '0';
-                    el.style.maxHeight  = el.offsetHeight + 'px';
-                    // Forzar reflow para que la transición arranque desde el valor actual
-                    el.offsetHeight;
-                    el.style.maxHeight  = '0';
-                    el.style.marginTop  = '0';
-                    el.style.marginBottom = '0';
-                    el.style.paddingTop   = '0';
-                    el.style.paddingBottom = '0';
-                    setTimeout(function () { el.remove(); }, 520);
-                }, rule.delay);
-            });
+        function dismissToast(el) {
+            el.classList.add('toast-out');
+            setTimeout(function () { el.remove(); }, 300);
+        }
+        document.querySelectorAll('.toast-item').forEach(function (el) {
+            var delay = parseInt(el.dataset.delay) || 5000;
+            var timer = setTimeout(function () { dismissToast(el); }, delay);
+            var btn = el.querySelector('.toast-close');
+            if (btn) btn.addEventListener('click', function () { clearTimeout(timer); dismissToast(el); });
         });
     });
     </script>

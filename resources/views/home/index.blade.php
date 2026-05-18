@@ -331,18 +331,6 @@
                 <div class="lg:col-span-3">
                     <div class="bg-uicm-gray rounded-2xl shadow-sm p-6 md:p-8">
 
-                        {{-- Mensaje de éxito --}}
-                        @if(session('contacto_enviado'))
-                        <div class="flex items-start gap-3 bg-green-50 border border-green-200 text-green-800 rounded-xl px-4 py-4 mb-5">
-                            <svg class="w-5 h-5 flex-shrink-0 mt-0.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <div>
-                                <p class="font-semibold text-sm">¡Mensaje enviado correctamente!</p>
-                                <p class="text-xs text-green-700 mt-0.5">Un asesor se pondrá en contacto contigo a la brevedad.</p>
-                            </div>
-                        </div>
-                        @endif
 
                         <h5 class="font-bold text-gray-800 text-lg mb-5">Envíanos un mensaje</h5>
                         <form method="POST" action="{{ route('contacto.store') }}">

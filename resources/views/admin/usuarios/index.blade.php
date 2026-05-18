@@ -88,29 +88,6 @@ $rolesLabels = [
             </button>
         </div>
 
-        {{-- Flash success --}}
-        @if(session('success'))
-        <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-            <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
-        </div>
-        @endif
-
-        {{-- Flash error --}}
-        @if(session('error'))
-        <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50 border-red-400">
-            <p class="text-sm font-semibold text-red-700">{{ session('error') }}</p>
-        </div>
-        @endif
-
-        {{-- Errores de validación --}}
-        @if($errors->any())
-        <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50 border-red-400">
-            @foreach($errors->all() as $error)
-                <p class="text-sm text-red-700">{{ $error }}</p>
-            @endforeach
-        </div>
-        @endif
-
         {{-- Contadores por rol --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             @foreach(['admin' => 'Administradores', 'control_escolar' => 'Control Escolar', 'finanzas' => 'Finanzas', 'coordinacion' => 'Coordinación'] as $rol => $label)

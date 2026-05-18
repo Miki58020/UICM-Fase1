@@ -54,7 +54,7 @@ class CargaAcademicaController extends Controller
 
         return redirect()
             ->route('admin.carga-academica.index', ['grupo_id' => $grupo->id])
-            ->with('success', "Carga académica generada para el grupo {$grupo->clave}.");
+            ->with('carga_success', "Carga académica generada para el grupo {$grupo->clave}.");
     }
 
     public function actualizar(Request $request, CargaAcademica $carga)

@@ -57,29 +57,6 @@
         </div>
     </div>
 
-    {{-- Notificaciones flash --}}
-    @if (session('password_success') || session('success') || session('error'))
-    <div class="container mx-auto px-4 lg:px-12 max-w-6xl pt-6">
-        @if (session('password_success') || session('success'))
-        <div class="rounded-xl px-5 py-3 border-l-4 bg-green-50 flex items-center gap-3"
-             style="border-color: #0F4229;">
-            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                 style="color: #0F4229;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            <p class="text-sm font-semibold text-green-800">{{ session('password_success') ?? session('success') }}</p>
-        </div>
-        @endif
-        @if (session('error'))
-        <div class="rounded-xl px-5 py-3 border-l-4 bg-red-50 flex items-center gap-3 border-red-500">
-            <svg class="w-4 h-4 flex-shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-            <p class="text-sm font-semibold text-red-800">{{ session('error') }}</p>
-        </div>
-        @endif
-    </div>
-    @endif
 
     {{-- Contenido principal --}}
     <div class="container mx-auto px-4 lg:px-12 max-w-6xl py-8">

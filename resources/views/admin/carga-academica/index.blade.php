@@ -21,7 +21,7 @@
         {{-- ══════════════════════════════════════════
              MENSAJE DE ÉXITO
         ══════════════════════════════════════════ --}}
-        @if (session('success'))
+        @if (session('carga_success'))
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
 
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
@@ -41,7 +41,7 @@
                     ¡Carga académica generada correctamente!
                 </h2>
                 <p class="text-sm text-gray-500 mb-6">
-                    {{ session('success') }}
+                    {{ session('carga_success') }}
                 </p>
 
                 @if ($grupo)

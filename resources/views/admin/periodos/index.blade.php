@@ -28,27 +28,6 @@
         </button>
     </div>
 
-    {{-- Mensajes --}}
-    @if(session('success'))
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-        <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
-    </div>
-    @endif
-
-    @if(session('error'))
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50" style="border-color: #ef4444;">
-        <p class="text-sm font-semibold text-red-700">{{ session('error') }}</p>
-    </div>
-    @endif
-
-    @if($errors->any())
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50" style="border-color: #ef4444;">
-        @foreach($errors->all() as $error)
-            <p class="text-sm text-red-700">{{ $error }}</p>
-        @endforeach
-    </div>
-    @endif
-
     {{-- Cards resumen --}}
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">

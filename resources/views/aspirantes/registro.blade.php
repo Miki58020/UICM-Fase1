@@ -27,16 +27,6 @@
                       enctype="multipart/form-data">
                     @csrf
 
-                    @if($errors->any())
-                    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-                        <p class="text-sm font-semibold text-red-700 mb-2">Por favor corrige los siguientes errores:</p>
-                        <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
 
                     {{-- ══════════════════════════════════════════
                          SECCIÓN 1: DATOS PERSONALES

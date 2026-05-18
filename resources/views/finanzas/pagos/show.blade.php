@@ -23,12 +23,6 @@
             <span class="font-medium text-gray-600">{{ $personaRef }}</span>
         </nav>
 
-        {{-- Flash de éxito --}}
-        @if (session('success'))
-            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-                <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
-            </div>
-        @endif
 
         {{-- Encabezado del expediente --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">

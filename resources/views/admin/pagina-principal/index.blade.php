@@ -28,34 +28,6 @@
         </button>
     </div>
 
-    {{-- Mensajes --}}
-    @if(session('success_oferta'))
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-        <p class="text-sm font-semibold text-green-800">{{ session('success_oferta') }}</p>
-    </div>
-    @endif
-    @if(session('success_carrusel'))
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-        <p class="text-sm font-semibold text-green-800">{{ session('success_carrusel') }}</p>
-    </div>
-    @endif
-    @if(session('success_contacto'))
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-        <p class="text-sm font-semibold text-green-800">{{ session('success_contacto') }}</p>
-    </div>
-    @endif
-    @if($errors->has('imagen'))
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50" style="border-color: #ef4444;">
-        <p class="text-sm font-semibold text-red-700">{{ $errors->first('imagen') }}</p>
-    </div>
-    @elseif($errors->any())
-    <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50" style="border-color: #ef4444;">
-        @foreach($errors->all() as $error)
-            <p class="text-sm text-red-700">{{ $error }}</p>
-        @endforeach
-    </div>
-    @endif
-
     {{-- Tabs --}}
     <div class="flex gap-1 bg-white rounded-2xl shadow-sm p-1 mb-6 w-fit">
         <button @click="tab = 'oferta'"

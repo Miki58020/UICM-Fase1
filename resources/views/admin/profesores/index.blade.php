@@ -46,13 +46,6 @@
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
-        {{-- Flash --}}
-        @if (session('success'))
-            <div class="mb-6 px-5 py-3 rounded-xl text-sm font-semibold text-white"
-                 style="background-color: #0F4229;">
-                {{ session('success') }}
-            </div>
-        @endif
 
         {{-- Encabezado de módulo --}}
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">

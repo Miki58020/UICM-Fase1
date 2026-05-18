@@ -37,12 +37,6 @@
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
-        {{-- Flash de éxito --}}
-        @if (session('success'))
-            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-                <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
-            </div>
-        @endif
 
         {{-- Contadores --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">

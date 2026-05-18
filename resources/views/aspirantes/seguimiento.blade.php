@@ -16,12 +16,6 @@
                 <div class="mx-auto w-16 h-1 rounded-full" style="background-color: #D4AF37;"></div>
             </div>
 
-            {{-- Error flash --}}
-            @if ($errors->has('folio'))
-                <div class="mb-4 rounded-xl px-5 py-4 border-l-4 bg-red-50" style="border-color: #ef4444;">
-                    <p class="text-sm font-semibold text-red-700">{{ $errors->first('folio') }}</p>
-                </div>
-            @endif
 
             {{-- Card --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">

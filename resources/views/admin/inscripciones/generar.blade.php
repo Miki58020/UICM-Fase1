@@ -109,13 +109,6 @@
                 </div>
                 @endif
 
-                {{-- Flash reenvío --}}
-                @if (session('success'))
-                <div class="mb-4 rounded-xl px-4 py-3 border-l-4 bg-green-50 text-sm font-semibold text-green-800"
-                     style="border-color: #0F4229;">
-                    {{ session('success') }}
-                </div>
-                @endif
 
                 {{-- Aviso correo enviado --}}
                 <div class="flex items-center gap-2 mb-4 px-4 py-3 rounded-xl bg-blue-50 border border-blue-100">

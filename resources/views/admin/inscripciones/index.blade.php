@@ -38,17 +38,6 @@
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
-        {{-- Flashes --}}
-        @if (session('success'))
-            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-green-50" style="border-color: #0F4229;">
-                <p class="text-sm font-semibold text-green-800">{{ session('success') }}</p>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-red-50" style="border-color: #ef4444;">
-                <p class="text-sm font-semibold text-red-700">{{ session('error') }}</p>
-            </div>
-        @endif
 
         {{-- Contadores --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
