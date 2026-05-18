@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(EnviarResumenDiario::class)->dailyAt('09:00');
     })
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\NoCacheHeaders::class,
+        ]);
         $middleware->alias([
             'rol' => \App\Http\Middleware\CheckRol::class,
         ]);
