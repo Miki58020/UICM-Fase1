@@ -436,7 +436,7 @@
      style="background-color: rgba(0,0,0,0.6);"
      onclick="cerrarVistaPrevia(event)">
 
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col overflow-hidden"
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-full sm:max-w-4xl flex flex-col overflow-hidden"
          style="max-height: 90vh;"
          onclick="event.stopPropagation()">
 

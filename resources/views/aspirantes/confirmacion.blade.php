@@ -9,7 +9,7 @@
 @endif
 
 <section class="bg-uicm-gray min-h-screen flex items-center py-16">
-    <div class="container mx-auto px-8 lg:px-24">
+    <div class="container mx-auto px-4 sm:px-8 lg:px-24">
 
         <div class="max-w-xl mx-auto">
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">

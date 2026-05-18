@@ -27,17 +27,17 @@
 
             <div class="space-y-3">
                 @foreach($tarifas as $tarifa)
-                <div class="flex items-center justify-between gap-4 rounded-xl px-5 py-4 bg-uicm-gray">
-                    <div>
+                <div class="flex items-center gap-3 sm:gap-4 rounded-xl px-3 sm:px-5 py-3 sm:py-4 bg-uicm-gray">
+                    <div class="flex-1 min-w-0">
                         <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Nivel</p>
                         <p class="font-bold text-gray-900 capitalize">{{ $tarifa->nivel }}</p>
                     </div>
-                    <div class="text-right">
+                    <div class="flex-shrink-0 text-right">
                         <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-0.5">Monto actual</p>
-                        <p class="text-xl font-extrabold" style="color: #0F4229;">${{ number_format($tarifa->monto, 0) }} MXN</p>
+                        <p class="text-base sm:text-xl font-extrabold whitespace-nowrap" style="color: #0F4229;">${{ number_format($tarifa->monto, 0) }} MXN</p>
                     </div>
                     <button onclick="abrirModal({{ $tarifa->id }}, '{{ $tarifa->nivel }}', {{ $tarifa->monto }})"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-200 flex-shrink-0"
+                            class="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-200 flex-shrink-0"
                             style="background-color: #0F4229;"
                             onmouseover="this.style.backgroundColor='#0a2e1c'"
                             onmouseout="this.style.backgroundColor='#0F4229'">
@@ -45,7 +45,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>
-                        Editar
+                        <span class="hidden sm:inline">Editar</span>
                     </button>
                 </div>
                 @endforeach

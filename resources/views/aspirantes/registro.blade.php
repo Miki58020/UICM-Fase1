@@ -5,7 +5,7 @@
 @section('content')
 
 <section class="bg-uicm-gray min-h-screen py-12">
-    <div class="container mx-auto px-8 lg:px-24">
+    <div class="container mx-auto px-4 sm:px-8 lg:px-24">
 
         {{-- Encabezado de página --}}
         <div class="text-center mb-8">

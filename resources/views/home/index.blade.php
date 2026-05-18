@@ -21,7 +21,7 @@
              style="background: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')">
         </div>
 
-        <div class="container mx-auto px-8 lg:px-12 py-16 md:py-24 relative z-10">
+        <div class="container mx-auto px-4 sm:px-8 lg:px-12 py-16 md:py-24 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
                 {{-- Texto principal --}}
@@ -85,7 +85,7 @@
 
     {{-- ===== CIFRAS ===== --}}
     <section class="bg-uicm-gray py-12">
-        <div class="container mx-auto px-8 lg:px-12">
+        <div class="container mx-auto px-4 sm:px-8 lg:px-12">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 @foreach([
                     ['nivel' => 'licenciatura', 'label' => 'Licenciaturas'],
@@ -105,7 +105,7 @@
 
     {{-- ===== SOBRE LA UICM ===== --}}
     <section class="bg-white py-16">
-        <div class="container mx-auto px-8 lg:px-12">
+        <div class="container mx-auto px-4 sm:px-8 lg:px-12">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
                     <p class="text-uicm-gold text-xs font-bold uppercase tracking-widest mb-2">Nuestra institución</p>
@@ -150,7 +150,7 @@
 
     {{-- ===== ÁREAS DE FORMACIÓN ===== --}}
     <section id="oferta" class="bg-uicm-gray py-16">
-        <div class="container mx-auto px-8 lg:px-12">
+        <div class="container mx-auto px-4 sm:px-8 lg:px-12">
             <div class="text-center mb-10">
                 <p class="text-uicm-gold text-xs font-bold uppercase tracking-widest mb-2">Programas</p>
                 <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Áreas de formación</h2>
@@ -200,7 +200,7 @@
 
     {{-- ===== EVENTOS — CARRUSEL ===== --}}
     <section class="bg-white py-16">
-        <div class="container mx-auto px-8 lg:px-12">
+        <div class="container mx-auto px-4 sm:px-8 lg:px-12">
             <div class="text-center mb-10">
                 <p class="text-uicm-gold text-xs font-bold uppercase tracking-widest mb-2">Galería</p>
                 <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Eventos y vida universitaria</h2>
@@ -264,7 +264,7 @@
     {{-- ===== CONVOCATORIA / CTA ===== --}}
     @if($periodoActivo)
     <section class="bg-uicm-gray py-10">
-        <div class="container mx-auto px-8 lg:px-12">
+        <div class="container mx-auto px-4 sm:px-8 lg:px-12">
             <div class="rounded-xl p-6 md:p-8 border-l-4 border-uicm-orange bg-orange-50 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <div class="flex items-center gap-2 mb-1">
@@ -300,7 +300,7 @@
 
     {{-- ===== CONTACTO ===== --}}
     <section id="contacto" class="bg-white py-16">
-        <div class="container mx-auto px-8 lg:px-12">
+        <div class="container mx-auto px-4 sm:px-8 lg:px-12">
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
 
                 {{-- Info --}}

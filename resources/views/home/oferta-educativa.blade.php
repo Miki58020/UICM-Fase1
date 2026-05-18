@@ -6,7 +6,7 @@
 
 {{-- Hero --}}
 <section class="bg-uicm-green text-white py-16">
-    <div class="container mx-auto px-8 lg:px-12">
+    <div class="container mx-auto px-4 sm:px-8 lg:px-12">
         <p class="text-green-300 text-xs font-bold uppercase tracking-widest mb-2">Programas académicos</p>
         <h1 class="text-4xl font-extrabold mb-3">Oferta educativa</h1>
         <p class="text-green-100 max-w-2xl leading-relaxed">
@@ -15,7 +15,7 @@
         </p>
 
         {{-- Tabs de nivel --}}
-        <div class="flex gap-2 mt-8">
+        <div class="flex flex-wrap gap-2 mt-8">
             @foreach(['licenciatura' => 'Licenciaturas', 'maestria' => 'Maestrías', 'doctorado' => 'Doctorado'] as $key => $label)
             @if(isset($programas[$key]) && $programas[$key]->count())
             <a href="#{{ $key }}"
@@ -54,7 +54,7 @@ $titulos = [
 @if(isset($programas[$nivel]) && $programas[$nivel]->count())
 
 <section id="{{ $nivel }}" class="{{ $loop->even ? 'bg-uicm-gray' : 'bg-white' }} py-16">
-    <div class="container mx-auto px-8 lg:px-12">
+    <div class="container mx-auto px-4 sm:px-8 lg:px-12">
 
         <div class="mb-10">
             <p class="text-uicm-gold text-xs font-bold uppercase tracking-widest mb-2">{{ $labels[$nivel] }}</p>
@@ -119,7 +119,7 @@ $titulos = [
 
 {{-- Info de contacto --}}
 <section id="contacto" class="bg-uicm-gray py-16">
-    <div class="container mx-auto px-8 lg:px-12">
+    <div class="container mx-auto px-4 sm:px-8 lg:px-12">
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
             <div class="lg:col-span-2">
                 <p class="text-uicm-gold text-xs font-bold uppercase tracking-widest mb-2">Comunicación</p>

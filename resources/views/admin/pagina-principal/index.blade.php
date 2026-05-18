@@ -29,23 +29,23 @@
     </div>
 
     {{-- Tabs --}}
-    <div class="flex gap-1 bg-white rounded-2xl shadow-sm p-1 mb-6 w-fit">
+    <div class="flex gap-1 bg-white rounded-2xl shadow-sm p-1 mb-6 w-full sm:w-fit">
         <button @click="tab = 'oferta'"
                 :class="tab === 'oferta' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
                 :style="tab === 'oferta' ? 'background-color:#0F4229' : ''"
-                class="px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-150">
+                class="flex-1 sm:flex-none px-3 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150">
             Oferta educativa
         </button>
         <button @click="tab = 'carrusel'"
                 :class="tab === 'carrusel' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
                 :style="tab === 'carrusel' ? 'background-color:#0F4229' : ''"
-                class="px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-150">
+                class="flex-1 sm:flex-none px-3 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150">
             Carrusel
         </button>
         <button @click="tab = 'contacto'"
                 :class="tab === 'contacto' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
                 :style="tab === 'contacto' ? 'background-color:#0F4229' : ''"
-                class="px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-150">
+                class="flex-1 sm:flex-none px-3 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150">
             Contacto
         </button>
     </div>

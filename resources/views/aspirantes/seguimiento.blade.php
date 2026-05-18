@@ -5,7 +5,7 @@
 @section('content')
 
 <section class="bg-uicm-gray min-h-screen flex items-center py-16">
-    <div class="container mx-auto px-8 lg:px-24">
+    <div class="container mx-auto px-4 sm:px-8 lg:px-24">
 
         <div class="max-w-lg mx-auto">
 
