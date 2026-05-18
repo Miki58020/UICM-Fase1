@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ConfiguracionMercadopagoController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AspiranteController;
 use App\Http\Controllers\CargaAcademicaController;
@@ -104,6 +105,10 @@ Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::patch('/admin/tarifas/{tarifa}', [TarifaController::class, 'update'])->name('admin.tarifas.update');
 
     // Página principal (CMS)
+    Route::get('/admin/mercadopago', [ConfiguracionMercadopagoController::class, 'index'])->name('admin.mercadopago.index');
+    Route::patch('/admin/mercadopago/{configuracion}/credenciales', [ConfiguracionMercadopagoController::class, 'updateCredenciales'])->name('admin.mercadopago.credenciales');
+    Route::patch('/admin/mercadopago/{configuracion}/urls', [ConfiguracionMercadopagoController::class, 'updateUrls'])->name('admin.mercadopago.urls');
+
     Route::get('/admin/pagina-principal', [PaginaPrincipalController::class, 'index'])->name('admin.pagina-principal.index');
     Route::post('/admin/pagina-principal/contacto', [PaginaPrincipalController::class, 'updateContacto'])->name('admin.pagina-principal.contacto');
     Route::post('/admin/pagina-principal/carrusel', [PaginaPrincipalController::class, 'storeImagen'])->name('admin.pagina-principal.carrusel.store');

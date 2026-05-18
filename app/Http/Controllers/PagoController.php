@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\PagoAprobado;
 use App\Mail\PagoRechazado;
 use App\Models\Aspirante;
+use App\Models\ConfiguracionMercadopago;
 use App\Models\Pago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -64,19 +65,17 @@ class PagoController extends Controller
                     'statement_descriptor' => 'UICM Inscripcion',
                 ];
 
-                // back_urls solo cuando APP_URL es público (https://).
-                // MP rechaza back_urls con localhost/127.0.0.1.
-                // Con ngrok (https) esto se activa automáticamente.
-                $appUrl = rtrim(config('app.url', ''), '/');
-                if (str_starts_with($appUrl, 'https://')) {
-                    $retornoUrl = $appUrl . '/aspirante/pago/retorno';
+                $mpConfig = ConfiguracionMercadopago::activa();
+                if ($mpConfig) {
                     $preferenceData['back_urls'] = [
-                        'success' => $retornoUrl,
-                        'failure' => $retornoUrl,
-                        'pending' => $retornoUrl,
+                        'success' => $mpConfig->back_url_success,
+                        'failure' => $mpConfig->back_url_failure,
+                        'pending' => $mpConfig->back_url_pending,
                     ];
-                    $preferenceData['auto_return']      = 'approved';
-                    $preferenceData['notification_url'] = $appUrl . '/mp/webhook';
+                    $preferenceData['auto_return'] = 'approved';
+                    if ($mpConfig->notification_url) {
+                        $preferenceData['notification_url'] = $mpConfig->notification_url;
+                    }
                 }
 
                 $preference   = (new PreferenceClient())->create($preferenceData);
@@ -386,7 +385,11 @@ class PagoController extends Controller
 
     private function configurarMP(): void
     {
-        MercadoPagoConfig::setAccessToken(config('services.mercadopago.access_token'));
+        $config = ConfiguracionMercadopago::activa();
+        if (!$config) {
+            throw new \RuntimeException('No hay configuración activa de MercadoPago.');
+        }
+        MercadoPagoConfig::setAccessToken($config->access_token);
     }
 
     private function mapearEstado(string $mpStatus): string

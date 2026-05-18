@@ -69,7 +69,8 @@
       "Bash(composer show *)",
       "Bash(composer outdated *)",
       "Bash(Remove-Item *)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(del *)"
     ]
   }
 }

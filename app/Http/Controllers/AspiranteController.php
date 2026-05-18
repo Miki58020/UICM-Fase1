@@ -52,7 +52,8 @@ class AspiranteController extends Controller
 
         Mail::to($aspirante->email)->send(new AspiranteAprobado($aspirante));
 
-        return redirect()->back()->with('success', "Aspirante aprobado. Matrícula generada: {$matricula}");
+        return redirect()->route('admin.aspirantes.show', $aspirante)
+            ->with('success', "Aspirante aprobado. Matrícula generada: {$matricula}");
     }
 
     public function rechazar(Request $request, Aspirante $aspirante)

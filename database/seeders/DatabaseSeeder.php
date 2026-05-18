@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             PeriodosSeeder::class,
             TarifaInscripcionSeeder::class,
             PaginaPrincipalSeeder::class,
+            ConfiguracionMercadopagoSeeder::class,
         ]);
     }
 }
