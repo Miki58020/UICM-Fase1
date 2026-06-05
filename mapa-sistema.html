@@ -473,7 +473,8 @@
       <div class="mt-6 bg-white rounded-2xl shadow p-5 max-w-2xl mx-auto">
         <p class="font-extrabold text-sm text-gray-800 mb-2">¿Cómo se genera la carga académica?</p>
         <ol class="space-y-2 text-sm text-gray-600 list-decimal list-inside">
-          <li>Coordinación crea el <strong>Grupo</strong> (elige Programa, Periodo, Cuatrimestre).</li>
+          <li>Coordinación va a <strong>Cuatrimestres → tab Carreras</strong> y hace clic en <strong>"Agregar carrera"</strong>.</li>
+          <li>Elige el programa e indica cuántos grupos crear → el sistema crea los <strong>Grupos</strong> automáticamente con clave estructurada (<code class="bg-gray-100 px-1 rounded">LEI-2026-2-A</code>).</li>
           <li>Hace clic en <strong>"Generar carga"</strong> en <code class="bg-gray-100 px-1 rounded">/admin/carga-academica</code>.</li>
           <li>Sistema busca todas las <strong>Materias activas</strong> del programa con el mismo cuatrimestre del grupo.</li>
           <li>Crea un registro <code>CargaAcademica</code> por cada materia (<code>firstOrCreate</code> evita duplicados).</li>
@@ -491,6 +492,64 @@
       <p class="text-sm text-gray-500 mb-6">Haz clic en cualquier entidad para ver sus campos y relaciones.</p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <!-- Programa -->
+        <div @click="abierto = abierto === 'programa' ? null : 'programa'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#0F4229;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">🎓</span>
+            <div>
+              <p class="font-extrabold text-gray-900">Programa</p>
+              <p class="text-xs text-gray-400">programas · catálogo de carreras de la institución</p>
+            </div>
+          </div>
+          <div x-show="abierto==='programa'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">nombre</span> max 120</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">clave</span> único, max 10</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">nivel</span> licenciatura|maestria|doctorado</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">duracion_cuatrimestres</span> 1-20</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">activo</span> bool</div>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Notas:</p>
+            <p class="text-xs text-gray-600">Catálogo base — no cambia por cuatrimestre. Solo programas activos pueden asignarse a cuatrimestres. La clave define la abreviatura de los grupos (ej: <code class="bg-gray-100 px-1 rounded">lengua_inglesa</code> → <strong>LEI</strong>).</p>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ hasMany <strong>Aspirante</strong></p>
+              <p>→ hasMany <strong>Alumno</strong></p>
+              <p>→ hasMany <strong>Materia</strong></p>
+              <p>→ belongsToMany <strong>Periodo</strong> via periodo_programa</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PeriodoPrograma -->
+        <div @click="abierto = abierto === 'periodo_programa' ? null : 'periodo_programa'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#D4AF37;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">🔗</span>
+            <div>
+              <p class="font-extrabold text-gray-900">PeriodoPrograma</p>
+              <p class="text-xs text-gray-400">periodo_programa · pivot cuatrimestre ↔ carrera</p>
+            </div>
+          </div>
+          <div x-show="abierto==='periodo_programa'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">periodo_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">programa_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">numero_carrera</span> autoincrement por cuatrimestre (C)</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">generacion</span> histórico por carrera (G)</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">activo</span> bool — pausar sin quitar</div>
+            </div>
+            <p class="text-xs font-semibold text-yellow-700 mt-2 bg-yellow-50 rounded px-2 py-1">Unique: (periodo_id, programa_id)</p>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Notas:</p>
+            <p class="text-xs text-gray-600">Al agregar una carrera a un cuatrimestre se crean automáticamente los grupos con clave estructurada. Los valores C y G de esta tabla se usan en el cálculo de la matrícula del alumno.</p>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>Periodo</strong>, <strong>Programa</strong></p>
+            </div>
+          </div>
+        </div>
 
         <!-- Aspirante -->
         <div @click="abierto = abierto === 'aspirante' ? null : 'aspirante'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
@@ -836,8 +895,9 @@
             <p class="text-xs text-gray-400">Gestión académica completa</p>
           </div>
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Períodos de registro (crear/activar/cerrar)</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Grupos (crear/editar/borrar)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Programas académicos (crear/editar/activar — catálogo base)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cuatrimestres: crear + configurar inscripción + asignar carreras</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Grupos (se crean automáticamente al agregar carrera al cuatrimestre)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Materias (crear/editar/activar)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Profesores (crear, generar acceso)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Carga académica (generar + asignar prof/horario/aula)</span></li>
@@ -1064,7 +1124,7 @@
   </main>
 
   <footer class="text-center py-6 text-xs text-gray-400 mt-4">
-    UICM — Mapa del Sistema · Generado el 26 May 2026 · Solo para referencia interna
+    UICM — Mapa del Sistema · Actualizado el 05 Jun 2026 · Solo para referencia interna
   </footer>
 
 </body>
