@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ConfiguracionMercadopagoController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AspiranteController;
+use App\Http\Controllers\CalificacionController;
 use App\Http\Controllers\CargaAcademicaController;
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\HomeController;
@@ -12,6 +13,8 @@ use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PaginaPrincipalController;
 use App\Http\Controllers\PeriodoController;
+use App\Http\Controllers\PeriodoProgramaController;
+use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfesorController;
 use App\Http\Controllers\ReinscripcionController;
@@ -50,6 +53,14 @@ Route::get('/aspirante/pago-confirmacion', [PagoController::class, 'confirmacion
 
 // Webhook de Mercado Pago (excluido de CSRF en bootstrap/app.php)
 Route::post('/mp/webhook', [PagoController::class, 'webhook'])->name('mp.webhook');
+
+// Portal del profesor — captura de calificaciones
+Route::middleware(['auth', 'rol:profesor'])->group(function () {
+    Route::get('/profesor/calificaciones', [CalificacionController::class, 'indexProfesor'])->name('profesor.calificaciones.index');
+    Route::get('/profesor/calificaciones/{carga}/capturar', [CalificacionController::class, 'capturar'])->name('profesor.calificaciones.capturar');
+    Route::post('/profesor/calificaciones/{carga}/guardar', [CalificacionController::class, 'guardar'])->name('profesor.calificaciones.guardar');
+    Route::post('/profesor/cambiar-password', [CalificacionController::class, 'cambiarPassword'])->name('profesor.cambiar-password');
+});
 
 // Portal del alumno
 Route::middleware(['auth', 'rol:alumno'])->group(function () {
@@ -130,6 +141,11 @@ Route::middleware(['auth', 'rol:admin'])->group(function () {
 
 // Módulo coordinación — Materias, profesores y carga académica
 Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
+    Route::get('/admin/programas', [ProgramaController::class, 'index'])->name('admin.programas.index');
+    Route::post('/admin/programas', [ProgramaController::class, 'store'])->name('admin.programas.store');
+    Route::patch('/admin/programas/{programa}', [ProgramaController::class, 'update'])->name('admin.programas.update');
+    Route::patch('/admin/programas/{programa}/toggle', [ProgramaController::class, 'toggle'])->name('admin.programas.toggle');
+
     Route::get('/admin/materias', [MateriaController::class, 'index'])->name('admin.materias.index');
     Route::post('/admin/materias', [MateriaController::class, 'store'])->name('admin.materias.store');
     Route::patch('/admin/materias/{materia}', [MateriaController::class, 'update'])->name('admin.materias.update');
@@ -139,6 +155,14 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::post('/admin/profesores', [ProfesorController::class, 'store'])->name('admin.profesores.store');
     Route::patch('/admin/profesores/{profesor}', [ProfesorController::class, 'update'])->name('admin.profesores.update');
     Route::patch('/admin/profesores/{profesor}/toggle', [ProfesorController::class, 'toggle'])->name('admin.profesores.toggle');
+    Route::post('/admin/profesores/{profesor}/acceso', [ProfesorController::class, 'generarAcceso'])->name('admin.profesores.acceso');
+
+    // Calificaciones — vista de coordinación
+    Route::get('/admin/calificaciones', [CalificacionController::class, 'indexCoordinacion'])->name('admin.calificaciones.index');
+
+    // Contraseñas de profesores — coordinación
+    Route::get('/admin/contrasenas-profesores', [SolicitudContrasenaController::class, 'index'])->name('admin.contrasenas-profesores.index');
+    Route::post('/admin/contrasenas-profesores/{solicitud}/atender', [SolicitudContrasenaController::class, 'atender'])->name('admin.contrasenas-profesores.atender');
 
     Route::get('/admin/carga-academica', [CargaAcademicaController::class, 'index'])->name('admin.carga-academica.index');
     Route::post('/admin/carga-academica/{grupo}/generar', [CargaAcademicaController::class, 'generar'])->name('admin.carga-academica.generar');
@@ -147,10 +171,16 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::get('/admin/periodos', [PeriodoController::class, 'index'])->name('admin.periodos.index');
     Route::post('/admin/periodos', [PeriodoController::class, 'store'])->name('admin.periodos.store');
     Route::patch('/admin/periodos/{periodo}', [PeriodoController::class, 'update'])->name('admin.periodos.update');
+    Route::patch('/admin/periodos/{periodo}/inscripcion', [PeriodoController::class, 'configurarInscripcion'])->name('admin.periodos.inscripcion');
     Route::patch('/admin/periodos/{periodo}/activar', [PeriodoController::class, 'activar'])->name('admin.periodos.activar');
     Route::patch('/admin/periodos/{periodo}/cerrar', [PeriodoController::class, 'cerrar'])->name('admin.periodos.cerrar');
     Route::patch('/admin/periodos/{periodo}/toggle-auto', [PeriodoController::class, 'toggleAuto'])->name('admin.periodos.toggleAuto');
     Route::delete('/admin/periodos/{periodo}', [PeriodoController::class, 'destroy'])->name('admin.periodos.destroy');
+
+    Route::get('/admin/periodos/{periodo}/programas', [PeriodoProgramaController::class, 'index'])->name('admin.periodos.programas');
+    Route::post('/admin/periodos/{periodo}/programas', [PeriodoProgramaController::class, 'store'])->name('admin.periodos.programas.store');
+    Route::patch('/admin/periodos/{periodo}/programas/{programa}/toggle', [PeriodoProgramaController::class, 'toggle'])->name('admin.periodos.programas.toggle');
+    Route::delete('/admin/periodos/{periodo}/programas/{programa}', [PeriodoProgramaController::class, 'destroy'])->name('admin.periodos.programas.destroy');
 
     Route::get('/admin/grupos', [GrupoController::class, 'index'])->name('admin.grupos.index');
     Route::post('/admin/grupos', [GrupoController::class, 'store'])->name('admin.grupos.store');
@@ -173,6 +203,7 @@ Route::get('/dashboard', function () {
         'finanzas'        => 'finanzas.pagos.index',
         'coordinacion'    => 'admin.materias.index',
         'control_escolar' => 'admin.aspirantes.index',
+        'profesor'        => 'profesor.calificaciones.index',
         default           => 'admin.aspirantes.index',
     });
 })->middleware(['auth', 'verified'])->name('dashboard');

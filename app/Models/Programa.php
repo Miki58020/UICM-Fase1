@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Programa extends Model
 {
-    protected $fillable = ['clave', 'nombre', 'nivel', 'duracion_cuatrimestres', 'activo'];
+    protected $fillable = ['clave', 'nombre', 'nivel', 'duracion_cuatrimestres', 'activo', 'numero_carrera'];
 
     public function aspirantes()
     {
@@ -26,5 +26,12 @@ class Programa extends Model
     public function grupos()
     {
         return $this->hasMany(Grupo::class);
+    }
+
+    public function periodos()
+    {
+        return $this->belongsToMany(Periodo::class, 'periodo_programa')
+            ->withPivot('numero_carrera', 'numero_generacion', 'activo')
+            ->withTimestamps();
     }
 }

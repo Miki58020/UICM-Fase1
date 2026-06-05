@@ -7,17 +7,20 @@
 <div x-data="{
     showModal: false,
     editando: null,
-    form: { nombre: '', correo: '', telefono: '', especialidad: '' },
+    form: { nombre: '', correo: '', telefono: '', especialidad: '', password: '' },
     busqueda: '',
     filtroActivo: '',
+    showPwd: false,
     abrir() {
         this.editando = null;
-        this.form = { nombre: '', correo: '', telefono: '', especialidad: '' };
+        this.form = { nombre: '', correo: '', telefono: '', especialidad: '', password: '' };
+        this.showPwd = false;
         this.showModal = true;
     },
     abrirEditar(p) {
         this.editando = p;
-        this.form = { nombre: p.nombre, correo: p.correo, telefono: p.telefono ?? '', especialidad: p.especialidad ?? '' };
+        this.form = { nombre: p.nombre, correo: p.correo, telefono: p.telefono ?? '', especialidad: p.especialidad ?? '', password: '' };
+        this.showPwd = false;
         this.showModal = true;
     },
     get accion() {
@@ -211,19 +214,29 @@
 
                             {{-- Estado --}}
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if ($profesor->activo)
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
-                                          style="background-color: #0F4229;">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                                        Activo
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
-                                          style="background-color: #9CA3AF;">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-60 inline-block"></span>
-                                        Inactivo
-                                    </span>
-                                @endif
+                                <div class="flex flex-col gap-1.5">
+                                    @if ($profesor->activo)
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white w-fit"
+                                              style="background-color: #0F4229;">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                            Activo
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white w-fit"
+                                              style="background-color: #9CA3AF;">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-60 inline-block"></span>
+                                            Inactivo
+                                        </span>
+                                    @endif
+                                    @if ($profesor->user_id)
+                                        <span class="inline-flex items-center gap-1 text-xs text-blue-600 font-medium">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                            </svg>
+                                            Con acceso
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
 
                             {{-- Acciones --}}
@@ -390,6 +403,7 @@
                         name="nombre"
                         x-model="form.nombre"
                         placeholder="Ej. Dr. Alejandro Fuentes Mora"
+                        maxlength="150"
                         class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
                                placeholder-gray-400 outline-none transition-all duration-150"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
@@ -405,11 +419,13 @@
                         type="email"
                         name="correo"
                         x-model="form.correo"
-                        placeholder="nombre.apellido@uicm.edu.mx"
+                        placeholder="Ej. nombre.apellido@uicm.edu.mx"
+                        maxlength="150"
                         class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
                                placeholder-gray-400 outline-none transition-all duration-150"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
                         onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                    <p class="mt-1 text-xs text-gray-400">Usar dominio institucional @uicm.edu.mx.</p>
                 </div>
 
                 {{-- Teléfono + Especialidad en fila --}}
@@ -423,11 +439,14 @@
                             type="tel"
                             name="telefono"
                             x-model="form.telefono"
-                            placeholder="222-345-6780"
+                            placeholder="10 dígitos"
+                            maxlength="10"
+                            oninput="formatTelefono(this)"
                             class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
                                    placeholder-gray-400 outline-none transition-all duration-150"
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
                             onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                        <p class="mt-1 text-xs text-gray-400">Solo 10 dígitos, sin espacios ni guiones.</p>
                     </div>
 
                     <div>
@@ -439,12 +458,46 @@
                             name="especialidad"
                             x-model="form.especialidad"
                             placeholder="Ej. Ingeniería de Software"
+                            maxlength="100"
                             class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
                                    placeholder-gray-400 outline-none transition-all duration-150"
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
                             onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
                     </div>
 
+                </div>
+
+                {{-- Nueva contraseña — solo al editar --}}
+                <div x-show="editando" x-cloak>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                        Nueva contraseña
+                        <span class="normal-case font-normal text-gray-400 ml-1">(dejar vacío para no cambiar)</span>
+                    </label>
+                    <div class="relative">
+                        <input
+                            :type="showPwd ? 'text' : 'password'"
+                            name="password"
+                            x-model="form.password"
+                            placeholder="Mínimo 6 caracteres"
+                            autocomplete="new-password"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm text-gray-800
+                                   placeholder-gray-400 outline-none transition-all duration-150"
+                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
+                            onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
+                        <button type="button" @click="showPwd = !showPwd"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <svg x-show="!showPwd" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <svg x-show="showPwd" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 4.411m0 0L21 21"/>
+                            </svg>
+                        </button>
+                    </div>
+                    @error('password')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
             </div>
@@ -490,3 +543,4 @@
 @endif
 
 @endsection
+

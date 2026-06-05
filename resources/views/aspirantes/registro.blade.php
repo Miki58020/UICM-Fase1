@@ -52,6 +52,7 @@
                                        placeholder="Nombre(s)"
                                        value="{{ old('nombre') }}"
                                        required
+                                       maxlength="100"
                                        oninput="normalizarCampo(this)"
                                        class="w-full rounded-lg border {{ $errors->has('nombre') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
@@ -72,6 +73,7 @@
                                        placeholder="Apellido paterno"
                                        value="{{ old('apellido_paterno') }}"
                                        required
+                                       maxlength="100"
                                        oninput="normalizarCampo(this)"
                                        class="w-full rounded-lg border {{ $errors->has('apellido_paterno') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
@@ -91,6 +93,7 @@
                                        name="apellido_materno"
                                        placeholder="Apellido materno"
                                        value="{{ old('apellido_materno') }}"
+                                       maxlength="100"
                                        oninput="normalizarCampo(this)"
                                        class="w-full rounded-lg border {{ $errors->has('apellido_materno') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
@@ -108,12 +111,14 @@
                                 <input type="text"
                                        id="curp"
                                        name="curp"
-                                       placeholder="18 caracteres"
+                                       placeholder="AAAA000000XXXXXXXX"
                                        maxlength="18"
                                        value="{{ old('curp') }}"
                                        required
-                                       class="w-full rounded-lg border {{ $errors->has('curp') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm uppercase focus:outline-none focus:ring-2 focus:border-transparent"
+                                       oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"
+                                       class="w-full rounded-lg border {{ $errors->has('curp') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
+                                <p class="mt-1 text-xs text-gray-400">18 caracteres alfanuméricos, sin espacios ni guiones.</p>
                                 @error('curp')
                                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                 @enderror
@@ -150,9 +155,10 @@
                                        value="{{ old('telefono') }}"
                                        required
                                        maxlength="10"
-                                       oninput="this.value=this.value.replace(/\D/g,'')"
+                                       oninput="formatTelefono(this)"
                                        class="w-full rounded-lg border {{ $errors->has('telefono') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
+                                <p class="mt-1 text-xs text-gray-400">10 dígitos sin espacios ni guiones.</p>
                                 @error('telefono')
                                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                 @enderror
@@ -170,6 +176,7 @@
                                        placeholder="ejemplo@correo.com"
                                        value="{{ old('email') }}"
                                        required
+                                       maxlength="150"
                                        class="w-full rounded-lg border {{ $errors->has('email') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
                                        style="--tw-ring-color: #0F4229;">
                                 @error('email')
@@ -193,41 +200,21 @@
                             <h2 class="text-lg font-bold text-gray-800">Programa académico</h2>
                         </div>
 
+                        @php
+                            $nivelesLabel = ['licenciatura' => 'Licenciaturas', 'maestria' => 'Maestrías', 'doctorado' => 'Doctorado'];
+                        @endphp
+
+                        {{-- Si hay múltiples periodos activos, mostrar nota explicativa --}}
+                        @if($periodos->count() > 1)
+                        <div class="mb-4 flex items-start gap-2 text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2.5">
+                            <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Selecciona primero el periodo de inscripción y los programas disponibles se actualizarán automáticamente.
+                        </div>
+                        @endif
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                            {{-- Programa --}}
-                            <div>
-                                <label for="programa_academico"
-                                       class="block text-sm font-medium text-gray-700 mb-1">
-                                    Programa de interés <span class="text-red-500">*</span>
-                                </label>
-                                <select id="programa_academico"
-                                        name="programa_academico"
-                                        required
-                                        class="w-full rounded-lg border {{ $errors->has('programa_academico') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
-                                        style="--tw-ring-color: #0F4229;">
-                                    <option value="" disabled {{ old('programa_academico') ? '' : 'selected' }}>Selecciona un programa</option>
-                                    <optgroup label="Licenciaturas">
-                                        <option value="psicopedagogia" {{ old('programa_academico') == 'psicopedagogia' ? 'selected' : '' }}>Psicopedagogía</option>
-                                        <option value="lengua_inglesa" {{ old('programa_academico') == 'lengua_inglesa' ? 'selected' : '' }}>Lengua Inglesa</option>
-                                        <option value="administracion" {{ old('programa_academico') == 'administracion' ? 'selected' : '' }}>Administración</option>
-                                        <option value="lengua_literatura" {{ old('programa_academico') == 'lengua_literatura' ? 'selected' : '' }}>Lengua y Literatura</option>
-                                    </optgroup>
-                                    <optgroup label="Maestrías">
-                                        <option value="mba" {{ old('programa_academico') == 'mba' ? 'selected' : '' }}>Administración y Negocios</option>
-                                        <option value="maestria_educacion" {{ old('programa_academico') == 'maestria_educacion' ? 'selected' : '' }}>Educación</option>
-                                        <option value="negocios_logistica" {{ old('programa_academico') == 'negocios_logistica' ? 'selected' : '' }}>Negocios y Logística Internacional</option>
-                                    </optgroup>
-                                    <optgroup label="Doctorado">
-                                        <option value="doctorado_educacion" {{ old('programa_academico') == 'doctorado_educacion' ? 'selected' : '' }}>Doctorado en Educación</option>
-                                    </optgroup>
-                                </select>
-                                @error('programa_academico')
-                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- Periodo de inscripción --}}
+                            {{-- Periodo de inscripción (primero) --}}
                             <div>
                                 <label for="generacion"
                                        class="block text-sm font-medium text-gray-700 mb-1">
@@ -242,6 +229,7 @@
                                 <select id="generacion"
                                         name="generacion"
                                         required
+                                        onchange="filtrarProgramas(this.value)"
                                         class="w-full rounded-lg border {{ $errors->has('generacion') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
                                         style="--tw-ring-color: #0F4229;">
                                     <option value="" disabled {{ old('generacion') ? '' : 'selected' }}>Selecciona un periodo</option>
@@ -253,6 +241,47 @@
                                 </select>
                                 @endif
                                 @error('generacion')
+                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Programa de interés (segundo, se filtra según periodo) --}}
+                            <div>
+                                <label for="programa_academico"
+                                       class="block text-sm font-medium text-gray-700 mb-1">
+                                    Programa de interés <span class="text-red-500">*</span>
+                                </label>
+                                @if($programasActivos->isEmpty())
+                                <div class="w-full rounded-lg border border-yellow-300 bg-yellow-50 px-4 py-2.5 text-sm text-yellow-700">
+                                    No hay programas disponibles para el periodo actual.
+                                </div>
+                                <input type="hidden" name="programa_academico" value="">
+                                @else
+                                <select id="programa_academico"
+                                        name="programa_academico"
+                                        required
+                                        onchange="filtrarPeriodos(this.value)"
+                                        class="w-full rounded-lg border {{ $errors->has('programa_academico') ? 'border-red-400' : 'border-gray-200' }} px-4 py-2.5 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent"
+                                        style="--tw-ring-color: #0F4229;">
+                                    <option value="" disabled {{ old('programa_academico') ? '' : 'selected' }}>
+                                        {{ $periodos->count() > 1 ? 'Selecciona primero el periodo' : 'Selecciona un programa' }}
+                                    </option>
+                                    @foreach($nivelesLabel as $nivel => $label)
+                                        @if($programasActivos->has($nivel))
+                                        <optgroup label="{{ $label }}" data-nivel="{{ $nivel }}">
+                                            @foreach($programasActivos[$nivel] as $prog)
+                                            <option value="{{ $prog->clave }}"
+                                                    data-clave="{{ $prog->clave }}"
+                                                    {{ old('programa_academico') == $prog->clave ? 'selected' : '' }}>
+                                                {{ $prog->nombre }}
+                                            </option>
+                                            @endforeach
+                                        </optgroup>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                @endif
+                                @error('programa_academico')
                                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -575,6 +604,52 @@
 
 @push('scripts')
 <script>
+const mapaPeriodoPrograma = @json($mapaPeriodoPrograma ?? []);
+const mapaProgramaPeriodo = @json($mapaProgramaPeriodo ?? []);
+
+// Periodo cambia → filtra programas
+function filtrarProgramas(periodoNombre) {
+    const sel = document.getElementById('programa_academico');
+    if (!sel) return;
+    const disponibles = mapaPeriodoPrograma[periodoNombre] || [];
+    sel.querySelectorAll('optgroup').forEach(function(grp) {
+        let grupoVisible = false;
+        grp.querySelectorAll('option').forEach(function(opt) {
+            const clave = opt.dataset.clave || opt.value;
+            const visible = disponibles.length === 0 || disponibles.includes(clave);
+            opt.hidden = !visible; opt.disabled = !visible;
+            if (visible) grupoVisible = true;
+        });
+        grp.hidden = !grupoVisible;
+    });
+    const currentOpt = sel.querySelector('option[value="' + sel.value + '"]');
+    if (sel.value && (!currentOpt || currentOpt.hidden)) sel.value = '';
+}
+
+// Programa cambia → filtra periodos
+function filtrarPeriodos(clave) {
+    const sel = document.getElementById('generacion');
+    if (!sel) return;
+    const disponibles = mapaProgramaPeriodo[clave] || [];
+    sel.querySelectorAll('option').forEach(function(opt) {
+        if (opt.value === '') return;
+        const visible = disponibles.length === 0 || disponibles.includes(opt.value);
+        opt.hidden = !visible; opt.disabled = !visible;
+    });
+    const currentOpt = sel.querySelector('option[value="' + sel.value + '"]');
+    if (sel.value && (!currentOpt || currentOpt.hidden)) sel.value = '';
+    // Si solo queda un periodo disponible, seleccionarlo automáticamente
+    const visibles = Array.from(sel.options).filter(o => o.value && !o.hidden);
+    if (visibles.length === 1) sel.value = visibles[0].value;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const gen  = document.getElementById('generacion');
+    const prog = document.getElementById('programa_academico');
+    if (gen  && gen.value)  filtrarProgramas(gen.value);
+    if (prog && prog.value) filtrarPeriodos(prog.value);
+});
+
 function normalizarCampo(input) {
     const pos = input.selectionStart;
     let val = input.value;
@@ -602,17 +677,6 @@ document.addEventListener('visibilitychange', function () {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    const tiposPrograma = {
-        'psicopedagogia':      'licenciatura',
-        'lengua_inglesa':      'licenciatura',
-        'administracion':      'licenciatura',
-        'lengua_literatura':   'licenciatura',
-        'mba':                 'maestria',
-        'maestria_educacion':  'maestria',
-        'negocios_logistica':  'maestria',
-        'doctorado_educacion': 'doctorado',
-    };
-
     const labelesCert = {
         'licenciatura': 'Certificado de bachillerato',
         'maestria':     'Título de ingeniería o licenciatura',
@@ -634,7 +698,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const inputTitulo      = document.getElementById('titulo');
 
     function actualizarDocs(valor) {
-        const tipo = tiposPrograma[valor] || '';
+        const opt  = selectPrograma ? selectPrograma.querySelector('option[value="' + valor + '"]:not([disabled])') : null;
+        const tipo = opt ? (opt.closest('optgroup')?.dataset.nivel || '') : '';
 
         if (tipo) {
             seccionDoc.style.display      = '';

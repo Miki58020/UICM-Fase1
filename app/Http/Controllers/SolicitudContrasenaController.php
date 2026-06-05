@@ -13,11 +13,15 @@ class SolicitudContrasenaController extends Controller
     public function index(Request $request)
     {
         $rol  = auth()->user()->rol;
-        $tipo = $request->query('tipo', 'alumnos'); // 'alumnos' | 'administrativos'
+        $tipo = $request->query('tipo', 'alumnos'); // 'alumnos' | 'administrativos' | 'profesores'
 
         // Control escolar solo puede ver alumnos
         if ($rol === 'control_escolar') {
             $tipo = 'alumnos';
+        }
+        // Coordinación solo puede ver profesores
+        if ($rol === 'coordinacion') {
+            $tipo = 'profesores';
         }
 
         $solicitudes = SolicitudContrasena::with('user')
@@ -26,7 +30,10 @@ class SolicitudContrasenaController extends Controller
                 $q->whereHas('user', fn($u) => $u->where('rol', 'alumno'))
             )
             ->when($tipo === 'administrativos', fn($q) =>
-                $q->whereHas('user', fn($u) => $u->where('rol', '!=', 'alumno'))
+                $q->whereHas('user', fn($u) => $u->whereNotIn('rol', ['alumno', 'profesor']))
+            )
+            ->when($tipo === 'profesores', fn($q) =>
+                $q->whereHas('user', fn($u) => $u->where('rol', 'profesor'))
             )
             ->latest()
             ->get();
@@ -48,7 +55,11 @@ class SolicitudContrasenaController extends Controller
 
         Mail::to($solicitud->user->email)->send(new NuevaContrasena($solicitud->user, $request->password));
 
-        return redirect()->route('admin.solicitudes-contrasena.index')
+        $ruta = $solicitud->user->rol === 'profesor'
+            ? 'admin.contrasenas-profesores.index'
+            : 'admin.solicitudes-contrasena.index';
+
+        return redirect()->route($ruta)
             ->with('success', 'Contraseña actualizada y enviada a ' . $solicitud->user->email);
     }
 }

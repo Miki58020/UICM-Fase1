@@ -203,7 +203,7 @@
                         @if(!empty($contacto->mensaje))
                         <div class="mb-4">
                             <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Mensaje</p>
-                            <div class="bg-gray-50 border-l-4 rounded-r-lg px-4 py-3 text-sm text-gray-700 whitespace-pre-line leading-relaxed"
+                            <div class="bg-gray-50 border-l-4 rounded-r-lg px-4 py-3 text-sm text-gray-700 whitespace-pre-line leading-relaxed max-h-48 overflow-y-auto"
                                  style="border-color: #0F4229;">{{ $contacto->mensaje }}</div>
                         </div>
                         @else

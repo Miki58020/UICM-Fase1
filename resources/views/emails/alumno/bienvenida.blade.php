@@ -80,6 +80,10 @@
                     <td>Programa</td>
                     <td>{{ $alumno->programa->nombre ?? '—' }}</td>
                 </tr>
+                <tr>
+                    <td>Grupo</td>
+                    <td>{{ $alumno->grupo->clave ?? 'Por asignar' }}</td>
+                </tr>
             </table>
         </div>
 

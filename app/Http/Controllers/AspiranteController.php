@@ -8,6 +8,7 @@ use App\Mail\RegistroConfirmado;
 use App\Models\Alumno;
 use App\Models\Aspirante;
 use App\Models\Periodo;
+use App\Models\PeriodoPrograma;
 use App\Models\Programa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -34,18 +35,35 @@ class AspiranteController extends Controller
             abort(403, 'Este aspirante ya fue procesado.');
         }
 
-        $matricula = $this->generarMatricula($aspirante->generacion);
+        $aspirante->load('programa');
+
+        $periodoObj = Periodo::where('nombre', $aspirante->generacion)->first();
+
+        $pp = PeriodoPrograma::where('periodo_id', $periodoObj?->id)
+            ->where('programa_id', $aspirante->programa_id)
+            ->where('activo', true)
+            ->first();
+
+        if (!$pp) {
+            return redirect()->back()->with(
+                'error',
+                "No se puede aprobar: el programa \"{$aspirante->programa->nombre}\" no está configurado como activo en el periodo \"{$aspirante->generacion}\". Agrégalo en Periodos → Carreras antes de continuar."
+            );
+        }
+
+        $matricula = $this->generarMatricula($aspirante);
 
         Alumno::create([
-            'matricula'          => $matricula,
-            'aspirante_id'       => $aspirante->id,
-            'programa_id'        => $aspirante->programa_id,
-            'nombre'             => $aspirante->nombre,
-            'apellido_paterno'   => $aspirante->apellido_paterno,
-            'apellido_materno'   => $aspirante->apellido_materno,
-            'email'              => $aspirante->email,
-            'cuatrimestre_actual'=> 1,
-            'estado'             => 'activo',
+            'matricula'           => $matricula,
+            'aspirante_id'        => $aspirante->id,
+            'programa_id'         => $aspirante->programa_id,
+            'periodo_id'          => $periodoObj?->id,
+            'nombre'              => $aspirante->nombre,
+            'apellido_paterno'    => $aspirante->apellido_paterno,
+            'apellido_materno'    => $aspirante->apellido_materno,
+            'email'               => $aspirante->email,
+            'cuatrimestre_actual' => 1,
+            'estado'              => 'activo',
         ]);
 
         $aspirante->update(['estado' => 'aprobado']);
@@ -126,7 +144,33 @@ class AspiranteController extends Controller
                 return $p;
             });
 
-        return view('aspirantes.registro', compact('periodos'));
+        $relaciones = PeriodoPrograma::with('programa')
+            ->whereIn('periodo_id', $periodos->pluck('id'))
+            ->where('activo', true)
+            ->get();
+
+        // Programas únicos agrupados por nivel para renderizar el select
+        $programasActivos = $relaciones->pluck('programa')->unique('id')->filter()->groupBy('nivel');
+
+        // Mapa JSON: periodo_nombre -> [clave1, clave2, ...]
+        $mapaPeriodoPrograma = $relaciones->groupBy('periodo_id')
+            ->mapWithKeys(function ($items, $periodoId) use ($periodos) {
+                $periodo = $periodos->firstWhere('id', $periodoId);
+                return $periodo
+                    ? [$periodo->nombre => $items->pluck('programa.clave')->filter()->values()]
+                    : [];
+            });
+
+        // Mapa JSON inverso: programa_clave -> [periodo_nombre1, ...]
+        $mapaProgramaPeriodo = $relaciones->groupBy(fn($r) => $r->programa->clave ?? '')
+            ->filter(fn($items, $clave) => $clave !== '')
+            ->mapWithKeys(function ($items, $clave) use ($periodos) {
+                $periodoIds = $items->pluck('periodo_id')->unique()->values();
+                $nombres = $periodos->whereIn('id', $periodoIds)->pluck('nombre')->values();
+                return [$clave => $nombres];
+            });
+
+        return view('aspirantes.registro', compact('periodos', 'programasActivos', 'mapaPeriodoPrograma', 'mapaProgramaPeriodo'));
     }
 
     public function store(Request $request)
@@ -165,6 +209,19 @@ class AspiranteController extends Controller
         $programa = Programa::where('clave', $request->programa_academico)
             ->where('activo', true)
             ->firstOrFail();
+
+        // Validar que el programa está disponible en el periodo seleccionado
+        $periodoObj = Periodo::where('nombre', $request->generacion)->first();
+        $combinacionValida = PeriodoPrograma::where('periodo_id', $periodoObj?->id)
+            ->where('programa_id', $programa->id)
+            ->where('activo', true)
+            ->exists();
+
+        if (!$combinacionValida) {
+            return back()->withInput()->withErrors([
+                'programa_academico' => 'El programa seleccionado no está disponible en el periodo de inscripción elegido.',
+            ]);
+        }
 
         $curp   = strtoupper($request->curp);
         $nombre = $this->normalizarTexto($request->nombre);
@@ -225,12 +282,41 @@ class AspiranteController extends Controller
         return $prefix . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
-    private function generarMatricula(string $generacion): string
+    private function generarMatricula(Aspirante $aspirante): string
     {
-        $periodo = Periodo::where('nombre', $generacion)->first();
-        $year = $periodo ? $periodo->fecha_inicio_registro->year : now()->year;
-        $prefix = 'UICM-' . $year . '-';
-        $count = Alumno::where('matricula', 'like', $prefix . '%')->count() + 1;
+        $periodo = Periodo::where('nombre', $aspirante->generacion)->first();
+
+        // YY — últimos 2 dígitos del año del período
+        $yy = $periodo
+            ? $periodo->fecha_inicio_registro->format('y')
+            : now()->format('y');
+
+        // P — número de período según el mes de inicio (1=Sep-Dic, 2=Ene-Abr, 3=May-Ago)
+        $mes = $periodo
+            ? (int) $periodo->fecha_inicio_registro->format('n')
+            : (int) now()->format('n');
+        $p = match(true) {
+            $mes >= 9              => 1,
+            $mes >= 1 && $mes <= 4 => 2,
+            default                => 3,
+        };
+
+        // G y C — desde periodo_programa
+        $pp = PeriodoPrograma::where('periodo_id', $periodo?->id)
+            ->where('programa_id', $aspirante->programa_id)
+            ->first();
+
+        $g = $pp?->numero_generacion ?? 1;
+        $c = $pp?->numero_carrera ?? ($aspirante->programa->numero_carrera ?? 0);
+
+        // Prefijo del grupo de matrícula
+        $prefix = $yy . $p . $g . $c;
+
+        // XXXX — autoincrement por carrera y periodo
+        $count = Alumno::where('programa_id', $aspirante->programa_id)
+            ->where('periodo_id', $periodo?->id)
+            ->count() + 1;
+
         return $prefix . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 

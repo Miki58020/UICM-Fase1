@@ -16,12 +16,19 @@ $rolesLabels = [
 
 <section
     x-data="{
-        showModal: false,
+        showModal: {{ $errors->any() ? 'true' : 'false' }},
         showDeleteModal: false,
-        editando: null,
+        editando: {{ $errors->any() && old('_method') === 'PATCH' ? 'true' : 'null' }},
         deletingId: null,
         deletingName: '',
-        form: { name: '', apellido_paterno: '', apellido_materno: '', email: '', password: '', rol: '' },
+        form: {
+            name:             '{{ addslashes(old('name', '')) }}',
+            apellido_paterno: '{{ addslashes(old('apellido_paterno', '')) }}',
+            apellido_materno: '{{ addslashes(old('apellido_materno', '')) }}',
+            email:            '{{ addslashes(old('email', '')) }}',
+            password:         '',
+            rol:              '{{ old('rol', '') }}'
+        },
         busqueda: '',
         filtroRol: '',
         coincide(fila) {
@@ -252,8 +259,7 @@ $rolesLabels = [
          x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto"
-         style="background-color: rgba(0,0,0,0.5);"
+         class="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto bg-black/50 backdrop-blur-sm"
          @keydown.escape.window="showModal = false"
          x-cloak>
 
@@ -266,6 +272,7 @@ $rolesLabels = [
              x-transition:leave-end="opacity-0 scale-95"
              class="bg-white rounded-2xl shadow-xl w-full max-w-lg my-auto">
 
+            <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <div>
                     <h2 class="text-base font-bold" style="color: #0F4229;">
@@ -294,19 +301,21 @@ $rolesLabels = [
                     </label>
                     <input type="text" name="name" x-model="form.name"
                            placeholder="Ej. Juan Carlos"
+                           maxlength="100"
                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                 </div>
 
                 {{-- Apellidos --}}
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
                             Apellido paterno <span class="text-red-400">*</span>
                         </label>
                         <input type="text" name="apellido_paterno" x-model="form.apellido_paterno"
                                placeholder="Ej. García"
+                               maxlength="100"
                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -317,6 +326,7 @@ $rolesLabels = [
                         </label>
                         <input type="text" name="apellido_materno" x-model="form.apellido_materno"
                                placeholder="Ej. López"
+                               maxlength="100"
                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -329,10 +339,12 @@ $rolesLabels = [
                         Correo electrónico <span class="text-red-400">*</span>
                     </label>
                     <input type="email" name="email" x-model="form.email"
-                           placeholder="usuario@uicm.edu.mx"
+                           placeholder="Ej. usuario@uicm.edu.mx"
+                           maxlength="150"
                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <p class="mt-1 text-xs text-gray-400">Usar dominio institucional @uicm.edu.mx.</p>
                 </div>
 
                 {{-- Contraseña --}}
@@ -345,6 +357,7 @@ $rolesLabels = [
                     <div class="relative" x-data="{ showPwd: false }">
                         <input :type="showPwd ? 'text' : 'password'" name="password" x-model="form.password"
                                placeholder="Mínimo 6 caracteres"
+                               minlength="6" maxlength="50"
                                class="w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none"
                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -403,8 +416,7 @@ $rolesLabels = [
          x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center px-4"
-         style="background-color: rgba(0,0,0,0.5);"
+         class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm"
          @keydown.escape.window="showDeleteModal = false"
          x-cloak>
 

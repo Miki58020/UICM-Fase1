@@ -170,6 +170,7 @@
                         'finanzas'        => 'FINANZAS',
                         'coordinacion'    => 'COORDINACIÓN',
                         'alumno'          => 'ALUMNO',
+                        'profesor'        => 'PROFESOR',
                         default           => strtoupper(auth()->user()->rol),
                     };
                     $norm = function (?string $t): string {
@@ -406,6 +407,18 @@
                 <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Coordinación Académica</p>
             </div>
 
+            <a href="{{ route('admin.programas.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Programas"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.programas.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <span class="nav-link-text">Programas</span>
+            </a>
+
             <a href="{{ route('admin.periodos.index') }}"
                @click="sidebarOpen = false"
                data-tooltip="Periodos"
@@ -415,7 +428,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
-                <span class="nav-link-text">Periodos de registro</span>
+                <span class="nav-link-text">Cuatrimestres</span>
             </a>
 
             <a href="{{ route('admin.grupos.index') }}"
@@ -468,6 +481,42 @@
                              a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
                 <span class="nav-link-text">Carga académica</span>
+            </a>
+
+            <a href="{{ route('admin.calificaciones.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Calificaciones"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.calificaciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                <span class="nav-link-text">Calificaciones</span>
+            </a>
+
+            @php
+                $pendientesProfesores = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
+                    ->whereHas('user', fn($u) => $u->where('rol', 'profesor'))
+                    ->count();
+            @endphp
+            <a href="{{ route('admin.contrasenas-profesores.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Contraseñas"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.contrasenas-profesores.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
+                             a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                </svg>
+                <span class="flex-1 nav-link-text">Contraseñas</span>
+                @if($pendientesProfesores > 0)
+                    <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
+                          style="background-color: #dc2626; color: #fff;">
+                        {{ $pendientesProfesores }}
+                    </span>
+                @endif
             </a>
             @endif
 
@@ -592,6 +641,25 @@
             </a>
             @endif
 
+            {{-- ══ PROFESOR ══ --}}
+            @if($rol === 'profesor')
+            <div class="nav-section-label pt-1 pb-1 px-2">
+                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Portal del Profesor</p>
+            </div>
+
+            <a href="{{ route('profesor.calificaciones.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Mis materias"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('profesor.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                <span class="nav-link-text">Mis materias</span>
+            </a>
+            @endif
+
             {{-- ══ ALUMNO ══ --}}
             @if($rol === 'alumno')
             <div class="nav-section-label pt-1 pb-1 px-2">
@@ -620,11 +688,11 @@
 
     {{-- ===== CONTENIDO PRINCIPAL ===== --}}
     @auth
-    <div class="main-anim main-auth" :class="sidebarCollapsed ? 'sidebar-collapsed-md' : ''">
+    <div class="main-anim main-auth flex flex-col" style="min-height:calc(100vh - 4rem)" :class="sidebarCollapsed ? 'sidebar-collapsed-md' : ''">
     @else
-    <div>
+    <div class="flex flex-col" style="min-height:calc(100vh - 4rem)">
     @endauth
-        <main>
+        <main class="grow">
             @yield('content')
         </main>
 
@@ -664,6 +732,16 @@
                 navbar.classList.toggle('shadow-lg', window.scrollY > 10);
             }
         });
+    </script>
+
+    <script>
+        function formatTelefono(el) {
+            el.value = el.value.replace(/\D/g, '').substring(0, 10);
+        }
+        function formatPeriodo(el) {
+            var v = el.value.replace(/\D/g, '').substring(0, 5);
+            el.value = v.length > 4 ? v.slice(0, 4) + '-' + v.slice(4) : v;
+        }
     </script>
 
     @stack('scripts')

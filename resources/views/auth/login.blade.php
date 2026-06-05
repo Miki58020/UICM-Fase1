@@ -127,8 +127,7 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-50 flex items-center justify-center px-4"
-        style="background-color: rgba(0,0,0,0.5);"
+        class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm"
         @keydown.escape.window="showModal = false"
         x-cloak>
 

@@ -29,4 +29,9 @@ class CargaAcademica extends Model
     {
         return $this->belongsTo(Periodo::class);
     }
+
+    public function calificaciones()
+    {
+        return $this->hasMany(Calificacion::class);
+    }
 }

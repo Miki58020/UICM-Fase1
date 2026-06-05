@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa del Sistema — UICM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .arrow-right::after {
+      content: '';
+      display: block;
+      width: 0; height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 12px solid #0F4229;
+      margin: auto;
+    }
+    .arrow-down::after {
+      content: '';
+      display: block;
+      width: 0; height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 12px solid currentColor;
+      margin: 4px auto 0;
+    }
+    .connector-v {
+      width: 2px; min-height: 24px;
+      background: linear-gradient(to bottom, #0F4229, #D4AF37);
+      margin: 0 auto;
+    }
+    .connector-h {
+      height: 2px;
+      background: linear-gradient(to right, #0F4229, #D4AF37);
+      flex: 1;
+    }
+    .glow-green { box-shadow: 0 0 0 3px rgba(15,66,41,.25); }
+    .glow-gold  { box-shadow: 0 0 0 3px rgba(212,175,55,.30); }
+    .tab-active { background-color: #0F4229 !important; color: #fff !important; }
+    .fase-line  { position: relative; }
+    .fase-line::before {
+      content: '';
+      position: absolute;
+      left: 20px; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #0F4229 0%, #D4AF37 100%);
+      z-index: 0;
+    }
+    .fase-step { position: relative; z-index: 1; }
+    body { background-color: #f4f5f7; }
+  </style>
+</head>
+<body x-data="{ tab: 'flujo' }" class="font-sans text-gray-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-30 shadow-md" style="background-color: #0F4229;">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black" style="background:#D4AF37; color:#0F4229;">U</div>
+        <div>
+          <p class="text-white font-extrabold text-base leading-tight">UICM — Mapa del Sistema</p>
+          <p class="text-xs" style="color:#D4AF37;">Relaciones, flujos y entidades</p>
+        </div>
+      </div>
+      <!-- Tabs -->
+      <nav class="flex gap-1 flex-wrap">
+        <button @click="tab='flujo'"    :class="tab==='flujo'    ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Flujo de Inscripción</button>
+        <button @click="tab='academico'" :class="tab==='academico' ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Módulo Académico</button>
+        <button @click="tab='entidades'" :class="tab==='entidades' ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Entidades</button>
+        <button @click="tab='roles'"    :class="tab==='roles'    ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Roles y Permisos</button>
+        <button @click="tab='estados'"  :class="tab==='estados'  ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Estados</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAB: FLUJO DE INSCRIPCIÓN                                       -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div x-show="tab==='flujo'" x-cloak>
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Flujo completo de inscripción</h2>
+      <p class="text-sm text-gray-500 mb-6">Desde que el aspirante llena el formulario hasta que el alumno accede al portal y el profesor captura calificaciones.</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Columna 1: ASPIRANTE -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#EFAD5A;"></div>
+          <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+            <span class="text-lg">📋</span>
+            <div>
+              <p class="font-extrabold text-sm text-gray-900">Fase 1 — Solicitud</p>
+              <p class="text-xs text-gray-400">Actor: Aspirante + Control Escolar</p>
+            </div>
+          </div>
+          <div class="px-5 py-4 fase-line space-y-4">
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-black" style="background:#EFAD5A;">1</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Registro online</p>
+                <p class="text-xs text-gray-500 mt-0.5">El aspirante llena el formulario <code class="bg-gray-100 px-1 rounded">/registro</code>, sube documentos (acta, CURP, certif., ID, foto) y elige programa + generación.</p>
+                <div class="mt-1.5 flex flex-wrap gap-1">
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-amber-50 text-amber-700 font-medium">CURP único</span>
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-amber-50 text-amber-700 font-medium">Email único</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-black" style="background:#EFAD5A;">2</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Folio generado</p>
+                <p class="text-xs text-gray-500 mt-0.5">Sistema genera <strong>folio</strong> <code class="bg-gray-100 px-1 rounded">UICM-YYYY-0001</code>. Estado <code class="bg-gray-100 px-1 rounded">pendiente</code>. Correo de confirmación enviado.</p>
+              </div>
+            </div>
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-black" style="background:#EFAD5A;">3</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Revisión documental</p>
+                <p class="text-xs text-gray-500 mt-0.5">Control Escolar revisa en <code class="bg-gray-100 px-1 rounded">/admin/aspirantes</code>.</p>
+                <div class="mt-2 grid grid-cols-2 gap-1.5">
+                  <div class="rounded-lg px-2 py-1.5 text-center text-xs font-bold" style="background:#dcfce7; color:#166534;">✔ Aprueba</div>
+                  <div class="rounded-lg px-2 py-1.5 text-center text-xs font-bold bg-red-50 text-red-700">✖ Rechaza</div>
+                </div>
+                <p class="text-xs text-gray-400 mt-1.5">Al aprobar → se genera la <strong>matrícula</strong>.<br>Al rechazar → correo con motivo.</p>
+              </div>
+            </div>
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-black bg-gray-700">i</div>
+              <div class="bg-gray-50 rounded-xl px-3 py-2 w-full">
+                <p class="text-xs font-bold text-gray-700 mb-1">Formato de Matrícula</p>
+                <code class="text-xs text-green-800 font-mono">YY · P · G · C · XXXX</code>
+                <ul class="mt-1 space-y-0.5 text-xs text-gray-500">
+                  <li><strong>YY</strong> = año del período (ej. 26)</li>
+                  <li><strong>P</strong> = cuatrimestre (1,2,3)</li>
+                  <li><strong>G</strong> = generación del programa</li>
+                  <li><strong>C</strong> = numero_carrera del programa</li>
+                  <li><strong>XXXX</strong> = secuencia de 4 dígitos</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Columna 2: PAGO -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#0F4229;"></div>
+          <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+            <span class="text-lg">💳</span>
+            <div>
+              <p class="font-extrabold text-sm text-gray-900">Fase 2 — Pago</p>
+              <p class="text-xs text-gray-400">Actor: Aspirante + Finanzas</p>
+            </div>
+          </div>
+          <div class="px-5 py-4 fase-line space-y-4">
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-black" style="background:#0F4229;">4</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Pago de inscripción</p>
+                <p class="text-xs text-gray-500 mt-0.5">Aspirante aprobado paga en <code class="bg-gray-100 px-1 rounded">/aspirante/pago</code> vía <strong>Mercado Pago</strong>. Se crea registro <code>Pago</code> con <code>estado = pendiente</code>.</p>
+                <div class="mt-1.5 flex flex-wrap gap-1">
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-green-50 text-green-700 font-medium">mp_preference_id</span>
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-green-50 text-green-700 font-medium">Webhook MP</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-black" style="background:#0F4229;">5</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Validación por Finanzas</p>
+                <p class="text-xs text-gray-500 mt-0.5">Módulo <code class="bg-gray-100 px-1 rounded">/finanzas/pagos</code>. El equipo de finanzas revisa el comprobante y aprueba o rechaza.</p>
+                <div class="mt-2 grid grid-cols-2 gap-1.5">
+                  <div class="rounded-lg px-2 py-1.5 text-center text-xs font-bold" style="background:#dcfce7; color:#166534;">✔ Aprobado</div>
+                  <div class="rounded-lg px-2 py-1.5 text-center text-xs font-bold bg-red-50 text-red-700">✖ Rechazado</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-black bg-gray-700">i</div>
+              <div class="bg-gray-50 rounded-xl px-3 py-2 w-full">
+                <p class="text-xs font-bold text-gray-700 mb-1">Modelo Pago</p>
+                <ul class="text-xs text-gray-500 space-y-0.5">
+                  <li>Ligado a <strong>aspirante_id</strong> (inscripción)</li>
+                  <li>Ligado a <strong>alumno_id</strong> (reinscripción)</li>
+                  <li>concepto: inscripcion | reinscripcion</li>
+                  <li>Tarifa según nivel del programa</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-xs font-black" style="background:#0F4229;">6</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Seguimiento público</p>
+                <p class="text-xs text-gray-500 mt-0.5">El aspirante puede revisar su estado en <code class="bg-gray-100 px-1 rounded">/resultado?folio=...</code>. El sistema muestra en qué paso va (0-5).</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Columna 3: ALUMNO + PORTAL -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#D4AF37;"></div>
+          <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+            <span class="text-lg">🎓</span>
+            <div>
+              <p class="font-extrabold text-sm text-gray-900">Fase 3 — Acceso al Portal</p>
+              <p class="text-xs text-gray-400">Actor: Control Escolar + Alumno</p>
+            </div>
+          </div>
+          <div class="px-5 py-4 fase-line space-y-4">
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-black" style="background:#D4AF37; color:#0F4229;">7</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Generación de acceso</p>
+                <p class="text-xs text-gray-500 mt-0.5">Control Escolar en <code class="bg-gray-100 px-1 rounded">/admin/inscripciones</code> ve aspirantes con pago aprobado. Asigna grupo y genera cuenta.</p>
+              </div>
+            </div>
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-black" style="background:#D4AF37; color:#0F4229;">8</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Cuenta institucional creada</p>
+                <p class="text-xs text-gray-500 mt-0.5">Sistema crea registro <code>User</code> con rol <strong>alumno</strong>. Email: <code class="bg-gray-100 px-1 rounded">matricula@uicm.edu.mx</code>. Contraseña temporal generada y enviada por correo.</p>
+                <div class="mt-1.5 flex flex-wrap gap-1">
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-yellow-50 text-yellow-700 font-medium">BienvenidaAlumno mail</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-black" style="background:#D4AF37; color:#0F4229;">9</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Portal del alumno</p>
+                <p class="text-xs text-gray-500 mt-0.5">Alumno accede en <code class="bg-gray-100 px-1 rounded">/alumno</code>: ve grupo, materias, calificaciones, pagos y puede cambiar contraseña.</p>
+              </div>
+            </div>
+
+            <div class="fase-step flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-black" style="background:#D4AF37; color:#0F4229;">10</div>
+              <div>
+                <p class="font-bold text-sm text-gray-800">Reinscripción</p>
+                <p class="text-xs text-gray-500 mt-0.5">Control Escolar en <code class="bg-gray-100 px-1 rounded">/admin/reinscripciones</code> genera un nuevo Pago (tipo <strong>reinscripcion</strong>) ligado al <strong>alumno_id</strong>. El alumno paga el siguiente cuatrimestre.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Leyenda de requisito por fase -->
+      <div class="mt-6 bg-white rounded-2xl shadow p-5">
+        <p class="font-extrabold text-sm text-gray-800 mb-3">Condición para avanzar entre fases</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="rounded-xl p-3 bg-amber-50 border border-amber-200">
+            <p class="font-bold text-xs text-amber-700 mb-1">Fase 1 → 2</p>
+            <p class="text-xs text-gray-600">Aspirante.estado = <strong>aprobado</strong></p>
+          </div>
+          <div class="rounded-xl p-3 bg-green-50 border border-green-200">
+            <p class="font-bold text-xs text-green-700 mb-1">Fase 2 → 3</p>
+            <p class="text-xs text-gray-600">Pago.estado = <strong>aprobado</strong> + Alumno sin user_id</p>
+          </div>
+          <div class="rounded-xl p-3 border" style="background:#fefce8; border-color:#d4af37aa;">
+            <p class="font-bold text-xs mb-1" style="color:#92670b;">Fase 3 completada</p>
+            <p class="text-xs text-gray-600">Alumno.user_id asignado + correo enviado</p>
+          </div>
+          <div class="rounded-xl p-3 bg-gray-50 border border-gray-200">
+            <p class="font-bold text-xs text-gray-700 mb-1">Seguimiento aspirante</p>
+            <p class="text-xs text-gray-600">Pasos 0-5 visibles en <code class="bg-gray-100 px-1 rounded">/resultado</code></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAB: MÓDULO ACADÉMICO                                           -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div x-show="tab==='academico'" x-cloak>
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Módulo Académico</h2>
+      <p class="text-sm text-gray-500 mb-6">Cómo se construye la estructura desde el período hasta la calificación del alumno.</p>
+
+      <!-- Flujo vertical top-down -->
+      <div class="flex flex-col items-center gap-0">
+
+        <!-- Periodos -->
+        <div class="w-full max-w-2xl">
+          <div class="bg-white rounded-2xl shadow overflow-hidden">
+            <div class="h-1.5" style="background:#0F4229;"></div>
+            <div class="px-5 py-4 flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style="background:#f0f9f4;">📅</div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="font-extrabold text-gray-900">Periodo</p>
+                  <span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#dcfce7; color:#166534;">Coordinación</span>
+                </div>
+                <p class="text-sm text-gray-500">Unidad de tiempo académica. Define la ventana de registro de aspirantes y el ciclo de clases.</p>
+                <div class="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  <div class="bg-gray-50 rounded-lg p-2">
+                    <p class="font-bold text-gray-700">Clave</p>
+                    <code>2026-1</code>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-2">
+                    <p class="font-bold text-gray-700">Estado</p>
+                    <span>inactivo→activo→cerrado</span>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-2">
+                    <p class="font-bold text-gray-700">Auto</p>
+                    <span>Se activa solo en fecha de apertura</span>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-2">
+                    <p class="font-bold text-gray-700">Efecto</p>
+                    <span>Solo periodos <strong>activos</strong> aceptan solicitudes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="connector-v h-6" style="background:linear-gradient(to bottom,#0F4229,#0F4229); width:2px;"></div>
+        <div class="text-xs text-gray-400 font-semibold bg-white px-3 py-1 rounded-full shadow-sm border border-gray-200 mb-0">hasMany →</div>
+        <div class="connector-v h-6" style="background:linear-gradient(to bottom,#0F4229,#0F4229); width:2px;"></div>
+
+        <!-- Grupo -->
+        <div class="w-full max-w-2xl">
+          <div class="bg-white rounded-2xl shadow overflow-hidden">
+            <div class="h-1.5" style="background:#EFAD5A;"></div>
+            <div class="px-5 py-4 flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style="background:#fef9ec;">👥</div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="font-extrabold text-gray-900">Grupo</p>
+                  <span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#fef9ec; color:#92670b;">Coordinación</span>
+                </div>
+                <p class="text-sm text-gray-500">Sección de alumnos. Pertenece a un <strong>Programa</strong> y un <strong>Período</strong>. Define el cuatrimestre y la capacidad (25–30 alumnos).</p>
+                <div class="mt-2 flex flex-wrap gap-2 text-xs">
+                  <div class="bg-gray-50 rounded-lg px-3 py-1.5">
+                    <span class="font-bold">Clave:</span> PSI-2026-1-A
+                  </div>
+                  <div class="bg-gray-50 rounded-lg px-3 py-1.5">
+                    <span class="font-bold">Cuatrimestre:</span> 1–12
+                  </div>
+                  <div class="bg-gray-50 rounded-lg px-3 py-1.5">
+                    <span class="font-bold">Capacidad:</span> 25–30
+                  </div>
+                  <div class="bg-red-50 text-red-700 rounded-lg px-3 py-1.5 font-semibold">
+                    No se elimina si tiene alumnos
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flecha dividida -->
+        <div class="connector-v h-6" style="width:2px;background:#0F4229;"></div>
+        <div class="flex items-center justify-center gap-6 w-full max-w-2xl">
+          <div class="text-xs text-gray-400 bg-white px-3 py-1 rounded-full shadow-sm border border-gray-200">hasMany Alumnos ↙</div>
+          <div class="text-xs text-gray-400 bg-white px-3 py-1 rounded-full shadow-sm border border-gray-200">hasMany CargaAcademica ↘</div>
+        </div>
+        <div class="connector-v h-6" style="width:2px;background:#0F4229;"></div>
+
+        <!-- Materias + CargaAcademica grid -->
+        <div class="w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div class="bg-white rounded-2xl shadow overflow-hidden">
+            <div class="h-1.5" style="background:#6366f1;"></div>
+            <div class="px-4 py-4 flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background:#eef2ff;">📚</div>
+              <div>
+                <p class="font-extrabold text-gray-900 text-sm">Materia</p>
+                <p class="text-xs text-gray-500 mt-0.5">Pertenece a un Programa, tiene cuatrimestre y créditos. Clave formato <code class="bg-gray-100 px-1 rounded">IS-101</code>.</p>
+                <div class="mt-1.5 flex flex-wrap gap-1 text-xs">
+                  <span class="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-medium">activo / inactivo</span>
+                  <span class="bg-gray-50 text-gray-600 px-1.5 py-0.5 rounded">Créditos: 1-20</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow overflow-hidden">
+            <div class="h-1.5" style="background:#0ea5e9;"></div>
+            <div class="px-4 py-4 flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background:#f0f9ff;">🗓️</div>
+              <div>
+                <p class="font-extrabold text-gray-900 text-sm">Carga Académica</p>
+                <p class="text-xs text-gray-500 mt-0.5">Une <strong>Grupo + Materia + Periodo</strong> en una fila. Se genera automáticamente por grupo. Luego se asigna Profesor, Horario y Aula.</p>
+                <div class="mt-1.5 flex flex-wrap gap-1 text-xs">
+                  <span class="bg-sky-50 text-sky-700 px-1.5 py-0.5 rounded font-medium">firstOrCreate</span>
+                  <span class="bg-gray-50 text-gray-600 px-1.5 py-0.5 rounded">Único (grupo+materia+periodo)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="connector-v h-6" style="width:2px;background:#0ea5e9;"></div>
+        <div class="text-xs text-gray-400 font-semibold bg-white px-3 py-1 rounded-full shadow-sm border border-gray-200">hasMany →</div>
+        <div class="connector-v h-6" style="width:2px;background:#0ea5e9;"></div>
+
+        <!-- Profesor -->
+        <div class="w-full max-w-2xl">
+          <div class="bg-white rounded-2xl shadow overflow-hidden">
+            <div class="h-1.5" style="background:#10b981;"></div>
+            <div class="px-5 py-4 flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style="background:#f0fdf4;">👨‍🏫</div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="font-extrabold text-gray-900">Profesor</p>
+                  <span class="text-xs px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700">Coordinación</span>
+                </div>
+                <p class="text-sm text-gray-500">Se asigna a una o varias CargaAcademica. Tiene cuenta de usuario (rol: profesor) para capturar calificaciones. Contraseña generada y enviada por email.</p>
+                <div class="mt-2 flex flex-wrap gap-2 text-xs">
+                  <span class="bg-gray-50 rounded-lg px-3 py-1.5"><span class="font-bold">Correo:</span> único en profesores + users</span>
+                  <span class="bg-emerald-50 text-emerald-700 rounded-lg px-3 py-1.5 font-semibold">BienvenidaProfesor mail</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="connector-v h-6" style="width:2px;background:#10b981;"></div>
+        <div class="text-xs text-gray-400 font-semibold bg-white px-3 py-1 rounded-full shadow-sm border border-gray-200">captura →</div>
+        <div class="connector-v h-6" style="width:2px;background:#10b981;"></div>
+
+        <!-- Calificaciones -->
+        <div class="w-full max-w-2xl">
+          <div class="bg-white rounded-2xl shadow overflow-hidden">
+            <div class="h-1.5" style="background:#f43f5e;"></div>
+            <div class="px-5 py-4 flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style="background:#fff1f2;">📝</div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="font-extrabold text-gray-900">Calificación</p>
+                  <span class="text-xs px-2 py-0.5 rounded-full font-semibold bg-rose-50 text-rose-700">Profesor + Coordinación</span>
+                </div>
+                <p class="text-sm text-gray-500">Une <strong>Alumno + CargaAcademica</strong>. El profesor captura por tipo (parcial 1, parcial 2, extraordinario). La coordinación solo consulta.</p>
+                <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                  <div class="bg-gray-50 rounded-lg p-2">
+                    <p class="font-bold text-gray-700 mb-0.5">Tipos</p>
+                    <p>parcial · extraordinario</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-2">
+                    <p class="font-bold text-gray-700 mb-0.5">Aprobatorio</p>
+                    <p>≥ 7.0</p>
+                  </div>
+                  <div class="bg-rose-50 text-rose-700 rounded-lg p-2 font-semibold">
+                    Extraord. requiere parcial 1 y 2
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Nota sobre generación de carga -->
+      <div class="mt-6 bg-white rounded-2xl shadow p-5 max-w-2xl mx-auto">
+        <p class="font-extrabold text-sm text-gray-800 mb-2">¿Cómo se genera la carga académica?</p>
+        <ol class="space-y-2 text-sm text-gray-600 list-decimal list-inside">
+          <li>Coordinación crea el <strong>Grupo</strong> (elige Programa, Periodo, Cuatrimestre).</li>
+          <li>Hace clic en <strong>"Generar carga"</strong> en <code class="bg-gray-100 px-1 rounded">/admin/carga-academica</code>.</li>
+          <li>Sistema busca todas las <strong>Materias activas</strong> del programa con el mismo cuatrimestre del grupo.</li>
+          <li>Crea un registro <code>CargaAcademica</code> por cada materia (<code>firstOrCreate</code> evita duplicados).</li>
+          <li>Coordinación asigna <strong>Profesor, Horario y Aula</strong> a cada carga individualmente.</li>
+          <li>Profesor ve sus cargas en <code class="bg-gray-100 px-1 rounded">/profesor/calificaciones</code> y captura notas.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAB: ENTIDADES                                                  -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div x-show="tab==='entidades'" x-cloak x-data="{ abierto: null }">
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Entidades del sistema</h2>
+      <p class="text-sm text-gray-500 mb-6">Haz clic en cualquier entidad para ver sus campos y relaciones.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <!-- Aspirante -->
+        <div @click="abierto = abierto === 'aspirante' ? null : 'aspirante'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#EFAD5A;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">📋</span>
+            <div>
+              <p class="font-extrabold text-gray-900">Aspirante</p>
+              <p class="text-xs text-gray-400">aspirantes · estado: pendiente|aprobado|rechazado</p>
+            </div>
+          </div>
+          <div x-show="abierto==='aspirante'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">folio</span> UICM-2026-0001</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">curp</span> 18 chars, único</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">programa_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">generacion</span> periodo.nombre</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> enum 3 valores</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">observaciones</span> rechazo</div>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Documentos:</p>
+            <div class="flex flex-wrap gap-1 text-xs">
+              <span class="bg-amber-100 text-amber-800 px-1.5 rounded">acta_nacimiento</span>
+              <span class="bg-amber-100 text-amber-800 px-1.5 rounded">curp_url</span>
+              <span class="bg-amber-100 text-amber-800 px-1.5 rounded">identificacion</span>
+              <span class="bg-amber-100 text-amber-800 px-1.5 rounded">certificado</span>
+              <span class="bg-amber-100 text-amber-800 px-1.5 rounded">comprobante_domicilio</span>
+              <span class="bg-amber-100 text-amber-800 px-1.5 rounded">foto</span>
+              <span class="bg-amber-100 text-amber-800 px-1.5 rounded">titulo (maest/doc)</span>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>Programa</strong></p>
+              <p>→ hasMany <strong>Pago</strong></p>
+              <p>→ hasOne <strong>Alumno</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alumno -->
+        <div @click="abierto = abierto === 'alumno' ? null : 'alumno'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#0F4229;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">🎓</span>
+            <div>
+              <p class="font-extrabold text-gray-900">Alumno</p>
+              <p class="text-xs text-gray-400">alumnos · estado: activo|inactivo|baja</p>
+            </div>
+          </div>
+          <div x-show="abierto==='alumno'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">matricula</span> único</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">user_id</span> nullable FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">aspirante_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">programa_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">grupo_id</span> nullable FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">cuatrimestre_actual</span> 1-12</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">creditos_acumulados</span></div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> enum</div>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>User</strong>, <strong>Aspirante</strong>, <strong>Programa</strong>, <strong>Grupo</strong></p>
+              <p>→ hasMany <strong>Pago</strong> (reinscripciones)</p>
+              <p>→ hasMany <strong>Calificacion</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Periodo -->
+        <div @click="abierto = abierto === 'periodo' ? null : 'periodo'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#6366f1;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">📅</span>
+            <div>
+              <p class="font-extrabold text-gray-900">Periodo</p>
+              <p class="text-xs text-gray-400">periodos · estado: proximo|activo|cerrado|inactivo</p>
+            </div>
+          </div>
+          <div x-show="abierto==='periodo'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">nombre</span> 2026-1</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">label</span> texto largo</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">fecha_inicio_registro</span></div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">fecha_fin_registro</span></div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">fecha_inicio_clases</span></div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">fecha_fin_clases</span></div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> enum 4 valores</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">auto</span> bool — activación</div>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ hasMany <strong>Grupo</strong></p>
+              <p>→ hasMany <strong>CargaAcademica</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grupo -->
+        <div @click="abierto = abierto === 'grupo' ? null : 'grupo'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#EFAD5A;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">👥</span>
+            <div>
+              <p class="font-extrabold text-gray-900">Grupo</p>
+              <p class="text-xs text-gray-400">grupos · clave: PSI-2026-1-A</p>
+            </div>
+          </div>
+          <div x-show="abierto==='grupo'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">clave</span> único, max 20</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">programa_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">periodo_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">cuatrimestre</span> 1-12</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">capacidad</span> 25-30</div>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>Programa</strong>, <strong>Periodo</strong></p>
+              <p>→ hasMany <strong>Alumno</strong></p>
+              <p>→ hasMany <strong>CargaAcademica</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Materia -->
+        <div @click="abierto = abierto === 'materia' ? null : 'materia'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#8b5cf6;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">📚</span>
+            <div>
+              <p class="font-extrabold text-gray-900">Materia</p>
+              <p class="text-xs text-gray-400">materias · clave: IS-101</p>
+            </div>
+          </div>
+          <div x-show="abierto==='materia'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">clave</span> único, max 6</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">nombre</span></div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">creditos</span> 1-20</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">cuatrimestre</span> 1-12</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">programa_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">activo</span> bool</div>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>Programa</strong></p>
+              <p>→ hasMany <strong>CargaAcademica</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profesor -->
+        <div @click="abierto = abierto === 'profesor' ? null : 'profesor'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#10b981;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">👨‍🏫</span>
+            <div>
+              <p class="font-extrabold text-gray-900">Profesor</p>
+              <p class="text-xs text-gray-400">profesores · activo: bool</p>
+            </div>
+          </div>
+          <div x-show="abierto==='profesor'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">user_id</span> nullable FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">nombre</span></div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">correo</span> único</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">telefono</span> 10 dígitos</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">especialidad</span></div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">activo</span> bool</div>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>User</strong></p>
+              <p>→ hasMany <strong>CargaAcademica</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CargaAcademica -->
+        <div @click="abierto = abierto === 'carga' ? null : 'carga'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#0ea5e9;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">🗓️</span>
+            <div>
+              <p class="font-extrabold text-gray-900">CargaAcademica</p>
+              <p class="text-xs text-gray-400">carga_academica · pivot de grupo+materia+periodo</p>
+            </div>
+          </div>
+          <div x-show="abierto==='carga'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">grupo_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">materia_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">periodo_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">profesor_id</span> nullable FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">horario</span> Lun-Mié 08-10</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">aula</span> A-101</div>
+            </div>
+            <p class="text-xs font-semibold text-sky-700 mt-2 bg-sky-50 rounded px-2 py-1">Unique: (grupo_id, materia_id, periodo_id)</p>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>Grupo</strong>, <strong>Materia</strong>, <strong>Periodo</strong>, <strong>Profesor</strong></p>
+              <p>→ hasMany <strong>Calificacion</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calificacion -->
+        <div @click="abierto = abierto === 'calificacion' ? null : 'calificacion'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#f43f5e;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">📝</span>
+            <div>
+              <p class="font-extrabold text-gray-900">Calificacion</p>
+              <p class="text-xs text-gray-400">calificaciones · tipo: parcial|extraordinario</p>
+            </div>
+          </div>
+          <div x-show="abierto==='calificacion'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">alumno_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">carga_academica_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">tipo</span> parcial|extraord.</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">numero</span> 1 o 2</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">calificacion</span> 0.0-10.0</div>
+            </div>
+            <p class="text-xs font-semibold text-rose-700 mt-2 bg-rose-50 rounded px-2 py-1">Unique: (alumno, carga, tipo, numero)</p>
+            <p class="text-xs font-semibold text-rose-600 mt-1 bg-rose-50 rounded px-2 py-1">Extraordinario requiere ambos parciales</p>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>Alumno</strong>, <strong>CargaAcademica</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pago -->
+        <div @click="abierto = abierto === 'pago' ? null : 'pago'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#D4AF37;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">💳</span>
+            <div>
+              <p class="font-extrabold text-gray-900">Pago</p>
+              <p class="text-xs text-gray-400">pagos · estado: pendiente|aprobado|rechazado</p>
+            </div>
+          </div>
+          <div x-show="abierto==='pago'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">aspirante_id</span> nullable FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">alumno_id</span> nullable FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">concepto</span> inscripcion|reinsc.</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">monto</span> decimal 10,2</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> enum 3 valores</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">mp_preference_id</span> MP</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">mp_payment_id</span> MP</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">comprobante</span> archivo</div>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>Aspirante</strong> (inscripción)</p>
+              <p>→ belongsTo <strong>Alumno</strong> (reinscripción)</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAB: ROLES Y PERMISOS                                           -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div x-show="tab==='roles'" x-cloak>
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Roles y permisos</h2>
+      <p class="text-sm text-gray-500 mb-6">Cada rol accede solo a sus rutas. El middleware <code class="bg-gray-100 px-1 rounded">rol:X</code> bloquea el acceso al resto.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <!-- Admin -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#f43f5e;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-xl">🔐</span>
+              <p class="font-extrabold text-gray-900">Admin</p>
+            </div>
+            <p class="text-xs text-gray-400">Gestión global del sistema</p>
+          </div>
+          <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Usuarios del sistema (crear/editar/borrar)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Tarifas de inscripción por nivel</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Configuración de Mercado Pago</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>CMS de página principal (carrusel, programas, intereses)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Mensajes de contacto + respuestas</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: admin.aspirantes.index</span></li>
+          </ul>
+        </div>
+
+        <!-- Control Escolar -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#EFAD5A;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-xl">📁</span>
+              <p class="font-extrabold text-gray-900">Control Escolar</p>
+            </div>
+            <p class="text-xs text-gray-400">Gestión de alumnos y aspirantes</p>
+          </div>
+          <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver y aprobar/rechazar aspirantes</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Inscripciones: generar acceso al portal</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Reenviar credenciales de alumnos</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Editar datos de alumnos activos</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Solicitudes de contraseña de alumnos</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Reinscripciones: generar pagos</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: admin.aspirantes.index</span></li>
+          </ul>
+        </div>
+
+        <!-- Finanzas -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#10b981;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-xl">💵</span>
+              <p class="font-extrabold text-gray-900">Finanzas</p>
+            </div>
+            <p class="text-xs text-gray-400">Validación de pagos</p>
+          </div>
+          <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver listado de pagos (inscripción y reinscripción)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver detalle del comprobante de cada pago</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Aprobar o rechazar pagos con observaciones</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: finanzas.pagos.index</span></li>
+          </ul>
+        </div>
+
+        <!-- Coordinacion -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#0F4229;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-xl">🏛️</span>
+              <p class="font-extrabold text-gray-900">Coordinación Académica</p>
+            </div>
+            <p class="text-xs text-gray-400">Gestión académica completa</p>
+          </div>
+          <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Períodos de registro (crear/activar/cerrar)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Grupos (crear/editar/borrar)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Materias (crear/editar/activar)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Profesores (crear, generar acceso)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Carga académica (generar + asignar prof/horario/aula)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver calificaciones (solo lectura)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Contraseñas de profesores</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: admin.materias.index</span></li>
+          </ul>
+        </div>
+
+        <!-- Profesor -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#8b5cf6;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-xl">👨‍🏫</span>
+              <p class="font-extrabold text-gray-900">Profesor</p>
+            </div>
+            <p class="text-xs text-gray-400">Captura de calificaciones</p>
+          </div>
+          <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver sus cargas académicas asignadas</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Capturar notas (parcial 1, parcial 2, extraordinario)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Solo ve las cargas donde está asignado</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cambiar su contraseña de portal</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: profesor.calificaciones.index</span></li>
+          </ul>
+        </div>
+
+        <!-- Alumno -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#D4AF37;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-xl">🎒</span>
+              <p class="font-extrabold text-gray-900">Alumno</p>
+            </div>
+            <p class="text-xs text-gray-400">Portal estudiantil</p>
+          </div>
+          <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver su dashboard personal (/alumno)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Consultar sus calificaciones</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver y descargar comprobantes de pago</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cambiar su contraseña</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Check-estado (polling de sesión activa)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: alumno.dashboard</span></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAB: ESTADOS Y TRANSICIONES                                     -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div x-show="tab==='estados'" x-cloak>
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Estados y transiciones</h2>
+      <p class="text-sm text-gray-500 mb-6">Máquinas de estado de cada entidad principal.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <!-- Aspirante -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#EFAD5A;"></div>
+          <div class="px-5 pt-4 pb-2">
+            <p class="font-extrabold text-gray-900 mb-3">📋 Aspirante.estado</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">pendiente</span>
+                <span class="text-gray-400 text-sm">→</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#dcfce7; color:#166534;">aprobado</span>
+              </div>
+              <p class="text-xs text-gray-400 ml-4">Control Escolar revisa y aprueba documentos → se genera matrícula y registro Alumno</p>
+              <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">pendiente</span>
+                <span class="text-gray-400 text-sm">→</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">rechazado</span>
+              </div>
+              <p class="text-xs text-gray-400 ml-4">Se envía correo con observaciones</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pago -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#D4AF37;"></div>
+          <div class="px-5 pt-4 pb-2">
+            <p class="font-extrabold text-gray-900 mb-3">💳 Pago.estado</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">pendiente</span>
+                <span class="text-gray-400 text-sm">→</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#dcfce7; color:#166534;">aprobado</span>
+              </div>
+              <p class="text-xs text-gray-400 ml-4">Finanzas valida comprobante → habilita generación de acceso al portal</p>
+              <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">pendiente</span>
+                <span class="text-gray-400 text-sm">→</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">rechazado</span>
+              </div>
+              <p class="text-xs text-gray-400 ml-4">Pago inválido o no corresponde</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alumno -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#0F4229;"></div>
+          <div class="px-5 pt-4 pb-2">
+            <p class="font-extrabold text-gray-900 mb-3">🎓 Alumno.estado</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#dcfce7; color:#166534;">activo</span>
+                <span class="text-gray-400 text-sm">→</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">inactivo</span>
+              </div>
+              <p class="text-xs text-gray-400 ml-4">Baja temporal, sigue en el sistema</p>
+              <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#dcfce7; color:#166534;">activo</span>
+                <span class="text-gray-400 text-sm">→</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">baja</span>
+              </div>
+              <p class="text-xs text-gray-400 ml-4">Baja definitiva del programa</p>
+              <p class="text-xs font-semibold mt-2" style="color:#0F4229;">Estado inicial: activo (al aprobarse la solicitud)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Periodo -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#6366f1;"></div>
+          <div class="px-5 pt-4 pb-4">
+            <p class="font-extrabold text-gray-900 mb-3">📅 Periodo.estado</p>
+            <div class="flex items-center gap-1.5 flex-wrap mb-3">
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">inactivo</span>
+              <span class="text-gray-400 text-sm">→</span>
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">proximo</span>
+              <span class="text-gray-400 text-sm">→</span>
+              <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#dcfce7; color:#166534;">activo</span>
+              <span class="text-gray-400 text-sm">→</span>
+              <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">cerrado</span>
+            </div>
+            <ul class="text-xs text-gray-500 space-y-1">
+              <li><strong>auto=true:</strong> se activa solo en <code>fecha_inicio_registro</code></li>
+              <li><strong>auto=false:</strong> activación manual (botón en admin)</li>
+              <li>Solo estado <strong>activo</strong> acepta nuevos aspirantes</li>
+              <li>No se puede borrar si tiene grupos asociados</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Tracking aspirante (pasos) -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden sm:col-span-2">
+          <div class="h-1.5" style="background:#0F4229;"></div>
+          <div class="px-5 pt-4 pb-4">
+            <p class="font-extrabold text-gray-900 mb-3">🔍 Seguimiento público (/resultado)</p>
+            <p class="text-xs text-gray-400 mb-3">El aspirante puede ver en qué paso está usando su folio.</p>
+            <div class="space-y-2">
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex-shrink-0 flex items-center justify-center text-xs font-bold">0</span>
+                <p class="text-xs text-gray-600 pt-0.5">Solicitud en revisión — estado <strong>pendiente</strong></p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full bg-red-100 text-red-700 flex-shrink-0 flex items-center justify-center text-xs font-bold">1</span>
+                <p class="text-xs text-gray-600 pt-0.5">Solicitud <strong>rechazada</strong> con observaciones</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold" style="background:#dcfce7; color:#166534;">2</span>
+                <p class="text-xs text-gray-600 pt-0.5">Solicitud <strong>aprobada</strong>, aún sin pago registrado</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold" style="background:#fef9ec; color:#92670b;">3</span>
+                <p class="text-xs text-gray-600 pt-0.5">Pago registrado, <strong>en revisión</strong> por Finanzas</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold" style="background:#e0f2fe; color:#0369a1;">4</span>
+                <p class="text-xs text-gray-600 pt-0.5">Pago aprobado, esperando que Control Escolar <strong>genere acceso</strong></p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold" style="background:#0F4229; color:#fff;">5</span>
+                <p class="text-xs text-gray-600 pt-0.5"><strong>Inscripción completa</strong> — alumno tiene acceso al portal</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Correos del sistema -->
+      <div class="mt-5 bg-white rounded-2xl shadow p-5">
+        <p class="font-extrabold text-sm text-gray-800 mb-3">📧 Correos automáticos del sistema</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2" style="border-color:#EFAD5A;">
+            <p class="font-bold text-gray-700">RegistroConfirmado</p>
+            <p class="text-gray-500 mt-0.5">Al aspirante al enviar su solicitud. Incluye folio.</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2" style="border-color:#0F4229;">
+            <p class="font-bold text-gray-700">AspiranteAprobado</p>
+            <p class="text-gray-500 mt-0.5">Aprobación + matrícula asignada + instrucciones de pago.</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2 border-red-400">
+            <p class="font-bold text-gray-700">AspiranteRechazado</p>
+            <p class="text-gray-500 mt-0.5">Rechazo con el motivo (observaciones).</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2" style="border-color:#D4AF37;">
+            <p class="font-bold text-gray-700">BienvenidaAlumno</p>
+            <p class="text-gray-500 mt-0.5">Email institucional + contraseña temporal al inscribirse.</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2" style="border-color:#D4AF37;">
+            <p class="font-bold text-gray-700">ReenvioCredenciales</p>
+            <p class="text-gray-500 mt-0.5">Nueva contraseña al reenviar acceso de alumno.</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2 border-emerald-400">
+            <p class="font-bold text-gray-700">BienvenidaProfesor</p>
+            <p class="text-gray-500 mt-0.5">Credenciales de portal al crear o regenerar acceso del profesor.</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2 border-purple-400">
+            <p class="font-bold text-gray-700">NuevaContrasena</p>
+            <p class="text-gray-500 mt-0.5">Notificación al profesor cuando se cambia su contraseña.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="text-center py-6 text-xs text-gray-400 mt-4">
+    UICM — Mapa del Sistema · Generado el 26 May 2026 · Solo para referencia interna
+  </footer>
+
+</body>
+</html>

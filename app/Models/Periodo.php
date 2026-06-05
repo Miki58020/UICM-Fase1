@@ -14,15 +14,22 @@ class Periodo extends Model
 
     protected $casts = [
         'auto'                  => 'boolean',
-        'fecha_inicio_registro' => 'date',
-        'fecha_fin_registro'    => 'date',
-        'fecha_inicio_clases'   => 'date',
-        'fecha_fin_clases'      => 'date',
+        'fecha_inicio_registro' => 'date:Y-m-d',
+        'fecha_fin_registro'    => 'date:Y-m-d',
+        'fecha_inicio_clases'   => 'date:Y-m-d',
+        'fecha_fin_clases'      => 'date:Y-m-d',
     ];
 
     public function grupos()
     {
         return $this->hasMany(Grupo::class);
+    }
+
+    public function programas()
+    {
+        return $this->belongsToMany(Programa::class, 'periodo_programa')
+            ->withPivot('numero_carrera', 'numero_generacion', 'activo')
+            ->withTimestamps();
     }
 
     public function cargaAcademica()

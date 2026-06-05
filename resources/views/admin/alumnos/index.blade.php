@@ -14,6 +14,8 @@ $gruposJson = $grupos->map(fn($g) => [
 ])->values()->toJson();
 @endphp
 
+<script>window.__gruposAlumnos = {!! $gruposJson !!};</script>
+
 <section
     x-data="{
         showModal: false,
@@ -46,7 +48,7 @@ $gruposJson = $grupos->map(fn($g) => [
                 this.$refs.contadorVisible.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
             });
         },
-        grupos: {!! $gruposJson !!},
+        grupos: window.__gruposAlumnos || [],
         gruposFiltrados() {
             if (!this.editando) return [];
             return this.grupos.filter(g => g.programa_id == this.editando.programa_id);
@@ -190,7 +192,7 @@ $gruposJson = $grupos->map(fn($g) => [
                                     </div>
                                     <div>
                                         <p class="font-semibold text-gray-800">{{ $alumno->nombre_completo }}</p>
-                                        <p class="text-xs text-gray-400">{{ $alumno->email }}</p>
+                                        <p class="text-xs text-gray-400">{{ $alumno->user?->email ?? $alumno->email }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -279,8 +281,7 @@ $gruposJson = $grupos->map(fn($g) => [
          x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto"
-         style="background-color: rgba(0,0,0,0.5);"
+         class="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto bg-black/50 backdrop-blur-sm"
          @keydown.escape.window="showModal = false"
          x-cloak>
 
@@ -293,6 +294,7 @@ $gruposJson = $grupos->map(fn($g) => [
              x-transition:leave-end="opacity-0 scale-95"
              class="bg-white rounded-2xl shadow-xl w-full max-w-md my-auto">
 
+            <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
             {{-- Cabecera --}}
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <div>
@@ -334,10 +336,11 @@ $gruposJson = $grupos->map(fn($g) => [
                         Cuatrimestre actual <span class="text-red-400">*</span>
                     </label>
                     <input type="number" name="cuatrimestre_actual" x-model="form.cuatrimestre_actual"
-                           min="1" max="12"
+                           min="1" max="12" placeholder="1"
                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <p class="mt-1 text-xs text-gray-400">Del 1 al 12.</p>
                 </div>
 
                 {{-- Grupo --}}
@@ -370,6 +373,7 @@ $gruposJson = $grupos->map(fn($g) => [
                     <div class="relative" x-data="{ showPwd: false }">
                         <input :type="showPwd ? 'text' : 'password'" name="password" x-model="form.password"
                                placeholder="Mínimo 6 caracteres"
+                               minlength="6" maxlength="50"
                                class="w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none"
                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">

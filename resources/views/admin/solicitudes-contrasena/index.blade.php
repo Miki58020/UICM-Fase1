@@ -11,9 +11,11 @@
         {{-- Encabezado --}}
         <div class="mb-8">
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-                Administración
+                {{ $tipo === 'profesores' ? 'Coordinación Académica' : 'Administración' }}
             </p>
-            <h1 class="text-2xl font-extrabold text-gray-900">Solicitudes de contraseña</h1>
+            <h1 class="text-2xl font-extrabold text-gray-900">
+                {{ $tipo === 'profesores' ? 'Contraseñas de profesores' : 'Solicitudes de contraseña' }}
+            </h1>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
@@ -48,8 +50,12 @@
                             'finanzas'        => 'Finanzas',
                             'coordinacion'    => 'Coordinación Académica',
                             'alumno'          => 'Alumno',
+                            'profesor'        => 'Profesor',
                         ];
                         $rolLabel = $rolLabels[$solicitud->user->rol] ?? $solicitud->user->rol;
+                        $routeAtender = $tipo === 'profesores'
+                            ? 'admin.contrasenas-profesores.atender'
+                            : 'admin.solicitudes-contrasena.atender';
                     @endphp
 
                     <div class="px-6 py-5">
@@ -78,16 +84,16 @@
 
                             {{-- Formulario para atender --}}
                             <form method="POST"
-                                  action="{{ route('admin.solicitudes-contrasena.atender', $solicitud) }}"
-                                  class="flex items-center gap-2 flex-shrink-0">
+                                  action="{{ route($routeAtender, $solicitud) }}"
+                                  class="flex items-center gap-2 w-full sm:w-auto">
                                 @csrf
 
-                                <div>
+                                <div class="flex-1 min-w-0">
                                     <input type="text"
                                            name="password"
                                            placeholder="Nueva contraseña"
                                            autocomplete="off"
-                                           class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none w-44"
+                                           class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none w-full"
                                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                                     @error('password')

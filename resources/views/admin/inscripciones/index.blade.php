@@ -104,6 +104,7 @@
                             <th class="px-6 py-3">Nombre</th>
                             <th class="px-6 py-3">Programa</th>
                             <th class="px-6 py-3">Matrícula</th>
+                            <th class="px-6 py-3">Grupo</th>
                             <th class="px-6 py-3 text-center">Acción</th>
                         </tr>
                     </thead>
@@ -132,29 +133,30 @@
                                 {{ $asp->alumno->matricula ?? '—' }}
                             </td>
 
+                            <td class="px-6 py-4 text-xs text-gray-400">
+                                <span class="italic">Automático</span>
+                            </td>
+
                             {{-- Acción --}}
                             <td class="px-6 py-4 text-center">
                                 <form method="POST"
                                       action="{{ route('admin.inscripciones.inscribir', $asp->alumno->id) }}"
-                                      onsubmit="return confirm('¿Generar acceso al portal para {{ addslashes($asp->nombre_completo) }}? Se enviará el correo de bienvenida automáticamente.')">
+                                      onsubmit="return confirm('¿Generar acceso al portal para {{ addslashes($asp->nombre_completo) }}? Se asignará grupo automáticamente y se enviará el correo de bienvenida.')">
                                     @csrf
-                                    <div class="flex flex-col items-center gap-0.5">
-                                        <button type="submit"
-                                                class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold text-white
-                                                       transition-colors duration-150 whitespace-nowrap"
-                                                style="background-color: #0F4229;"
-                                                onmouseover="this.style.backgroundColor='#0a2e1c'"
-                                                onmouseout="this.style.backgroundColor='#0F4229'">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
-                                                         a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964
-                                                         A6 6 0 1121 9z"/>
-                                            </svg>
-                                            Generar acceso
-                                        </button>
-                                        <span class="text-xs text-gray-400">Envía correo automáticamente</span>
-                                    </div>
+                                    <button type="submit"
+                                            class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold text-white
+                                                   transition-colors duration-150 whitespace-nowrap"
+                                            style="background-color: #0F4229;"
+                                            onmouseover="this.style.backgroundColor='#0a2e1c'"
+                                            onmouseout="this.style.backgroundColor='#0F4229'">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
+                                                     a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964
+                                                     A6 6 0 1121 9z"/>
+                                        </svg>
+                                        Generar acceso
+                                    </button>
                                 </form>
                             </td>
 
@@ -182,6 +184,10 @@
 
                             <td class="px-6 py-4 font-mono text-xs font-semibold whitespace-nowrap" style="color: #0F4229;">
                                 {{ $alumno->matricula }}
+                            </td>
+
+                            <td class="px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
+                                {{ $alumno->grupo->clave ?? '—' }}
                             </td>
 
                             {{-- Acción --}}

@@ -489,6 +489,7 @@
 {{-- Modal asignación de profesor/horario/aula --}}
 <div id="modal-asignacion" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
         <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
             <div>
                 <h3 class="font-bold text-gray-800">Asignar profesor y horario</h3>
@@ -513,18 +514,23 @@
                     @endforeach
                 </select>
             </div>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Horario</label>
                     <input type="text" id="asig-horario" name="horario"
-                           placeholder="ej: Lun-Mié 08:00-10:00"
+                           placeholder="Ej. Lun-Mié 08:00-10:00"
+                           maxlength="50"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                    <p class="mt-1 text-xs text-gray-400">Días abreviados y horario en formato 24h.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Aula</label>
                     <input type="text" id="asig-aula" name="aula"
-                           placeholder="ej: A-101"
+                           placeholder="Ej. A-101"
+                           maxlength="20"
+                           oninput="this.value=this.value.toUpperCase()"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                    <p class="mt-1 text-xs text-gray-400">Letra del edificio + número (Ej. A-101).</p>
                 </div>
             </div>
             <div class="flex justify-end gap-3 pt-2">

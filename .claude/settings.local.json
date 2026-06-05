@@ -110,7 +110,12 @@
       "Bash(sed -n '12,30p' \"C:/Users/Miguel Ángel/Desktop/UICM-Fase1/resources/views/admin/tarifas/index.blade.php\")",
       "Bash(sed -n '435,445p' \"C:/Users/Miguel Ángel/Desktop/UICM-Fase1/resources/views/admin/aspirantes/show.blade.php\")",
       "Bash(sed -n '38,48p' \"C:/Users/Miguel Ángel/Desktop/UICM-Fase1/resources/views/finanzas/pagos/index.blade.php\")",
-      "Bash(sed -n '60,75p' \"C:/Users/Miguel Ángel/Desktop/UICM-Fase1/resources/views/alumno/dashboard.blade.php\")"
+      "Bash(sed -n '60,75p' \"C:/Users/Miguel Ángel/Desktop/UICM-Fase1/resources/views/alumno/dashboard.blade.php\")",
+      "Bash(Select-Object Name, FullName)",
+      "Bash(findstr /i \"MAIL_MAILER\\\\|MAIL_HOST\\\\|MAIL_PORT\\\\|MAIL_USERNAME\\\\|MAIL_FROM\" .env)",
+      "Bash(Select-String \"MAIL_\" .env)",
+      "Bash(Select-Object -First 10)",
+      "Bash(Select-Object Name)"
     ]
   }
 }

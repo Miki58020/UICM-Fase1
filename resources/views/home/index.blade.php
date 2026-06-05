@@ -198,7 +198,8 @@
         </div>
     </section>
 
-    {{-- ===== EVENTOS — CARRUSEL ===== --}}
+    {{-- ===== EVENTOS — CARRUSEL (solo si hay imágenes en el CMS) ===== --}}
+    @if($imagenes->isNotEmpty())
     <section class="bg-white py-16">
         <div class="container mx-auto px-4 sm:px-8 lg:px-12">
             <div class="text-center mb-10">
@@ -211,23 +212,14 @@
             <div class="relative overflow-hidden rounded-2xl shadow-lg" id="carrusel">
                 {{-- Track --}}
                 <div class="flex transition-transform duration-500 ease-in-out" id="carrusel-track">
-                    @forelse($imagenes as $img)
+                    @foreach($imagenes as $img)
                     <div class="min-w-full">
                         <img src="{{ $img->url }}"
                              alt="Evento UICM"
                              class="w-full object-cover"
                              style="height: 420px; object-position: center;">
                     </div>
-                    @empty
-                    @foreach(['evento1','evento2','evento3','evento4','evento5'] as $ev)
-                    <div class="min-w-full">
-                        <img src="{{ asset('images/' . $ev . '.jpg') }}"
-                             alt="Evento UICM"
-                             class="w-full object-cover"
-                             style="height: 420px; object-position: center;">
-                    </div>
                     @endforeach
-                    @endforelse
                 </div>
 
                 {{-- Botón anterior --}}
@@ -250,8 +242,7 @@
 
                 {{-- Indicadores (dots) --}}
                 <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2" id="carrusel-dots">
-                    @php $total = $imagenes->count() ?: 5; @endphp
-                    @for($i = 0; $i < $total; $i++)
+                    @for($i = 0; $i < $imagenes->count(); $i++)
                     <button class="w-2.5 h-2.5 rounded-full transition-all duration-200 carrusel-dot {{ $i === 0 ? 'bg-white scale-125' : 'bg-white bg-opacity-50' }}"
                             data-index="{{ $i }}"
                             aria-label="Slide {{ $i + 1 }}"></button>
@@ -260,6 +251,7 @@
             </div>
         </div>
     </section>
+    @endif
 
     {{-- ===== CONVOCATORIA / CTA ===== --}}
     @if($periodoActivo)
@@ -340,6 +332,7 @@
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
                                 <input type="text" name="nombre" value="{{ old('nombre') }}"
+                                       maxlength="150"
                                        class="w-full rounded-lg border @error('nombre') border-red-400 bg-red-50 @else border-gray-200 bg-white @enderror px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
                                        placeholder="Nombre y apellidos">
                                 @error('nombre')
@@ -351,6 +344,7 @@
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
                                 <input type="email" name="correo" value="{{ old('correo') }}"
+                                       maxlength="150"
                                        class="w-full rounded-lg border @error('correo') border-red-400 bg-red-50 @else border-gray-200 bg-white @enderror px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
                                        placeholder="ejemplo@correo.com">
                                 @error('correo')
@@ -381,7 +375,7 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
                                     <input type="tel" name="telefono" value="{{ old('telefono') }}"
                                            maxlength="10"
-                                           oninput="this.value=this.value.replace(/\D/g,'')"
+                                           oninput="formatTelefono(this)"
                                            class="w-full rounded-lg border @error('telefono') border-red-400 bg-red-50 @else border-gray-200 bg-white @enderror px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent"
                                            placeholder="10 dígitos">
                                     @error('telefono')
@@ -393,7 +387,7 @@
                             {{-- Mensaje --}}
                             <div class="mb-5">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
-                                <textarea name="mensaje" rows="3"
+                                <textarea name="mensaje" rows="3" maxlength="500"
                                           class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-uicm-green focus:border-transparent resize-none"
                                           placeholder="Cuéntanos brevemente en qué podemos apoyarte.">{{ old('mensaje') }}</textarea>
                             </div>

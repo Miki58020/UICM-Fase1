@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\NuevaContrasena;
 use App\Models\Alumno;
+use App\Models\Calificacion;
 use App\Models\CargaAcademica;
 use App\Models\Pago;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class AlumnoController extends Controller
 {
     public function listado()
     {
-        $alumnos = Alumno::with(['programa', 'grupo'])
+        $alumnos = Alumno::with(['programa', 'grupo', 'user'])
             ->orderBy('apellido_paterno')
             ->orderBy('apellido_materno')
             ->orderBy('nombre')
@@ -77,13 +78,23 @@ class AlumnoController extends Controller
 
         $totalCreditos = $carga->sum(fn($c) => $c->materia->creditos ?? 0);
 
+        // Calificaciones del alumno en las materias del período actual
+        $calificaciones = collect();
+        if ($carga->isNotEmpty()) {
+            $cargaIds = $carga->pluck('id');
+            $calificaciones = Calificacion::where('alumno_id', $alumno->id)
+                ->whereIn('carga_academica_id', $cargaIds)
+                ->get()
+                ->groupBy('carga_academica_id');
+        }
+
         // Merge inscripción pagos (via aspirante_id) with reinscripción pagos (via alumno_id)
         $pagosReinscripcion = Pago::where('alumno_id', $alumno->id)
             ->where('concepto', 'reinscripcion')
             ->get();
         $pagos = $alumno->pagos->merge($pagosReinscripcion)->sortByDesc('created_at');
 
-        return view('alumno.dashboard', compact('alumno', 'carga', 'totalCreditos', 'pagos'));
+        return view('alumno.dashboard', compact('alumno', 'carga', 'totalCreditos', 'calificaciones', 'pagos'));
     }
 
     public function cambiarPassword(Request $request)

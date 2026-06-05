@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de Admisión — UICM</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f3f4f6; color: #111827; min-height: 100vh; }
+        :root { --verde:#0F4229; --verde2:#0a2e1c; --dorado:#D4AF37; --naranja:#EFAD5A; --gris:#9ca3af; }
+
+        .header { background: var(--verde); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .header h1 { color: #fff; font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px; }
+        .header p { color: #a7f3d0; font-size: .8rem; margin-top: .2rem; }
+        .badge-date { background: var(--dorado); color: #fff; font-size: .75rem; font-weight: 700; padding: .35rem .9rem; border-radius: 99px; white-space: nowrap; }
+
+        .container { max-width: 1040px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+        /* Cards resumen */
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+        .summary-card { background: #fff; border-radius: 1rem; padding: 1.1rem 1.2rem; border-left: 4px solid var(--verde); box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+        .summary-card.dorado  { border-color: var(--dorado); }
+        .summary-card.naranja { border-color: var(--naranja); }
+        .summary-card.azul    { border-color: #3b82f6; }
+        .summary-card .label  { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; font-weight: 600; }
+        .summary-card .value  { font-size: 1.6rem; font-weight: 900; color: var(--verde); margin-top: .2rem; }
+        .summary-card.dorado  .value { color: var(--dorado); }
+        .summary-card.naranja .value { color: var(--naranja); }
+        .summary-card.azul    .value { color: #3b82f6; }
+
+        /* Section title */
+        .section-title { font-size: .85rem; font-weight: 800; color: var(--verde); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 1.2rem; display: flex; align-items: center; gap: .6rem; }
+        .section-title::after { content: ''; flex: 1; height: 2px; background: linear-gradient(to right, var(--dorado), transparent); border-radius: 99px; }
+        .section-title.dorado { color: var(--dorado); }
+        .section-title.dorado::after { background: linear-gradient(to right, var(--naranja), transparent); }
+
+        /* Roles */
+        .roles-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2rem; }
+        .role-pill { font-size: .72rem; font-weight: 600; padding: .3rem .75rem; border-radius: 99px; }
+        .role-coord    { background: #fff7ed; color: #9a3412; }
+        .role-publico  { background: #eff6ff; color: #2563eb; }
+        .role-control  { background: #f0fdf4; color: #166534; }
+        .role-finanzas { background: #fdf4ff; color: #7e22ce; }
+        .role-sistema  { background: #f0f9ff; color: #075985; }
+
+        /* Steps */
+        .steps { display: flex; flex-direction: column; }
+        .step-wrapper { display: flex; gap: 0; position: relative; }
+        .step-line { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 52px; }
+        .step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--verde); color: #fff; font-weight: 800; font-size: .9rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(15,66,41,.25); position: relative; z-index: 2; transition: transform .2s, box-shadow .2s; cursor: pointer; }
+        .step-num:hover { transform: scale(1.08); }
+        .step-num.coord  { background: #9a3412; }
+        .step-num.active { background: var(--dorado); }
+        .connector { width: 2px; flex: 1; min-height: 20px; margin: 0 auto; background: linear-gradient(to bottom, #d1d5db 0%, #e5e7eb 100%); }
+        .connector.coord { background: linear-gradient(to bottom, #9a3412 0%, #d1d5db 100%); }
+        .step-wrapper:last-child .connector { display: none; }
+
+        .step-card { flex: 1; background: #fff; border-radius: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,.08); margin: 0 0 1rem 1rem; overflow: hidden; transition: box-shadow .2s; border: 2px solid transparent; }
+        .step-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+        .step-card.active { border-color: var(--dorado); box-shadow: 0 4px 18px rgba(212,175,55,.2); }
+
+        .step-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; cursor: pointer; user-select: none; gap: .75rem; }
+        .step-header-left { display: flex; align-items: center; gap: .75rem; flex: 1; min-width: 0; }
+        .step-icon { width: 36px; height: 36px; border-radius: .6rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .step-icon svg { width: 18px; height: 18px; }
+        .step-title { font-weight: 700; font-size: .9rem; color: #111827; }
+        .step-subtitle { font-size: .75rem; color: #6b7280; margin-top: .1rem; }
+
+        .step-role { font-size: .7rem; font-weight: 700; padding: .25rem .65rem; border-radius: 99px; white-space: nowrap; flex-shrink: 0; }
+        .chevron { color: #9ca3af; transition: transform .25s; flex-shrink: 0; }
+        .chevron.open { transform: rotate(180deg); }
+
+        .step-body { border-top: 1px solid #f3f4f6; padding: 1rem 1.2rem 1.2rem; }
+        .detail-list { display: flex; flex-direction: column; gap: .55rem; }
+        .detail-item { display: flex; align-items: flex-start; gap: .6rem; font-size: .82rem; color: #374151; line-height: 1.45; }
+        .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dorado); flex-shrink: 0; margin-top: .38rem; }
+        .dot.verde { background: var(--verde); }
+
+        .info-box { border-radius: .7rem; padding: .75rem 1rem; margin-top: .9rem; font-size: .8rem; display: flex; align-items: flex-start; gap: .6rem; }
+        .info-box.verde  { background: #f0fdf4; border: 1px solid #bbf7d0; color: var(--verde2); }
+        .info-box.dorado { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+        .info-box svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: .15rem; }
+
+        .code-pill { display: inline-block; background: #1e293b; color: #a5f3fc; font-family: 'Courier New', monospace; font-size: .75rem; padding: .2rem .55rem; border-radius: .35rem; }
+        .screen-pill { display: inline-block; background: #f1f5f9; border: 1px solid #e2e8f0; color: #0f172a; font-size: .75rem; padding: .15rem .5rem; border-radius: .35rem; font-weight: 600; }
+
+        /* Tech cards */
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem; }
+        .tech-card { background: #fff; border-radius: 1rem; padding: 1rem 1.1rem; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid var(--verde); }
+        .tech-card.dorado  { border-color: var(--dorado); }
+        .tech-card.naranja { border-color: var(--naranja); }
+        .tech-card h4 { font-size: .8rem; font-weight: 700; color: #374151; margin-bottom: .6rem; }
+        .tech-card ul { list-style: none; display: flex; flex-direction: column; gap: .35rem; }
+        .tech-card li { font-size: .77rem; color: #6b7280; display: flex; align-items: center; gap: .45rem; }
+        .tech-card li::before { content: '✓'; color: var(--verde); font-weight: 700; font-size: .8rem; }
+        .tech-card.dorado  li::before { color: var(--dorado); }
+        .tech-card.naranja li::before { color: var(--naranja); }
+
+        /* Divider */
+        .phase-divider { display: flex; align-items: center; gap: 1rem; margin: 2rem 0 1.5rem; }
+        .phase-divider span { font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; padding: .35rem .9rem; border-radius: 99px; }
+        .phase-divider::before, .phase-divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
+        .phase-coord  span { background: #fff7ed; color: #9a3412; }
+        .phase-admision span { background: #f0fdf4; color: var(--verde); }
+
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body x-data="{ paso: null }">
+
+<div class="header">
+    <div>
+        <h1>UICM — Sistema de Admisión</h1>
+        <p>Flujo completo de configuración y admisión — Coordinación · Control Escolar · Finanzas</p>
+    </div>
+    <span class="badge-date">Revisión junio 2026</span>
+</div>
+
+<div class="container">
+
+    <!-- Resumen -->
+    <div class="summary-grid" style="margin-top:1.5rem;">
+        <div class="summary-card">
+            <div class="label">Fases</div>
+            <div class="value">2</div>
+        </div>
+        <div class="summary-card dorado">
+            <div class="label">Pasos totales</div>
+            <div class="value">10</div>
+        </div>
+        <div class="summary-card naranja">
+            <div class="label">Roles</div>
+            <div class="value">4</div>
+        </div>
+        <div class="summary-card azul">
+            <div class="label">Automatizaciones</div>
+            <div class="value">5</div>
+        </div>
+    </div>
+
+    <!-- Roles -->
+    <div class="section-title">Roles del sistema</div>
+    <div class="roles-row">
+        <span class="role-pill role-coord">Coordinación Académica</span>
+        <span class="role-pill role-publico">Público (Aspirante)</span>
+        <span class="role-pill role-control">Control Escolar</span>
+        <span class="role-pill role-finanzas">Finanzas</span>
+        <span class="role-pill role-sistema">Sistema automático</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         FASE 1: CONFIGURACIÓN (COORDINACIÓN)
+    ══════════════════════════════════════════ -->
+    <div class="phase-divider phase-coord"><span>Fase 1 — Configuración previa (Coordinación)</span></div>
+    <div class="section-title dorado">Antes de abrir el registro</div>
+
+    <div class="steps">
+
+        <!-- PASO C1: Programas -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num coord" @click="paso = paso === 'c1' ? null : 'c1'">C1</div>
+                <div class="connector coord"></div>
+            </div>
+            <div class="step-card" :class="paso === 'c1' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === 'c1' ? null : 'c1'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#fff7ed;">
+                            <svg fill="none" stroke="#9a3412" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Programas académicos</div>
+                            <div class="step-subtitle">Se configura una sola vez · <span class="screen-pill">Coordinación → Programas</span></div>
+                        </div>
+                    </div>
+                    <span class="step-role role-coord">Coordinación</span>
+                    <svg class="chevron" :class="paso === 'c1' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === 'c1'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot verde"></div>Crear o editar las carreras que ofrece la institución: nombre, clave, nivel (licenciatura / maestría / doctorado) y duración en cuatrimestres</div>
+                        <div class="detail-item"><div class="dot verde"></div>Activar o desactivar carreras según su vigencia</div>
+                        <div class="detail-item"><div class="dot verde"></div>Esta sección no cambia por cuatrimestre — es el catálogo base de la institución</div>
+                        <div class="detail-item"><div class="dot verde"></div>Filtros disponibles: por nivel, por estado (activo/inactivo), búsqueda por nombre o clave</div>
+                    </div>
+                    <div class="info-box verde">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Solo los programas marcados como <strong>activos</strong> pueden asignarse a cuatrimestres. Si una carrera se desactiva, deja de ofrecerse en futuros cuatrimestres pero los registros anteriores quedan intactos.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO C2: Cuatrimestre -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num coord" @click="paso = paso === 'c2' ? null : 'c2'">C2</div>
+                <div class="connector coord"></div>
+            </div>
+            <div class="step-card" :class="paso === 'c2' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === 'c2' ? null : 'c2'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#fff7ed;">
+                            <svg fill="none" stroke="#9a3412" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Crear el cuatrimestre</div>
+                            <div class="step-subtitle">Tab "Cuatrimestres" · <span class="screen-pill">Cuatrimestres → Nuevo cuatrimestre</span></div>
+                        </div>
+                    </div>
+                    <span class="step-role role-coord">Coordinación</span>
+                    <svg class="chevron" :class="paso === 'c2' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === 'c2'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot verde"></div>Definir clave del cuatrimestre: <span class="code-pill">2026-3</span></div>
+                        <div class="detail-item"><div class="dot verde"></div>Nombre completo: ej. "Tercer Cuatrimestre 2026"</div>
+                        <div class="detail-item"><div class="dot verde"></div>Fechas de clases: inicio y fin del periodo académico</div>
+                        <div class="detail-item"><div class="dot verde"></div>Al crearlo queda en estado <strong>Inactivo</strong> — sin periodo de inscripción todavía</div>
+                    </div>
+                    <div class="info-box dorado">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Las fechas de registro de aspirantes se configuran por separado en el siguiente paso, en el tab <strong>Inscripciones</strong>.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO C3: Inscripciones -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num coord" @click="paso = paso === 'c3' ? null : 'c3'">C3</div>
+                <div class="connector coord"></div>
+            </div>
+            <div class="step-card" :class="paso === 'c3' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === 'c3' ? null : 'c3'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#fff7ed;">
+                            <svg fill="none" stroke="#9a3412" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Configurar el periodo de inscripción</div>
+                            <div class="step-subtitle">Tab "Inscripciones" · <span class="screen-pill">Cuatrimestres → Inscripciones → Configurar</span></div>
+                        </div>
+                    </div>
+                    <span class="step-role role-coord">Coordinación</span>
+                    <svg class="chevron" :class="paso === 'c3' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === 'c3'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot verde"></div>El cuatrimestre aparece como <strong>"Sin configurar"</strong> en esta tabla</div>
+                        <div class="detail-item"><div class="dot verde"></div>Clic en <strong>"Configurar"</strong> → definir apertura y cierre del registro</div>
+                        <div class="detail-item"><div class="dot verde"></div>Desde aquí también se controla el estado (Abrir / Cerrar) y el modo (Auto / Manual)</div>
+                        <div class="detail-item"><div class="dot verde"></div>En modo <strong>Auto</strong>, el sistema activa el registro automáticamente en la fecha de apertura</div>
+                    </div>
+                    <div class="info-box verde">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        El cuatrimestre y el periodo de inscripción están ligados pero son conceptos distintos: el cuatrimestre define cuándo son las <strong>clases</strong>, la inscripción define cuándo pueden <strong>registrarse los aspirantes</strong>.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO C4: Carreras del cuatrimestre -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num coord" @click="paso = paso === 'c4' ? null : 'c4'">C4</div>
+                <div class="connector"></div>
+            </div>
+            <div class="step-card" :class="paso === 'c4' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === 'c4' ? null : 'c4'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#fff7ed;">
+                            <svg fill="none" stroke="#9a3412" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Asignar carreras y crear grupos</div>
+                            <div class="step-subtitle">Tab "Carreras" · <span class="screen-pill">Cuatrimestres → Carreras → Agregar carrera</span></div>
+                        </div>
+                    </div>
+                    <span class="step-role role-coord">Coordinación</span>
+                    <svg class="chevron" :class="paso === 'c4' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === 'c4'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot verde"></div>Seleccionar el cuatrimestre en el selector de tabs</div>
+                        <div class="detail-item"><div class="dot verde"></div>Clic en <strong>"Agregar carrera"</strong> → elegir programa del catálogo → indicar cuántos grupos crear</div>
+                        <div class="detail-item"><div class="dot verde"></div>Los grupos se crean automáticamente con clave estructurada: <span class="code-pill">PSI-2026-3-A</span>, <span class="code-pill">PSI-2026-3-B</span></div>
+                        <div class="detail-item"><div class="dot verde"></div>El sistema calcula y asigna automáticamente:
+                            <br>&nbsp;&nbsp;· <strong>C</strong> = número de carrera en este cuatrimestre (autoincrement)
+                            <br>&nbsp;&nbsp;· <strong>G</strong> = generación histórica de esa carrera
+                        </div>
+                        <div class="detail-item"><div class="dot verde"></div>Las carreras asignadas son las que aparecen en el formulario público de registro</div>
+                    </div>
+                    <div class="info-box verde">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Si en un cuatrimestre se decide no ofrecer una carrera, simplemente no se agrega. Su generación <strong>no avanza</strong> y no aparece en el registro público.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /steps config -->
+
+    <!-- ═══════════════════════════════════════
+         FASE 2: FLUJO DE ADMISIÓN
+    ══════════════════════════════════════════ -->
+    <div class="phase-divider phase-admision"><span>Fase 2 — Flujo de admisión</span></div>
+    <div class="section-title">Del registro al acceso al portal</div>
+
+    <div class="steps">
+
+        <!-- PASO 1: Registro -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num" @click="paso = paso === '1' ? null : '1'">1</div>
+                <div class="connector"></div>
+            </div>
+            <div class="step-card" :class="paso === '1' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === '1' ? null : '1'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#eff6ff;">
+                            <svg fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Registro del aspirante</div>
+                            <div class="step-subtitle">Vista pública · <span class="screen-pill">/registro</span></div>
+                        </div>
+                    </div>
+                    <span class="step-role role-publico">Público</span>
+                    <svg class="chevron" :class="paso === '1' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === '1'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot"></div>El aspirante llena datos personales, CURP, teléfono, correo</div>
+                        <div class="detail-item"><div class="dot"></div>Selector de programa muestra <strong>solo las carreras activas del cuatrimestre vigente</strong> (dinámico desde BD)</div>
+                        <div class="detail-item"><div class="dot"></div>Los dos selectores están <strong>vinculados</strong>: elegir periodo filtra los programas disponibles, y elegir programa filtra los periodos — en ambas direcciones, sin posibilidad de combinar opciones inválidas</div>
+                        <div class="detail-item"><div class="dot"></div>Sube 7 documentos: acta de nacimiento, CURP, certificado, identificación, comprobante de domicilio, foto, título (si aplica)</div>
+                        <div class="detail-item"><div class="dot"></div>Al enviar: folio generado automáticamente <span class="code-pill">UICM-2026-0001</span> y correo de confirmación</div>
+                    </div>
+                    <div class="info-box verde">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        El aspirante puede consultar su estatus en cualquier momento en <span class="screen-pill">/seguimiento</span> con su folio.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 2: Revisión expediente -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num" @click="paso = paso === '2' ? null : '2'">2</div>
+                <div class="connector"></div>
+            </div>
+            <div class="step-card" :class="paso === '2' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === '2' ? null : '2'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#f0fdf4;">
+                            <svg fill="none" stroke="#166534" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Revisión del expediente</div>
+                            <div class="step-subtitle"><span class="screen-pill">Control Escolar → Aspirantes</span></div>
+                        </div>
+                    </div>
+                    <span class="step-role role-control">Control Escolar</span>
+                    <svg class="chevron" :class="paso === '2' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === '2'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot"></div>Control Escolar revisa el expediente — documentos se abren en modal sin perder la sesión</div>
+                        <div class="detail-item"><div class="dot"></div>Aprueba o rechaza con observaciones</div>
+                        <div class="detail-item"><div class="dot"></div>Al aprobar, el sistema genera la matrícula automáticamente con formato: <span class="code-pill">YY · P · G · C · XXXX</span></div>
+                        <div class="detail-item"><div class="dot"></div>Se envía correo de notificación al aspirante</div>
+                    </div>
+                    <div class="info-box verde">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        La matrícula usa los datos del cuatrimestre: <strong>G</strong> = generación histórica de esa carrera · <strong>C</strong> = número de carrera en ese cuatrimestre · <strong>XXXX</strong> = consecutivo por carrera y cuatrimestre.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 3: Pago -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num" @click="paso = paso === '3' ? null : '3'">3</div>
+                <div class="connector"></div>
+            </div>
+            <div class="step-card" :class="paso === '3' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === '3' ? null : '3'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#eff6ff;">
+                            <svg fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Pago de inscripción</div>
+                            <div class="step-subtitle">Vista pública · <span class="screen-pill">/aspirante/pago</span></div>
+                        </div>
+                    </div>
+                    <span class="step-role role-publico">Público</span>
+                    <svg class="chevron" :class="paso === '3' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === '3'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot"></div>El aspirante aprobado accede al pago desde su página de seguimiento</div>
+                        <div class="detail-item"><div class="dot"></div>Monto calculado automáticamente según el nivel (licenciatura / maestría / doctorado)</div>
+                        <div class="detail-item"><div class="dot"></div>Redirige al checkout de <strong>MercadoPago</strong></div>
+                        <div class="detail-item"><div class="dot"></div>El webhook de MP actualiza el estado del pago automáticamente</div>
+                    </div>
+                    <div class="info-box dorado">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Las credenciales de MercadoPago se gestionan desde <span class="screen-pill">Admin → MercadoPago</span> — sin tocar código. Al pasar a producción solo se cambian las credenciales en ese panel.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 4: Validación pago -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num" @click="paso = paso === '4' ? null : '4'">4</div>
+                <div class="connector"></div>
+            </div>
+            <div class="step-card" :class="paso === '4' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === '4' ? null : '4'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#fdf4ff;">
+                            <svg fill="none" stroke="#7e22ce" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Validación del pago</div>
+                            <div class="step-subtitle"><span class="screen-pill">Finanzas → Validación de pagos</span></div>
+                        </div>
+                    </div>
+                    <span class="step-role role-finanzas">Finanzas</span>
+                    <svg class="chevron" :class="paso === '4' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === '4'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot"></div>Finanzas revisa los pagos pendientes de aprobación</div>
+                        <div class="detail-item"><div class="dot"></div>Aprueba o rechaza con observaciones</div>
+                        <div class="detail-item"><div class="dot"></div>Una vez aprobado, el aspirante aparece en la lista de inscripciones listo para recibir acceso</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 5: Generación de acceso -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num" @click="paso = paso === '5' ? null : '5'">5</div>
+                <div class="connector"></div>
+            </div>
+            <div class="step-card" :class="paso === '5' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === '5' ? null : '5'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#f0fdf4;">
+                            <svg fill="none" stroke="#166534" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Generación de credenciales</div>
+                            <div class="step-subtitle"><span class="screen-pill">Control Escolar → Inscripciones → Generar acceso</span></div>
+                        </div>
+                    </div>
+                    <span class="step-role role-control">Control Escolar</span>
+                    <svg class="chevron" :class="paso === '5' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === '5'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot"></div>El aspirante aparece en "Pendientes de acceso" con su folio y matrícula</div>
+                        <div class="detail-item"><div class="dot"></div>Al dar "Generar acceso" el sistema automáticamente:
+                            <br>&nbsp;&nbsp;· Crea usuario institucional <span class="code-pill">matricula@uicm.edu.mx</span>
+                            <br>&nbsp;&nbsp;· Busca el primer grupo con espacio disponible y asigna al alumno
+                            <br>&nbsp;&nbsp;· Genera contraseña temporal
+                            <br>&nbsp;&nbsp;· Envía correo de bienvenida con credenciales y grupo asignado
+                        </div>
+                    </div>
+                    <div class="info-box verde">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Los grupos se llenan en orden (máximo 30 alumnos por grupo). Cuando un grupo se llena el sistema pasa al siguiente automáticamente. Si no hay grupos disponibles, muestra una alerta para crear más.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 6: Portal -->
+        <div class="step-wrapper">
+            <div class="step-line">
+                <div class="step-num" @click="paso = paso === '6' ? null : '6'">6</div>
+            </div>
+            <div class="step-card" :class="paso === '6' ? 'active' : ''" style="margin-bottom:1rem;">
+                <div class="step-header" @click="paso = paso === '6' ? null : '6'">
+                    <div class="step-header-left">
+                        <div class="step-icon" style="background:#f0f9ff;">
+                            <svg fill="none" stroke="#075985" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        </div>
+                        <div>
+                            <div class="step-title">Acceso al portal del alumno</div>
+                            <div class="step-subtitle">El alumno es parte del sistema</div>
+                        </div>
+                    </div>
+                    <span class="step-role role-sistema">Sistema</span>
+                    <svg class="chevron" :class="paso === '6' ? 'open' : ''" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+                <div class="step-body" x-show="paso === '6'" x-cloak x-transition>
+                    <div class="detail-list">
+                        <div class="detail-item"><div class="dot"></div>El alumno recibe correo con: matrícula, correo institucional, contraseña temporal y grupo asignado</div>
+                        <div class="detail-item"><div class="dot"></div>Accede al portal, cambia su contraseña</div>
+                        <div class="detail-item"><div class="dot"></div>Puede consultar: carga académica, calificaciones y comprobantes de pago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /steps admision -->
+
+    <!-- Notas técnicas -->
+    <div class="section-title" style="margin-top:2.5rem;">Puntos técnicos destacados</div>
+    <div class="tech-grid">
+        <div class="tech-card">
+            <h4>Separación cuatrimestre / inscripción</h4>
+            <ul>
+                <li>Cuatrimestre = fechas de clases</li>
+                <li>Inscripción = ventana de registro</li>
+                <li>Se configuran por separado</li>
+                <li>Ligados pero conceptualmente distintos</li>
+            </ul>
+        </div>
+        <div class="tech-card dorado">
+            <h4>Matrícula inteligente</h4>
+            <ul>
+                <li>YY = año del cuatrimestre</li>
+                <li>P = periodo (1/2/3)</li>
+                <li>G = generación por carrera</li>
+                <li>C = número de carrera en el cuatrimestre</li>
+                <li>XXXX = consecutivo por carrera</li>
+            </ul>
+        </div>
+        <div class="tech-card naranja">
+            <h4>Automatizaciones</h4>
+            <ul>
+                <li>Grupos creados al agregar carrera</li>
+                <li>Grupo asignado automáticamente al inscribir</li>
+                <li>Correos en cada etapa del flujo</li>
+                <li>Activación automática por fecha</li>
+                <li>Select de registro dinámico desde BD</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

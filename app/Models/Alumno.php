@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Alumno extends Model
 {
     protected $fillable = [
-        'matricula', 'user_id', 'aspirante_id', 'programa_id', 'grupo_id',
+        'matricula', 'user_id', 'aspirante_id', 'programa_id', 'periodo_id', 'grupo_id',
         'nombre', 'apellido_paterno', 'apellido_materno', 'email',
         'cuatrimestre_actual', 'creditos_acumulados', 'estado',
     ];
@@ -27,6 +27,11 @@ class Alumno extends Model
         return $this->belongsTo(Programa::class);
     }
 
+    public function periodo()
+    {
+        return $this->belongsTo(Periodo::class);
+    }
+
     public function grupo()
     {
         return $this->belongsTo(Grupo::class);
@@ -40,6 +45,11 @@ class Alumno extends Model
     public function reinscripciones()
     {
         return $this->hasMany(Pago::class);
+    }
+
+    public function calificaciones()
+    {
+        return $this->hasMany(Calificacion::class);
     }
 
     public function getNombreCompletoAttribute(): string

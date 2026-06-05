@@ -432,8 +432,7 @@
      MODAL: Vista previa de documento
 ══════════════════════════════════════ --}}
 <div id="modal-documento"
-     class="fixed inset-0 z-50 hidden flex items-center justify-center p-4"
-     style="background-color: rgba(0,0,0,0.6);"
+     class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
      onclick="cerrarVistaPrevia(event)">
 
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-full sm:max-w-4xl flex flex-col overflow-hidden"
@@ -495,26 +494,46 @@
 @push('scripts')
 <script>
 const imagenes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+let _blobUrl = null;
 
-function abrirVistaPrevia(url, nombre, extension) {
-    const ext = extension.toLowerCase();
+function _revocarBlob() {
+    if (_blobUrl) { URL.revokeObjectURL(_blobUrl); _blobUrl = null; }
+}
 
-    document.getElementById('modal-titulo').textContent   = nombre;
-    document.getElementById('modal-link-externo').href    = url;
-
+async function abrirVistaPrevia(url, nombre, extension) {
+    const ext    = extension.toLowerCase();
     const iframe = document.getElementById('modal-iframe');
     const img    = document.getElementById('modal-img');
+    const link   = document.getElementById('modal-link-externo');
 
-    if (imagenes.includes(ext)) {
-        iframe.classList.add('hidden');
-        iframe.src = '';
-        img.src    = url;
-        img.classList.remove('hidden');
-    } else {
-        img.classList.add('hidden');
-        img.src    = '';
-        iframe.src = url;
-        iframe.classList.remove('hidden');
+    document.getElementById('modal-titulo').textContent = nombre;
+
+    iframe.classList.add('hidden'); iframe.src = '';
+    img.classList.add('hidden');    img.src    = '';
+    _revocarBlob();
+
+    // Fetch como AJAX para que Laravel no sobreescriba la URL anterior en sesión
+    try {
+        const res  = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        const blob = await res.blob();
+        _blobUrl   = URL.createObjectURL(blob);
+        link.href  = _blobUrl;
+
+        if (imagenes.includes(ext)) {
+            img.src = _blobUrl;
+            img.classList.remove('hidden');
+        } else {
+            iframe.src = _blobUrl;
+            iframe.classList.remove('hidden');
+        }
+    } catch (e) {
+        // fallback directo si el fetch falla
+        link.href = url;
+        if (imagenes.includes(ext)) {
+            img.src = url; img.classList.remove('hidden');
+        } else {
+            iframe.src = url; iframe.classList.remove('hidden');
+        }
     }
 
     document.getElementById('modal-documento').classList.remove('hidden');
@@ -528,6 +547,7 @@ function cerrarVistaPrevia(event) {
     document.getElementById('modal-iframe').src = '';
     document.getElementById('modal-img').src    = '';
     document.body.style.overflow = '';
+    _revocarBlob();
 }
 
 document.addEventListener('keydown', (e) => {
@@ -536,6 +556,7 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('modal-iframe').src = '';
         document.getElementById('modal-img').src    = '';
         document.body.style.overflow = '';
+        _revocarBlob();
     }
 });
 </script>

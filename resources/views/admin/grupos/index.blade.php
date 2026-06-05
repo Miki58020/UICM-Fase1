@@ -228,8 +228,7 @@
 </section>
 
 {{-- Modal crear --}}
-<div id="modal-crear" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
-     style="background-color: rgba(0,0,0,0.5);">
+<div id="modal-crear" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
         <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
         <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
@@ -245,13 +244,17 @@
             @csrf
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Clave del grupo <span class="text-red-500">*</span></label>
-                <input type="text" name="clave" placeholder="ej: PSI-2026-1-A"
-                       class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                <input type="text" name="clave" placeholder="Ej. PSI-2026-1-A"
+                       maxlength="12"
+                       oninput="formatClave(this)"
+                       value="{{ old('clave') }}"
+                       class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none font-mono"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                        required>
+                <p class="mt-1 text-xs text-gray-400">3 letras del programa · 4 dígitos del año · 1 número · 1 letra de grupo.</p>
             </div>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Programa <span class="text-red-500">*</span></label>
                     <select name="programa_id"
@@ -281,7 +284,7 @@
                     </select>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Cuatrimestre <span class="text-red-500">*</span></label>
                     <select name="cuatrimestre"
@@ -297,11 +300,15 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Capacidad <span class="text-red-500">*</span></label>
-                    <input type="number" name="capacidad" value="30" min="1" max="100"
+                    <input type="number" name="capacidad" value="{{ old('capacidad') }}" min="1" placeholder="25-30"
+                           oninput="checkCapacidad(this, 'warn-cap-crear')"
                            class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                            required>
+                    <p id="warn-cap-crear" class="hidden mt-1 text-xs text-red-600">
+                        La capacidad debe estar entre 25 y 30 alumnos.
+                    </p>
                 </div>
             </div>
             <div class="flex justify-end gap-3 pt-2">
@@ -322,8 +329,7 @@
 </div>
 
 {{-- Modal editar --}}
-<div id="modal-editar" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
-     style="background-color: rgba(0,0,0,0.5);">
+<div id="modal-editar" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
         <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #D4AF37;"></div>
         <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
@@ -340,12 +346,16 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Clave del grupo <span class="text-red-500">*</span></label>
                 <input type="text" id="edit-clave" name="clave"
-                       class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                       placeholder="Ej. PSI-2026-1-A"
+                       maxlength="12"
+                       oninput="formatClave(this)"
+                       class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none font-mono"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                        required>
+                <p class="mt-1 text-xs text-gray-400">3 letras del programa · 4 dígitos del año · 1 número · 1 letra de grupo.</p>
             </div>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Programa <span class="text-red-500">*</span></label>
                     <select id="edit-programa" name="programa_id"
@@ -371,7 +381,7 @@
                     </select>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Cuatrimestre <span class="text-red-500">*</span></label>
                     <select id="edit-cuatrimestre" name="cuatrimestre"
@@ -386,11 +396,15 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Capacidad <span class="text-red-500">*</span></label>
-                    <input type="number" id="edit-capacidad" name="capacidad" min="1" max="100"
+                    <input type="number" id="edit-capacidad" name="capacidad" min="1" placeholder="25-30"
+                           oninput="checkCapacidad(this, 'warn-cap-editar')"
                            class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                            required>
+                    <p id="warn-cap-editar" class="hidden mt-1 text-xs text-red-600">
+                        La capacidad debe estar entre 25 y 30 alumnos.
+                    </p>
                 </div>
             </div>
             <div class="flex justify-end gap-3 pt-2">
@@ -414,6 +428,38 @@
 
 @push('scripts')
 <script>
+function formatClave(el) {
+    var raw = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    var result = '';
+
+    var s1 = raw.match(/^[A-Z]{0,3}/)[0];
+    result = s1;
+    if (s1.length < 3) { el.value = result; return; }
+
+    var rem = raw.slice(3);
+    var s2 = rem.match(/^[0-9]{0,4}/)[0];
+    if (s2.length > 0) result += '-' + s2;
+    if (s2.length < 4) { el.value = result; return; }
+
+    rem = rem.slice(4);
+    var s3 = rem.match(/^[0-9]{0,1}/)[0];
+    if (s3.length > 0) result += '-' + s3;
+    if (s3.length < 1) { el.value = result; return; }
+
+    rem = rem.slice(1);
+    var s4 = rem.match(/^[A-Z]{0,1}/)[0];
+    if (s4.length > 0) result += '-' + s4;
+
+    el.value = result;
+}
+
+function checkCapacidad(el, warnId) {
+    var v = parseInt(el.value);
+    var warn = document.getElementById(warnId);
+    if (!warn) return;
+    warn.classList.toggle('hidden', isNaN(v) || (v >= 25 && v <= 30));
+}
+
 function abrirEditar(id, clave, programaId, periodoId, cuatrimestre, capacidad) {
     document.getElementById('form-editar').action = '/admin/grupos/' + id;
     document.getElementById('edit-clave').value = clave;
@@ -421,7 +467,18 @@ function abrirEditar(id, clave, programaId, periodoId, cuatrimestre, capacidad) 
     document.getElementById('edit-periodo').value = periodoId;
     document.getElementById('edit-cuatrimestre').value = cuatrimestre;
     document.getElementById('edit-capacidad').value = capacidad;
+    checkCapacidad(document.getElementById('edit-capacidad'), 'warn-cap-editar');
     document.getElementById('modal-editar').classList.remove('hidden');
 }
+
+@if ($errors->any() && !old('_method'))
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('modal-crear').classList.remove('hidden');
+});
+@elseif ($errors->any() && old('_method') === 'PATCH')
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('modal-editar').classList.remove('hidden');
+});
+@endif
 </script>
 @endpush

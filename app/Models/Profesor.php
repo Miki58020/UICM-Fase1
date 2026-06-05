@@ -8,7 +8,12 @@ class Profesor extends Model
 {
     protected $table = 'profesores';
 
-    protected $fillable = ['nombre', 'correo', 'telefono', 'especialidad', 'activo'];
+    protected $fillable = ['user_id', 'nombre', 'correo', 'telefono', 'especialidad', 'activo'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function cargaAcademica()
     {

@@ -430,6 +430,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
                                 <input type="email" name="correo" value="{{ old('correo', $contacto['correo']) }}" required
+                                       maxlength="150" placeholder="Ej. contacto@uicm.edu.mx"
                                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:outline-none"
                                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -437,7 +438,9 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                                <input type="text" name="telefono" value="{{ old('telefono', $contacto['telefono']) }}" required
+                                <input type="tel" name="telefono" value="{{ old('telefono', $contacto['telefono']) }}" required
+                                       maxlength="20"
+                                       placeholder="Ej. 5512345678"
                                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:outline-none"
                                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -446,6 +449,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Horario de atención</label>
                                 <input type="text" name="horario" value="{{ old('horario', $contacto['horario']) }}" required
+                                       maxlength="100" placeholder="Ej. Lun–Vie 9:00–18:00"
                                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:outline-none"
                                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -566,8 +570,7 @@
 
             {{-- Modal nuevo/editar interés --}}
             <div x-show="modalInteres" x-cloak
-                 class="fixed inset-0 z-50 flex items-center justify-center px-4"
-                 style="background-color: rgba(0,0,0,0.5);"
+                 class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm"
                  @click.self="modalInteres = false">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
                     <div class="h-1.5 w-full rounded-t-2xl"
@@ -592,7 +595,7 @@
                                    class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                                    onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                    onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
-                                   placeholder="ej: Información de titulación">
+                                   placeholder="Ej. Información de titulación">
                             @error('etiqueta')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div class="flex justify-end gap-3 pt-2">
@@ -647,8 +650,7 @@
 </section>
 
 {{-- ═══ MODAL: NUEVO PROGRAMA ═══ --}}
-<div id="modal-nuevo" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto"
-     style="background-color: rgba(0,0,0,0.5);">
+<div id="modal-nuevo" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto bg-black/50 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-auto">
         <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
         <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
@@ -668,7 +670,7 @@
                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
-                       placeholder="ej: Licenciatura en Administración de Empresas">
+                       placeholder="Ej. Licenciatura en Administración de Empresas">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Nivel <span class="text-red-500">*</span></label>
@@ -717,8 +719,7 @@
 </div>
 
 {{-- ═══ MODAL: EDITAR PROGRAMA ═══ --}}
-<div id="modal-editar" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto"
-     style="background-color: rgba(0,0,0,0.5);">
+<div id="modal-editar" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto bg-black/50 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-auto">
         <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #D4AF37;"></div>
         <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">

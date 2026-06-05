@@ -311,6 +311,116 @@
             </div>
 
             {{-- ══════════════════════════════════════════
+                 TABLA: Calificaciones
+            ══════════════════════════════════════════ --}}
+            @if ($carga->isNotEmpty())
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         style="color: #0F4229;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    <h2 class="text-sm font-semibold text-gray-700">Mis calificaciones</h2>
+                    <span class="ml-auto text-xs text-gray-400">Cuatrimestre {{ $alumno->cuatrimestre_actual }}</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3">Materia</th>
+                                <th class="px-4 py-3 text-center">Parcial 1</th>
+                                <th class="px-4 py-3 text-center">Parcial 2</th>
+                                <th class="px-4 py-3 text-center">Extraordinario</th>
+                                <th class="px-4 py-3 text-center">Cal. Final</th>
+                                <th class="px-4 py-3 text-center">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @foreach ($carga as $c)
+                            @php
+                                $calif = $calificaciones->get($c->id, collect());
+                                $p1 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 1);
+                                $p2 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 2);
+                                $ex = $calif->firstWhere(fn($q) => $q->tipo === 'extraordinario');
+                                $tieneParciales = $p1 && $p2;
+                                $calFinal = $ex
+                                    ? $ex->calificacion
+                                    : ($tieneParciales ? round(($p1->calificacion + $p2->calificacion) / 2, 1) : null);
+                                $aprobado = $calFinal !== null && $calFinal >= 7.0;
+                            @endphp
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-3 font-medium text-gray-800 whitespace-nowrap">
+                                    {{ $c->materia->nombre }}
+                                    <span class="block text-xs text-gray-400 font-normal">{{ $c->materia->clave }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-center font-semibold">
+                                    @if ($p1)
+                                        <span class="{{ $p1->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
+                                            {{ number_format($p1->calificacion, 1) }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-300">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-center font-semibold">
+                                    @if ($p2)
+                                        <span class="{{ $p2->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
+                                            {{ number_format($p2->calificacion, 1) }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-300">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-center font-semibold">
+                                    @if ($ex)
+                                        <span class="{{ $ex->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
+                                            {{ number_format($ex->calificacion, 1) }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-300">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-center font-bold">
+                                    @if ($calFinal !== null)
+                                        <span class="{{ $aprobado ? 'text-green-700' : 'text-red-600' }}">
+                                            {{ number_format($calFinal, 1) }}
+                                            @if ($ex)
+                                                <span class="block text-xs font-normal text-gray-400">(extra)</span>
+                                            @endif
+                                        </span>
+                                    @else
+                                        <span class="text-gray-300">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    @if ($calFinal !== null)
+                                        @if ($aprobado)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                                Aprobado
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                                                Reprobado
+                                            </span>
+                                        @endif
+                                    @else
+                                        <span class="text-xs text-gray-400">Pendiente</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endif
+
+            {{-- ══════════════════════════════════════════
                  TABLA: Historial de pagos
             ══════════════════════════════════════════ --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
@@ -461,8 +571,8 @@
          x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4"
-         style="background-color: rgba(0,0,0,0.5); display: none;"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+         style="display: none;"
          @click.self="modalContrasena = false">
 
         <div x-transition:enter="transition ease-out duration-200"
@@ -558,8 +668,7 @@
 
 {{-- Overlay de cuenta suspendida/baja --}}
 <div id="estado-overlay"
-     class="hidden fixed inset-0 z-[9999] flex items-center justify-center px-4"
-     style="background-color: rgba(0,0,0,0.75);">
+     class="hidden fixed inset-0 z-[9999] flex items-center justify-center px-4 bg-black/75 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center">
         <div id="estado-overlay-bar" class="h-1.5 w-full"></div>
         <div class="px-8 py-8">

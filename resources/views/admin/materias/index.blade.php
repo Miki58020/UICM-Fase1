@@ -6,9 +6,15 @@
 
 <section
     x-data="{
-        showModal: false,
-        editando: null,
-        form: { clave: '', nombre: '', programa_id: '', cuatrimestre: '', creditos: '' },
+        showModal: {{ $errors->any() ? 'true' : 'false' }},
+        editando: {{ $errors->any() && old('_method') === 'PATCH' ? 'true' : 'null' }},
+        form: {
+            clave:       '{{ addslashes(old('clave', '')) }}',
+            nombre:      '{{ addslashes(old('nombre', '')) }}',
+            programa_id: '{{ old('programa_id', '') }}',
+            cuatrimestre:'{{ old('cuatrimestre', '') }}',
+            creditos:    '{{ old('creditos', '') }}'
+        },
         busqueda: '',
         filtroPrograma: '',
         filtroActivo: '',
@@ -259,8 +265,7 @@
          x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto"
-         style="background-color: rgba(0,0,0,0.5);"
+         class="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 overflow-y-auto bg-black/50 backdrop-blur-sm"
          @keydown.escape.window="showModal = false"
          x-cloak>
 
@@ -273,6 +278,7 @@
              x-transition:leave-end="opacity-0 scale-95"
              class="bg-white rounded-2xl shadow-xl w-full max-w-lg my-auto">
 
+            <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
             {{-- Header --}}
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <div>
@@ -297,16 +303,19 @@
                 <input type="hidden" name="_method" x-bind:value="editando ? 'PATCH' : 'POST'">
 
                 {{-- Clave + Créditos --}}
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
                             Clave <span class="text-red-400">*</span>
                         </label>
                         <input type="text" name="clave" x-model="form.clave"
-                               placeholder="IS-101"
+                               placeholder="Ej. IS-101"
+                               maxlength="6"
+                               oninput="formatClaveMateria(this); this.$el.dispatchEvent(new Event('input'))"
                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg font-mono focus:outline-none"
                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                        <p class="mt-1 text-xs text-gray-400">2 letras + 3 dígitos (Ej. IS-101).</p>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
@@ -317,6 +326,7 @@
                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                        <p class="mt-1 text-xs text-gray-400">Entre 1 y 20 créditos.</p>
                     </div>
                 </div>
 
@@ -327,6 +337,7 @@
                     </label>
                     <input type="text" name="nombre" x-model="form.nombre"
                            placeholder="Ej. Programación I"
+                           maxlength="100"
                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -384,5 +395,20 @@
     </div>
 
 </section>
+
+@push('scripts')
+<script>
+function formatClaveMateria(el) {
+    var raw = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    var s1 = raw.match(/^[A-Z]{0,2}/)[0];
+    var result = s1;
+    if (s1.length < 2) { el.value = result; return; }
+    var rem = raw.slice(2);
+    var s2 = rem.match(/^[0-9]{0,3}/)[0];
+    if (s2.length > 0) result += '-' + s2;
+    el.value = result;
+}
+</script>
+@endpush
 
 @endsection
