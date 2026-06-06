@@ -196,22 +196,21 @@ Route::get('/admin/archivo/{path}', function (string $path) {
     return Storage::disk('local')->response($path);
 })->middleware('auth')->where('path', '.*')->name('admin.archivo');
 
-Route::get('/dashboard', function () {
-    $rol = auth()->user()->rol;
-    return redirect()->route(match($rol) {
-        'alumno'          => 'alumno.dashboard',
-        'finanzas'        => 'finanzas.pagos.index',
-        'coordinacion'    => 'admin.materias.index',
-        'control_escolar' => 'admin.aspirantes.index',
-        'profesor'        => 'profesor.calificaciones.index',
-        default           => 'admin.aspirantes.index',
-    });
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+Route::post('/admin/notificar/{rol}', [App\Http\Controllers\NotificacionDepartamentoController::class, 'enviar'])
+    ->middleware(['auth', 'rol:admin'])
+    ->name('admin.notificar.departamento')
+    ->where('rol', 'control_escolar|finanzas|coordinacion|admin');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/perfil/foto', [\App\Http\Controllers\PerfilController::class, 'updateFoto'])->name('perfil.foto');
 });
 
 require __DIR__ . '/auth.php';

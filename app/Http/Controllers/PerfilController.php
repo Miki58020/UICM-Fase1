@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+class PerfilController extends Controller
+{
+    public function updateFoto(Request $request)
+    {
+        $request->validate([
+            'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ], [
+            'foto.image'    => 'El archivo debe ser una imagen.',
+            'foto.mimes'    => 'Solo se permiten formatos JPG, PNG o WEBP.',
+            'foto.max'      => 'La imagen no debe superar 2 MB.',
+        ]);
+
+        $user = auth()->user();
+
+        if ($user->foto) {
+            Storage::disk('local')->delete($user->foto);
+        }
+
+        $path = $request->file('foto')->store('perfiles', 'local');
+        $user->update(['foto' => $path]);
+
+        return redirect()->route('dashboard')->with('success', 'Foto de perfil actualizada.');
+    }
+}

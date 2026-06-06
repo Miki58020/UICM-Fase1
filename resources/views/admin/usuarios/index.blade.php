@@ -18,7 +18,7 @@ $rolesLabels = [
     x-data="{
         showModal: {{ $errors->any() ? 'true' : 'false' }},
         showDeleteModal: false,
-        editando: {{ $errors->any() && old('_method') === 'PATCH' ? 'true' : 'null' }},
+        editando: {{ $errors->any() && old('_method') === 'PATCH' && old('edit_usuario_id') ? '{ id: ' . (int) old('edit_usuario_id') . ' }' : 'null' }},
         deletingId: null,
         deletingName: '',
         form: {
@@ -293,6 +293,7 @@ $rolesLabels = [
                   class="px-6 py-5 space-y-4">
                 @csrf
                 <input type="hidden" name="_method" x-bind:value="editando ? 'PATCH' : 'POST'">
+                <input type="hidden" name="edit_usuario_id" x-bind:value="editando ? editando.id : ''">
 
                 {{-- Nombre(s) --}}
                 <div>

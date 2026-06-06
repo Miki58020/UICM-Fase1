@@ -290,20 +290,29 @@
            :class="[sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0', sidebarCollapsed ? 'sidebar-collapsed-md' : '']"
            style="background-color: #0F4229;">
 
-        {{-- Nombre de usuario --}}
-        <div class="sidebar-user-block px-4 py-3 border-b border-white/10 text-center">
-            <p class="text-xs text-green-400 uppercase tracking-widest mb-0.5">Bienvenido</p>
-            <p class="text-base font-semibold text-white truncate">{{ $nombreMostrado }}</p>
-        </div>
-
         {{-- Navegación --}}
         <nav class="flex-1 px-3 py-3">
 
             @php $rol = auth()->user()->rol; @endphp
 
+            {{-- ══ INICIO (todos los roles admin) ══ --}}
+            @if(!in_array($rol, ['alumno', 'profesor']))
+            <a href="{{ route('dashboard') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Inicio"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('dashboard') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="nav-link-text">Inicio</span>
+            </a>
+            @endif
+
             {{-- ══ ADMIN ══ --}}
             @if($rol === 'admin')
-            <div class="nav-section-label pt-1 pb-1 px-2">
+            <div class="nav-section-label pt-2 pb-1 px-2 mt-1 border-t border-white/10">
                 <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Administración</p>
             </div>
 
@@ -789,6 +798,11 @@
         if (session('success_contacto')) $toasts[] = ['ok', session('success_contacto')];
         if (session('contacto_enviado')) $toasts[] = ['ok', '¡Mensaje enviado! Un asesor se pondrá en contacto a la brevedad.'];
         if (session('error'))            $toasts[] = ['err', session('error')];
+        if (session('notif_error'))      $toasts[] = ['err', session('notif_error')];
+        foreach (['control_escolar', 'finanzas', 'coordinacion', 'admin'] as $_nr) {
+            if (session('notif_ok_'.$_nr))      $toasts[] = ['ok',   session('notif_ok_'.$_nr)];
+            if (session('notif_warning_'.$_nr)) $toasts[] = ['warn', session('notif_warning_'.$_nr)];
+        }
         if ($errors->any()) {
             $allErrs = $errors->all();
             $shown   = min(count($allErrs), 3);
@@ -801,15 +815,23 @@
     <div id="toast-container" aria-live="polite"
          style="position:fixed; top:1.25rem; right:1.25rem; z-index:9999; display:flex; flex-direction:column; gap:0.625rem; width:20rem; pointer-events:none;">
         @foreach($toasts as [$type, $msg])
+        @php
+            $tColor = match($type) { 'ok' => '#0F4229', 'warn' => '#b45309', default => '#ef4444' };
+            $tIcon  = match($type) {
+                'ok'   => 'M5 13l4 4L19 7',
+                'warn' => 'M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z',
+                default => 'M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+            };
+            $tText  = match($type) { 'ok' => 'text-green-800', 'warn' => 'text-amber-800', default => 'text-red-700' };
+        @endphp
         <div class="toast-item pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg bg-white"
-             style="border-left: 4px solid {{ $type === 'ok' ? '#0F4229' : '#ef4444' }};"
-             data-delay="{{ $type === 'ok' ? 5000 : 7000 }}">
+             style="border-left: 4px solid {{ $tColor }};"
+             data-delay="{{ $type === 'err' ? 7000 : 5000 }}">
             <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                 style="color: {{ $type === 'ok' ? '#0F4229' : '#ef4444' }}; flex-shrink:0;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                      d="{{ $type === 'ok' ? 'M5 13l4 4L19 7' : 'M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' }}"/>
+                 style="color: {{ $tColor }}; flex-shrink:0;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="{{ $tIcon }}"/>
             </svg>
-            <p class="text-sm font-semibold flex-1 leading-snug {{ $type === 'ok' ? 'text-green-800' : 'text-red-700' }}"
+            <p class="text-sm font-semibold flex-1 leading-snug {{ $tText }}"
                style="flex:1;">
                 {{ $msg }}
             </p>

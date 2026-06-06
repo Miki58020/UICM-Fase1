@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resumen diario UICM</title>
+    <title>Recordatorio de pendientes — UICM</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Georgia', serif; background: #eef2ee; padding: 32px 16px; }
@@ -50,7 +50,7 @@
 
     <div class="header">
         <div class="header-logo">Universidad Internacional Cuba México</div>
-        <h1>Resumen del día</h1>
+        <h1>Recordatorio de pendientes</h1>
         <p class="header-sub">{{ now()->translatedFormat('l d \d\e F \d\e Y') }}</p>
         <div class="header-band"></div>
     </div>
@@ -70,11 +70,11 @@
             <span class="rol-badge">{{ $rolLabels[$destinatario->rol] ?? $destinatario->rol }}</span>
         </div>
 
-        <p class="greeting">Buenos días, {{ $destinatario->nombre_completo }}.</p>
+        <p class="greeting">Hola, {{ $destinatario->nombre_completo }}.</p>
 
-        <p>Aquí tienes el resumen de actividad pendiente para comenzar tu jornada de hoy:</p>
+        <p>El administrador del sistema te envía este recordatorio con los pendientes actuales de tu área:</p>
 
-        <p class="resumen-titulo" style="margin-top: 24px;">Pendientes del día</p>
+        <p class="resumen-titulo" style="margin-top: 24px;">Pendientes actuales</p>
 
         <div class="detail-wrap">
             <table class="detail-table">
@@ -88,12 +88,7 @@
         </div>
 
         <div class="info-box">
-            @if($manual)
-                Este recordatorio fue enviado manualmente por el administrador del sistema.
-            @else
-                Este resumen se genera automáticamente cada día a las 9:00 AM.
-            @endif
-            Para ver el detalle completo, ingresa al sistema.
+            Este recordatorio fue enviado manualmente desde el panel de administración. Para atender los pendientes, ingresa al sistema.
         </div>
 
         <div class="btn-wrap">
@@ -103,7 +98,7 @@
         <hr class="divider">
 
         <div class="signature">
-            Que tengas un excelente día,<br>
+            Saludos,<br>
             <strong>Sistema de Gestión Escolar — UICM</strong>
         </div>
     </div>

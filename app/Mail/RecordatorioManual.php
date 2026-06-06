@@ -7,23 +7,22 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
-class ResumenDiario extends Mailable
+class RecordatorioManual extends Mailable
 {
     public function __construct(
         public User  $destinatario,
         public array $datos,
-        public bool  $manual = false,
     ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '[UICM] Resumen del día — ' . now()->translatedFormat('l d \d\e F \d\e Y')
+            subject: '[UICM] Recordatorio de pendientes — ' . now()->translatedFormat('d \d\e F \d\e Y')
         );
     }
 
     public function content(): Content
     {
-        return new Content(view: 'emails.sistema.resumen-diario');
+        return new Content(view: 'emails.sistema.recordatorio-manual');
     }
 }
