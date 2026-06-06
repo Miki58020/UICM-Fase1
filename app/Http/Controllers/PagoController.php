@@ -44,9 +44,11 @@ class PagoController extends Controller
             return redirect()->route('aspirantes.pago.confirmacion', ['status' => 'aprobado']);
         }
 
+        $tarifa         = $this->obtenerTarifaInscripcion($aspirante->programa);
         $monto          = $this->calcularMonto($aspirante->programa);
-        $sessionKeyPref = 'mp_preference_' . $folio . '_' . (int) $monto;
-        $sessionKeyUrl  = 'mp_checkout_url_' . $folio . '_' . (int) $monto;
+        $descuentoKey   = (int) ($tarifa?->descuento ?? 0);
+        $sessionKeyPref = 'mp_preference_' . $folio . '_' . (int) $monto . '_' . $descuentoKey;
+        $sessionKeyUrl  = 'mp_checkout_url_' . $folio . '_' . (int) $monto . '_' . $descuentoKey;
         $preferenceId   = session($sessionKeyPref);
         $checkoutUrl    = session($sessionKeyUrl);
 
@@ -54,9 +56,15 @@ class PagoController extends Controller
             try {
                 $this->configurarMP();
 
+                $nombrePrograma = $aspirante->programa->nombre ?? 'Programa academico';
+                $tituloItem     = 'Inscripcion UICM — ' . $nombrePrograma;
+                if ($tarifa && $tarifa->descuento > 0) {
+                    $tituloItem .= ' (' . number_format($tarifa->descuento, 0) . '% dto.)';
+                }
+
                 $preferenceData = [
                     'items' => [[
-                        'title'       => 'Inscripcion UICM — ' . ($aspirante->programa->nombre ?? 'Programa academico'),
+                        'title'       => $tituloItem,
                         'quantity'    => 1,
                         'unit_price'  => $monto,
                         'currency_id' => 'MXN',
@@ -104,6 +112,7 @@ class PagoController extends Controller
             'aspirante'   => $aspirante,
             'checkoutUrl' => $checkoutUrl,
             'monto'       => $monto,
+            'tarifa'      => $tarifa,
         ]);
     }
 
@@ -402,12 +411,24 @@ class PagoController extends Controller
         };
     }
 
+    private function obtenerTarifaInscripcion(?\App\Models\Programa $programa): ?\App\Models\TarifaInscripcion
+    {
+        $nivel = $programa?->nivel ?? 'licenciatura';
+        return \App\Models\TarifaInscripcion::where('nivel', $nivel)
+                    ->where('tipo', 'inscripcion')
+                    ->first();
+    }
+
     private function calcularMonto(?\App\Models\Programa $programa): float
     {
-        $nivel  = $programa?->nivel ?? 'licenciatura';
-        $tarifa = \App\Models\TarifaInscripcion::where('nivel', $nivel)->first();
+        $tarifa = $this->obtenerTarifaInscripcion($programa);
 
-        return $tarifa ? (float) $tarifa->monto : match($nivel) {
+        if ($tarifa) {
+            return round($tarifa->monto * (1 - $tarifa->descuento / 100), 2);
+        }
+
+        $nivel = $programa?->nivel ?? 'licenciatura';
+        return match($nivel) {
             'maestria'  => 4000.00,
             'doctorado' => 5000.00,
             default     => 3000.00,

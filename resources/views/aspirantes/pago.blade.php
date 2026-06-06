@@ -50,6 +50,15 @@
                         </div>
                         <div class="bg-uicm-gray rounded-xl p-4">
                             <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">Monto</p>
+                            @if($tarifa && $tarifa->descuento > 0)
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <span class="text-sm text-gray-400 line-through">${{ number_format($tarifa->monto, 0) }}</span>
+                                    <span class="text-xs font-bold px-1.5 py-0.5 rounded-lg"
+                                          style="background-color:#fef4e8; color:#b45309;">
+                                        {{ number_format($tarifa->descuento, 0) }}% dto.
+                                    </span>
+                                </div>
+                            @endif
                             <p class="text-xl font-extrabold" style="color: #0F4229;">${{ number_format($monto, 0) }} MXN</p>
                         </div>
                     </div>
@@ -73,6 +82,11 @@
                     <p class="text-sm text-gray-500 max-w-sm">
                         Al dar clic serás redirigido al sitio seguro de Mercado Pago para completar
                         tu pago de <span class="font-bold text-gray-800">${{ number_format($monto, 0) }} MXN</span>.
+                        @if($tarifa && $tarifa->descuento > 0)
+                            <span class="block mt-1 text-xs" style="color:#b45309;">
+                                Incluye {{ number_format($tarifa->descuento, 0) }}% de descuento sobre el precio base de ${{ number_format($tarifa->monto, 0) }} MXN.
+                            </span>
+                        @endif
                     </p>
 
                     @if($checkoutUrl)

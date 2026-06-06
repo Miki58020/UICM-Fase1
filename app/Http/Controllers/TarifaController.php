@@ -16,7 +16,7 @@ class TarifaController extends Controller
                 WHEN 'doctorado'    THEN 3
                 ELSE 4
             END
-        ")->get();
+        ")->get()->groupBy('tipo');
 
         return view('admin.tarifas.index', compact('tarifas'));
     }
@@ -24,10 +24,14 @@ class TarifaController extends Controller
     public function update(Request $request, TarifaInscripcion $tarifa)
     {
         $request->validate([
-            'monto' => 'required|numeric|min:1|max:99999.99',
+            'monto'     => 'required|numeric|min:1|max:99999.99',
+            'descuento' => 'required|numeric|min:0|max:100',
         ]);
 
-        $tarifa->update(['monto' => $request->monto]);
+        $tarifa->update([
+            'monto'     => $request->monto,
+            'descuento' => $request->descuento,
+        ]);
 
         return redirect()->back()->with('success', 'Tarifa actualizada correctamente.');
     }
