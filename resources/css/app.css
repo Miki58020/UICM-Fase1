@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Scroll discreto y estilizado para todas las áreas con scroll del sitio (tablas, paneles, modales) */
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-auto {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(15, 66, 41, 0.25) transparent;
+}
+.overflow-y-auto::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar,
+.overflow-auto::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.overflow-y-auto::-webkit-scrollbar-track,
+.overflow-x-auto::-webkit-scrollbar-track,
+.overflow-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb,
+.overflow-x-auto::-webkit-scrollbar-thumb,
+.overflow-auto::-webkit-scrollbar-thumb {
+    background: rgba(15, 66, 41, 0.25);
+    border-radius: 9999px;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb:hover,
+.overflow-x-auto::-webkit-scrollbar-thumb:hover,
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+    background: rgba(15, 66, 41, 0.4);
+}

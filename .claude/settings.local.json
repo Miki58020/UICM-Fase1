@@ -121,7 +121,8 @@
       "Bash(chromium-cli --help)",
       "Read(//tmp/**)",
       "Bash(node -e ' *)",
-      "Bash(pkill -f \"artisan serve\")"
+      "Bash(pkill -f \"artisan serve\")",
+      "Bash(npm run *)"
     ]
   }
 }

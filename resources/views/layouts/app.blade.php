@@ -40,6 +40,13 @@
     /* Sidebar colapso escritorio */
     .sidebar-anim { transition: width 0.3s ease-in-out, transform 0.3s ease-in-out; }
     .main-anim    { transition: margin-left 0.3s ease-in-out; }
+
+    /* Scroll del sidebar más discreto */
+    .sidebar-anim { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) transparent; }
+    .sidebar-anim::-webkit-scrollbar { width: 6px; }
+    .sidebar-anim::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-anim::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 9999px; }
+    .sidebar-anim::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.32); }
     @media (min-width: 768px) {
         aside.sidebar-collapsed-md { width: 4rem !important; }
         .main-auth { margin-left: 16rem; }
