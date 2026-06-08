@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\ConfiguracionApisController;
+use App\Http\Controllers\Admin\ConfiguracionCorreoController;
 use App\Http\Controllers\Admin\ConfiguracionMercadopagoController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AspiranteController;
@@ -115,10 +117,12 @@ Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::get('/admin/tarifas', [TarifaController::class, 'index'])->name('admin.tarifas.index');
     Route::patch('/admin/tarifas/{tarifa}', [TarifaController::class, 'update'])->name('admin.tarifas.update');
 
-    // Página principal (CMS)
-    Route::get('/admin/mercadopago', [ConfiguracionMercadopagoController::class, 'index'])->name('admin.mercadopago.index');
-    Route::patch('/admin/mercadopago/{configuracion}/credenciales', [ConfiguracionMercadopagoController::class, 'updateCredenciales'])->name('admin.mercadopago.credenciales');
-    Route::patch('/admin/mercadopago/{configuracion}/urls', [ConfiguracionMercadopagoController::class, 'updateUrls'])->name('admin.mercadopago.urls');
+    // APIs externas (MercadoPago, correo)
+    Route::get('/admin/apis', [ConfiguracionApisController::class, 'index'])->name('admin.apis.index');
+    Route::patch('/admin/apis/mercadopago/{configuracion}/credenciales', [ConfiguracionMercadopagoController::class, 'updateCredenciales'])->name('admin.apis.mercadopago.credenciales');
+    Route::patch('/admin/apis/mercadopago/{configuracion}/urls', [ConfiguracionMercadopagoController::class, 'updateUrls'])->name('admin.apis.mercadopago.urls');
+    Route::patch('/admin/apis/correo/{configuracion}/conexion', [ConfiguracionCorreoController::class, 'updateConexion'])->name('admin.apis.correo.conexion');
+    Route::patch('/admin/apis/correo/{configuracion}/remitente', [ConfiguracionCorreoController::class, 'updateRemitente'])->name('admin.apis.correo.remitente');
 
     Route::get('/admin/pagina-principal', [PaginaPrincipalController::class, 'index'])->name('admin.pagina-principal.index');
     Route::post('/admin/pagina-principal/contacto', [PaginaPrincipalController::class, 'updateContacto'])->name('admin.pagina-principal.contacto');

@@ -8,12 +8,6 @@ use Illuminate\Http\Request;
 
 class ConfiguracionMercadopagoController extends Controller
 {
-    public function index()
-    {
-        $config = ConfiguracionMercadopago::activa() ?? ConfiguracionMercadopago::latest()->first();
-        return view('admin.mercadopago.index', compact('config'));
-    }
-
     public function updateCredenciales(Request $request, ConfiguracionMercadopago $configuracion)
     {
         $request->validate([
@@ -23,7 +17,7 @@ class ConfiguracionMercadopagoController extends Controller
 
         $configuracion->update($request->only(['public_key', 'access_token']));
 
-        return redirect()->route('admin.mercadopago.index')
+        return redirect()->route('admin.apis.index', ['tab' => 'mercadopago'])
             ->with('success', 'Credenciales actualizadas correctamente.');
     }
 
@@ -43,7 +37,7 @@ class ConfiguracionMercadopagoController extends Controller
             'notification_url',
         ]));
 
-        return redirect()->route('admin.mercadopago.index')
+        return redirect()->route('admin.apis.index', ['tab' => 'mercadopago'])
             ->with('success', 'URLs de retorno actualizadas correctamente.');
     }
 }

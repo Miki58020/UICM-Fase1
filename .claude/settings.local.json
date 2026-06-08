@@ -122,7 +122,13 @@
       "Read(//tmp/**)",
       "Bash(node -e ' *)",
       "Bash(pkill -f \"artisan serve\")",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(rm resources/views/admin/mercadopago/index.blade.php)",
+      "Bash(rmdir resources/views/admin/mercadopago)",
+      "Bash(python3 -c ' *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(pkill -9 -f \"artisan serve\")",
+      "Bash(pkill -9 -f \"php artisan\")"
     ]
   }
 }
