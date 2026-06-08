@@ -8,13 +8,15 @@ class Pago extends Model
 {
     protected $fillable = [
         'aspirante_id', 'alumno_id', 'concepto', 'periodo',
-        'monto', 'comprobante', 'fecha_pago', 'estado', 'observaciones',
+        'monto', 'descuento', 'monto_original', 'comprobante', 'fecha_pago', 'estado', 'observaciones',
         'mp_preference_id', 'mp_payment_id',
     ];
 
     protected $casts = [
-        'fecha_pago' => 'date',
-        'monto'      => 'decimal:2',
+        'fecha_pago'     => 'date',
+        'monto'          => 'decimal:2',
+        'descuento'      => 'decimal:2',
+        'monto_original' => 'decimal:2',
     ];
 
     public function aspirante()

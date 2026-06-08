@@ -49,6 +49,11 @@
         .footer span { color: #D4AF37; }
 
         @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
             body { background: #fff; padding: 0; }
             .actions { display: none; }
             .wrapper { max-width: 100%; }
@@ -116,7 +121,14 @@
                 </tr>
                 <tr>
                     <td>Monto</td>
-                    <td>${{ number_format($pago->monto, 2) }} MXN</td>
+                    <td>
+                        @if($pago->descuento > 0)
+                            <span style="font-weight: normal; text-decoration: line-through; color: #9ca3af; margin-right: 6px;">
+                                ${{ number_format($pago->monto_original, 2) }}
+                            </span>
+                        @endif
+                        ${{ number_format($pago->monto, 2) }} MXN
+                    </td>
                 </tr>
                 <tr>
                     <td>Fecha de pago</td>
@@ -124,6 +136,14 @@
                 </tr>
             </table>
         </div>
+
+        {{-- Nota de descuento aplicado --}}
+        @if($pago->descuento > 0)
+        <div class="mp-box">
+            <strong>Descuento aplicado: {{ number_format($pago->descuento, 0) }}%</strong><br>
+            Precio original ${{ number_format($pago->monto_original, 2) }} MXN — pagaste ${{ number_format($pago->monto, 2) }} MXN.
+        </div>
+        @endif
 
         {{-- Referencia Mercado Pago --}}
         @if($pago->mp_payment_id || $pago->mp_preference_id)

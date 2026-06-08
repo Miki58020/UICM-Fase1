@@ -132,7 +132,8 @@ class PagoController extends Controller
         try {
             $this->configurarMP();
 
-            $monto = $this->calcularMonto($aspirante->programa);
+            $tarifa = $this->obtenerTarifaInscripcion($aspirante->programa);
+            $monto  = $this->calcularMonto($aspirante->programa);
 
             $paymentData = [
                 'transaction_amount' => (float) $monto,
@@ -171,6 +172,8 @@ class PagoController extends Controller
                     'concepto'         => 'inscripcion',
                     'periodo'          => date('Y') . '-1',
                     'monto'            => $monto,
+                    'descuento'        => $tarifa->descuento ?? 0,
+                    'monto_original'   => $tarifa->monto ?? $monto,
                     'fecha_pago'       => now()->toDateString(),
                     'estado'           => 'pendiente',
                     'mp_preference_id' => $preferenceId,
@@ -219,12 +222,14 @@ class PagoController extends Controller
         if ($paymentId && $extRef) {
             try {
                 $this->configurarMP();
-                $aspirante = Aspirante::where('folio', strtoupper($extRef))->first();
+                $aspirante = Aspirante::with('programa')->where('folio', strtoupper($extRef))->first();
 
                 if ($aspirante) {
                     $payment = (new PaymentClient())->get((int) $paymentId);
 
                     if (in_array($payment->status, ['approved', 'pending', 'in_process', 'authorized'])) {
+                        $tarifa = $this->obtenerTarifaInscripcion($aspirante->programa);
+
                         Pago::firstOrCreate(
                             ['mp_payment_id' => (string) $payment->id],
                             [
@@ -232,6 +237,8 @@ class PagoController extends Controller
                                 'concepto'         => 'inscripcion',
                                 'periodo'          => date('Y') . '-1',
                                 'monto'            => $payment->transaction_amount,
+                                'descuento'        => $tarifa->descuento ?? 0,
+                                'monto_original'   => $tarifa->monto ?? $payment->transaction_amount,
                                 'fecha_pago'       => now()->toDateString(),
                                 'estado'           => 'pendiente',
                                 'mp_preference_id' => $payment->preference_id ?? null,
@@ -279,7 +286,7 @@ class PagoController extends Controller
             $pago = Pago::where('mp_payment_id', $payment->id)->first();
 
             if (!$pago && $payment->external_reference) {
-                $aspirante = Aspirante::where('folio', $payment->external_reference)->first();
+                $aspirante = Aspirante::with('programa')->where('folio', $payment->external_reference)->first();
                 if ($aspirante) {
                     $pago = Pago::where('aspirante_id', $aspirante->id)
                         ->where('estado', 'pendiente')
@@ -292,6 +299,8 @@ class PagoController extends Controller
             if ($pago) {
                 $pago->update(['mp_payment_id' => $payment->id]);
             } elseif ($aspirante && in_array($payment->status, ['approved', 'pending', 'in_process', 'authorized'])) {
+                $tarifa = $this->obtenerTarifaInscripcion($aspirante->programa);
+
                 Pago::firstOrCreate(
                     ['mp_payment_id' => (string) $payment->id],
                     [
@@ -299,6 +308,8 @@ class PagoController extends Controller
                         'concepto'         => 'inscripcion',
                         'periodo'          => date('Y') . '-1',
                         'monto'            => $payment->transaction_amount,
+                        'descuento'        => $tarifa->descuento ?? 0,
+                        'monto_original'   => $tarifa->monto ?? $payment->transaction_amount,
                         'fecha_pago'       => now()->toDateString(),
                         'estado'           => 'pendiente',
                         'mp_preference_id' => $payment->preference_id ?? null,
