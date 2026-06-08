@@ -115,7 +115,13 @@
       "Bash(findstr /i \"MAIL_MAILER\\\\|MAIL_HOST\\\\|MAIL_PORT\\\\|MAIL_USERNAME\\\\|MAIL_FROM\" .env)",
       "Bash(Select-String \"MAIL_\" .env)",
       "Bash(Select-Object -First 10)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Skill(run)",
+      "Bash(ls /tmp/*.png)",
+      "Bash(chromium-cli --help)",
+      "Read(//tmp/**)",
+      "Bash(node -e ' *)",
+      "Bash(pkill -f \"artisan serve\")"
     ]
   }
 }

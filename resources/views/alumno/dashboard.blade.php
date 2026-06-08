@@ -14,20 +14,57 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
                 <div class="flex items-center gap-5">
-                    {{-- Avatar / Fotografía --}}
-                    @if (!empty($alumno->aspirante->foto_url))
-                        <div class="flex-shrink-0 w-16 h-16 rounded-2xl border-2 border-white/30 overflow-hidden">
-                            <img src="{{ route('admin.archivo', ['path' => $alumno->aspirante->foto_url]) }}"
-                                 alt="Foto {{ $alumno->nombre }}"
-                                 class="w-full h-full object-cover">
+                    {{-- Avatar / Fotografía (con badge para cambiarla) --}}
+                    @php
+                        $fotoPerfil = auth()->user()->foto ?: ($alumno->aspirante->foto_url ?? null);
+                    @endphp
+                    <div x-data="{ hover: false }"
+                         class="flex-shrink-0 relative cursor-pointer"
+                         @mouseenter="hover = true" @mouseleave="hover = false"
+                         @click="$refs.fotoInput.click()"
+                         title="Cambiar foto de perfil">
+
+                        <div class="w-16 h-16 rounded-2xl border-2 border-white/30 overflow-hidden">
+                            @if($fotoPerfil)
+                                <img src="{{ route('admin.archivo', ['path' => $fotoPerfil]) }}"
+                                     alt="Foto {{ $alumno->nombre }}"
+                                     class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center
+                                            text-2xl font-extrabold text-white select-none"
+                                     style="background-color: rgba(255,255,255,0.15);">
+                                    {{ strtoupper(substr($alumno->nombre, 0, 1)) }}
+                                </div>
+                            @endif
                         </div>
-                    @else
-                        <div class="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center
-                                    text-2xl font-extrabold text-white border-2 border-white/30"
-                             style="background-color: rgba(255,255,255,0.15);">
-                            {{ strtoupper(substr($alumno->nombre, 0, 1)) }}
+
+                        {{-- Overlay hover (Alpine.js) --}}
+                        <div x-show="hover"
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-0.5"
+                             style="display:none; background-color: rgba(0,0,0,0.58);">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span class="text-[10px] font-bold text-white leading-tight text-center">Cambiar<br>foto</span>
                         </div>
-                    @endif
+
+                        {{-- Input oculto --}}
+                        <form method="POST" action="{{ route('perfil.foto') }}" enctype="multipart/form-data"
+                              x-ref="fotoForm" class="hidden">
+                            @csrf
+                            <input x-ref="fotoInput" type="file" name="foto" accept="image/*"
+                                   @change="$refs.fotoForm.submit()">
+                        </form>
+                    </div>
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-widest text-white/60 mb-0.5">
                             Portal del Alumno
