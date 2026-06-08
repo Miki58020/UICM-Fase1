@@ -19,7 +19,8 @@ class ConfiguracionMercadopago extends Model
     ];
 
     protected $casts = [
-        'activo' => 'boolean',
+        'activo'       => 'boolean',
+        'access_token' => 'encrypted',
     ];
 
     public static function activa(): ?self

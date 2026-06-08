@@ -20,8 +20,9 @@ class ConfiguracionCorreo extends Model
     ];
 
     protected $casts = [
-        'port'   => 'integer',
-        'activo' => 'boolean',
+        'port'     => 'integer',
+        'activo'   => 'boolean',
+        'password' => 'encrypted',
     ];
 
     public static function activa(): ?self
