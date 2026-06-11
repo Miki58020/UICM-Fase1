@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContrasenaActualizada;
 use App\Mail\NuevaContrasena;
 use App\Models\Alumno;
 use App\Models\Calificacion;
@@ -107,9 +108,13 @@ class AlumnoController extends Controller
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
-        Auth::user()->update(['password' => Hash::make($request->password)]);
+        $user = Auth::user();
+        $user->update(['password' => Hash::make($request->password)]);
 
-        return redirect()->route('alumno.dashboard')->with('password_success', 'Contraseña actualizada correctamente.');
+        // Notificar al alumno por email
+        Mail::to($user->email)->send(new ContrasenaActualizada($user, $request->password));
+
+        return redirect()->route('alumno.dashboard')->with('password_success', 'Contraseña actualizada correctamente. Se envió confirmación a tu correo.');
     }
 
     public function checkEstado(): \Illuminate\Http\JsonResponse

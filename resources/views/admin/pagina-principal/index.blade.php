@@ -570,8 +570,7 @@
 
             {{-- Modal nuevo/editar interés --}}
             <div x-show="modalInteres" x-cloak
-                 class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm"
-                 @click.self="modalInteres = false">
+                 class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
                     <div class="h-1.5 w-full rounded-t-2xl"
                          :style="editId ? 'background-color:#D4AF37' : 'background-color:#0F4229'"></div>

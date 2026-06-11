@@ -25,18 +25,6 @@
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
-        @if (session('success'))
-            <div class="mb-6 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="mb-6 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-                {{ $errors->first() }}
-            </div>
-        @endif
-
         @if ($alumnos->isEmpty())
             <div class="bg-white rounded-2xl shadow-md p-12 text-center text-gray-400 text-sm">
                 No hay alumnos activos en este grupo.

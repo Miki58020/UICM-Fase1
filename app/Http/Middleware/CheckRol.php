@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Alumno;
+use App\Models\Profesor;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +37,19 @@ class CheckRol
                     : 'Tu cuenta está inactiva temporalmente. Comunícate con Control Escolar para reactivarla.';
 
                 return redirect()->route('login')->withErrors(['email' => $mensaje]);
+            }
+        }
+
+        // Si es profesor, verificar que su cuenta siga activa en cada request
+        if ($userRol === 'profesor') {
+            $profesor = Profesor::where('user_id', $request->user()->id)->first();
+
+            if ($profesor && !$profesor->activo) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login')->withErrors(['email' => 'Tu cuenta ha sido desactivada. Comunícate con Coordinación Académica para más información.']);
             }
         }
 

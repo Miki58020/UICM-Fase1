@@ -128,7 +128,9 @@
       "Bash(python3 -c ' *)",
       "Bash(echo \"exit: $?\")",
       "Bash(pkill -9 -f \"artisan serve\")",
-      "Bash(pkill -9 -f \"php artisan\")"
+      "Bash(pkill -9 -f \"php artisan\")",
+      "Bash(grep -rn \"user_id\" database/migrations/*profesor*)",
+      "Bash(grep -rln \"Profesor\" database/seeders/)"
     ]
   }
 }

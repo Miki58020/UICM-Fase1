@@ -181,30 +181,12 @@
 
                             {{-- Correo --}}
                             <td class="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                <span class="inline-flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    {{ $profesor->correo }}
-                                </span>
+                                {{ $profesor->correo }}
                             </td>
 
                             {{-- Teléfono --}}
                             <td class="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                @if ($profesor->telefono)
-                                    <span class="inline-flex items-center gap-1.5">
-                                        <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13
-                                                     a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498
-                                                     a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                        </svg>
-                                        {{ $profesor->telefono }}
-                                    </span>
-                                @else
-                                    <span class="text-gray-400">—</span>
-                                @endif
+                                {{ $profesor->telefono ?: '—' }}
                             </td>
 
                             {{-- Especialidad --}}
@@ -216,26 +198,22 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex flex-col gap-1.5">
                                     @if ($profesor->activo)
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white w-fit"
-                                              style="background-color: #0F4229;">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold w-fit"
+                                              style="background-color: #dcfce7; color: #15803d;">
                                             Activo
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white w-fit"
-                                              style="background-color: #9CA3AF;">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-60 inline-block"></span>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold w-fit"
+                                              style="background-color: #f3f4f6; color: #6b7280;">
                                             Inactivo
                                         </span>
                                     @endif
-                                    @if ($profesor->user_id)
-                                        <span class="inline-flex items-center gap-1 text-xs text-blue-600 font-medium">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                            </svg>
-                                            Con acceso
+                                    @unless ($profesor->user_id)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold w-fit"
+                                              style="background-color: #fef3c7; color: #b45309;">
+                                            Sin cuenta
                                         </span>
-                                    @endif
+                                    @endunless
                                 </div>
                             </td>
 
@@ -264,6 +242,27 @@
                                         </svg>
                                         Editar
                                     </button>
+
+                                    {{-- Generar acceso --}}
+                                    @unless ($profesor->user_id)
+                                        <form method="POST"
+                                              action="{{ route('admin.profesores.acceso', $profesor->id) }}">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                                           text-white transition-colors duration-150"
+                                                    style="background-color: #1d4ed8;"
+                                                    onmouseover="this.style.backgroundColor='#1e40af'"
+                                                    onmouseout="this.style.backgroundColor='#1d4ed8'">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
+                                                             a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                                                </svg>
+                                                Generar acceso
+                                            </button>
+                                        </form>
+                                    @endunless
 
                                     {{-- Activar / Desactivar --}}
                                     <form method="POST"

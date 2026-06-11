@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu nueva contraseña - UICM</title>
+    <title>Confirmación de cambio de contraseña - UICM</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Georgia', serif; background: #eef2ee; padding: 32px 16px; }
@@ -43,7 +43,7 @@
 
     <div class="header">
         <div class="header-logo">Universidad Internacional Cuba México</div>
-        <h1>Tu nueva contraseña</h1>
+        <h1>Contraseña actualizada</h1>
         <p class="header-sub">{{ now()->translatedFormat('l d \d\e F \d\e Y') }}</p>
         <div class="header-band"></div>
     </div>
@@ -67,7 +67,7 @@
 
         <p class="greeting">Hola, {{ $usuario->nombre_completo }}.</p>
 
-        <p>Tu solicitud de cambio de contraseña ha sido atendida. A continuación encontrarás tu nueva contraseña de acceso al sistema:</p>
+        <p>Te confirmamos que tu contraseña de acceso al sistema fue actualizada correctamente desde tu portal. Si tú realizaste este cambio, no necesitas hacer nada más. Para tu referencia, esta es tu nueva contraseña:</p>
 
         <div class="password-box">
             <div class="password-label">Tu nueva contraseña</div>
@@ -75,7 +75,7 @@
         </div>
 
         <div class="info-box">
-            <strong>Importante:</strong> Por razones de seguridad, te recomendamos cambiar esta contraseña inmediatamente después de iniciar sesión. Dirígete a tu perfil para actualizarla.
+            <strong>¿No reconoces este cambio?</strong> Si tú no actualizaste tu contraseña, comunícate de inmediato con Control Escolar para proteger tu cuenta.
         </div>
 
         <div class="btn-wrap">

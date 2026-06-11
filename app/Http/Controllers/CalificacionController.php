@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\NuevaContrasena;
+use App\Mail\ContrasenaActualizada;
 use App\Models\Alumno;
 use App\Models\Calificacion;
 use App\Models\CargaAcademica;
@@ -142,7 +142,7 @@ class CalificacionController extends Controller
         $user->update(['password' => Hash::make($request->password)]);
 
         // Notificar al profesor por email
-        Mail::to($user->email)->send(new NuevaContrasena($user, $request->password));
+        Mail::to($user->email)->send(new ContrasenaActualizada($user, $request->password));
 
         return redirect()->route('profesor.calificaciones.index')
             ->with('success', 'Contraseña actualizada correctamente. Se envió confirmación a tu correo.');

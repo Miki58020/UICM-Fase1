@@ -43,6 +43,19 @@ class AuthenticatedSessionController extends Controller
             }
         }
 
+        // Verificar estado del profesor antes de permitir el acceso
+        if (Auth::user()->rol === 'profesor') {
+            $profesor = \App\Models\Profesor::where('user_id', Auth::id())->first();
+
+            if ($profesor && !$profesor->activo) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login')->withErrors(['email' => 'Tu cuenta ha sido desactivada. Comunícate con Coordinación Académica para más información.']);
+            }
+        }
+
         $request->session()->regenerate();
 
         $rol = Auth::user()->rol;
