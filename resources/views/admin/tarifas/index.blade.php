@@ -29,6 +29,9 @@ $nivelLabel = fn($n) => match($n) {
     'doctorado'    => 'Doctorado',
     default        => ucfirst($n),
 };
+
+$regInicio = $periodoActivo?->fecha_inicio_registro?->format('Y-m-d');
+$regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
 @endphp
 
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
@@ -87,7 +90,7 @@ $nivelLabel = fn($n) => match($n) {
 
                             {{-- Precios --}}
                             <div class="flex-shrink-0 text-right">
-                                @if($tarifa->descuento > 0)
+                                @if($tarifa->descuentoVigente())
                                     <div class="flex items-center justify-end gap-2 mb-0.5">
                                         <span class="text-xs text-gray-400 line-through">
                                             ${{ number_format($tarifa->monto, 0) }}
@@ -105,11 +108,18 @@ $nivelLabel = fn($n) => match($n) {
                                     <p class="text-base sm:text-xl font-extrabold whitespace-nowrap" style="color: {{ $info['color'] }};">
                                         ${{ number_format($tarifa->monto, 0) }} MXN
                                     </p>
+                                    @if($tarifa->descuento > 0 && $tarifa->descuento_fecha_inicio && $tarifa->descuento_fecha_fin)
+                                        <p class="text-xs text-gray-400 mt-0.5">
+                                            {{ number_format($tarifa->descuento, 0) }}% dto. programado:
+                                            {{ $tarifa->descuento_fecha_inicio->format('d/m/Y') }}
+                                            - {{ $tarifa->descuento_fecha_fin->format('d/m/Y') }}
+                                        </p>
+                                    @endif
                                 @endif
                             </div>
 
                             {{-- Botón editar --}}
-                            <button onclick="abrirModal({{ $tarifa->id }}, '{{ $nivelLabel($tarifa->nivel) }}', '{{ $info['label'] }}', {{ $tarifa->monto }}, {{ $tarifa->descuento }})"
+                            <button onclick="abrirModal({{ $tarifa->id }}, '{{ $nivelLabel($tarifa->nivel) }}', '{{ $info['label'] }}', '{{ $key }}', {{ $tarifa->monto }}, {{ $tarifa->descuento }}, {{ $tarifa->descuento_fecha_inicio?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_inicio->format('Y-m-d')."'" : 'null' }}, {{ $tarifa->descuento_fecha_fin?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_fin->format('Y-m-d')."'" : 'null' }})"
                                     class="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-200 flex-shrink-0"
                                     style="background-color: {{ $info['color'] }};"
                                     onmouseover="this.style.opacity='0.85'"
@@ -181,6 +191,45 @@ $nivelLabel = fn($n) => match($n) {
                     <p class="mt-1 text-xs text-gray-400">Ingresa 0 si no aplica descuento.</p>
                 </div>
 
+                {{-- Vigencia del descuento (solo Inscripción) --}}
+                <div id="modal-descuento-fechas" class="mb-4 hidden">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                        Vigencia del descuento
+                    </label>
+
+                    @if($regInicio && $regFin)
+                        <p class="mb-2 text-xs text-gray-400">
+                            Debe estar dentro del periodo de inscripción del cuatrimestre activo:
+                            <span class="font-semibold text-gray-600">
+                                {{ \Illuminate\Support\Carbon::parse($regInicio)->format('d/m/Y') }}
+                                - {{ \Illuminate\Support\Carbon::parse($regFin)->format('d/m/Y') }}
+                            </span>
+                        </p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Desde</label>
+                                <input type="date" name="descuento_fecha_inicio" id="modal-descuento-inicio"
+                                       min="{{ $regInicio }}" max="{{ $regFin }}"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Hasta</label>
+                                <input type="date" name="descuento_fecha_fin" id="modal-descuento-fin"
+                                       min="{{ $regInicio }}" max="{{ $regFin }}"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                            </div>
+                        </div>
+                    @else
+                        <p class="text-xs font-medium" style="color:#b45309;">
+                            Configura primero el rango de inscripción del cuatrimestre activo para poder programar un descuento.
+                        </p>
+                        <input type="hidden" name="descuento_fecha_inicio" id="modal-descuento-inicio" value="">
+                        <input type="hidden" name="descuento_fecha_fin" id="modal-descuento-fin" value="">
+                    @endif
+                </div>
+
                 {{-- Preview precio final --}}
                 <div class="mb-5 px-4 py-3 rounded-xl flex items-center justify-between" style="background-color:#f0f9f4;">
                     <span class="text-xs font-semibold text-gray-500">Precio final</span>
@@ -207,11 +256,24 @@ $nivelLabel = fn($n) => match($n) {
 
 @push('scripts')
 <script>
-function abrirModal(id, nivel, tipo, monto, descuento) {
+function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, descFin) {
     document.getElementById('modal-info').textContent = nivel + ' — ' + tipo;
     document.getElementById('modal-monto').value = monto;
     document.getElementById('modal-descuento').value = descuento;
     document.getElementById('form-editar').action = '/admin/tarifas/' + id;
+
+    const fechasWrap = document.getElementById('modal-descuento-fechas');
+    const inputInicio = document.getElementById('modal-descuento-inicio');
+    const inputFin    = document.getElementById('modal-descuento-fin');
+
+    if (tipoKey === 'inscripcion') {
+        fechasWrap.classList.remove('hidden');
+    } else {
+        fechasWrap.classList.add('hidden');
+    }
+    inputInicio.value = descInicio || '';
+    inputFin.value    = descFin || '';
+
     actualizarPreview();
     document.getElementById('modal-editar').classList.remove('hidden');
 }

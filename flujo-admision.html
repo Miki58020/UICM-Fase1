@@ -253,6 +253,7 @@
                         <div class="detail-item"><div class="dot verde"></div>Clic en <strong>"Configurar"</strong> → definir apertura y cierre del registro</div>
                         <div class="detail-item"><div class="dot verde"></div>Desde aquí también se controla el estado (Abrir / Cerrar) y el modo (Auto / Manual)</div>
                         <div class="detail-item"><div class="dot verde"></div>En modo <strong>Auto</strong>, el sistema activa el registro automáticamente en la fecha de apertura</div>
+                        <div class="detail-item"><div class="dot verde"></div>Este rango define también el límite para programar el <strong>descuento de inscripción</strong> en <span class="screen-pill">Admin → Conceptos de Pago</span></div>
                     </div>
                     <div class="info-box verde">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -405,9 +406,13 @@
                 <div class="step-body" x-show="paso === '3'" x-cloak x-transition>
                     <div class="detail-list">
                         <div class="detail-item"><div class="dot"></div>El aspirante aprobado accede al pago desde su página de seguimiento</div>
-                        <div class="detail-item"><div class="dot"></div>Monto calculado automáticamente según el nivel (licenciatura / maestría / doctorado)</div>
+                        <div class="detail-item"><div class="dot"></div>Monto calculado automáticamente según el nivel (licenciatura / maestría / doctorado), aplicando el descuento de inscripción si está vigente</div>
                         <div class="detail-item"><div class="dot"></div>Redirige al checkout de <strong>MercadoPago</strong></div>
                         <div class="detail-item"><div class="dot"></div>El webhook de MP actualiza el estado del pago automáticamente</div>
+                    </div>
+                    <div class="info-box verde">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        El descuento de inscripción configurado en <span class="screen-pill">Admin → Conceptos de Pago</span> solo aplica dentro del rango de fechas programado (que debe caer dentro del periodo de inscripción del cuatrimestre activo). Fuera de ese rango se cobra el precio normal, y se desactiva automáticamente al cerrar el periodo de inscripción, sin intervención manual.
                     </div>
                     <div class="info-box dorado">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -546,6 +551,7 @@
                 <li>Correos en cada etapa del flujo</li>
                 <li>Activación automática por fecha</li>
                 <li>Select de registro dinámico desde BD</li>
+                <li>Descuento de inscripción activo solo dentro de su rango de fechas</li>
             </ul>
         </div>
     </div>

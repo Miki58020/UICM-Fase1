@@ -58,7 +58,7 @@ class PagoController extends Controller
 
                 $nombrePrograma = $aspirante->programa->nombre ?? 'Programa academico';
                 $tituloItem     = 'Inscripcion UICM — ' . $nombrePrograma;
-                if ($tarifa && $tarifa->descuento > 0) {
+                if ($tarifa && $tarifa->descuentoVigente()) {
                     $tituloItem .= ' (' . number_format($tarifa->descuento, 0) . '% dto.)';
                 }
 
@@ -172,7 +172,7 @@ class PagoController extends Controller
                     'concepto'         => 'inscripcion',
                     'periodo'          => date('Y') . '-1',
                     'monto'            => $monto,
-                    'descuento'        => $tarifa->descuento ?? 0,
+                    'descuento'        => $this->descuentoAplicado($tarifa),
                     'monto_original'   => $tarifa->monto ?? $monto,
                     'fecha_pago'       => now()->toDateString(),
                     'estado'           => 'pendiente',
@@ -237,7 +237,7 @@ class PagoController extends Controller
                                 'concepto'         => 'inscripcion',
                                 'periodo'          => date('Y') . '-1',
                                 'monto'            => $payment->transaction_amount,
-                                'descuento'        => $tarifa->descuento ?? 0,
+                                'descuento'        => $this->descuentoAplicado($tarifa),
                                 'monto_original'   => $tarifa->monto ?? $payment->transaction_amount,
                                 'fecha_pago'       => now()->toDateString(),
                                 'estado'           => 'pendiente',
@@ -308,7 +308,7 @@ class PagoController extends Controller
                         'concepto'         => 'inscripcion',
                         'periodo'          => date('Y') . '-1',
                         'monto'            => $payment->transaction_amount,
-                        'descuento'        => $tarifa->descuento ?? 0,
+                        'descuento'        => $this->descuentoAplicado($tarifa),
                         'monto_original'   => $tarifa->monto ?? $payment->transaction_amount,
                         'fecha_pago'       => now()->toDateString(),
                         'estado'           => 'pendiente',
@@ -435,7 +435,7 @@ class PagoController extends Controller
         $tarifa = $this->obtenerTarifaInscripcion($programa);
 
         if ($tarifa) {
-            return round($tarifa->monto * (1 - $tarifa->descuento / 100), 2);
+            return $tarifa->precio_final;
         }
 
         $nivel = $programa?->nivel ?? 'licenciatura';
@@ -444,5 +444,10 @@ class PagoController extends Controller
             'doctorado' => 5000.00,
             default     => 3000.00,
         };
+    }
+
+    private function descuentoAplicado(?\App\Models\TarifaInscripcion $tarifa): float
+    {
+        return $tarifa && $tarifa->descuentoVigente() ? $tarifa->descuento : 0;
     }
 }

@@ -325,7 +325,7 @@
 
             <a href="{{ route('admin.usuarios.index') }}"
                @click="sidebarOpen = false"
-               data-tooltip="Usuarios del sistema"
+               data-tooltip="Usuarios"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.usuarios.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -337,7 +337,7 @@
 
             <a href="{{ route('admin.tarifas.index') }}"
                @click="sidebarOpen = false"
-               data-tooltip="Conceptos de pago"
+               data-tooltip="Conceptos"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.tarifas.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -364,7 +364,7 @@
             @endphp
             <a href="{{ route('admin.contactos.index') }}"
                @click="sidebarOpen = false"
-               data-tooltip="Mensajes de contacto"
+               data-tooltip="Mensajes"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.contactos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -639,7 +639,7 @@
             @endphp
             <a href="{{ route('finanzas.pagos.index') }}"
                @click="sidebarOpen = false"
-               data-tooltip="Validación de pagos"
+               data-tooltip="Pagos"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('finanzas.pagos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
