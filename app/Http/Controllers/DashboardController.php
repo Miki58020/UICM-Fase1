@@ -162,10 +162,10 @@ class DashboardController extends Controller
                 ],
             ],
             'usuariosPorRol'  => User::selectRaw('rol, count(*) as total')
-                ->whereNotIn('rol', ['alumno'])
+                ->whereNotIn('rol', ['alumno', 'profesor'])
                 ->groupBy('rol')
                 ->pluck('total', 'rol'),
-            'ultimosUsuarios' => User::whereNotIn('rol', ['alumno'])->latest()->take(6)->get(),
+            'ultimosUsuarios' => User::whereNotIn('rol', ['alumno', 'profesor'])->latest()->take(6)->get(),
         ];
     }
 }

@@ -652,7 +652,7 @@
                         </div>
 
                         {{-- Estado --}}
-                        <p class="text-xs {{ $hayPendientes ? 'text-red-500 font-semibold' : 'text-green-600 font-medium' }}">
+                        <p class="text-xs mt-auto {{ $hayPendientes ? 'text-red-500 font-semibold' : 'text-green-600 font-medium' }}">
                             {{ $hayPendientes ? 'Requiere atención' : 'Al día ✓' }}
                         </p>
 
@@ -707,14 +707,13 @@
                     </svg>
                     <h2 class="text-sm font-semibold text-gray-700">Distribución por rol</h2>
                 </div>
-                <div class="px-6 py-5 space-y-4 overflow-auto flex-1">
+                <div class="px-6 py-5 flex flex-col justify-around gap-4 overflow-auto flex-1">
                     @php
                         $rolDef = [
                             'admin'           => ['Administrador',   '#0F4229'],
                             'control_escolar' => ['Control Escolar', '#D4AF37'],
                             'finanzas'        => ['Finanzas',        '#EFAD5A'],
                             'coordinacion'    => ['Coordinación',    '#0F4229'],
-                            'profesor'        => ['Profesores',      '#6B7280'],
                         ];
                         $totalU = max($usuariosPorRol->sum(), 1);
                     @endphp
