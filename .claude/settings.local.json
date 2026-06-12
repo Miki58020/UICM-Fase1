@@ -131,7 +131,13 @@
       "Bash(pkill -9 -f \"php artisan\")",
       "Bash(grep -rn \"user_id\" database/migrations/*profesor*)",
       "Bash(grep -rln \"Profesor\" database/seeders/)",
-      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\Users\\\\Angel\\\\Desktop\\\\nu.PNG\"\\); Write-Output \"$\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\))"
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\Users\\\\Angel\\\\Desktop\\\\nu.PNG\"\\); Write-Output \"$\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\))",
+      "WebSearch",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\('C:\\\\Users\\\\Angel\\\\Desktop\\\\pru.PNG'\\); \"$\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\))",
+      "Bash(npm -v)",
+      "Bash(npx -v)",
+      "WebFetch(domain:www.mercadopago.com.mx)",
+      "WebFetch(domain:groups.google.com)"
     ]
   }
 }

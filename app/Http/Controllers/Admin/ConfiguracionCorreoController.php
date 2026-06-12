@@ -18,6 +18,14 @@ class ConfiguracionCorreoController extends Controller
             'password' => 'nullable|string',
         ]);
 
+        // El password guardado puede no ser descifrable con el APP_KEY actual
+        // (p. ej. si se cifró con una clave distinta). Se limpia el valor original
+        // antes de actualizar para que Eloquent no intente descifrarlo al comparar.
+        $configuracion->setRawAttributes(
+            array_merge($configuracion->getAttributes(), ['password' => null]),
+            true
+        );
+
         $configuracion->update($request->only(['mailer', 'host', 'port', 'username', 'password']));
 
         return redirect()->route('admin.apis.index', ['tab' => 'correo'])

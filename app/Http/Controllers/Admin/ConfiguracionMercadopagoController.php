@@ -15,6 +15,14 @@ class ConfiguracionMercadopagoController extends Controller
             'access_token' => 'required|string',
         ]);
 
+        // El access_token guardado puede no ser descifrable con el APP_KEY actual
+        // (p. ej. si se cifró con una clave distinta). Se limpia el valor original
+        // antes de actualizar para que Eloquent no intente descifrarlo al comparar.
+        $configuracion->setRawAttributes(
+            array_merge($configuracion->getAttributes(), ['access_token' => null]),
+            true
+        );
+
         $configuracion->update($request->only(['public_key', 'access_token']));
 
         return redirect()->route('admin.apis.index', ['tab' => 'mercadopago'])

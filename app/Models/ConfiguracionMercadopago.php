@@ -27,4 +27,13 @@ class ConfiguracionMercadopago extends Model
     {
         return self::where('activo', true)->first();
     }
+
+    public function accessTokenSeguro(): ?string
+    {
+        try {
+            return $this->access_token;
+        } catch (\Illuminate\Contracts\Encryption\DecryptException) {
+            return null;
+        }
+    }
 }

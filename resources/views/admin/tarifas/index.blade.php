@@ -175,59 +175,59 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
                     </div>
                 </div>
 
-                {{-- Descuento --}}
-                <div class="mb-4">
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                        Descuento (%)
-                    </label>
-                    <div class="relative">
-                        <input type="number" name="descuento" id="modal-descuento"
-                               min="0" max="100" step="0.01" placeholder="0" required
-                               oninput="actualizarPreview()"
-                               class="w-full pl-4 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:border-transparent"
-                               style="--tw-ring-color: #0F4229;">
-                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
-                    </div>
-                    <p class="mt-1 text-xs text-gray-400">Ingresa 0 si no aplica descuento.</p>
-                </div>
-
-                {{-- Vigencia del descuento (solo Inscripción) --}}
-                <div id="modal-descuento-fechas" class="mb-4 hidden">
-                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                        Vigencia del descuento
-                    </label>
-
-                    @if($regInicio && $regFin)
-                        <p class="mb-2 text-xs text-gray-400">
-                            Debe estar dentro del periodo de inscripción del cuatrimestre activo:
-                            <span class="font-semibold text-gray-600">
-                                {{ \Illuminate\Support\Carbon::parse($regInicio)->format('d/m/Y') }}
-                                - {{ \Illuminate\Support\Carbon::parse($regFin)->format('d/m/Y') }}
-                            </span>
-                        </p>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Desde</label>
-                                <input type="date" name="descuento_fecha_inicio" id="modal-descuento-inicio"
-                                       min="{{ $regInicio }}" max="{{ $regFin }}"
-                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:border-transparent"
-                                       style="--tw-ring-color: #0F4229;">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-400 mb-1">Hasta</label>
-                                <input type="date" name="descuento_fecha_fin" id="modal-descuento-fin"
-                                       min="{{ $regInicio }}" max="{{ $regFin }}"
-                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:border-transparent"
-                                       style="--tw-ring-color: #0F4229;">
-                            </div>
+                {{-- Descuento y vigencia --}}
+                <div class="mb-4 p-4 rounded-xl bg-uicm-gray space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                            Descuento (%)
+                        </label>
+                        <div class="relative">
+                            <input type="number" name="descuento" id="modal-descuento"
+                                   min="0" max="100" step="0.01" placeholder="0" required
+                                   oninput="actualizarPreview()"
+                                   class="w-full pl-4 pr-8 py-2.5 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
+                                   style="--tw-ring-color: #0F4229;">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
                         </div>
-                    @else
-                        <p class="text-xs font-medium" style="color:#b45309;">
-                            Configura primero el rango de inscripción del cuatrimestre activo para poder programar un descuento.
-                        </p>
-                        <input type="hidden" name="descuento_fecha_inicio" id="modal-descuento-inicio" value="">
-                        <input type="hidden" name="descuento_fecha_fin" id="modal-descuento-fin" value="">
-                    @endif
+                        <p class="mt-1 text-xs text-gray-400">Ingresa 0 si no aplica descuento.</p>
+                    </div>
+
+                    {{-- Vigencia del descuento (solo Inscripción) --}}
+                    <div id="modal-descuento-fechas" class="hidden">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                            Vigencia del descuento
+                        </label>
+
+                        @if($regInicio && $regFin)
+                            <span class="inline-block mb-3 text-xs font-bold px-2 py-1 rounded-lg"
+                                  style="background-color:#fef4e8; color:#b45309;">
+                                Rango permitido: {{ \Illuminate\Support\Carbon::parse($regInicio)->format('d/m/Y') }} - {{ \Illuminate\Support\Carbon::parse($regFin)->format('d/m/Y') }}
+                            </span>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Desde</label>
+                                    <input type="date" name="descuento_fecha_inicio" id="modal-descuento-inicio"
+                                           min="{{ $regInicio }}" max="{{ $regFin }}"
+                                           class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
+                                           style="--tw-ring-color: #0F4229;">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Hasta</label>
+                                    <input type="date" name="descuento_fecha_fin" id="modal-descuento-fin"
+                                           min="{{ $regInicio }}" max="{{ $regFin }}"
+                                           class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
+                                           style="--tw-ring-color: #0F4229;">
+                                </div>
+                            </div>
+                        @else
+                            <span class="inline-block text-xs font-bold px-2 py-1 rounded-lg"
+                                  style="background-color:#fef4e8; color:#b45309;">
+                                Configura primero el rango de inscripción del cuatrimestre activo para poder programar un descuento.
+                            </span>
+                            <input type="hidden" name="descuento_fecha_inicio" id="modal-descuento-inicio" value="">
+                            <input type="hidden" name="descuento_fecha_fin" id="modal-descuento-fin" value="">
+                        @endif
+                    </div>
                 </div>
 
                 {{-- Preview precio final --}}

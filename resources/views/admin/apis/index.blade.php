@@ -108,7 +108,8 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 font-semibold text-gray-700">Access Token</td>
                                 <td class="px-6 py-4 font-mono text-gray-600 text-xs">
-                                    {{ $configMercadopago ? Str::limit($configMercadopago->access_token, 20) . '••••••••••••' . substr($configMercadopago->access_token, -6) : '—' }}
+                                    @php $accessTokenActual = $configMercadopago?->accessTokenSeguro(); @endphp
+                                    {{ $accessTokenActual ? Str::limit($accessTokenActual, 20) . '••••••••••••' . substr($accessTokenActual, -6) : '—' }}
                                 </td>
                             </tr>
                         </tbody>
@@ -226,7 +227,8 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 font-semibold text-gray-700 whitespace-nowrap">Contraseña</td>
                                 <td class="px-6 py-4 font-mono text-gray-600 text-xs">
-                                    {{ $configCorreo?->password ? '••••••••••••' . substr($configCorreo->password, -4) : '—' }}
+                                    @php $passwordActual = $configCorreo?->passwordSeguro(); @endphp
+                                    {{ $passwordActual ? '••••••••••••' . substr($passwordActual, -4) : '—' }}
                                 </td>
                             </tr>
                         </tbody>
@@ -326,7 +328,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                 </label>
                 <div class="relative">
                     <input :type="showToken ? 'text' : 'password'" name="access_token"
-                           value="{{ old('access_token', $configMercadopago?->access_token) }}"
+                           value="{{ old('access_token', $configMercadopago?->accessTokenSeguro()) }}"
                            placeholder="TEST-xxxx o APP_USR-xxxx"
                            class="w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded-lg font-mono focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
@@ -534,7 +536,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                     </label>
                     <div class="relative">
                         <input :type="showPass ? 'text' : 'password'" name="password"
-                               value="{{ old('password', $configCorreo?->password) }}"
+                               value="{{ old('password', $configCorreo?->passwordSeguro()) }}"
                                placeholder="contraseña del servidor SMTP"
                                class="w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded-lg font-mono focus:outline-none"
                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"

@@ -29,4 +29,13 @@ class ConfiguracionCorreo extends Model
     {
         return self::where('activo', true)->first();
     }
+
+    public function passwordSeguro(): ?string
+    {
+        try {
+            return $this->password;
+        } catch (\Illuminate\Contracts\Encryption\DecryptException) {
+            return null;
+        }
+    }
 }

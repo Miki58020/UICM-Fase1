@@ -246,6 +246,13 @@ class PagoController extends Controller
                         );
                     }
                 }
+            } catch (\MercadoPago\Exceptions\MPApiException $e) {
+                Log::error('MP retorno MPApiException', [
+                    'message'  => $e->getMessage(),
+                    'httpCode' => $e->getApiResponse()?->getStatusCode(),
+                    'body'     => $e->getApiResponse()?->getContent(),
+                    'payment_id' => $paymentId,
+                ]);
             } catch (\Exception $e) {
                 Log::error('MP retorno error: ' . $e->getMessage());
             }
