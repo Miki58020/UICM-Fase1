@@ -57,6 +57,12 @@
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
+        <x-banner-desarrollo>
+            El cobro de reinscripción se genera correctamente y Finanzas puede aprobarlo/rechazarlo desde
+            <strong>Pagos en revisión</strong>. Falta integrar el lado del alumno: subir comprobante o pagar
+            en línea desde su panel. Por ahora, aprueba manualmente para continuar el flujo.
+        </x-banner-desarrollo>
+
         {{-- Alerta sin periodo activo --}}
         @if (!$periodoActivo)
             <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-yellow-50" style="border-color: #EFAD5A;">

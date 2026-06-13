@@ -57,6 +57,35 @@ class CargaAcademicaController extends Controller
             ->with('carga_success', "Carga académica generada para el grupo {$grupo->clave}.");
     }
 
+    public function plantillaMigracion()
+    {
+        $columnas = [
+            'nombre', 'apellido_paterno', 'apellido_materno', 'email',
+            'curp', 'telefono', 'fecha_nacimiento', 'matricula', 'cuatrimestre_actual',
+        ];
+
+        $ejemplo = [
+            'Juan', 'Pérez', 'García', 'juan.perez@example.com',
+            'PEGJ900101HDFRRN09', '5512345678', '1990-01-01', '2023UICM00123', '3',
+        ];
+
+        $filas = [$columnas, $ejemplo];
+
+        $callback = function () use ($filas) {
+            $handle = fopen('php://output', 'w');
+            fwrite($handle, "\xEF\xBB\xBF"); // BOM para acentos en Excel
+            foreach ($filas as $fila) {
+                fputcsv($handle, $fila);
+            }
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="plantilla_migracion_alumnos.csv"',
+        ]);
+    }
+
     public function actualizar(Request $request, CargaAcademica $carga)
     {
         $request->validate([

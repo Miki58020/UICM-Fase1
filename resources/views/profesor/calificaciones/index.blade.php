@@ -28,10 +28,94 @@
             </button>
         </div>
 
-        @if ($cargas->isEmpty())
-            <div class="bg-white rounded-2xl shadow-md p-12 text-center text-gray-400 text-sm">
-                No tienes materias asignadas por el momento.
+        @if ($ilustrativo)
+            <x-banner-desarrollo>
+                Este panel está en desarrollo. La información de materias, grupos y alumnos que se muestra
+                a continuación es <strong>ilustrativa</strong>, únicamente para mostrar cómo se vería una vez
+                que se asignen materias y grupos reales a los profesores.
+            </x-banner-desarrollo>
+        @endif
+
+        {{-- Resumen / dashboard --}}
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+            <div class="bg-white rounded-2xl shadow-md p-4">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Materias</p>
+                <p class="text-2xl font-extrabold" style="color: #0F4229;">{{ $stats['materias'] }}</p>
             </div>
+            <div class="bg-white rounded-2xl shadow-md p-4">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Grupos</p>
+                <p class="text-2xl font-extrabold" style="color: #0F4229;">{{ $stats['grupos'] }}</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-md p-4">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Alumnos</p>
+                <p class="text-2xl font-extrabold" style="color: #0F4229;">{{ $stats['alumnos'] }}</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-md p-4">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Por calificar</p>
+                <p class="text-2xl font-extrabold" style="color: #D4AF37;">{{ $stats['pendientes'] }}</p>
+            </div>
+        </div>
+
+        @if ($cargas->isEmpty())
+            @if ($ilustrativo)
+                {{-- Vista previa ilustrativa --}}
+                @php
+                    $filasEjemplo = [
+                        ['grupo' => 'PSI-2026-3-A', 'materia' => 'Introducción a la Psicología Educativa', 'clave' => 'PSI-101', 'horario' => 'Lun y Mié 8:00 - 10:00', 'aula' => 'A-101'],
+                        ['grupo' => 'MBA-2026-3-A', 'materia' => 'Dirección Estratégica',                  'clave' => 'MBA-101', 'horario' => 'Mar y Jue 16:00 - 18:00', 'aula' => 'B-203'],
+                        ['grupo' => 'DOE-2026-3-A', 'materia' => 'Epistemología de la Investigación',       'clave' => 'DOE-101', 'horario' => 'Vie 9:00 - 13:00',          'aula' => 'C-305'],
+                    ];
+                @endphp
+                <div class="mb-8">
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-3">
+                        Período: Cuatrimestre Junio-Septiembre 2026
+                    </h2>
+                    <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                        <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        <th class="px-6 py-3">Grupo</th>
+                                        <th class="px-6 py-3">Materia</th>
+                                        <th class="px-6 py-3">Horario</th>
+                                        <th class="px-6 py-3">Aula</th>
+                                        <th class="px-6 py-3 text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    @foreach ($filasEjemplo as $fila)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-700">
+                                            {{ $fila['grupo'] }}
+                                        </td>
+                                        <td class="px-6 py-4 font-medium text-gray-800">
+                                            {{ $fila['materia'] }}
+                                            <span class="block text-xs text-gray-400">{{ $fila['clave'] }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600 text-xs">
+                                            {{ $fila['horario'] }}
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600 text-xs">
+                                            {{ $fila['aula'] }}
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold text-gray-400 bg-gray-100 whitespace-nowrap">
+                                                Solo ilustrativo
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <div class="bg-white rounded-2xl shadow-md p-12 text-center text-gray-400 text-sm">
+                    No tienes materias asignadas por el momento.
+                </div>
+            @endif
         @else
             {{-- Agrupar por período --}}
             @foreach ($cargas->groupBy(fn($c) => $c->periodo->nombre ?? 'Sin período') as $periodoNombre => $cargasPeriodo)

@@ -78,6 +78,14 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
                         Los cambios aplican a nuevos pagos inmediatamente.
                     </p>
 
+                    @if($key !== 'inscripcion')
+                        <x-banner-desarrollo>
+                            Estas tarifas quedan configuradas para cuando se implemente el módulo de cobro de
+                            {{ strtolower($info['label']) }}. Por ahora solo se usan activamente las tarifas de
+                            <strong>Inscripción</strong>.
+                        </x-banner-desarrollo>
+                    @endif
+
                     <div class="space-y-3">
                         @forelse($tarifas[$key] ?? [] as $tarifa)
                         <div class="flex items-center gap-3 sm:gap-4 rounded-xl px-3 sm:px-5 py-3 sm:py-4 bg-uicm-gray">
