@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Mail\AspiranteAprobado;
 use App\Mail\AspiranteRechazado;
 use App\Mail\RegistroConfirmado;
-use App\Models\Alumno;
 use App\Models\Aspirante;
 use App\Models\Periodo;
 use App\Models\PeriodoPrograma;
@@ -51,27 +50,12 @@ class AspiranteController extends Controller
             );
         }
 
-        $matricula = $this->generarMatricula($aspirante);
-
-        Alumno::create([
-            'matricula'           => $matricula,
-            'aspirante_id'        => $aspirante->id,
-            'programa_id'         => $aspirante->programa_id,
-            'periodo_id'          => $periodoObj?->id,
-            'nombre'              => $aspirante->nombre,
-            'apellido_paterno'    => $aspirante->apellido_paterno,
-            'apellido_materno'    => $aspirante->apellido_materno,
-            'email'               => $aspirante->email,
-            'cuatrimestre_actual' => 1,
-            'estado'              => 'activo',
-        ]);
-
         $aspirante->update(['estado' => 'aprobado']);
 
         Mail::to($aspirante->email)->send(new AspiranteAprobado($aspirante));
 
         return redirect()->route('admin.aspirantes.show', $aspirante)
-            ->with('success', "Aspirante aprobado. Matrícula generada: {$matricula}");
+            ->with('success', "Expediente aprobado. El aspirante puede proceder con el pago. Folio: {$aspirante->folio}");
     }
 
     public function rechazar(Request $request, Aspirante $aspirante)
@@ -279,44 +263,6 @@ class AspiranteController extends Controller
         $year = $periodo ? $periodo->fecha_inicio_registro->year : now()->year;
         $prefix = 'UICM-' . $year . '-';
         $count = Aspirante::where('folio', 'like', $prefix . '%')->count() + 1;
-        return $prefix . str_pad($count, 4, '0', STR_PAD_LEFT);
-    }
-
-    private function generarMatricula(Aspirante $aspirante): string
-    {
-        $periodo = Periodo::where('nombre', $aspirante->generacion)->first();
-
-        // YY — últimos 2 dígitos del año del período
-        $yy = $periodo
-            ? $periodo->fecha_inicio_registro->format('y')
-            : now()->format('y');
-
-        // P — número de período según el mes de inicio (1=Sep-Dic, 2=Ene-Abr, 3=May-Ago)
-        $mes = $periodo
-            ? (int) $periodo->fecha_inicio_registro->format('n')
-            : (int) now()->format('n');
-        $p = match(true) {
-            $mes >= 9              => 1,
-            $mes >= 1 && $mes <= 4 => 2,
-            default                => 3,
-        };
-
-        // G y C — desde periodo_programa
-        $pp = PeriodoPrograma::where('periodo_id', $periodo?->id)
-            ->where('programa_id', $aspirante->programa_id)
-            ->first();
-
-        $g = $pp?->numero_generacion ?? 1;
-        $c = $pp?->numero_carrera ?? ($aspirante->programa->numero_carrera ?? 0);
-
-        // Prefijo del grupo de matrícula
-        $prefix = $yy . $p . $g . $c;
-
-        // XXXX — autoincrement por carrera y periodo
-        $count = Alumno::where('programa_id', $aspirante->programa_id)
-            ->where('periodo_id', $periodo?->id)
-            ->count() + 1;
-
         return $prefix . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 

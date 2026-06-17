@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Mail\PagoAprobado;
 use App\Mail\PagoRechazado;
+use App\Models\Alumno;
 use App\Models\Aspirante;
 use App\Models\ConfiguracionMercadopago;
 use App\Models\Pago;
+use App\Models\Periodo;
+use App\Models\PeriodoPrograma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -377,6 +380,27 @@ class PagoController extends Controller
             'fecha_pago' => $pago->fecha_pago ?? now()->toDateString(),
         ]);
 
+        // Si es pago de inscripción de un aspirante nuevo, generar matrícula y crear Alumno
+        if ($pago->aspirante_id && !Alumno::where('aspirante_id', $pago->aspirante_id)->exists()) {
+            $aspirante = $pago->aspirante->load('programa');
+            $periodoObj = Periodo::where('nombre', $aspirante->generacion)->first();
+
+            $matricula = $this->generarMatricula($aspirante);
+
+            Alumno::create([
+                'matricula'           => $matricula,
+                'aspirante_id'        => $aspirante->id,
+                'programa_id'         => $aspirante->programa_id,
+                'periodo_id'          => $periodoObj?->id,
+                'nombre'              => $aspirante->nombre,
+                'apellido_paterno'    => $aspirante->apellido_paterno,
+                'apellido_materno'    => $aspirante->apellido_materno,
+                'email'               => $aspirante->email,
+                'cuatrimestre_actual' => 1,
+                'estado'              => 'activo',
+            ]);
+        }
+
         $email = $pago->aspirante?->email ?? $pago->alumno?->email;
         if ($email) {
             Mail::to($email)->send(new PagoAprobado($pago));
@@ -409,6 +433,39 @@ class PagoController extends Controller
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    private function generarMatricula(Aspirante $aspirante): string
+    {
+        $periodo = Periodo::where('nombre', $aspirante->generacion)->first();
+
+        $yy = $periodo
+            ? $periodo->fecha_inicio_registro->format('y')
+            : now()->format('y');
+
+        $mes = $periodo
+            ? (int) $periodo->fecha_inicio_registro->format('n')
+            : (int) now()->format('n');
+        $p = match(true) {
+            $mes >= 9              => 1,
+            $mes >= 1 && $mes <= 4 => 2,
+            default                => 3,
+        };
+
+        $pp = PeriodoPrograma::where('periodo_id', $periodo?->id)
+            ->where('programa_id', $aspirante->programa_id)
+            ->first();
+
+        $g = $pp?->numero_generacion ?? 1;
+        $c = $pp?->numero_carrera ?? ($aspirante->programa->numero_carrera ?? 0);
+
+        $prefix = $yy . $p . $g . $c;
+
+        $count = Alumno::where('programa_id', $aspirante->programa_id)
+            ->where('periodo_id', $periodo?->id)
+            ->count() + 1;
+
+        return $prefix . str_pad($count, 4, '0', STR_PAD_LEFT);
+    }
 
     private function configurarMP(): void
     {
