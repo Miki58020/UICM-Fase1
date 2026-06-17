@@ -127,7 +127,7 @@
                   <div class="rounded-lg px-2 py-1.5 text-center text-xs font-bold" style="background:#dcfce7; color:#166534;">✔ Aprueba</div>
                   <div class="rounded-lg px-2 py-1.5 text-center text-xs font-bold bg-red-50 text-red-700">✖ Rechaza</div>
                 </div>
-                <p class="text-xs text-gray-400 mt-1.5">Al aprobar → se genera la <strong>matrícula</strong>.<br>Al rechazar → correo con motivo.</p>
+                <p class="text-xs text-gray-400 mt-1.5">Al aprobar → aspirante puede proceder con el pago (se muestra el <strong>folio</strong>, aún no la matrícula).<br>Al rechazar → correo con motivo.</p>
               </div>
             </div>
 
@@ -182,6 +182,7 @@
                   <div class="rounded-lg px-2 py-1.5 text-center text-xs font-bold" style="background:#dcfce7; color:#166534;">✔ Aprobado</div>
                   <div class="rounded-lg px-2 py-1.5 text-center text-xs font-bold bg-red-50 text-red-700">✖ Rechazado</div>
                 </div>
+                <p class="text-xs text-gray-400 mt-1.5">Al aprobar → se crea el registro <strong>Alumno</strong> con <strong>matrícula</strong> generada.</p>
               </div>
             </div>
 
@@ -467,6 +468,44 @@
           </div>
         </div>
 
+        <div class="connector-v h-6" style="width:2px;background:#f43f5e;"></div>
+        <div class="text-xs text-gray-400 font-semibold bg-white px-3 py-1 rounded-full shadow-sm border border-gray-200">auto-actualiza →</div>
+        <div class="connector-v h-6" style="width:2px;background:#f43f5e;"></div>
+
+        <!-- Sistema de Créditos -->
+        <div class="w-full max-w-2xl">
+          <div class="bg-white rounded-2xl shadow overflow-hidden">
+            <div class="h-1.5" style="background:#D4AF37;"></div>
+            <div class="px-5 py-4 flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style="background:#fffbea;">⭐</div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="font-extrabold text-gray-900">Sistema de Créditos</p>
+                  <span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#fef9ec; color:#92670b;">Automático</span>
+                </div>
+                <p class="text-sm text-gray-500">Al guardar calificaciones, el sistema recalcula <code class="bg-gray-100 px-1 rounded">creditos_acumulados</code> de cada alumno sumando los créditos de las materias con calificación final aprobatoria (≥ 7.0).</p>
+                <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                  <div class="bg-gray-50 rounded-lg p-2">
+                    <p class="font-bold text-gray-700 mb-0.5">Créditos por materia</p>
+                    <p>Definidos por Coordinación (1–20 cr. c/u)</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-2">
+                    <p class="font-bold text-gray-700 mb-0.5">Total del plan</p>
+                    <p>Lic: 216 · Maest: 120 · Doc: 198 cr.</p>
+                  </div>
+                  <div class="bg-yellow-50 text-yellow-800 rounded-lg p-2 font-semibold">
+                    Final = extraord. si existe, si no = avg(P1, P2)
+                  </div>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-2 text-xs">
+                  <span class="bg-green-50 text-green-700 rounded-lg px-3 py-1.5 font-semibold">Alumno ve kárdex en /alumno/kardex</span>
+                  <span class="bg-indigo-50 text-indigo-700 rounded-lg px-3 py-1.5">Coordinación ve cobertura en /admin/programas</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Nota sobre generación de carga -->
@@ -509,10 +548,11 @@
               <div><span class="font-mono bg-gray-200 px-1 rounded">clave</span> único, max 10</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">nivel</span> licenciatura|maestria|doctorado</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">duracion_cuatrimestres</span> 1-20</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">total_creditos</span> nullable, plan de estudios</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">activo</span> bool</div>
             </div>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Notas:</p>
-            <p class="text-xs text-gray-600">Catálogo base — no cambia por cuatrimestre. Solo programas activos pueden asignarse a cuatrimestres. La clave define la abreviatura de los grupos (ej: <code class="bg-gray-100 px-1 rounded">lengua_inglesa</code> → <strong>LEI</strong>).</p>
+            <p class="text-xs text-gray-600">Catálogo base — no cambia por cuatrimestre. Solo programas activos pueden asignarse a cuatrimestres. La clave define la abreviatura de los grupos (ej: <code class="bg-gray-100 px-1 rounded">lengua_inglesa</code> → <strong>LEI</strong>). El campo <code class="bg-gray-100 px-1 rounded">total_creditos</code> define el denominador del kárdex; la tabla de programas muestra cuántos créditos de las materias definidas ya cubren ese plan.</p>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
             <div class="text-xs space-y-0.5 text-gray-600">
               <p>→ hasMany <strong>Aspirante</strong></p>
@@ -607,9 +647,10 @@
               <div><span class="font-mono bg-gray-200 px-1 rounded">programa_id</span> FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">grupo_id</span> nullable FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">cuatrimestre_actual</span> 1-12</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">creditos_acumulados</span></div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">creditos_acumulados</span> auto-update al guardar califs.</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> enum</div>
             </div>
+            <p class="text-xs font-semibold text-yellow-700 mt-2 bg-yellow-50 rounded px-2 py-1"><code>creditos_acumulados</code> se recalcula automáticamente cada vez que el profesor guarda calificaciones en el grupo del alumno.</p>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
             <div class="text-xs space-y-0.5 text-gray-600">
               <p>→ belongsTo <strong>User</strong>, <strong>Aspirante</strong>, <strong>Programa</strong>, <strong>Grupo</strong></p>
@@ -895,7 +936,8 @@
             <p class="text-xs text-gray-400">Gestión académica completa</p>
           </div>
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Programas académicos (crear/editar/activar — catálogo base)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Programas académicos (crear/editar/activar — catálogo base, incl. total de créditos del plan)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Indicador de cobertura de créditos por programa (créditos definidos en materias vs total del plan)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cuatrimestres: crear + configurar inscripción + asignar carreras</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Grupos (se crean automáticamente al agregar carrera al cuatrimestre)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Materias (crear/editar/activar)</span></li>
@@ -939,6 +981,7 @@
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver su dashboard personal (/alumno)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Consultar sus calificaciones</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Kárdex académico (/alumno/kardex): calificaciones, créditos acumulados vs plan, promedio, imprimible</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver y descargar comprobantes de pago</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cambiar su contraseña</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Check-estado (polling de sesión activa)</span></li>
@@ -969,7 +1012,7 @@
                 <span class="text-gray-400 text-sm">→</span>
                 <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#dcfce7; color:#166534;">aprobado</span>
               </div>
-              <p class="text-xs text-gray-400 ml-4">Control Escolar revisa y aprueba documentos → se genera matrícula y registro Alumno</p>
+              <p class="text-xs text-gray-400 ml-4">Control Escolar revisa y aprueba documentos → aspirante puede proceder con el pago (el registro Alumno y la matrícula se generan al aprobar el <strong>pago</strong>, no aquí)</p>
               <div class="flex items-center gap-2">
                 <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">pendiente</span>
                 <span class="text-gray-400 text-sm">→</span>
@@ -991,7 +1034,7 @@
                 <span class="text-gray-400 text-sm">→</span>
                 <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#dcfce7; color:#166534;">aprobado</span>
               </div>
-              <p class="text-xs text-gray-400 ml-4">Finanzas valida comprobante → habilita generación de acceso al portal</p>
+              <p class="text-xs text-gray-400 ml-4">Finanzas valida comprobante → se crea el registro <strong>Alumno</strong> con matrícula generada → habilita generación de acceso al portal por Control Escolar</p>
               <div class="flex items-center gap-2">
                 <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">pendiente</span>
                 <span class="text-gray-400 text-sm">→</span>
@@ -1095,7 +1138,7 @@
           </div>
           <div class="bg-gray-50 rounded-xl p-3 border-l-2" style="border-color:#0F4229;">
             <p class="font-bold text-gray-700">AspiranteAprobado</p>
-            <p class="text-gray-500 mt-0.5">Aprobación + matrícula asignada + instrucciones de pago.</p>
+            <p class="text-gray-500 mt-0.5">Aprobación de expediente + folio + instrucciones de pago. (La matrícula se genera al aprobar el pago, no en este correo.)</p>
           </div>
           <div class="bg-gray-50 rounded-xl p-3 border-l-2 border-red-400">
             <p class="font-bold text-gray-700">AspiranteRechazado</p>
@@ -1124,7 +1167,7 @@
   </main>
 
   <footer class="text-center py-6 text-xs text-gray-400 mt-4">
-    UICM — Mapa del Sistema · Actualizado el 05 Jun 2026 · Solo para referencia interna
+    UICM — Mapa del Sistema · Actualizado el 17 Jun 2026 · Solo para referencia interna
   </footer>
 
 </body>

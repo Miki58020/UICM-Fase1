@@ -140,6 +140,7 @@
                         <th class="px-6 py-3">Clave</th>
                         <th class="px-6 py-3">Nivel</th>
                         <th class="px-6 py-3 text-center">Duración</th>
+                        <th class="px-6 py-3 text-center">Créditos plan</th>
                         <th class="px-6 py-3 text-center">Estado</th>
                         <th class="px-6 py-3 text-center">Acciones</th>
                     </tr>
@@ -169,6 +170,22 @@
                         </td>
                         <td class="px-6 py-4 text-center text-gray-600">{{ $programa->duracion_cuatrimestres }} cuatrimestres</td>
                         <td class="px-6 py-4 text-center">
+                            @php
+                                $definidos = $programa->materias->sum('creditos');
+                                $total_c   = $programa->total_creditos;
+                            @endphp
+                            @if($total_c)
+                                <span class="text-xs font-mono {{ $definidos >= $total_c ? 'text-green-700 font-bold' : 'text-gray-500' }}">
+                                    {{ $definidos }} / {{ $total_c }}
+                                </span>
+                                @if($definidos < $total_c)
+                                    <span class="block text-[10px] text-amber-600">faltan {{ $total_c - $definidos }} cr.</span>
+                                @endif
+                            @else
+                                <span class="text-gray-300 text-xs">—</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-center">
                             <form method="POST" action="{{ route('admin.programas.toggle', $programa->id) }}">
                                 @csrf @method('PATCH')
                                 @if($programa->activo)
@@ -190,7 +207,7 @@
                             </form>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <button onclick="abrirEditar({{ $programa->id }}, '{{ addslashes($programa->nombre) }}', '{{ $programa->clave }}', '{{ $programa->nivel }}', {{ $programa->duracion_cuatrimestres }})"
+                            <button onclick="abrirEditar({{ $programa->id }}, '{{ addslashes($programa->nombre) }}', '{{ $programa->clave }}', '{{ $programa->nivel }}', {{ $programa->duracion_cuatrimestres }}, {{ $programa->total_creditos ?? 'null' }})"
                                     class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
                                     style="background-color: #D4AF37;"
                                     onmouseover="this.style.backgroundColor='#b8962e'"
@@ -205,13 +222,13 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
+                        <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
                             No hay programas registrados.
                         </td>
                     </tr>
                     @endforelse
                     <tr x-ref="sinResultados" style="display:none;">
-                        <td colspan="6" class="px-6 py-8 text-center text-sm text-gray-400">
+                        <td colspan="7" class="px-6 py-8 text-center text-sm text-gray-400">
                             No hay programas con ese criterio de búsqueda.
                         </td>
                     </tr>
@@ -273,14 +290,25 @@
                     </select>
                 </div>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Duración (cuatrimestres) <span class="text-red-500">*</span></label>
-                <input type="number" name="duracion_cuatrimestres" value="{{ old('duracion_cuatrimestres', 12) }}"
-                       min="1" max="20"
-                       class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
-                       onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
-                       required>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Duración (cuatrimestres) <span class="text-red-500">*</span></label>
+                    <input type="number" name="duracion_cuatrimestres" value="{{ old('duracion_cuatrimestres', 12) }}"
+                           min="1" max="20"
+                           class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
+                           required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Total de créditos del plan</label>
+                    <input type="number" name="total_creditos" value="{{ old('total_creditos') }}"
+                           min="1" max="999" placeholder="Ej. 216"
+                           class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <p class="text-xs text-gray-400 mt-1">Créditos totales que debe cubrir el alumno.</p>
+                </div>
             </div>
             <div class="flex justify-end gap-3 pt-2">
                 <button type="button" onclick="document.getElementById('modal-crear').classList.add('hidden')"
@@ -350,6 +378,14 @@
                            required>
                 </div>
             </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Total de créditos del plan</label>
+                <input type="number" id="edit-total-creditos" name="total_creditos" min="1" max="999" placeholder="Ej. 216"
+                       class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                       onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                <p class="text-xs text-gray-400 mt-1">Créditos totales que debe cubrir el alumno.</p>
+            </div>
             <div class="flex justify-end gap-3 pt-2">
                 <button type="button" onclick="document.getElementById('modal-editar').classList.add('hidden')"
                         class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
@@ -371,12 +407,13 @@
 
 @push('scripts')
 <script>
-function abrirEditar(id, nombre, clave, nivel, duracion) {
+function abrirEditar(id, nombre, clave, nivel, duracion, totalCreditos) {
     document.getElementById('form-editar').action = '/admin/programas/' + id;
-    document.getElementById('edit-nombre').value   = nombre;
-    document.getElementById('edit-clave').value    = clave;
-    document.getElementById('edit-nivel').value    = nivel;
-    document.getElementById('edit-duracion').value = duracion;
+    document.getElementById('edit-nombre').value          = nombre;
+    document.getElementById('edit-clave').value           = clave;
+    document.getElementById('edit-nivel').value           = nivel;
+    document.getElementById('edit-duracion').value        = duracion;
+    document.getElementById('edit-total-creditos').value  = totalCreditos || '';
     document.getElementById('modal-editar').classList.remove('hidden');
 }
 @if($errors->any())

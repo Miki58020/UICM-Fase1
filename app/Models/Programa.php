@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Programa extends Model
 {
-    protected $fillable = ['clave', 'nombre', 'nivel', 'duracion_cuatrimestres', 'activo', 'numero_carrera'];
+    protected $fillable = ['clave', 'nombre', 'nivel', 'duracion_cuatrimestres', 'total_creditos', 'activo', 'numero_carrera'];
 
     public function aspirantes()
     {

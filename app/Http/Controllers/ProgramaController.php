@@ -10,7 +10,7 @@ class ProgramaController extends Controller
 {
     public function index()
     {
-        $programas = Programa::orderBy('nivel')->orderBy('nombre')->get();
+        $programas = Programa::with('materias')->orderBy('nivel')->orderBy('nombre')->get();
         return view('admin.programas.index', compact('programas'));
     }
 
@@ -21,6 +21,7 @@ class ProgramaController extends Controller
             'clave'                  => 'required|string|max:10|unique:programas,clave|alpha_dash',
             'nivel'                  => 'required|in:licenciatura,maestria,doctorado',
             'duracion_cuatrimestres' => 'required|integer|min:1|max:20',
+            'total_creditos'         => 'nullable|integer|min:1|max:999',
         ], [
             'clave.alpha_dash' => 'La clave solo puede contener letras, números y guiones bajos.',
             'clave.unique'     => 'Esa clave ya está en uso.',
@@ -31,6 +32,7 @@ class ProgramaController extends Controller
             'clave'                  => strtolower($request->clave),
             'nivel'                  => $request->nivel,
             'duracion_cuatrimestres' => $request->duracion_cuatrimestres,
+            'total_creditos'         => $request->total_creditos ?: null,
             'activo'                 => true,
         ]);
 
@@ -44,12 +46,14 @@ class ProgramaController extends Controller
             'nombre'                 => 'required|string|max:120',
             'nivel'                  => 'required|in:licenciatura,maestria,doctorado',
             'duracion_cuatrimestres' => 'required|integer|min:1|max:20',
+            'total_creditos'         => 'nullable|integer|min:1|max:999',
         ]);
 
         $programa->update([
             'nombre'                 => $request->nombre,
             'nivel'                  => $request->nivel,
             'duracion_cuatrimestres' => $request->duracion_cuatrimestres,
+            'total_creditos'         => $request->total_creditos ?: null,
         ]);
 
         return redirect()->route('admin.programas.index')

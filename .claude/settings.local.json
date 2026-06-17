@@ -145,7 +145,8 @@
       "Bash(npm -v)",
       "Bash(npx -v)",
       "WebFetch(domain:www.mercadopago.com.mx)",
-      "WebFetch(domain:groups.google.com)"
+      "WebFetch(domain:groups.google.com)",
+      "PowerShell(cd \"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\"; php artisan tinker --execute=\"App\\\\Models\\\\Programa::orderBy\\('nivel'\\)->orderBy\\('nombre'\\)->get\\(['nombre','nivel','total_creditos']\\)->each\\(function\\(\\\\$p\\){ echo \\\\$p->nivel.': '.\\\\$p->nombre.' -> '.\\\\$p->total_creditos.PHP_EOL; }\\);\" 2>&1)"
     ]
   }
 }

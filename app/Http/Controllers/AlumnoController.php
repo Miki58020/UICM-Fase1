@@ -170,15 +170,12 @@ class AlumnoController extends Controller
         $reprobadas = $materias->filter(fn($m) => $m['calFinal'] !== null && !$m['aprobado'])->count();
         $pendientes = $materias->filter(fn($m) => $m['calFinal'] === null)->count();
 
-        $creditosAprobados     = $materias->filter(fn($m) => $m['aprobado'])->sum(fn($m) => $m['carga']->materia->creditos ?? 0);
-        $totalCreditosPrograma = $alumno->programa_id
-            ? \App\Models\Materia::where('programa_id', $alumno->programa_id)->where('activo', true)->sum('creditos')
-            : 0;
+        $totalCreditosPrograma = $alumno->programa?->total_creditos ?? 0;
 
         return view('alumno.kardex', compact(
             'alumno', 'materias', 'promedioGeneral',
             'aprobadas', 'reprobadas', 'pendientes',
-            'creditosAprobados', 'totalCreditosPrograma'
+            'totalCreditosPrograma'
         ));
     }
 

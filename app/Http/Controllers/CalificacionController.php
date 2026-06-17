@@ -141,6 +141,41 @@ class CalificacionController extends Controller
             return back()->withErrors([implode(' ', $errores)]);
         }
 
+        // Recalcular creditos_acumulados para los alumnos con calificaciones en este grupo
+        if ($guardadas > 0) {
+            $alumnos = Alumno::whereIn('id', $alumnosDelGrupo)->get();
+            foreach ($alumnos as $alumno) {
+                $califs = Calificacion::where('alumno_id', $alumno->id)
+                    ->with('cargaAcademica.materia')
+                    ->get()
+                    ->groupBy('carga_academica_id');
+
+                $creditosAprobados = 0;
+                foreach ($califs as $cargaId => $registros) {
+                    $materia  = $registros->first()?->cargaAcademica?->materia;
+                    if (!$materia) continue;
+
+                    $ex = $registros->first(fn($r) => $r->tipo === 'extraordinario');
+                    $p1 = $registros->first(fn($r) => $r->tipo === 'parcial' && $r->numero == 1);
+                    $p2 = $registros->first(fn($r) => $r->tipo === 'parcial' && $r->numero == 2);
+
+                    if ($ex) {
+                        $final = $ex->calificacion;
+                    } elseif ($p1 && $p2) {
+                        $final = ($p1->calificacion + $p2->calificacion) / 2;
+                    } else {
+                        continue;
+                    }
+
+                    if ($final >= 7.0) {
+                        $creditosAprobados += $materia->creditos ?? 0;
+                    }
+                }
+
+                $alumno->update(['creditos_acumulados' => $creditosAprobados]);
+            }
+        }
+
         return back()->with('success', $guardadas > 0
             ? 'Calificaciones guardadas correctamente.'
             : 'No se realizaron cambios.');
