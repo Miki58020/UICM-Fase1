@@ -138,7 +138,7 @@
       "Bash(MSYS_NO_PATHCONV=1 git show *)",
       "PowerShell(Get-CimInstance *)",
       "Bash(taskkill //F //PID 16040 //T)",
-      "Bash(taskkill //F //PID 12208 //T)"
+      "Bash(taskkill //F //PID 12208 //T)",
       "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\Users\\\\Angel\\\\Desktop\\\\nu.PNG\"\\); Write-Output \"$\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\))",
       "WebSearch",
       "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\('C:\\\\Users\\\\Angel\\\\Desktop\\\\pru.PNG'\\); \"$\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\))",

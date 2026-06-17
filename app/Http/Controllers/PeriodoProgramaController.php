@@ -46,7 +46,8 @@ class PeriodoProgramaController extends Controller
                 'exists:programas,id',
                 Rule::unique('periodo_programa')->where('periodo_id', $periodo->id),
             ],
-            'num_grupos' => 'required|integer|min:1|max:10',
+            'num_grupos'  => 'required|integer|min:1|max:10',
+            'capacidad'   => 'required|integer|min:1|max:500',
         ], [
             'programa_id.unique' => 'Esta carrera ya está agregada a este periodo.',
         ]);
@@ -72,7 +73,7 @@ class PeriodoProgramaController extends Controller
         ]);
 
         // Crear grupos automáticamente
-        $this->crearGrupos($programa, $periodo, (int) $request->num_grupos);
+        $this->crearGrupos($programa, $periodo, (int) $request->num_grupos, (int) $request->capacidad);
 
         return redirect()->route('admin.periodos.index')
             ->with('success', "Carrera \"{$programa->nombre}\" agregada con {$request->num_grupos} grupo(s).")
@@ -131,7 +132,7 @@ class PeriodoProgramaController extends Controller
             ->with('periodos_tab_periodo', $periodo->id);
     }
 
-    private function crearGrupos(Programa $programa, Periodo $periodo, int $cantidad): void
+    private function crearGrupos(Programa $programa, Periodo $periodo, int $cantidad, int $capacidad): void
     {
         $partes      = array_filter(explode('_', $programa->clave));
         $partes      = array_values($partes);
@@ -166,7 +167,7 @@ class PeriodoProgramaController extends Controller
                 'programa_id'  => $programa->id,
                 'periodo_id'   => $periodo->id,
                 'cuatrimestre' => 1,
-                'capacidad'    => 30,
+                'capacidad'    => $capacidad,
             ]);
         }
     }

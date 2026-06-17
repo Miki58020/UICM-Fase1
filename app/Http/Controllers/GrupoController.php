@@ -24,7 +24,7 @@ class GrupoController extends Controller
             'programa_id'  => 'required|exists:programas,id',
             'periodo_id'   => 'required|exists:periodos,id',
             'cuatrimestre' => 'required|integer|min:1|max:12',
-            'capacidad'    => 'required|integer|min:25|max:30',
+            'capacidad'    => 'required|integer|min:1|max:500',
         ]);
 
         Grupo::create($request->only('clave', 'programa_id', 'periodo_id', 'cuatrimestre', 'capacidad'));
@@ -40,7 +40,7 @@ class GrupoController extends Controller
             'programa_id'  => 'required|exists:programas,id',
             'periodo_id'   => 'required|exists:periodos,id',
             'cuatrimestre' => 'required|integer|min:1|max:12',
-            'capacidad'    => 'required|integer|min:25|max:30',
+            'capacidad'    => 'required|integer|min:1|max:500',
         ]);
 
         $grupo->update($request->only('clave', 'programa_id', 'periodo_id', 'cuatrimestre', 'capacidad'));

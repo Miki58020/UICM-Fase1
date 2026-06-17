@@ -300,15 +300,12 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Capacidad <span class="text-red-500">*</span></label>
-                    <input type="number" name="capacidad" value="{{ old('capacidad') }}" min="1" placeholder="25-30"
-                           oninput="checkCapacidad(this, 'warn-cap-crear')"
+                    <input type="number" name="capacidad" value="{{ old('capacidad') }}" min="1" max="500" placeholder="Ej. 20"
                            class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                            required>
-                    <p id="warn-cap-crear" class="hidden mt-1 text-xs text-red-600">
-                        La capacidad debe estar entre 25 y 30 alumnos.
-                    </p>
+                    <p class="mt-1 text-xs text-gray-400">Máximo de alumnos que puede tener este grupo.</p>
                 </div>
             </div>
             <div class="flex justify-end gap-3 pt-2">
@@ -396,15 +393,12 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Capacidad <span class="text-red-500">*</span></label>
-                    <input type="number" id="edit-capacidad" name="capacidad" min="1" placeholder="25-30"
-                           oninput="checkCapacidad(this, 'warn-cap-editar')"
+                    <input type="number" id="edit-capacidad" name="capacidad" min="1" max="500" placeholder="Ej. 20"
                            class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                            required>
-                    <p id="warn-cap-editar" class="hidden mt-1 text-xs text-red-600">
-                        La capacidad debe estar entre 25 y 30 alumnos.
-                    </p>
+                    <p class="mt-1 text-xs text-gray-400">Máximo de alumnos que puede tener este grupo.</p>
                 </div>
             </div>
             <div class="flex justify-end gap-3 pt-2">
@@ -453,13 +447,6 @@ function formatClave(el) {
     el.value = result;
 }
 
-function checkCapacidad(el, warnId) {
-    var v = parseInt(el.value);
-    var warn = document.getElementById(warnId);
-    if (!warn) return;
-    warn.classList.toggle('hidden', isNaN(v) || (v >= 25 && v <= 30));
-}
-
 function abrirEditar(id, clave, programaId, periodoId, cuatrimestre, capacidad) {
     document.getElementById('form-editar').action = '/admin/grupos/' + id;
     document.getElementById('edit-clave').value = clave;
@@ -467,7 +454,6 @@ function abrirEditar(id, clave, programaId, periodoId, cuatrimestre, capacidad) 
     document.getElementById('edit-periodo').value = periodoId;
     document.getElementById('edit-cuatrimestre').value = cuatrimestre;
     document.getElementById('edit-capacidad').value = capacidad;
-    checkCapacidad(document.getElementById('edit-capacidad'), 'warn-cap-editar');
     document.getElementById('modal-editar').classList.remove('hidden');
 }
 

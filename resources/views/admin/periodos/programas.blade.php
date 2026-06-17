@@ -177,16 +177,29 @@ $agrupados = $periodo->programas->groupBy('nivel');
                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Grupos a crear <span class="text-red-500">*</span>
-                </label>
-                <input type="number" name="num_grupos" value="{{ old('num_grupos', 1) }}" min="1" max="10"
-                       class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
-                       onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
-                       required>
-                <p class="text-xs text-gray-400 mt-1">Se crearán automáticamente con clave: XXX-{{ $periodo->nombre }}-A, B, C...</p>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Grupos a crear <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" name="num_grupos" value="{{ old('num_grupos') }}" placeholder="Ej. 2" min="1" max="10"
+                           class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
+                           required>
+                    <p class="text-xs text-gray-400 mt-1">Clave: XXX-{{ $periodo->nombre }}-A, B, C...</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Capacidad por grupo <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" name="capacidad" value="{{ old('capacidad') }}" placeholder="Ej. 20" min="1" max="500"
+                           class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
+                           required>
+                    <p class="text-xs text-gray-400 mt-1">Máximo de alumnos por grupo.</p>
+                </div>
             </div>
             <div class="flex justify-end gap-3 pt-2">
                 <button type="button" onclick="document.getElementById('modal-agregar').classList.add('hidden')"
