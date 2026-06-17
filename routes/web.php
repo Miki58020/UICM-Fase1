@@ -67,6 +67,7 @@ Route::middleware(['auth', 'rol:profesor'])->group(function () {
 // Portal del alumno
 Route::middleware(['auth', 'rol:alumno'])->group(function () {
     Route::get('/alumno', [AlumnoController::class, 'dashboard'])->name('alumno.dashboard');
+    Route::get('/alumno/kardex', [AlumnoController::class, 'kardex'])->name('alumno.kardex');
     Route::get('/alumno/comprobante/{pago}', [AlumnoController::class, 'comprobante'])->name('alumno.comprobante');
     Route::post('/alumno/cambiar-password', [AlumnoController::class, 'cambiarPassword'])->name('alumno.cambiar-password');
 });

@@ -180,7 +180,7 @@
             </div>
 
             {{-- Fila 2: Estado + resumen --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
 
                 {{-- Estado administrativo --}}
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex items-center gap-4 px-5 py-4">
@@ -231,6 +231,26 @@
                         </p>
                     </div>
                 </div>
+
+                {{-- Kárdex --}}
+                <a href="{{ route('alumno.kardex') }}"
+                   class="bg-white rounded-2xl shadow-sm overflow-hidden flex items-center gap-4 px-5 py-4
+                          hover:shadow-md transition-shadow duration-150">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                         style="background-color: #f0f9f4;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             style="color: #0F4229;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+                                     M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2
+                                     m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Kárdex</p>
+                        <p class="text-sm font-bold mt-0.5" style="color: #0F4229;">Ver / Imprimir</p>
+                    </div>
+                </a>
 
                 {{-- Cambiar contraseña --}}
                 <button type="button" @click="modalContrasena = true"

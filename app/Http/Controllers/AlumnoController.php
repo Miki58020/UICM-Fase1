@@ -123,6 +123,65 @@ class AlumnoController extends Controller
         return response()->json(['estado' => $alumno?->estado ?? 'activo']);
     }
 
+    public function kardex()
+    {
+        $alumno = Alumno::where('user_id', Auth::id())
+            ->with(['programa', 'grupo.periodo', 'periodo'])
+            ->firstOrFail();
+
+        $carga = $alumno->grupo_id
+            ? CargaAcademica::where('grupo_id', $alumno->grupo_id)
+                ->with(['materia', 'profesor'])
+                ->get()
+            : collect();
+
+        $calificaciones = collect();
+        if ($carga->isNotEmpty()) {
+            $calificaciones = Calificacion::where('alumno_id', $alumno->id)
+                ->whereIn('carga_academica_id', $carga->pluck('id'))
+                ->get()
+                ->groupBy('carga_academica_id');
+        }
+
+        $materias = $carga->map(function ($c) use ($calificaciones) {
+            $calif = $calificaciones->get($c->id, collect());
+            $p1 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 1);
+            $p2 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 2);
+            $ex = $calif->firstWhere(fn($q) => $q->tipo === 'extraordinario');
+            $calFinal = $ex
+                ? $ex->calificacion
+                : ($p1 && $p2 ? round(($p1->calificacion + $p2->calificacion) / 2, 1) : null);
+            return [
+                'carga'    => $c,
+                'p1'       => $p1,
+                'p2'       => $p2,
+                'ex'       => $ex,
+                'calFinal' => $calFinal,
+                'aprobado' => $calFinal !== null && $calFinal >= 7.0,
+            ];
+        });
+
+        $conCal         = $materias->filter(fn($m) => $m['calFinal'] !== null);
+        $promedioGeneral = $conCal->isNotEmpty()
+            ? round($conCal->avg(fn($m) => $m['calFinal']), 1)
+            : null;
+
+        $aprobadas  = $materias->filter(fn($m) => $m['calFinal'] !== null && $m['aprobado'])->count();
+        $reprobadas = $materias->filter(fn($m) => $m['calFinal'] !== null && !$m['aprobado'])->count();
+        $pendientes = $materias->filter(fn($m) => $m['calFinal'] === null)->count();
+
+        $creditosAprobados     = $materias->filter(fn($m) => $m['aprobado'])->sum(fn($m) => $m['carga']->materia->creditos ?? 0);
+        $totalCreditosPrograma = $alumno->programa_id
+            ? \App\Models\Materia::where('programa_id', $alumno->programa_id)->where('activo', true)->sum('creditos')
+            : 0;
+
+        return view('alumno.kardex', compact(
+            'alumno', 'materias', 'promedioGeneral',
+            'aprobadas', 'reprobadas', 'pendientes',
+            'creditosAprobados', 'totalCreditosPrograma'
+        ));
+    }
+
     public function comprobante(Pago $pago)
     {
         $alumno = Alumno::where('user_id', Auth::id())->firstOrFail();
