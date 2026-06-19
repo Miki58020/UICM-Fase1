@@ -40,19 +40,25 @@
         .progress-bar-fill { background: linear-gradient(to right, #0F4229, #1a6b42); border-radius: 99px; height: 10px; transition: width 0.3s; }
         .progress-note { font-size: 11px; color: #9ca3af; margin-top: 6px; }
 
+        /* Bloques por cuatrimestre */
+        .cuatri-block { margin-bottom: 16px; page-break-inside: avoid; }
+        .cuatri-header { display: flex; justify-content: space-between; align-items: baseline; background: #f8fafc; padding: 7px 14px; border-radius: 10px 10px 0 0; border: 1px solid #e5e7eb; border-bottom: none; }
+        .cuatri-title { font-size: 11px; font-weight: 800; color: #0F4229; text-transform: uppercase; letter-spacing: 0.5px; }
+        .cuatri-periodo { font-size: 10px; color: #9ca3af; }
+
         /* Tabla de materias */
-        .table-wrap { border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; margin-bottom: 28px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .table-wrap { border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
         thead tr { background: #0F4229; }
-        thead th { padding: 10px 14px; text-align: left; color: #fff; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        thead th { padding: 6px 14px; text-align: left; color: #fff; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
         thead th.center { text-align: center; }
         tbody tr { border-bottom: 1px solid #f3f4f6; }
         tbody tr:last-child { border-bottom: none; }
         tbody tr:hover { background: #f9fafb; }
-        tbody td { padding: 11px 14px; color: #333; }
+        tbody td { padding: 6px 14px; color: #333; }
         tbody td.center { text-align: center; }
         .materia-nombre { font-weight: bold; color: #111; }
-        .materia-clave { font-size: 11px; color: #9ca3af; }
+        .materia-clave { font-size: 10px; color: #9ca3af; }
 
         .cal-aprobado { color: #166534; font-weight: bold; }
         .cal-reprobado { color: #991b1b; font-weight: bold; }
@@ -163,7 +169,7 @@
         @endif
 
         {{-- Resumen estadístico --}}
-        <p class="section-title">Resumen del cuatrimestre {{ $alumno->cuatrimestre_actual }}</p>
+        <p class="section-title">Resumen general</p>
         <div class="summary-grid">
             <div class="summary-card">
                 <div class="s-label">Promedio</div>
@@ -183,87 +189,95 @@
             </div>
         </div>
 
-        {{-- Tabla de materias --}}
+        {{-- Tabla de materias por cuatrimestre --}}
         <p class="section-title">Historial de calificaciones</p>
-        @if($materias->isEmpty())
-            <div class="nota">Aún no hay materias asignadas para este cuatrimestre.</div>
+        @if($porCuatrimestre->isEmpty())
+            <div class="nota">Aún no hay materias asignadas.</div>
         @else
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Materia</th>
-                        <th class="center">Créditos</th>
-                        <th class="center">Parcial 1</th>
-                        <th class="center">Parcial 2</th>
-                        <th class="center">Extraord.</th>
-                        <th class="center">Final</th>
-                        <th class="center">Estatus</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($materias as $m)
-                    @php
-                        $c = $m['carga'];
-                    @endphp
-                    <tr>
-                        <td>
-                            <div class="materia-nombre">{{ $c->materia->nombre }}</div>
-                            <div class="materia-clave">{{ $c->materia->clave }}</div>
-                        </td>
-                        <td class="center">
-                            <span style="font-weight:bold; color:#D4AF37;">{{ $c->materia->creditos }}</span>
-                        </td>
-                        <td class="center">
-                            @if($m['p1'])
-                                <span class="{{ $m['p1']->calificacion >= 7.0 ? 'cal-aprobado' : 'cal-reprobado' }}">
-                                    {{ number_format($m['p1']->calificacion, 1) }}
-                                </span>
-                            @else
-                                <span class="cal-pendiente">—</span>
-                            @endif
-                        </td>
-                        <td class="center">
-                            @if($m['p2'])
-                                <span class="{{ $m['p2']->calificacion >= 7.0 ? 'cal-aprobado' : 'cal-reprobado' }}">
-                                    {{ number_format($m['p2']->calificacion, 1) }}
-                                </span>
-                            @else
-                                <span class="cal-pendiente">—</span>
-                            @endif
-                        </td>
-                        <td class="center">
-                            @if($m['ex'])
-                                <span class="{{ $m['ex']->calificacion >= 7.0 ? 'cal-aprobado' : 'cal-reprobado' }}">
-                                    {{ number_format($m['ex']->calificacion, 1) }}
-                                </span>
-                            @else
-                                <span class="cal-pendiente">—</span>
-                            @endif
-                        </td>
-                        <td class="center">
-                            @if($m['calFinal'] !== null)
-                                <span class="{{ $m['aprobado'] ? 'cal-aprobado' : 'cal-reprobado' }}">
-                                    {{ number_format($m['calFinal'], 1) }}
-                                </span>
-                            @else
-                                <span class="cal-pendiente">—</span>
-                            @endif
-                        </td>
-                        <td class="center">
-                            @if($m['calFinal'] === null)
-                                <span class="badge badge-pendiente">Pendiente</span>
-                            @elseif($m['aprobado'])
-                                <span class="badge badge-aprobado">Aprobada</span>
-                            @else
-                                <span class="badge badge-reprobado">Reprobada</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+            @foreach($porCuatrimestre as $numCuatri => $items)
+            <div class="cuatri-block">
+                <div class="cuatri-header">
+                    <span class="cuatri-title">{{ $numCuatri > 0 ? $numCuatri.'° Cuatrimestre' : 'Sin cuatrimestre asignado' }}</span>
+                    <span class="cuatri-periodo">{{ $items->first()['carga']->periodo->label ?? '' }}</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th class="center">Créditos</th>
+                                <th class="center">Parcial 1</th>
+                                <th class="center">Parcial 2</th>
+                                <th class="center">Extraord.</th>
+                                <th class="center">Final</th>
+                                <th class="center">Estatus</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($items as $m)
+                            @php
+                                $c = $m['carga'];
+                            @endphp
+                            <tr>
+                                <td>
+                                    <div class="materia-nombre">{{ $c->materia->nombre }}</div>
+                                    <div class="materia-clave">{{ $c->materia->clave }}</div>
+                                </td>
+                                <td class="center">
+                                    <span style="font-weight:bold; color:#D4AF37;">{{ $c->materia->creditos }}</span>
+                                </td>
+                                <td class="center">
+                                    @if($m['p1'])
+                                        <span class="{{ $m['p1']->calificacion >= 7.0 ? 'cal-aprobado' : 'cal-reprobado' }}">
+                                            {{ number_format($m['p1']->calificacion, 1) }}
+                                        </span>
+                                    @else
+                                        <span class="cal-pendiente">—</span>
+                                    @endif
+                                </td>
+                                <td class="center">
+                                    @if($m['p2'])
+                                        <span class="{{ $m['p2']->calificacion >= 7.0 ? 'cal-aprobado' : 'cal-reprobado' }}">
+                                            {{ number_format($m['p2']->calificacion, 1) }}
+                                        </span>
+                                    @else
+                                        <span class="cal-pendiente">—</span>
+                                    @endif
+                                </td>
+                                <td class="center">
+                                    @if($m['ex'])
+                                        <span class="{{ $m['ex']->calificacion >= 7.0 ? 'cal-aprobado' : 'cal-reprobado' }}">
+                                            {{ number_format($m['ex']->calificacion, 1) }}
+                                        </span>
+                                    @else
+                                        <span class="cal-pendiente">—</span>
+                                    @endif
+                                </td>
+                                <td class="center">
+                                    @if($m['calFinal'] !== null)
+                                        <span class="{{ $m['aprobado'] ? 'cal-aprobado' : 'cal-reprobado' }}">
+                                            {{ number_format($m['calFinal'], 1) }}
+                                        </span>
+                                    @else
+                                        <span class="cal-pendiente">—</span>
+                                    @endif
+                                </td>
+                                <td class="center">
+                                    @if($m['calFinal'] === null)
+                                        <span class="badge badge-pendiente">Pendiente</span>
+                                    @elseif($m['aprobado'])
+                                        <span class="badge badge-aprobado">Aprobada</span>
+                                    @else
+                                        <span class="badge badge-reprobado">Reprobada</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endforeach
         @endif
 
         <div class="nota">

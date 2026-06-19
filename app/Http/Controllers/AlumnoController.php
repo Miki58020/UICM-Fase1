@@ -129,21 +129,25 @@ class AlumnoController extends Controller
             ->with(['programa', 'grupo.periodo', 'periodo'])
             ->firstOrFail();
 
-        $carga = $alumno->grupo_id
+        // Materias del grupo actual (aunque aún no tengan calificación)
+        $cargasActuales = $alumno->grupo_id
             ? CargaAcademica::where('grupo_id', $alumno->grupo_id)
-                ->with(['materia', 'profesor'])
+                ->with(['materia', 'profesor', 'periodo'])
                 ->get()
             : collect();
 
-        $calificaciones = collect();
-        if ($carga->isNotEmpty()) {
-            $calificaciones = Calificacion::where('alumno_id', $alumno->id)
-                ->whereIn('carga_academica_id', $carga->pluck('id'))
-                ->get()
-                ->groupBy('carga_academica_id');
-        }
+        // Historial completo: cualquier carga académica (de cualquier cuatrimestre cursado)
+        // en la que el alumno tenga al menos una calificación registrada
+        $calificaciones = Calificacion::where('alumno_id', $alumno->id)
+            ->with('cargaAcademica.materia', 'cargaAcademica.profesor', 'cargaAcademica.periodo')
+            ->get()
+            ->groupBy('carga_academica_id');
 
-        $materias = $carga->map(function ($c) use ($calificaciones) {
+        $cargasHistoricas = $calificaciones->map(fn($grupo) => $grupo->first()->cargaAcademica)->filter();
+
+        $cargas = $cargasActuales->concat($cargasHistoricas)->unique('id');
+
+        $materias = $cargas->map(function ($c) use ($calificaciones) {
             $calif = $calificaciones->get($c->id, collect());
             $p1 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 1);
             $p2 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 2);
@@ -159,9 +163,13 @@ class AlumnoController extends Controller
                 'calFinal' => $calFinal,
                 'aprobado' => $calFinal !== null && $calFinal >= 7.0,
             ];
-        });
+        })->sortBy(fn($m) => $m['carga']->materia->nombre);
 
-        $conCal         = $materias->filter(fn($m) => $m['calFinal'] !== null);
+        $porCuatrimestre = $materias
+            ->groupBy(fn($m) => $m['carga']->materia->cuatrimestre ?? 0)
+            ->sortKeys();
+
+        $conCal          = $materias->filter(fn($m) => $m['calFinal'] !== null);
         $promedioGeneral = $conCal->isNotEmpty()
             ? round($conCal->avg(fn($m) => $m['calFinal']), 1)
             : null;
@@ -173,7 +181,7 @@ class AlumnoController extends Controller
         $totalCreditosPrograma = $alumno->programa?->total_creditos ?? 0;
 
         return view('alumno.kardex', compact(
-            'alumno', 'materias', 'promedioGeneral',
+            'alumno', 'porCuatrimestre', 'promedioGeneral',
             'aprobadas', 'reprobadas', 'pendientes',
             'totalCreditosPrograma'
         ));

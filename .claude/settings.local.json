@@ -146,7 +146,17 @@
       "Bash(npx -v)",
       "WebFetch(domain:www.mercadopago.com.mx)",
       "WebFetch(domain:groups.google.com)",
-      "PowerShell(cd \"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\"; php artisan tinker --execute=\"App\\\\Models\\\\Programa::orderBy\\('nivel'\\)->orderBy\\('nombre'\\)->get\\(['nombre','nivel','total_creditos']\\)->each\\(function\\(\\\\$p\\){ echo \\\\$p->nivel.': '.\\\\$p->nombre.' -> '.\\\\$p->total_creditos.PHP_EOL; }\\);\" 2>&1)"
+      "PowerShell(cd \"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\"; php artisan tinker --execute=\"App\\\\Models\\\\Programa::orderBy\\('nivel'\\)->orderBy\\('nombre'\\)->get\\(['nombre','nivel','total_creditos']\\)->each\\(function\\(\\\\$p\\){ echo \\\\$p->nivel.': '.\\\\$p->nombre.' -> '.\\\\$p->total_creditos.PHP_EOL; }\\);\" 2>&1)",
+      "Bash(find .claude/skills -maxdepth 1 -name \"SKILL.md\")",
+      "Bash(ls .claude/skills)",
+      "Bash(grep -Hm1 '^description:' .claude/skills/*/SKILL.md)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(chromium-cli --session kardex)",
+      "Read(//c/Program Files \\(x86\\)/Microsoft/Edge/Application/**)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --no-sandbox --window-size=1000,2400 --screenshot=/tmp/kardex.png \"http://127.0.0.1:8000/_dev_login_alumno6\")",
+      "Bash(rm -f /tmp/kardex.png /tmp/serve.log)",
+      "Bash(rm -f \"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\\\\storage\\\\app\\\\kardex_test.html\")"
     ]
   }
 }
