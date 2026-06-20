@@ -21,6 +21,9 @@
                 Grupo: <strong>{{ $carga->grupo->clave }}</strong> &nbsp;·&nbsp;
                 Período: <strong>{{ $carga->periodo->nombre ?? '—' }}</strong> &nbsp;·&nbsp;
                 Cuatrimestre: <strong>{{ $carga->grupo->cuatrimestre }}</strong>
+                @if ($carga->fecha_inicio && $carga->fecha_fin)
+                    &nbsp;·&nbsp; Ventana: <strong>{{ $carga->fecha_inicio->format('d/m/Y') }} - {{ $carga->fecha_fin->format('d/m/Y') }}</strong>
+                @endif
             </p>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
@@ -31,6 +34,28 @@
             </div>
         @else
 
+        @if ($carga->estado_revision === 'rechazado')
+        <div class="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-5 py-3 mb-6">
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <p class="text-xs text-red-700">
+                Control escolar rechazó estas calificaciones{{ $carga->motivo_rechazo ? ': '.$carga->motivo_rechazo : '.' }}
+                Puedes volver a capturarlas aunque la ventana de fechas ya haya cerrado.
+            </p>
+        </div>
+        @elseif (!$puedeCapturar)
+        <div class="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-5 py-3 mb-6">
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-xs text-amber-700">
+                La ventana de captura para esta materia ya cerró. Si necesitas corregir una calificación,
+                usa el botón <strong>Solicitar aclaración</strong> en la fila del alumno.
+            </p>
+        </div>
+        @endif
+
         {{-- Indicaciones --}}
         <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-xl px-5 py-3 mb-6">
             <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +63,7 @@
             </svg>
             <p class="text-xs text-gray-500">
                 Escribe la calificación en cada celda (ej. <code class="bg-gray-100 px-1 rounded">8</code> o <code class="bg-gray-100 px-1 rounded">8.5</code>).
-                El <strong class="text-gray-700">Extraordinario</strong> solo está disponible cuando ambos parciales ya están guardados.
+                El <strong class="text-gray-700">Extraordinario</strong> solo está disponible cuando la calificación final ya está guardada y es reprobatoria.
                 Mínimo aprobatorio: <strong class="text-gray-700">7.0</strong>.
             </p>
         </div>
@@ -60,29 +85,26 @@
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 <th class="px-6 py-3">Alumno</th>
                                 <th class="px-6 py-3">Matrícula</th>
-                                <th class="px-6 py-3 text-center">Parcial 1</th>
-                                <th class="px-6 py-3 text-center">Parcial 2</th>
+                                <th class="px-6 py-3 text-center">Final</th>
                                 <th class="px-6 py-3 text-center">Extraordinario</th>
-                                <th class="px-6 py-3 text-center">Cal. Final</th>
                                 <th class="px-6 py-3 text-center">Estado</th>
+                                @if (!$puedeCapturar)
+                                    <th class="px-6 py-3 text-center">Aclaración</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @foreach ($alumnos as $alumno)
                             @php
-                                $p1Key = $alumno->id . '-parcial-1';
-                                $p2Key = $alumno->id . '-parcial-2';
-                                $exKey = $alumno->id . '-extraordinario-1';
-                                $p1    = $calificaciones[$p1Key]->first() ?? null;
-                                $p2    = $calificaciones[$p2Key]->first() ?? null;
-                                $ex    = $calificaciones[$exKey]->first() ?? null;
-                                $tieneParciales = $p1 && $p2;
-                                $calFinal = $ex
-                                    ? $ex->calificacion
-                                    : ($tieneParciales ? round(($p1->calificacion + $p2->calificacion) / 2, 1) : null);
+                                $finalKey = $alumno->id . '-final';
+                                $exKey    = $alumno->id . '-extraordinario';
+                                $final    = $calificaciones[$finalKey]->first() ?? null;
+                                $ex       = $calificaciones[$exKey]->first() ?? null;
+                                $puedeExtraordinario = $final && $final->calificacion < 7.0;
+                                $calFinal = $ex ? $ex->calificacion : $final?->calificacion;
                                 $aprobado = $calFinal !== null && $calFinal >= 7.0;
                             @endphp
-                            <tr class="hover:bg-gray-50 transition-colors duration-100">
+                            <tr class="hover:bg-gray-50 transition-colors duration-100" x-data="{ aclarando: false }">
                                 <td class="px-6 py-4 font-semibold text-gray-800 whitespace-nowrap">
                                     {{ $alumno->nombre_completo }}
                                 </td>
@@ -90,60 +112,35 @@
                                     {{ $alumno->matricula }}
                                 </td>
 
-                                {{-- Parcial 1 --}}
+                                {{-- Final --}}
                                 <td class="px-6 py-3 text-center">
                                     <input type="number"
-                                           name="grades[{{ $alumno->id }}][parcial][1]"
+                                           name="grades[{{ $alumno->id }}][final]"
                                            step="0.1" min="0" max="10"
-                                           value="{{ $p1?->calificacion }}"
+                                           value="{{ $final?->calificacion }}"
                                            placeholder="—"
-                                           class="w-20 text-center text-sm border rounded-lg px-2 py-1.5 focus:outline-none transition-colors
-                                                  {{ $p1 ? ($p1->calificacion >= 7.0 ? 'border-green-400 bg-green-50 text-green-700' : 'border-red-400 bg-red-50 text-red-700') : 'border-gray-300 bg-white text-gray-700' }}"
-                                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.15)'"
-                                           onblur="this.style.boxShadow=''">
-                                </td>
-
-                                {{-- Parcial 2 --}}
-                                <td class="px-6 py-3 text-center">
-                                    <input type="number"
-                                           name="grades[{{ $alumno->id }}][parcial][2]"
-                                           step="0.1" min="0" max="10"
-                                           value="{{ $p2?->calificacion }}"
-                                           placeholder="—"
-                                           class="w-20 text-center text-sm border rounded-lg px-2 py-1.5 focus:outline-none transition-colors
-                                                  {{ $p2 ? ($p2->calificacion >= 7.0 ? 'border-green-400 bg-green-50 text-green-700' : 'border-red-400 bg-red-50 text-red-700') : 'border-gray-300 bg-white text-gray-700' }}"
+                                           @disabled(!$puedeCapturar)
+                                           class="w-20 text-center text-sm border rounded-lg px-2 py-1.5 focus:outline-none transition-colors disabled:opacity-60
+                                                  {{ $final ? ($final->calificacion >= 7.0 ? 'border-green-400 bg-green-50 text-green-700' : 'border-red-400 bg-red-50 text-red-700') : 'border-gray-300 bg-white text-gray-700' }}"
                                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.15)'"
                                            onblur="this.style.boxShadow=''">
                                 </td>
 
                                 {{-- Extraordinario --}}
                                 <td class="px-6 py-3 text-center">
-                                    @if ($tieneParciales)
+                                    @if ($puedeExtraordinario)
                                         <input type="number"
-                                               name="grades[{{ $alumno->id }}][extraordinario][1]"
+                                               name="grades[{{ $alumno->id }}][extraordinario]"
                                                step="0.1" min="0" max="10"
                                                value="{{ $ex?->calificacion }}"
                                                placeholder="—"
-                                               class="w-20 text-center text-sm border rounded-lg px-2 py-1.5 focus:outline-none transition-colors
+                                               @disabled(!$puedeCapturar)
+                                               class="w-20 text-center text-sm border rounded-lg px-2 py-1.5 focus:outline-none transition-colors disabled:opacity-60
                                                       {{ $ex ? ($ex->calificacion >= 7.0 ? 'border-green-400 bg-green-50 text-green-700' : 'border-red-400 bg-red-50 text-red-700') : 'border-gray-300 bg-white text-gray-700' }}"
                                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.15)'"
                                                onblur="this.style.boxShadow=''">
                                     @else
-                                        <span class="text-xs text-gray-300 italic">Pendiente parciales</span>
-                                    @endif
-                                </td>
-
-                                {{-- Calificación final --}}
-                                <td class="px-6 py-4 text-center font-bold text-sm whitespace-nowrap">
-                                    @if ($calFinal !== null)
-                                        <span class="{{ $aprobado ? 'text-green-700' : 'text-red-600' }}">
-                                            {{ number_format($calFinal, 1) }}
-                                            @if ($ex)
-                                                <span class="block text-xs font-normal text-gray-400">(extra)</span>
-                                            @endif
-                                        </span>
-                                    @else
-                                        <span class="text-gray-300">—</span>
+                                        <span class="text-xs text-gray-300 italic">Requiere final reprobatorio</span>
                                     @endif
                                 </td>
 
@@ -164,7 +161,54 @@
                                         <span class="text-xs text-gray-400">Pendiente</span>
                                     @endif
                                 </td>
+
+                                {{-- Aclaración --}}
+                                @if (!$puedeCapturar)
+                                <td class="px-6 py-4 text-center whitespace-nowrap">
+                                    @if ($final)
+                                        <button type="button" @click="aclarando = !aclarando"
+                                                class="text-xs font-bold px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700">
+                                            Solicitar aclaración
+                                        </button>
+                                    @else
+                                        <span class="text-xs text-gray-300">—</span>
+                                    @endif
+                                </td>
+                                @endif
                             </tr>
+                            @if (!$puedeCapturar)
+                            <tr x-show="aclarando" x-cloak>
+                                <td colspan="6" class="px-6 py-4 bg-amber-50">
+                                    <form method="POST"
+                                          action="{{ route('profesor.aclaraciones.solicitar', [$carga->id, $alumno->id]) }}"
+                                          class="flex flex-wrap items-end gap-3">
+                                        @csrf
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
+                                            <select name="tipo" class="border border-gray-200 rounded-lg px-2 py-1.5 text-xs">
+                                                <option value="final">Final</option>
+                                                <option value="extraordinario" {{ $ex ? 'selected' : '' }}>Extraordinario</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Calificación correcta</label>
+                                            <input type="number" name="calificacion_propuesta" step="0.1" min="0" max="10" required
+                                                   class="w-20 border border-gray-200 rounded-lg px-2 py-1.5 text-xs">
+                                        </div>
+                                        <div class="flex-1 min-w-[200px]">
+                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Motivo</label>
+                                            <input type="text" name="motivo" required maxlength="500"
+                                                   class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs">
+                                        </div>
+                                        <button type="submit"
+                                                class="px-4 py-2 rounded-lg text-xs font-bold text-white"
+                                                style="background-color: #0F4229;">
+                                            Enviar a control escolar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @endif
                             @endforeach
                         </tbody>
                     </table>
@@ -172,6 +216,7 @@
             </div>
 
             {{-- Botón guardar --}}
+            @if ($puedeCapturar)
             <div class="flex justify-end">
                 <button type="submit"
                         class="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold text-white shadow-sm transition-colors"
@@ -184,6 +229,7 @@
                     Guardar calificaciones
                 </button>
             </div>
+            @endif
 
         </form>
         @endif

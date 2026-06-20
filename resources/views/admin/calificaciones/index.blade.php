@@ -172,12 +172,19 @@
 
             {{-- Tabla por materia --}}
             @foreach ($cargasConCalif as $carga)
-            @php $alumnos = $grupo->alumnos; @endphp
-            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            @php
+                $alumnos = $grupo->alumnos;
+                $estadoBadge = [
+                    'pendiente' => ['bg-amber-100 text-amber-700', 'Pendiente de revisión'],
+                    'aprobado'  => ['bg-green-100 text-green-700', 'Aprobado por control escolar'],
+                    'rechazado' => ['bg-red-100 text-red-700', 'Rechazado'],
+                ][$carga->estado_revision];
+            @endphp
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden" x-data="{ rechazando: false }">
 
                 <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
 
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-2">
                         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                              style="color: #D4AF37;">
@@ -196,13 +203,62 @@
                             </p>
                         </div>
                     </div>
-                    @php
-                        $conCalif = $carga->calificaciones->pluck('alumno_id')->unique()->count();
-                    @endphp
-                    <span class="text-xs text-gray-400 whitespace-nowrap">
-                        {{ $conCalif }}/{{ $alumnos->count() }} con calificación
-                    </span>
+
+                    <div class="flex items-center gap-2 flex-wrap">
+                        @if ($carga->sospechosa)
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                                ⚠ Calificaciones idénticas
+                            </span>
+                        @endif
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $estadoBadge[0] }}">
+                            {{ $estadoBadge[1] }}
+                        </span>
+                        @php
+                            $conCalif = $carga->calificaciones->where('tipo', 'final')->pluck('alumno_id')->unique()->count();
+                        @endphp
+                        <span class="text-xs text-gray-400 whitespace-nowrap">
+                            {{ $conCalif }}/{{ $alumnos->count() }} con calificación
+                        </span>
+                    </div>
                 </div>
+
+                @if ($carga->estado_revision === 'rechazado' && $carga->motivo_rechazo)
+                <div class="px-6 py-3 bg-red-50 border-b border-red-100 text-xs text-red-700">
+                    <strong>Motivo de rechazo:</strong> {{ $carga->motivo_rechazo }}
+                </div>
+                @endif
+
+                @if ($conCalif > 0)
+                <div class="px-6 py-3 border-b border-gray-100 flex items-center justify-end gap-2" x-show="!rechazando">
+                    <form method="POST" action="{{ route('admin.calificaciones.aprobar', $carga) }}">
+                        @csrf
+                        <button type="submit"
+                                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
+                                style="background-color: #0F4229;">
+                            Aprobar
+                        </button>
+                    </form>
+                    <button type="button" @click="rechazando = true"
+                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-red-100 text-red-700">
+                        Rechazar
+                    </button>
+                </div>
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50" x-show="rechazando" x-cloak>
+                    <form method="POST" action="{{ route('admin.calificaciones.rechazar', $carga) }}" class="flex flex-col gap-2">
+                        @csrf
+                        <label class="text-xs font-semibold text-gray-600">Motivo del rechazo</label>
+                        <textarea name="motivo" required rows="2"
+                                  class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none"
+                                  placeholder="Ej. inconsistencias en las calificaciones del grupo"></textarea>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" @click="rechazando = false"
+                                    class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-600">Cancelar</button>
+                            <button type="submit"
+                                    class="px-4 py-2 rounded-xl text-xs font-bold bg-red-600 text-white">Confirmar rechazo</button>
+                        </div>
+                    </form>
+                </div>
+                @endif
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -210,10 +266,8 @@
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 <th class="px-6 py-3">Alumno</th>
                                 <th class="px-6 py-3">Matrícula</th>
-                                <th class="px-6 py-3 text-center">Parcial 1</th>
-                                <th class="px-6 py-3 text-center">Parcial 2</th>
+                                <th class="px-6 py-3 text-center">Final</th>
                                 <th class="px-6 py-3 text-center">Extraordinario</th>
-                                <th class="px-6 py-3 text-center">Cal. Final</th>
                                 <th class="px-6 py-3 text-center">Estado</th>
                             </tr>
                         </thead>
@@ -221,12 +275,9 @@
                             @forelse ($alumnos as $alumno)
                             @php
                                 $califs   = $carga->calificaciones->where('alumno_id', $alumno->id);
-                                $p1       = $califs->first(fn($c) => $c->tipo === 'parcial' && $c->numero === 1);
-                                $p2       = $califs->first(fn($c) => $c->tipo === 'parcial' && $c->numero === 2);
+                                $final    = $califs->first(fn($c) => $c->tipo === 'final');
                                 $ex       = $califs->first(fn($c) => $c->tipo === 'extraordinario');
-                                $calFinal = $ex
-                                    ? $ex->calificacion
-                                    : ($p1 && $p2 ? round(($p1->calificacion + $p2->calificacion) / 2, 1) : null);
+                                $calFinal = $ex ? $ex->calificacion : $final?->calificacion;
                                 $aprobado = $calFinal !== null && $calFinal >= 7.0;
                             @endphp
                             <tr class="hover:bg-gray-50 transition-colors duration-100">
@@ -236,40 +287,19 @@
                                 <td class="px-6 py-4 font-mono text-xs text-gray-500 whitespace-nowrap">
                                     {{ $alumno->matricula }}
                                 </td>
-                                <td class="px-6 py-4 text-center">
-                                    @if ($p1)
-                                        <span class="font-semibold {{ $p1->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
-                                            {{ number_format($p1->calificacion, 1) }}
+                                <td class="px-6 py-4 text-center font-bold">
+                                    @if ($final)
+                                        <span class="{{ $final->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
+                                            {{ number_format($final->calificacion, 1) }}
                                         </span>
                                     @else
                                         <span class="text-gray-300">—</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-center">
-                                    @if ($p2)
-                                        <span class="font-semibold {{ $p2->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
-                                            {{ number_format($p2->calificacion, 1) }}
-                                        </span>
-                                    @else
-                                        <span class="text-gray-300">—</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-center">
+                                <td class="px-6 py-4 text-center font-bold">
                                     @if ($ex)
-                                        <span class="font-semibold {{ $ex->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
+                                        <span class="{{ $ex->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
                                             {{ number_format($ex->calificacion, 1) }}
-                                        </span>
-                                    @else
-                                        <span class="text-gray-300">—</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 text-center font-bold whitespace-nowrap">
-                                    @if ($calFinal !== null)
-                                        <span class="{{ $aprobado ? 'text-green-700' : 'text-red-600' }}">
-                                            {{ number_format($calFinal, 1) }}
-                                            @if ($ex)
-                                                <span class="block text-xs font-normal text-gray-400">(extra)</span>
-                                            @endif
                                         </span>
                                     @else
                                         <span class="text-gray-300">—</span>
@@ -296,7 +326,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
+                                <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
                                     No hay alumnos en este grupo.
                                 </td>
                             </tr>

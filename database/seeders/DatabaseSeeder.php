@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ProgramasSeeder::class,
+            MateriasRealesSeeder::class,
             PeriodosSeeder::class,
             TarifaInscripcionSeeder::class,
             PaginaPrincipalSeeder::class,

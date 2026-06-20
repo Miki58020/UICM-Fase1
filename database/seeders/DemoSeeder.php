@@ -373,42 +373,33 @@ class DemoSeeder extends Seeder
             $cargas = DB::table('carga_academica')->where('grupo_id', $grupo->id)->get();
 
             foreach ($cargas as $carga) {
-                $p1 = round(rand(55, 100) / 10, 1);
-                $p2 = round(rand(55, 100) / 10, 1);
+                $final = round(rand(55, 100) / 10, 1);
 
                 DB::table('calificaciones')->insert([
                     'alumno_id'          => $al->id,
                     'carga_academica_id' => $carga->id,
-                    'tipo'               => 'parcial',
-                    'numero'             => 1,
-                    'calificacion'       => $p1,
+                    'tipo'               => 'final',
+                    'calificacion'       => $final,
                     'created_at'         => $now,
                     'updated_at'         => $now,
                 ]);
 
-                DB::table('calificaciones')->insert([
-                    'alumno_id'          => $al->id,
-                    'carga_academica_id' => $carga->id,
-                    'tipo'               => 'parcial',
-                    'numero'             => 2,
-                    'calificacion'       => $p2,
-                    'created_at'         => $now,
-                    'updated_at'         => $now,
-                ]);
-
-                // Extraordinario solo si promedio < 7
-                $prom = ($p1 + $p2) / 2;
-                if ($prom < 7.0) {
+                // Extraordinario solo si el final fue reprobatorio
+                if ($final < 7.0) {
                     DB::table('calificaciones')->insert([
                         'alumno_id'          => $al->id,
                         'carga_academica_id' => $carga->id,
                         'tipo'               => 'extraordinario',
-                        'numero'             => 1,
                         'calificacion'       => round(rand(70, 90) / 10, 1),
                         'created_at'         => $now,
                         'updated_at'         => $now,
                     ]);
                 }
+
+                DB::table('carga_academica')->where('id', $carga->id)->update([
+                    'estado_revision' => 'aprobado',
+                    'revisado_at'     => $now,
+                ]);
             }
         }
 

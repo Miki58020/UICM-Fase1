@@ -133,11 +133,19 @@
                                     <th class="px-6 py-3">Materia</th>
                                     <th class="px-6 py-3">Horario</th>
                                     <th class="px-6 py-3">Aula</th>
+                                    <th class="px-6 py-3 text-center">Revisión</th>
                                     <th class="px-6 py-3 text-center">Acción</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach ($cargasPeriodo as $carga)
+                                @php
+                                    $estadoBadge = [
+                                        'pendiente' => ['bg-amber-100 text-amber-700', 'Pendiente'],
+                                        'aprobado'  => ['bg-green-100 text-green-700', 'Aprobado'],
+                                        'rechazado' => ['bg-red-100 text-red-700', 'Rechazado'],
+                                    ][$carga->estado_revision];
+                                @endphp
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-700">
                                         {{ $carga->grupo->clave ?? '—' }}
@@ -151,6 +159,14 @@
                                     </td>
                                     <td class="px-6 py-4 text-gray-600 text-xs">
                                         {{ $carga->aula ?? '—' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $estadoBadge[0] }}">
+                                            {{ $estadoBadge[1] }}
+                                        </span>
+                                        @if ($carga->estado_revision === 'rechazado' && $carga->motivo_rechazo)
+                                            <span class="block text-xs text-red-500 mt-1 max-w-[160px]">{{ $carga->motivo_rechazo }}</span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <a href="{{ route('profesor.calificaciones.capturar', $carga->id) }}"

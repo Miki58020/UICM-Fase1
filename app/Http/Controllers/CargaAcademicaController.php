@@ -89,15 +89,36 @@ class CargaAcademicaController extends Controller
     public function actualizar(Request $request, CargaAcademica $carga)
     {
         $request->validate([
-            'profesor_id' => 'nullable|exists:profesores,id',
-            'horario'     => 'nullable|string|max:50',
-            'aula'        => 'nullable|string|max:20',
+            'profesor_id'  => 'nullable|exists:profesores,id',
+            'horario'      => 'nullable|string|max:50',
+            'aula'         => 'nullable|string|max:20',
+            'fecha_inicio' => 'nullable|date',
+            'fecha_fin'    => 'nullable|date|after_or_equal:fecha_inicio',
         ]);
 
+        if ($request->fecha_inicio && $request->fecha_fin) {
+            $traslape = CargaAcademica::where('grupo_id', $carga->grupo_id)
+                ->where('id', '!=', $carga->id)
+                ->whereNotNull('fecha_inicio')
+                ->whereNotNull('fecha_fin')
+                ->where('fecha_inicio', '<=', $request->fecha_fin)
+                ->where('fecha_fin', '>=', $request->fecha_inicio)
+                ->with('materia')
+                ->first();
+
+            if ($traslape) {
+                return back()->withErrors([
+                    "Las fechas se traslapan con \"{$traslape->materia->nombre}\" en el mismo grupo.",
+                ]);
+            }
+        }
+
         $carga->update([
-            'profesor_id' => $request->profesor_id ?: null,
-            'horario'     => $request->horario,
-            'aula'        => $request->aula,
+            'profesor_id'  => $request->profesor_id ?: null,
+            'horario'      => $request->horario,
+            'aula'         => $request->aula,
+            'fecha_inicio' => $request->fecha_inicio,
+            'fecha_fin'    => $request->fecha_fin,
         ]);
 
         return redirect()

@@ -61,11 +61,13 @@ class CalificacionController extends Controller
 
         $calificaciones = Calificacion::where('carga_academica_id', $carga->id)
             ->get()
-            ->groupBy(fn($c) => $c->alumno_id . '-' . $c->tipo . '-' . $c->numero);
+            ->groupBy(fn($c) => $c->alumno_id . '-' . $c->tipo);
 
         $carga->load(['materia', 'grupo.programa', 'periodo']);
 
-        return view('profesor.calificaciones.capturar', compact('carga', 'alumnos', 'calificaciones'));
+        $puedeCapturar = $carga->dentroDeVentana() || $carga->estado_revision === 'rechazado';
+
+        return view('profesor.calificaciones.capturar', compact('carga', 'alumnos', 'calificaciones', 'puedeCapturar'));
     }
 
     // Guardar todas las calificaciones en lote
@@ -73,6 +75,10 @@ class CalificacionController extends Controller
     {
         $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
         abort_if($carga->profesor_id !== $profesor->id, 403);
+
+        if (!$carga->dentroDeVentana() && $carga->estado_revision !== 'rechazado') {
+            return back()->withErrors(['La ventana de captura para esta materia ya cerró.']);
+        }
 
         $alumnosDelGrupo = Alumno::where('grupo_id', $carga->grupo_id)
             ->where('estado', 'activo')
@@ -88,52 +94,47 @@ class CalificacionController extends Controller
                 continue;
             }
 
-            foreach ($tipos as $tipo => $numeros) {
-                if (!in_array($tipo, ['parcial', 'extraordinario'])) {
+            foreach ($tipos as $tipo => $valor) {
+                if (!in_array($tipo, ['final', 'extraordinario'])) {
                     continue;
                 }
 
-                foreach ($numeros as $numero => $valor) {
-                    // Ignorar celdas vacías
-                    if ($valor === null || $valor === '') {
-                        continue;
-                    }
-
-                    if (!is_numeric($valor) || $valor < 0 || $valor > 10) {
-                        $errores[] = "Calificación inválida para alumno #{$alumnoId} ({$tipo} {$numero}).";
-                        continue;
-                    }
-
-                    // Extraordinario requiere ambos parciales ya guardados
-                    if ($tipo === 'extraordinario') {
-                        $parciales = Calificacion::where('carga_academica_id', $carga->id)
-                            ->where('alumno_id', $alumnoId)
-                            ->where('tipo', 'parcial')
-                            ->count();
-
-                        // También contar los que vienen en este mismo envío
-                        $p1EnEnvio = isset($grades[$alumnoId]['parcial'][1]) && $grades[$alumnoId]['parcial'][1] !== '';
-                        $p2EnEnvio = isset($grades[$alumnoId]['parcial'][2]) && $grades[$alumnoId]['parcial'][2] !== '';
-                        $parcialesDisponibles = max($parciales, ($p1EnEnvio ? 1 : 0) + ($p2EnEnvio ? 1 : 0));
-
-                        if ($parcialesDisponibles < 2) {
-                            $errores[] = "El extraordinario del alumno #{$alumnoId} requiere ambos parciales capturados.";
-                            continue;
-                        }
-                    }
-
-                    Calificacion::updateOrCreate(
-                        [
-                            'alumno_id'          => (int) $alumnoId,
-                            'carga_academica_id' => $carga->id,
-                            'tipo'               => $tipo,
-                            'numero'             => (int) $numero,
-                        ],
-                        ['calificacion' => round((float) $valor, 1)]
-                    );
-
-                    $guardadas++;
+                // Ignorar celdas vacías
+                if ($valor === null || $valor === '') {
+                    continue;
                 }
+
+                if (!is_numeric($valor) || $valor < 0 || $valor > 10) {
+                    $errores[] = "Calificación inválida para alumno #{$alumnoId} ({$tipo}).";
+                    continue;
+                }
+
+                // Extraordinario solo aplica si la calificación final fue reprobatoria
+                if ($tipo === 'extraordinario') {
+                    $final = Calificacion::where('carga_academica_id', $carga->id)
+                        ->where('alumno_id', $alumnoId)
+                        ->where('tipo', 'final')
+                        ->first();
+
+                    $finalEnEnvio = $grades[$alumnoId]['final'] ?? null;
+                    $valorFinal = $final?->calificacion ?? (is_numeric($finalEnEnvio) ? (float) $finalEnEnvio : null);
+
+                    if ($valorFinal === null || $valorFinal >= 7.0) {
+                        $errores[] = "El extraordinario del alumno #{$alumnoId} requiere una calificación final reprobatoria.";
+                        continue;
+                    }
+                }
+
+                Calificacion::updateOrCreate(
+                    [
+                        'alumno_id'          => (int) $alumnoId,
+                        'carga_academica_id' => $carga->id,
+                        'tipo'               => $tipo,
+                    ],
+                    ['calificacion' => round((float) $valor, 1)]
+                );
+
+                $guardadas++;
             }
         }
 
@@ -143,42 +144,26 @@ class CalificacionController extends Controller
 
         // Recalcular creditos_acumulados para los alumnos con calificaciones en este grupo
         if ($guardadas > 0) {
-            $alumnos = Alumno::whereIn('id', $alumnosDelGrupo)->get();
-            foreach ($alumnos as $alumno) {
-                $califs = Calificacion::where('alumno_id', $alumno->id)
-                    ->with('cargaAcademica.materia')
-                    ->get()
-                    ->groupBy('carga_academica_id');
+            $carga->update([
+                'estado_revision' => 'pendiente',
+                'motivo_rechazo'  => null,
+                'revisado_por'    => null,
+                'revisado_at'     => null,
+            ]);
 
-                $creditosAprobados = 0;
-                foreach ($califs as $cargaId => $registros) {
-                    $materia  = $registros->first()?->cargaAcademica?->materia;
-                    if (!$materia) continue;
-
-                    $ex = $registros->first(fn($r) => $r->tipo === 'extraordinario');
-                    $p1 = $registros->first(fn($r) => $r->tipo === 'parcial' && $r->numero == 1);
-                    $p2 = $registros->first(fn($r) => $r->tipo === 'parcial' && $r->numero == 2);
-
-                    if ($ex) {
-                        $final = $ex->calificacion;
-                    } elseif ($p1 && $p2) {
-                        $final = ($p1->calificacion + $p2->calificacion) / 2;
-                    } else {
-                        continue;
-                    }
-
-                    if ($final >= 7.0) {
-                        $creditosAprobados += $materia->creditos ?? 0;
-                    }
-                }
-
-                $alumno->update(['creditos_acumulados' => $creditosAprobados]);
-            }
+            $this->recalcularCreditos($alumnosDelGrupo);
         }
 
         return back()->with('success', $guardadas > 0
-            ? 'Calificaciones guardadas correctamente.'
+            ? 'Calificaciones guardadas correctamente. Quedan pendientes de revisión por control escolar.'
             : 'No se realizaron cambios.');
+    }
+
+    // Recalcula creditos_acumulados de los alumnos dados a partir de sus calificaciones aprobadas por control escolar
+    private function recalcularCreditos(array $alumnoIds): void
+    {
+        Alumno::whereIn('id', $alumnoIds)->get()
+            ->each(fn (Alumno $alumno) => $alumno->recalcularCreditosAcumulados());
     }
 
     // Cambio de contraseña del profesor desde su portal
@@ -216,9 +201,53 @@ class CalificacionController extends Controller
 
             $cargasConCalif = CargaAcademica::where('grupo_id', $grupo->id)
                 ->with(['materia', 'profesor', 'calificaciones.alumno'])
-                ->get();
+                ->get()
+                ->map(function ($carga) {
+                    $finales = $carga->calificaciones->where('tipo', 'final')->pluck('calificacion');
+                    $carga->sospechosa = $finales->count() >= 3 && $finales->unique()->count() === 1;
+
+                    return $carga;
+                });
         }
 
         return view('admin.calificaciones.index', compact('grupos', 'grupo', 'cargasConCalif'));
+    }
+
+    // Control escolar aprueba las calificaciones capturadas de una materia/grupo
+    public function aprobar(CargaAcademica $carga)
+    {
+        $carga->update([
+            'estado_revision' => 'aprobado',
+            'motivo_rechazo'  => null,
+            'revisado_por'    => Auth::id(),
+            'revisado_at'     => now(),
+        ]);
+
+        $this->recalcularCreditos(
+            Alumno::where('grupo_id', $carga->grupo_id)->pluck('id')->toArray()
+        );
+
+        return back()->with('success', 'Calificaciones aprobadas. Ya son visibles para los alumnos.');
+    }
+
+    // Control escolar rechaza las calificaciones capturadas; el profesor podrá volver a capturarlas
+    public function rechazar(Request $request, CargaAcademica $carga)
+    {
+        $request->validate(['motivo' => 'required|string|max:500'], [
+            'motivo.required' => 'Indica el motivo del rechazo.',
+        ]);
+
+        $carga->update([
+            'estado_revision' => 'rechazado',
+            'motivo_rechazo'  => $request->motivo,
+            'revisado_por'    => Auth::id(),
+            'revisado_at'     => now(),
+        ]);
+
+        $this->recalcularCreditos(
+            Alumno::where('grupo_id', $carga->grupo_id)->pluck('id')->toArray()
+        );
+
+        return back()->with('success', 'Calificaciones rechazadas. El profesor podrá volver a capturarlas.');
     }
 }

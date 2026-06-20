@@ -511,6 +511,19 @@
                 <span class="nav-link-text">Calificaciones</span>
             </a>
 
+            <a href="{{ route('admin.aclaraciones.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Aclaraciones"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.aclaraciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8
+                             a2 2 0 01-2 2h-5l-4 4v-4z"/>
+                </svg>
+                <span class="nav-link-text">Aclaraciones</span>
+            </a>
+
             @php
                 $pendientesProfesores = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
                     ->whereHas('user', fn($u) => $u->where('rol', 'profesor'))

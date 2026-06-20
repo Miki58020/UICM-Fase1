@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ConfiguracionCorreoController;
 use App\Http\Controllers\Admin\ConfiguracionMercadopagoController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AspiranteController;
+use App\Http\Controllers\AclaracionCalificacionController;
 use App\Http\Controllers\CalificacionController;
 use App\Http\Controllers\CargaAcademicaController;
 use App\Http\Controllers\ContactoController;
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'rol:profesor'])->group(function () {
     Route::get('/profesor/calificaciones/{carga}/capturar', [CalificacionController::class, 'capturar'])->name('profesor.calificaciones.capturar');
     Route::post('/profesor/calificaciones/{carga}/guardar', [CalificacionController::class, 'guardar'])->name('profesor.calificaciones.guardar');
     Route::post('/profesor/cambiar-password', [CalificacionController::class, 'cambiarPassword'])->name('profesor.cambiar-password');
+    Route::post('/profesor/calificaciones/{carga}/aclaracion/{alumno}', [AclaracionCalificacionController::class, 'solicitar'])->name('profesor.aclaraciones.solicitar');
 });
 
 // Portal del alumno
@@ -164,6 +166,13 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
 
     // Calificaciones — vista de coordinación
     Route::get('/admin/calificaciones', [CalificacionController::class, 'indexCoordinacion'])->name('admin.calificaciones.index');
+    Route::post('/admin/calificaciones/{carga}/aprobar', [CalificacionController::class, 'aprobar'])->name('admin.calificaciones.aprobar');
+    Route::post('/admin/calificaciones/{carga}/rechazar', [CalificacionController::class, 'rechazar'])->name('admin.calificaciones.rechazar');
+
+    // Aclaraciones de calificación
+    Route::get('/admin/aclaraciones', [AclaracionCalificacionController::class, 'index'])->name('admin.aclaraciones.index');
+    Route::post('/admin/aclaraciones/{aclaracion}/aprobar', [AclaracionCalificacionController::class, 'aprobar'])->name('admin.aclaraciones.aprobar');
+    Route::post('/admin/aclaraciones/{aclaracion}/rechazar', [AclaracionCalificacionController::class, 'rechazar'])->name('admin.aclaraciones.rechazar');
 
     // Contraseñas de profesores — coordinación
     Route::get('/admin/contrasenas-profesores', [SolicitudContrasenaController::class, 'index'])->name('admin.contrasenas-profesores.index');

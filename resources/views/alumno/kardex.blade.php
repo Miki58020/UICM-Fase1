@@ -206,10 +206,9 @@
                             <tr>
                                 <th>Materia</th>
                                 <th class="center">Créditos</th>
-                                <th class="center">Parcial 1</th>
-                                <th class="center">Parcial 2</th>
-                                <th class="center">Extraord.</th>
                                 <th class="center">Final</th>
+                                <th class="center">Extraord.</th>
+                                <th class="center">Cal. Final</th>
                                 <th class="center">Estatus</th>
                             </tr>
                         </thead>
@@ -227,18 +226,9 @@
                                     <span style="font-weight:bold; color:#D4AF37;">{{ $c->materia->creditos }}</span>
                                 </td>
                                 <td class="center">
-                                    @if($m['p1'])
-                                        <span class="{{ $m['p1']->calificacion >= 7.0 ? 'cal-aprobado' : 'cal-reprobado' }}">
-                                            {{ number_format($m['p1']->calificacion, 1) }}
-                                        </span>
-                                    @else
-                                        <span class="cal-pendiente">—</span>
-                                    @endif
-                                </td>
-                                <td class="center">
-                                    @if($m['p2'])
-                                        <span class="{{ $m['p2']->calificacion >= 7.0 ? 'cal-aprobado' : 'cal-reprobado' }}">
-                                            {{ number_format($m['p2']->calificacion, 1) }}
+                                    @if($m['final'])
+                                        <span class="{{ $m['final']->calificacion >= 7.0 ? 'cal-aprobado' : 'cal-reprobado' }}">
+                                            {{ number_format($m['final']->calificacion, 1) }}
                                         </span>
                                     @else
                                         <span class="cal-pendiente">—</span>
@@ -282,7 +272,7 @@
 
         <div class="nota">
             Calificación mínima aprobatoria: <strong>7.0</strong>.
-            La calificación final es el promedio de los dos parciales. Si se presentó extraordinario, este sustituye la calificación final.
+            Si se presentó extraordinario, este sustituye a la calificación final. Solo se muestran las materias ya aprobadas por control escolar.
         </div>
 
         <div class="actions">

@@ -79,12 +79,12 @@ class AlumnoController extends Controller
 
         $totalCreditos = $carga->sum(fn($c) => $c->materia->creditos ?? 0);
 
-        // Calificaciones del alumno en las materias del período actual
+        // Calificaciones del alumno en las materias del período actual ya aprobadas por control escolar
         $calificaciones = collect();
         if ($carga->isNotEmpty()) {
-            $cargaIds = $carga->pluck('id');
+            $cargaIdsAprobadas = $carga->where('estado_revision', 'aprobado')->pluck('id');
             $calificaciones = Calificacion::where('alumno_id', $alumno->id)
-                ->whereIn('carga_academica_id', $cargaIds)
+                ->whereIn('carga_academica_id', $cargaIdsAprobadas)
                 ->get()
                 ->groupBy('carga_academica_id');
         }
@@ -137,10 +137,11 @@ class AlumnoController extends Controller
             : collect();
 
         // Historial completo: cualquier carga académica (de cualquier cuatrimestre cursado)
-        // en la que el alumno tenga al menos una calificación registrada
+        // en la que el alumno tenga al menos una calificación ya aprobada por control escolar
         $calificaciones = Calificacion::where('alumno_id', $alumno->id)
             ->with('cargaAcademica.materia', 'cargaAcademica.profesor', 'cargaAcademica.periodo')
             ->get()
+            ->filter(fn($c) => $c->cargaAcademica?->estado_revision === 'aprobado')
             ->groupBy('carga_academica_id');
 
         $cargasHistoricas = $calificaciones->map(fn($grupo) => $grupo->first()->cargaAcademica)->filter();
@@ -149,16 +150,12 @@ class AlumnoController extends Controller
 
         $materias = $cargas->map(function ($c) use ($calificaciones) {
             $calif = $calificaciones->get($c->id, collect());
-            $p1 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 1);
-            $p2 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 2);
-            $ex = $calif->firstWhere(fn($q) => $q->tipo === 'extraordinario');
-            $calFinal = $ex
-                ? $ex->calificacion
-                : ($p1 && $p2 ? round(($p1->calificacion + $p2->calificacion) / 2, 1) : null);
+            $final = $calif->firstWhere('tipo', 'final');
+            $ex = $calif->firstWhere('tipo', 'extraordinario');
+            $calFinal = $ex ? $ex->calificacion : $final?->calificacion;
             return [
                 'carga'    => $c,
-                'p1'       => $p1,
-                'p2'       => $p2,
+                'final'    => $final,
                 'ex'       => $ex,
                 'calFinal' => $calFinal,
                 'aprobado' => $calFinal !== null && $calFinal >= 7.0,

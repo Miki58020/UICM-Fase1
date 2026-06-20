@@ -56,4 +56,33 @@ class Alumno extends Model
     {
         return "{$this->nombre} {$this->apellido_paterno} {$this->apellido_materno}";
     }
+
+    /**
+     * Recalcula creditos_acumulados a partir de las calificaciones cuya
+     * carga académica ya fue aprobada por control escolar.
+     */
+    public function recalcularCreditosAcumulados(): void
+    {
+        $porCarga = $this->calificaciones()
+            ->with('cargaAcademica.materia')
+            ->get()
+            ->groupBy('carga_academica_id');
+
+        $creditos = 0;
+        foreach ($porCarga as $cargaId => $registros) {
+            $carga = $registros->first()?->cargaAcademica;
+            $materia = $carga?->materia;
+
+            if (!$materia || $carga->estado_revision !== 'aprobado') {
+                continue;
+            }
+
+            $final = Calificacion::finalPara($this->id, $cargaId, $registros);
+            if ($final && $final->calificacion >= 7.0) {
+                $creditos += $materia->creditos ?? 0;
+            }
+        }
+
+        $this->update(['creditos_acumulados' => $creditos]);
+    }
 }

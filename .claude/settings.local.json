@@ -156,7 +156,9 @@
       "Read(//c/Program Files/Google/Chrome/Application/**)",
       "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --no-sandbox --window-size=1000,2400 --screenshot=/tmp/kardex.png \"http://127.0.0.1:8000/_dev_login_alumno6\")",
       "Bash(rm -f /tmp/kardex.png /tmp/serve.log)",
-      "Bash(rm -f \"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\\\\storage\\\\app\\\\kardex_test.html\")"
+      "Bash(rm -f \"C:\\\\Users\\\\Miguel Ángel\\\\Desktop\\\\UICM-Fase1\\\\storage\\\\app\\\\kardex_test.html\")",
+      "Bash(npx --yes playwright --version)",
+      "Bash(sort -k6,7)"
     ]
   }
 }

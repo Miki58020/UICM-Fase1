@@ -390,8 +390,7 @@
                         <thead>
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                 <th class="px-6 py-3">Materia</th>
-                                <th class="px-4 py-3 text-center">Parcial 1</th>
-                                <th class="px-4 py-3 text-center">Parcial 2</th>
+                                <th class="px-4 py-3 text-center">Final</th>
                                 <th class="px-4 py-3 text-center">Extraordinario</th>
                                 <th class="px-4 py-3 text-center">Cal. Final</th>
                                 <th class="px-4 py-3 text-center">Estado</th>
@@ -401,13 +400,9 @@
                             @foreach ($carga as $c)
                             @php
                                 $calif = $calificaciones->get($c->id, collect());
-                                $p1 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 1);
-                                $p2 = $calif->firstWhere(fn($q) => $q->tipo === 'parcial' && $q->numero === 2);
-                                $ex = $calif->firstWhere(fn($q) => $q->tipo === 'extraordinario');
-                                $tieneParciales = $p1 && $p2;
-                                $calFinal = $ex
-                                    ? $ex->calificacion
-                                    : ($tieneParciales ? round(($p1->calificacion + $p2->calificacion) / 2, 1) : null);
+                                $final = $calif->firstWhere('tipo', 'final');
+                                $ex = $calif->firstWhere('tipo', 'extraordinario');
+                                $calFinal = $ex ? $ex->calificacion : $final?->calificacion;
                                 $aprobado = $calFinal !== null && $calFinal >= 7.0;
                             @endphp
                             <tr class="hover:bg-gray-50">
@@ -416,18 +411,9 @@
                                     <span class="block text-xs text-gray-400 font-normal">{{ $c->materia->clave }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-center font-semibold">
-                                    @if ($p1)
-                                        <span class="{{ $p1->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
-                                            {{ number_format($p1->calificacion, 1) }}
-                                        </span>
-                                    @else
-                                        <span class="text-gray-300">—</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 text-center font-semibold">
-                                    @if ($p2)
-                                        <span class="{{ $p2->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
-                                            {{ number_format($p2->calificacion, 1) }}
+                                    @if ($final)
+                                        <span class="{{ $final->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
+                                            {{ number_format($final->calificacion, 1) }}
                                         </span>
                                     @else
                                         <span class="text-gray-300">—</span>

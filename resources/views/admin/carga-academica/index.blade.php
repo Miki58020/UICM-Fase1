@@ -145,7 +145,7 @@
                                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
                                         onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
                                     <option value="">Todos</option>
-                                    @foreach (range(1, 9) as $n)
+                                    @foreach (range(1, $programas->max('duracion_cuatrimestres') ?: 9) as $n)
                                         <option value="{{ $n }}">{{ $n }}°</option>
                                     @endforeach
                                 </select>
@@ -488,6 +488,7 @@
                                     <th class="px-6 py-3">Profesor asignado</th>
                                     <th class="px-6 py-3">Horario</th>
                                     <th class="px-6 py-3">Aula</th>
+                                    <th class="px-6 py-3">Ventana (mes)</th>
                                     <th class="px-6 py-3 text-center">Créditos</th>
                                     <th class="px-6 py-3 text-right">Acción</th>
                                 </tr>
@@ -510,6 +511,13 @@
                                     </td>
                                     <td class="px-6 py-3 text-gray-500 text-xs">{{ $entrada->horario ?? '—' }}</td>
                                     <td class="px-6 py-3 text-gray-500 text-xs">{{ $entrada->aula ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-gray-500 text-xs whitespace-nowrap">
+                                        @if ($entrada->fecha_inicio && $entrada->fecha_fin)
+                                            {{ $entrada->fecha_inicio->format('d/m/Y') }} - {{ $entrada->fecha_fin->format('d/m/Y') }}
+                                        @else
+                                            <span class="text-orange-500 font-medium">Sin definir</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-3 text-center">
                                         <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white"
                                               style="background-color: #D4AF37;">
@@ -517,7 +525,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-3 text-right">
-                                        <button onclick="abrirAsignacion({{ $entrada->id }}, '{{ addslashes($entrada->materia->nombre ?? '') }}', {{ $entrada->profesor_id ?? 'null' }}, '{{ addslashes($entrada->horario ?? '') }}', '{{ addslashes($entrada->aula ?? '') }}')"
+                                        <button onclick="abrirAsignacion({{ $entrada->id }}, '{{ addslashes($entrada->materia->nombre ?? '') }}', {{ $entrada->profesor_id ?? 'null' }}, '{{ addslashes($entrada->horario ?? '') }}', '{{ addslashes($entrada->aula ?? '') }}', '{{ $entrada->fecha_inicio?->format('Y-m-d') }}', '{{ $entrada->fecha_fin?->format('Y-m-d') }}')"
                                                 class="text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors duration-150"
                                                 style="border-color: #0F4229; color: #0F4229;"
                                                 onmouseover="this.style.backgroundColor='#0F4229'; this.style.color='white'"
@@ -647,6 +655,21 @@
                     <p class="mt-1 text-xs text-gray-400">Letra del edificio + número (Ej. A-101).</p>
                 </div>
             </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Inicio de ventana</label>
+                    <input type="date" id="asig-fecha-inicio" name="fecha_inicio"
+                           class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fin de ventana</label>
+                    <input type="date" id="asig-fecha-fin" name="fecha_fin"
+                           class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                </div>
+            </div>
+            <p class="text-xs text-gray-400 -mt-2">
+                Define el mes en que el profesor podrá capturar la calificación de esta materia. Déjalo vacío para no restringir fechas.
+            </p>
             <div class="flex justify-end gap-3 pt-2">
                 <button type="button" onclick="document.getElementById('modal-asignacion').classList.add('hidden')"
                         class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
@@ -668,12 +691,14 @@
 
 @push('scripts')
 <script>
-function abrirAsignacion(cargaId, materiaNombre, profesorId, horario, aula) {
+function abrirAsignacion(cargaId, materiaNombre, profesorId, horario, aula, fechaInicio, fechaFin) {
     document.getElementById('form-asignacion').action = '/admin/carga-academica/' + cargaId + '/actualizar';
     document.getElementById('modal-materia-nombre').textContent = materiaNombre;
     document.getElementById('asig-profesor').value = profesorId ?? '';
     document.getElementById('asig-horario').value = horario;
     document.getElementById('asig-aula').value = aula;
+    document.getElementById('asig-fecha-inicio').value = fechaInicio ?? '';
+    document.getElementById('asig-fecha-fin').value = fechaFin ?? '';
     document.getElementById('modal-asignacion').classList.remove('hidden');
 }
 </script>
