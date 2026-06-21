@@ -185,8 +185,10 @@ class CargaAcademicaController extends Controller
                 continue;
             }
 
-            if (Alumno::where('email', $d['email'])->exists()) {
-                $errores[] = "Línea {$fila['linea']}: ya existe un alumno con el correo \"{$d['email']}\".";
+            // Acotado por programa: la misma persona puede estar migrada en más de un
+            // programa (doble carrera) con el mismo correo personal de contacto.
+            if (Alumno::where('email', $d['email'])->where('programa_id', $grupoDestino->programa_id)->exists()) {
+                $errores[] = "Línea {$fila['linea']}: ya existe un alumno con el correo \"{$d['email']}\" en este programa.";
                 continue;
             }
 

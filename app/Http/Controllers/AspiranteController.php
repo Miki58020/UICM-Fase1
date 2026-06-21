@@ -165,17 +165,29 @@ class AspiranteController extends Controller
             ]);
         }
 
-        $esDoctorado = Programa::where('clave', $request->programa_academico)
-            ->value('nivel') === 'doctorado';
+        // Se resuelve antes de validar para poder acotar la unicidad de curp/email por programa:
+        // la misma persona puede aplicar a programas distintos (doble carrera), pero no duplicar
+        // su aplicación al mismo programa.
+        $programaSeleccionado = Programa::where('clave', $request->programa_academico)
+            ->where('activo', true)
+            ->first();
+
+        $esDoctorado = $programaSeleccionado?->nivel === 'doctorado';
 
         $request->validate([
             'nombre'            => 'required|string|max:100',
             'apellido_paterno'  => 'required|string|max:100',
             'apellido_materno'  => 'nullable|string|max:100',
-            'curp'              => 'required|string|size:18|unique:aspirantes,curp',
+            'curp'              => [
+                'required', 'string', 'size:18',
+                \Illuminate\Validation\Rule::unique('aspirantes', 'curp')->where('programa_id', $programaSeleccionado?->id),
+            ],
             'fecha_nacimiento'  => 'required|date|before:today',
             'telefono'          => 'required|digits:10',
-            'email'             => 'required|email:rfc,filter|unique:aspirantes,email',
+            'email'             => [
+                'required', 'email:rfc,filter',
+                \Illuminate\Validation\Rule::unique('aspirantes', 'email')->where('programa_id', $programaSeleccionado?->id),
+            ],
             'programa_academico'=> 'required|string',
             'generacion'        => 'required|string|exists:periodos,nombre',
             'acta_nacimiento'        => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
@@ -190,9 +202,7 @@ class AspiranteController extends Controller
             ],
         ]);
 
-        $programa = Programa::where('clave', $request->programa_academico)
-            ->where('activo', true)
-            ->firstOrFail();
+        $programa = $programaSeleccionado ?? abort(404);
 
         // Validar que el programa está disponible en el periodo seleccionado
         $periodoObj = Periodo::where('nombre', $request->generacion)->first();
