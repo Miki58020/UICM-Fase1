@@ -78,14 +78,6 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
                         Los cambios aplican a nuevos pagos inmediatamente.
                     </p>
 
-                    @if($key !== 'inscripcion')
-                        <x-banner-desarrollo>
-                            Estas tarifas quedan configuradas para cuando se implemente el módulo de cobro de
-                            {{ strtolower($info['label']) }}. Por ahora solo se usan activamente las tarifas de
-                            <strong>Inscripción</strong>.
-                        </x-banner-desarrollo>
-                    @endif
-
                     <div class="space-y-3">
                         @forelse($tarifas[$key] ?? [] as $tarifa)
                         <div class="flex items-center gap-3 sm:gap-4 rounded-xl px-3 sm:px-5 py-3 sm:py-4 bg-uicm-gray">
@@ -123,11 +115,21 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
                                             - {{ $tarifa->descuento_fecha_fin->format('d/m/Y') }}
                                         </p>
                                     @endif
+                                    @if($key === 'colegiatura')
+                                        @if($tarifa->descuento > 0 && $tarifa->dias_descuento_pronto_pago)
+                                            <p class="text-xs text-gray-400 mt-0.5">
+                                                {{ number_format($tarifa->descuento, 0) }}% dto. si paga del día 1 al {{ $tarifa->dias_descuento_pronto_pago }} de cada mes
+                                            </p>
+                                        @endif
+                                        <p class="text-xs text-gray-400 mt-0.5">
+                                            Atraso después del día {{ $tarifa->dia_limite_pago ?? '—' }} de cada mes
+                                        </p>
+                                    @endif
                                 @endif
                             </div>
 
                             {{-- Botón editar --}}
-                            <button onclick="abrirModal({{ $tarifa->id }}, '{{ $nivelLabel($tarifa->nivel) }}', '{{ $info['label'] }}', '{{ $key }}', {{ $tarifa->monto }}, {{ $tarifa->descuento }}, {{ $tarifa->descuento_fecha_inicio?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_inicio->format('Y-m-d')."'" : 'null' }}, {{ $tarifa->descuento_fecha_fin?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_fin->format('Y-m-d')."'" : 'null' }})"
+                            <button onclick="abrirModal({{ $tarifa->id }}, '{{ $nivelLabel($tarifa->nivel) }}', '{{ $info['label'] }}', '{{ $key }}', {{ $tarifa->monto }}, {{ $tarifa->descuento }}, {{ $tarifa->descuento_fecha_inicio?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_inicio->format('Y-m-d')."'" : 'null' }}, {{ $tarifa->descuento_fecha_fin?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_fin->format('Y-m-d')."'" : 'null' }}, {{ $tarifa->dia_limite_pago ?? 'null' }}, {{ $tarifa->dias_descuento_pronto_pago ?? 'null' }})"
                                     class="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-200 flex-shrink-0"
                                     style="background-color: {{ $info['color'] }};"
                                     onmouseover="this.style.opacity='0.85'"
@@ -200,7 +202,7 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
                         <p class="mt-1 text-xs text-gray-400">Ingresa 0 si no aplica descuento.</p>
                     </div>
 
-                    {{-- Vigencia del descuento (solo Inscripción) --}}
+                    {{-- Vigencia del descuento (Inscripción / Cuatrimestre) --}}
                     <div id="modal-descuento-fechas" class="hidden">
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
                             Vigencia del descuento
@@ -236,6 +238,27 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
                             <input type="hidden" name="descuento_fecha_fin" id="modal-descuento-fin" value="">
                         @endif
                     </div>
+
+                    {{-- Días del mes (solo Colegiatura) --}}
+                    <div id="modal-descuento-dias" class="hidden">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Días con descuento (desde el 1°)</label>
+                                <input type="number" name="dias_descuento_pronto_pago" id="modal-dias-descuento"
+                                       min="1" max="28"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Día límite de pago</label>
+                                <input type="number" name="dia_limite_pago" id="modal-dia-limite"
+                                       min="1" max="28" required
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                            </div>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-400">Después del día límite, el pago se marca como atrasado (sin suspender el acceso).</p>
+                    </div>
                 </div>
 
                 {{-- Preview precio final --}}
@@ -264,7 +287,7 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
 
 @push('scripts')
 <script>
-function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, descFin) {
+function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, descFin, diaLimite, diasDescuento) {
     document.getElementById('modal-info').textContent = nivel + ' — ' + tipo;
     document.getElementById('modal-monto').value = monto;
     document.getElementById('modal-descuento').value = descuento;
@@ -273,14 +296,25 @@ function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, desc
     const fechasWrap = document.getElementById('modal-descuento-fechas');
     const inputInicio = document.getElementById('modal-descuento-inicio');
     const inputFin    = document.getElementById('modal-descuento-fin');
+    const diasWrap     = document.getElementById('modal-descuento-dias');
+    const inputDiaLimite = document.getElementById('modal-dia-limite');
+    const inputDiasDescuento = document.getElementById('modal-dias-descuento');
 
-    if (tipoKey === 'inscripcion') {
+    if (tipoKey === 'inscripcion' || tipoKey === 'cuatrimestre') {
         fechasWrap.classList.remove('hidden');
     } else {
         fechasWrap.classList.add('hidden');
     }
     inputInicio.value = descInicio || '';
     inputFin.value    = descFin || '';
+
+    if (tipoKey === 'colegiatura') {
+        diasWrap.classList.remove('hidden');
+    } else {
+        diasWrap.classList.add('hidden');
+    }
+    inputDiaLimite.value = diaLimite || '';
+    inputDiasDescuento.value = diasDescuento || '';
 
     actualizarPreview();
     document.getElementById('modal-editar').classList.remove('hidden');

@@ -89,11 +89,7 @@ class AlumnoController extends Controller
                 ->groupBy('carga_academica_id');
         }
 
-        // Merge inscripción pagos (via aspirante_id) with reinscripción pagos (via alumno_id)
-        $pagosReinscripcion = Pago::where('alumno_id', $alumno->id)
-            ->where('concepto', 'reinscripcion')
-            ->get();
-        $pagos = $alumno->pagos->merge($pagosReinscripcion)->sortByDesc('created_at');
+        $pagos = $alumno->todosLosPagos()->sortByDesc('created_at');
 
         return view('alumno.dashboard', compact('alumno', 'carga', 'totalCreditos', 'calificaciones', 'pagos'));
     }

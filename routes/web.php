@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ConfiguracionApisController;
 use App\Http\Controllers\Admin\ConfiguracionCorreoController;
 use App\Http\Controllers\Admin\ConfiguracionMercadopagoController;
 use App\Http\Controllers\AlumnoController;
+use App\Http\Controllers\AlumnoFinanzasController;
 use App\Http\Controllers\AspiranteController;
 use App\Http\Controllers\AclaracionCalificacionController;
 use App\Http\Controllers\CalificacionController;
@@ -75,6 +76,9 @@ Route::middleware(['auth', 'rol:alumno'])->group(function () {
     Route::post('/alumno/cambiar-password', [AlumnoController::class, 'cambiarPassword'])->name('alumno.cambiar-password');
     Route::get('/alumno/documentos', [DocumentoAlumnoController::class, 'index'])->name('alumno.documentos.index');
     Route::post('/alumno/documentos/{tipo}', [DocumentoAlumnoController::class, 'subir'])->name('alumno.documentos.subir');
+    Route::get('/alumno/finanzas', [AlumnoFinanzasController::class, 'index'])->name('alumno.finanzas.index');
+    Route::get('/alumno/pagos/{pago}/pagar', [PagoController::class, 'pagarAlumno'])->name('alumno.pagos.pagar');
+    Route::get('/alumno/pagos/{pago}/retorno', [PagoController::class, 'retornoAlumno'])->name('alumno.pagos.retorno');
 });
 
 // Polling de estado del alumno — solo requiere auth (sin CheckRol para no entrar en bucle de kick)
@@ -85,9 +89,12 @@ Route::get('/alumno/check-estado', [AlumnoController::class, 'checkEstado'])
 // Módulo finanzas — Validación de pagos
 Route::middleware(['auth', 'rol:finanzas'])->group(function () {
     Route::get('/finanzas/pagos', [PagoController::class, 'index'])->name('finanzas.pagos.index');
+    Route::get('/finanzas/pagos/exportar', [PagoController::class, 'exportar'])->name('finanzas.pagos.exportar');
     Route::get('/finanzas/pagos/{pago}', [PagoController::class, 'show'])->name('finanzas.pagos.show');
     Route::patch('/finanzas/pagos/{pago}/aprobar', [PagoController::class, 'aprobar'])->name('finanzas.pagos.aprobar');
     Route::patch('/finanzas/pagos/{pago}/rechazar', [PagoController::class, 'rechazar'])->name('finanzas.pagos.rechazar');
+    Route::get('/finanzas/estadisticas', [PagoController::class, 'estadisticas'])->name('finanzas.estadisticas');
+    Route::get('/finanzas/alumnos', [PagoController::class, 'alumnosEstadoPago'])->name('finanzas.alumnos');
 });
 
 // Módulo Control Escolar — Aspirantes e inscripciones

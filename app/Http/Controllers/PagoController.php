@@ -9,7 +9,9 @@ use App\Models\Aspirante;
 use App\Models\ConfiguracionMercadopago;
 use App\Models\Pago;
 use App\Models\Periodo;
+use App\Models\TarifaInscripcion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -294,6 +296,12 @@ class PagoController extends Controller
 
             $pago = Pago::where('mp_payment_id', $payment->id)->first();
 
+            // Pago de un alumno autenticado (colegiatura/cuatrimestre/reinscripcion)
+            if (!$pago && str_starts_with((string) $payment->external_reference, 'PAGO-')) {
+                $pagoId = (int) str_replace('PAGO-', '', $payment->external_reference);
+                $pago   = Pago::find($pagoId);
+            }
+
             if (!$pago && $payment->external_reference) {
                 $aspirante = Aspirante::with('programa')->where('folio', $payment->external_reference)->first();
                 if ($aspirante) {
@@ -306,7 +314,10 @@ class PagoController extends Controller
             }
 
             if ($pago) {
-                $pago->update(['mp_payment_id' => $payment->id]);
+                $pago->update([
+                    'mp_payment_id' => $payment->id,
+                    'fecha_pago'    => $pago->fecha_pago ?? now()->toDateString(),
+                ]);
             } elseif ($aspirante && in_array($payment->status, ['approved', 'pending', 'in_process', 'authorized'])) {
                 $tarifa = $this->obtenerTarifaInscripcion($aspirante->programa);
 
@@ -340,12 +351,206 @@ class PagoController extends Controller
         return view('aspirantes.pago_confirmacion', compact('status'));
     }
 
+    // ─── Alumno: pagar un cargo pendiente dentro del portal ───────────────────
+
+    public function pagarAlumno(Pago $pago)
+    {
+        $alumno = Alumno::where('user_id', Auth::id())->with('programa')->firstOrFail();
+        abort_if($pago->alumno_id !== $alumno->id, 403);
+        abort_if($pago->estado !== 'pendiente', 403, 'Este pago ya fue procesado.');
+
+        // La colegiatura tiene descuento por pronto pago: el monto se recalcula
+        // siempre con la fecha de hoy antes de generar el cobro en Mercado Pago.
+        if ($pago->concepto === 'colegiatura') {
+            $tarifa = TarifaInscripcion::where('nivel', $alumno->programa->nivel)
+                ->where('tipo', 'colegiatura')
+                ->first();
+
+            if ($tarifa) {
+                $pago->update([
+                    'monto'          => $tarifa->precioParaFecha(now()),
+                    'descuento'      => $tarifa->descuentoVigenteEnFecha(now()) ? $tarifa->descuento : 0,
+                    'monto_original' => $tarifa->monto,
+                ]);
+            }
+        }
+
+        $sessionKeyPref = 'mp_pref_pago_' . $pago->id . '_' . (int) $pago->monto;
+        $sessionKeyUrl  = 'mp_url_pago_' . $pago->id . '_' . (int) $pago->monto;
+        $preferenceId   = session($sessionKeyPref);
+        $checkoutUrl    = session($sessionKeyUrl);
+
+        if (!$preferenceId || !$checkoutUrl) {
+            try {
+                $this->configurarMP();
+
+                $preference = (new PreferenceClient())->create([
+                    'items' => [[
+                        'title'       => $this->tituloConcepto($pago),
+                        'quantity'    => 1,
+                        'unit_price'  => (float) $pago->monto,
+                        'currency_id' => 'MXN',
+                    ]],
+                    'external_reference'   => 'PAGO-' . $pago->id,
+                    'statement_descriptor'  => 'UICM ' . ucfirst($pago->concepto),
+                    'auto_return'           => 'approved',
+                    'back_urls'             => [
+                        'success' => route('alumno.pagos.retorno', $pago),
+                        'pending' => route('alumno.pagos.retorno', $pago),
+                        'failure' => route('alumno.finanzas.index'),
+                    ],
+                ]);
+
+                $preferenceId = $preference->id;
+                $checkoutUrl  = app()->environment('production')
+                    ? $preference->init_point
+                    : $preference->sandbox_init_point;
+
+                session([$sessionKeyPref => $preferenceId, $sessionKeyUrl => $checkoutUrl]);
+                $pago->update(['mp_preference_id' => $preferenceId]);
+            } catch (\Exception $e) {
+                Log::error('MP pagarAlumno error: ' . $e->getMessage());
+            }
+        }
+
+        return view('alumno.pagos.pagar', compact('pago', 'checkoutUrl'));
+    }
+
+    public function retornoAlumno(Request $request, Pago $pago)
+    {
+        $paymentId = $request->query('payment_id');
+
+        if ($paymentId) {
+            try {
+                $this->configurarMP();
+                $payment = (new PaymentClient())->get((int) $paymentId);
+
+                if (in_array($payment->status, ['approved', 'pending', 'in_process', 'authorized'])) {
+                    $pago->update([
+                        'mp_payment_id' => (string) $payment->id,
+                        'fecha_pago'    => now()->toDateString(),
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('MP retornoAlumno error: ' . $e->getMessage());
+            }
+        }
+
+        return redirect()->route('alumno.finanzas.index')
+            ->with('success', 'Tu pago fue enviado y quedó en revisión por Finanzas.');
+    }
+
+    private function tituloConcepto(Pago $pago): string
+    {
+        $labels = [
+            'colegiatura'   => 'Colegiatura',
+            'cuatrimestre'  => 'Cuatrimestre',
+            'reinscripcion' => 'Reinscripción',
+        ];
+
+        $titulo = 'UICM — ' . ($labels[$pago->concepto] ?? ucfirst($pago->concepto));
+
+        return $pago->mes ? $titulo . ' ' . $pago->mes : $titulo;
+    }
+
     // ─── Finanzas: listado y detalle ──────────────────────────────────────────
 
-    public function index()
+    public function index(Request $request)
     {
-        $pagos = Pago::with(['aspirante.programa', 'alumno.programa'])->latest()->get();
+        $pagos = $this->pagosFiltrados($request)->get();
+
         return view('finanzas.pagos.index', compact('pagos'));
+    }
+
+    public function exportar(Request $request)
+    {
+        $pagos = $this->pagosFiltrados($request)->get();
+
+        $callback = function () use ($pagos) {
+            $handle = fopen('php://output', 'w');
+            fwrite($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['Referencia', 'Nombre', 'Matricula', 'Programa', 'Concepto', 'Periodo', 'Monto', 'Descuento (%)', 'Fecha de pago', 'Estado']);
+
+            foreach ($pagos as $pago) {
+                fputcsv($handle, [
+                    $pago->aspirante?->folio ?? $pago->alumno?->matricula ?? '',
+                    $pago->aspirante?->nombre_completo ?? $pago->alumno?->nombre_completo ?? '',
+                    $pago->alumno?->matricula ?? '',
+                    $pago->aspirante?->programa?->nombre ?? $pago->alumno?->programa?->nombre ?? '',
+                    $pago->concepto . ($pago->mes ? ' ' . $pago->mes : ''),
+                    $pago->periodo,
+                    $pago->monto,
+                    $pago->descuento,
+                    $pago->fecha_pago?->format('Y-m-d') ?? '',
+                    $pago->estado,
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="pagos_' . now()->format('Ymd_His') . '.csv"',
+        ]);
+    }
+
+    // ─── Finanzas: estadísticas ────────────────────────────────────────────────
+
+    public function estadisticas()
+    {
+        $aprobados  = Pago::where('estado', 'aprobado')->get();
+        $pendientes = Pago::where('estado', 'pendiente')->get();
+
+        $totalRecaudado = $aprobados->sum('monto');
+
+        $porConcepto = $aprobados->groupBy('concepto')->map(fn ($grupo) => [
+            'cantidad' => $grupo->count(),
+            'monto'    => $grupo->sum('monto'),
+        ]);
+
+        $porMes = $aprobados->groupBy(fn (Pago $p) => $p->fecha_pago?->format('Y-m') ?? $p->created_at->format('Y-m'))
+            ->sortKeys()
+            ->map(fn ($grupo) => $grupo->sum('monto'));
+
+        $montoPendiente = $pendientes->sum('monto');
+        $montoAtrasado  = $pendientes->filter(fn (Pago $p) => $p->estaVencido())->sum('monto');
+
+        return view('finanzas.estadisticas', compact(
+            'totalRecaudado', 'porConcepto', 'porMes', 'montoPendiente', 'montoAtrasado', 'pendientes'
+        ));
+    }
+
+    public function alumnosEstadoPago()
+    {
+        $alumnos = Alumno::where('estado', 'activo')
+            ->with('programa')
+            ->orderBy('apellido_paterno')
+            ->orderBy('nombre')
+            ->get()
+            ->map(function (Alumno $alumno) {
+                $pendientes                = $alumno->todosLosPagos()->where('estado', 'pendiente');
+                $atrasados                 = $pendientes->filter(fn (Pago $p) => $p->estaVencido());
+                $alumno->montoAtrasado      = $atrasados->sum('monto');
+                $alumno->cantidadAtrasados  = $atrasados->count();
+                $alumno->alCorriente        = $atrasados->isEmpty();
+                return $alumno;
+            });
+
+        $atrasados   = $alumnos->where('alCorriente', false)->values();
+        $alCorriente = $alumnos->where('alCorriente', true)->values();
+
+        return view('finanzas.alumnos', compact('atrasados', 'alCorriente'));
+    }
+
+    private function pagosFiltrados(Request $request)
+    {
+        return Pago::with(['aspirante.programa', 'alumno.programa'])
+            ->when($request->filled('concepto'), fn ($q) => $q->where('concepto', $request->concepto))
+            ->when($request->filled('estado'), fn ($q) => $q->where('estado', $request->estado))
+            ->when($request->filled('fecha_desde'), fn ($q) => $q->whereDate('created_at', '>=', $request->fecha_desde))
+            ->when($request->filled('fecha_hasta'), fn ($q) => $q->whereDate('created_at', '<=', $request->fecha_hasta))
+            ->latest();
     }
 
     public function show(Pago $pago)

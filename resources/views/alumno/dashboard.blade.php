@@ -180,7 +180,7 @@
             </div>
 
             {{-- Fila 2: Estado + resumen --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
 
                 {{-- Estado administrativo --}}
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex items-center gap-4 px-5 py-4">
@@ -249,6 +249,25 @@
                     <div>
                         <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Kárdex</p>
                         <p class="text-sm font-bold mt-0.5" style="color: #0F4229;">Ver / Imprimir</p>
+                    </div>
+                </a>
+
+                {{-- Finanzas --}}
+                <a href="{{ route('alumno.finanzas.index') }}"
+                   class="bg-white rounded-2xl shadow-sm overflow-hidden flex items-center gap-4 px-5 py-4
+                          hover:shadow-md transition-shadow duration-150">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                         style="background-color: #f0f9f4;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             style="color: #0F4229;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6
+                                     a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Finanzas</p>
+                        <p class="text-sm font-bold mt-0.5" style="color: #0F4229;">Pagos / Estado</p>
                     </div>
                 </a>
 

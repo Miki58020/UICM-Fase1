@@ -29,13 +29,62 @@
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         {{-- Encabezado de módulo --}}
-        <div class="mb-8">
-            <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-                Finanzas
-            </p>
-            <h1 class="text-2xl font-extrabold text-gray-900">Pagos en revisión</h1>
-            <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
+        <div class="mb-8 flex flex-wrap items-end justify-between gap-3">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
+                    Finanzas
+                </p>
+                <h1 class="text-2xl font-extrabold text-gray-900">Pagos en revisión</h1>
+                <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
+            </div>
+            <div class="flex gap-2">
+                <a href="{{ route('finanzas.estadisticas') }}"
+                   class="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-colors"
+                   style="border-color: #0F4229; color: #0F4229;">
+                    Estadísticas
+                </a>
+                <a href="{{ route('finanzas.alumnos') }}"
+                   class="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-colors"
+                   style="border-color: #0F4229; color: #0F4229;">
+                    Alumnos al corriente
+                </a>
+            </div>
         </div>
+
+        {{-- Filtros de servidor --}}
+        <form method="GET" class="bg-white rounded-2xl shadow-md px-6 py-5 mb-6 grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Concepto</label>
+                <select name="concepto" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+                    <option value="">Todos</option>
+                    @foreach (['inscripcion' => 'Inscripción', 'reinscripcion' => 'Reinscripción', 'colegiatura' => 'Colegiatura', 'cuatrimestre' => 'Cuatrimestre', 'otro' => 'Otro'] as $val => $label)
+                        <option value="{{ $val }}" {{ request('concepto') === $val ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Desde</label>
+                <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
+                       class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}"
+                       class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+            </div>
+            <div class="flex items-end gap-2">
+                <button type="submit"
+                        class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+                        style="background-color: #0F4229;">
+                    Filtrar
+                </button>
+                <a href="{{ route('finanzas.pagos.exportar', request()->query()) }}"
+                   class="flex-1 text-center px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+                   style="background-color: #D4AF37;">
+                    Exportar CSV
+                </a>
+            </div>
+        </form>
 
 
         {{-- Contadores --}}
@@ -171,11 +220,18 @@
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if ($pago->concepto === 'reinscripcion')
-                                    <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Reinscripción</span>
-                                @else
-                                    <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">Inscripción</span>
-                                @endif
+                                @php
+                                    $badgesConcepto = [
+                                        'inscripcion'   => 'bg-gray-100 text-gray-600',
+                                        'reinscripcion' => 'bg-blue-100 text-blue-700',
+                                        'colegiatura'   => 'bg-emerald-100 text-emerald-700',
+                                        'cuatrimestre'  => 'bg-purple-100 text-purple-700',
+                                        'otro'          => 'bg-gray-100 text-gray-600',
+                                    ];
+                                @endphp
+                                <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold {{ $badgesConcepto[$pago->concepto] ?? 'bg-gray-100 text-gray-600' }}">
+                                    {{ ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}
+                                </span>
                             </td>
 
                             <td class="px-6 py-4 font-bold text-gray-800 whitespace-nowrap">

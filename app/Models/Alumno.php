@@ -48,6 +48,18 @@ class Alumno extends Model
         return $this->hasMany(Pago::class, 'aspirante_id', 'aspirante_id');
     }
 
+    /**
+     * Todos los pagos del alumno: la inscripción original queda ligada por aspirante_id
+     * (se generó antes de existir el registro de alumno); reinscripción, colegiatura
+     * y cuatrimestre se ligan por alumno_id.
+     */
+    public function todosLosPagos()
+    {
+        return Pago::where('alumno_id', $this->id)
+            ->orWhere('aspirante_id', $this->aspirante_id)
+            ->get();
+    }
+
     public function reinscripciones()
     {
         return $this->hasMany(Pago::class);

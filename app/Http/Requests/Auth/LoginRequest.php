@@ -5,12 +5,19 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
+    /**
+     * Duración del bloqueo (segundos) según cuántas veces se ha bloqueado antes
+     * este email/IP. Cada bloqueo nuevo escala al siguiente valor de la lista.
+     */
+    private const DECAY_PROGRESIVO = [60, 300, 900, 1800, 3600]; // 1min, 5min, 15min, 30min, 1h
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -42,7 +49,7 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+            $this->hitProgresivo();
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
@@ -50,6 +57,36 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+        Cache::forget($this->nivelBloqueoKey());
+    }
+
+    /**
+     * Registra el intento fallido. Si es el primer intento de una ventana nueva,
+     * el tiempo de bloqueo se calcula según cuántas veces este email/IP ya fue
+     * bloqueado antes (bloqueos progresivos: 1min, 5min, 15min, 30min, 1h).
+     */
+    private function hitProgresivo(): void
+    {
+        $key = $this->throttleKey();
+        $esVentanaNueva = RateLimiter::attempts($key) === 0;
+
+        if ($esVentanaNueva) {
+            $nivel = Cache::get($this->nivelBloqueoKey(), 0);
+            $decay = self::DECAY_PROGRESIVO[min($nivel, count(self::DECAY_PROGRESIVO) - 1)];
+            RateLimiter::hit($key, $decay);
+        } else {
+            RateLimiter::hit($key);
+        }
+
+        if (RateLimiter::attempts($key) === 5) {
+            $nivel = Cache::get($this->nivelBloqueoKey(), 0);
+            Cache::put($this->nivelBloqueoKey(), $nivel + 1, now()->addDay());
+        }
+    }
+
+    private function nivelBloqueoKey(): string
+    {
+        return 'login_nivel_bloqueo:' . $this->throttleKey();
     }
 
     /**
