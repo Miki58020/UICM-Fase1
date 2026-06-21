@@ -242,98 +242,130 @@
 
                 <div class="px-6 py-5">
 
-                    <x-banner-desarrollo>
-                        Esta sección es un adelanto de cómo se incorporarán alumnos por lote, sin pasar uno por
-                        uno por el registro en línea (sin pago de inscripción). Por ahora puedes descargar la
-                        plantilla y dejar la información lista; la carga automática del archivo se habilitará
-                        próximamente.
-                    </x-banner-desarrollo>
-
                     {{-- Guía rápida --}}
                     <div class="bg-uicm-gray rounded-xl p-4 mb-5 text-sm text-gray-600">
-                        <p class="font-semibold text-gray-800 mb-2">¿Cómo va a funcionar? (guía rápida)</p>
+                        <p class="font-semibold text-gray-800 mb-2">¿Cómo funciona?</p>
                         <ol class="list-decimal list-inside space-y-1">
-                            <li>Elige el <strong>cuatrimestre</strong>, <strong>programa</strong> y <strong>grupo</strong> donde se incorporarán los alumnos.</li>
+                            <li>Elige el <strong>periodo</strong>, <strong>programa</strong> y <strong>grupo destino</strong> donde se incorporarán los alumnos (su cuatrimestre será el del grupo elegido).</li>
                             <li>Descarga la <strong>plantilla CSV</strong> y llena un renglón por cada alumno (nombre, apellidos, CURP, correo, etc.).</li>
-                            <li>El <strong>correo</strong> que captures es muy importante: ahí se enviarán la matrícula y la contraseña de acceso al alumno.</li>
-                            <li>Sube el archivo lleno (próximamente) y el sistema creará automáticamente al alumno, su usuario y le notificará por correo. No se requiere pago de inscripción para estos alumnos.</li>
+                            <li>El <strong>correo</strong> que captures es el personal del alumno: ahí se enviarán su matrícula y contraseña. Después usará su correo institucional.</li>
+                            <li>Sube el archivo. El sistema generará matrícula y usuario automáticamente; si el grupo se llena, crea grupos adicionales sin detener la carga. No se requiere pago de inscripción para estos alumnos.</li>
                         </ol>
                     </div>
 
-                    {{-- Selects de destino --}}
-                    <div x-data="{
-                        periodo_id: '',
-                        programa_id: '',
-                        grupos: @js($grupos->map(fn($g) => ['id' => $g->id, 'clave' => $g->clave, 'periodo_id' => $g->periodo_id, 'programa_id' => $g->programa_id])),
-                        get gruposFiltrados() {
-                            return this.grupos.filter(g =>
-                                (!this.periodo_id  || g.periodo_id  == this.periodo_id) &&
-                                (!this.programa_id || g.programa_id == this.programa_id)
-                            );
-                        }
-                    }" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+                    @if (session('migracion_resultado'))
+                        @php $resultado = session('migracion_resultado'); @endphp
+                        <div class="rounded-xl border border-green-200 bg-green-50 px-5 py-4 mb-5">
+                            <p class="text-sm font-bold text-green-800 mb-1">
+                                {{ $resultado['creados'] }} alumno(s) importado(s) correctamente.
+                            </p>
+                            @if (!empty($resultado['gruposCreados']))
+                                <p class="text-xs text-green-700">
+                                    Grupos creados automáticamente: {{ implode(', ', $resultado['gruposCreados']) }}.
+                                </p>
+                            @endif
+                            @if (!empty($resultado['errores']))
+                                <div class="mt-2 text-xs text-amber-700">
+                                    <p class="font-semibold mb-1">Filas con errores (no se importaron):</p>
+                                    <ul class="list-disc list-inside space-y-0.5">
+                                        @foreach ($resultado['errores'] as $err)
+                                            <li>{{ $err }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
 
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                Cuatrimestre (periodo)
-                            </label>
-                            <select x-model="periodo_id"
-                                    class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
-                                <option value="">Seleccionar…</option>
-                                @foreach ($periodos as $p)
-                                    <option value="{{ $p->id }}">{{ $p->label }}</option>
-                                @endforeach
-                            </select>
+                    <form method="POST" action="{{ route('admin.carga-academica.importar-migracion') }}"
+                          enctype="multipart/form-data"
+                          x-data="{
+                              periodo_id: '',
+                              programa_id: '',
+                              grupo_id: '',
+                              grupos: @js($grupos->map(fn($g) => ['id' => $g->id, 'clave' => $g->clave, 'periodo_id' => $g->periodo_id, 'programa_id' => $g->programa_id])),
+                              get gruposFiltrados() {
+                                  return this.grupos.filter(g =>
+                                      (!this.periodo_id  || g.periodo_id  == this.periodo_id) &&
+                                      (!this.programa_id || g.programa_id == this.programa_id)
+                                  );
+                              }
+                          }">
+                        @csrf
+
+                        {{-- Selects de destino --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                                    Periodo
+                                </label>
+                                <select x-model="periodo_id"
+                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
+                                    <option value="">Seleccionar…</option>
+                                    @foreach ($periodos as $p)
+                                        <option value="{{ $p->id }}">{{ $p->label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                                    Programa / Carrera
+                                </label>
+                                <select x-model="programa_id"
+                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
+                                    <option value="">Seleccionar…</option>
+                                    @foreach ($programas as $prog)
+                                        <option value="{{ $prog->id }}">{{ $prog->nombre }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                                    Grupo destino
+                                </label>
+                                <select name="grupo_id" x-model="grupo_id" required
+                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
+                                    <option value="">Seleccionar…</option>
+                                    <template x-for="g in gruposFiltrados" :key="g.id">
+                                        <option :value="g.id" x-text="g.clave"></option>
+                                    </template>
+                                </select>
+                            </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                Programa / Carrera
-                            </label>
-                            <select x-model="programa_id"
-                                    class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
-                                <option value="">Seleccionar…</option>
-                                @foreach ($programas as $prog)
-                                    <option value="{{ $prog->id }}">{{ $prog->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        {{-- Plantilla + carga --}}
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a href="{{ route('admin.carga-academica.plantilla-migracion') }}"
+                               class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-150 whitespace-nowrap"
+                               style="background-color: #0F4229;"
+                               onmouseover="this.style.backgroundColor='#0a2e1c'"
+                               onmouseout="this.style.backgroundColor='#0F4229'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-3L12 16.5l4.5-3M12 16.5V3"/>
+                                </svg>
+                                Descargar plantilla CSV
+                            </a>
 
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                Grupo destino
-                            </label>
-                            <select class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
-                                <option value="">Seleccionar…</option>
-                                <template x-for="g in gruposFiltrados" :key="g.id">
-                                    <option :value="g.id" x-text="g.clave"></option>
-                                </template>
-                            </select>
-                        </div>
-                    </div>
+                            <input type="file" name="csv" accept=".csv,text/csv" required
+                                   class="flex-1 text-sm text-gray-600 border-2 border-dashed border-gray-200 rounded-xl px-4 py-2.5 outline-none file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
 
-                    {{-- Plantilla + carga (concepto) --}}
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <a href="{{ route('admin.carga-academica.plantilla-migracion') }}"
-                           class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-150"
-                           style="background-color: #0F4229;"
-                           onmouseover="this.style.backgroundColor='#0a2e1c'"
-                           onmouseout="this.style.backgroundColor='#0F4229'">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-3L12 16.5l4.5-3M12 16.5V3"/>
-                            </svg>
-                            Descargar plantilla CSV
-                        </a>
-
-                        <div class="flex-1 flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-gray-200 text-sm text-gray-400 cursor-not-allowed">
-                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 7.5L12 3 7.5 7.5M12 3v13.5"/>
-                            </svg>
-                            Subir archivo de migración (próximamente)
+                            <button type="submit"
+                                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-150 whitespace-nowrap"
+                                    style="background-color: #D4AF37;"
+                                    onmouseover="this.style.backgroundColor='#b9952c'"
+                                    onmouseout="this.style.backgroundColor='#D4AF37'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 7.5L12 3 7.5 7.5M12 3v13.5"/>
+                                </svg>
+                                Subir e importar
+                            </button>
                         </div>
-                    </div>
+                    </form>
 
                 </div>
             </div>

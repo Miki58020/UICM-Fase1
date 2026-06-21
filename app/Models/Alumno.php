@@ -9,7 +9,13 @@ class Alumno extends Model
     protected $fillable = [
         'matricula', 'user_id', 'aspirante_id', 'programa_id', 'periodo_id', 'grupo_id',
         'nombre', 'apellido_paterno', 'apellido_materno', 'email',
-        'cuatrimestre_actual', 'creditos_acumulados', 'estado',
+        'cuatrimestre_actual', 'creditos_acumulados', 'estado', 'migrado',
+        'curp', 'telefono', 'fecha_nacimiento',
+    ];
+
+    protected $casts = [
+        'migrado' => 'boolean',
+        'fecha_nacimiento' => 'date:Y-m-d',
     ];
 
     public function user()
@@ -55,6 +61,40 @@ class Alumno extends Model
     public function getNombreCompletoAttribute(): string
     {
         return "{$this->nombre} {$this->apellido_paterno} {$this->apellido_materno}";
+    }
+
+    /**
+     * Genera la siguiente matrícula disponible para un programa dentro de un periodo,
+     * tomando en cuenta las matrículas ya existentes para ese periodo/programa.
+     */
+    public static function generarMatricula(Periodo $periodo, Programa $programa): string
+    {
+        $yy = $periodo->fecha_inicio_registro?->format('y') ?? now()->format('y');
+
+        $mes = $periodo->fecha_inicio_registro
+            ? (int) $periodo->fecha_inicio_registro->format('n')
+            : (int) now()->format('n');
+
+        $p = match (true) {
+            $mes >= 9              => 1,
+            $mes >= 1 && $mes <= 4 => 2,
+            default                => 3,
+        };
+
+        $pp = PeriodoPrograma::where('periodo_id', $periodo->id)
+            ->where('programa_id', $programa->id)
+            ->first();
+
+        $g = $pp?->numero_generacion ?? 1;
+        $c = $pp?->numero_carrera ?? ($programa->numero_carrera ?? 0);
+
+        $prefix = $yy . $p . $g . $c;
+
+        $count = self::where('programa_id', $programa->id)
+            ->where('periodo_id', $periodo->id)
+            ->count() + 1;
+
+        return $prefix . str_pad((string) $count, 4, '0', STR_PAD_LEFT);
     }
 
     /**

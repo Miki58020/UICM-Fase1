@@ -9,7 +9,6 @@ use App\Models\Aspirante;
 use App\Models\ConfiguracionMercadopago;
 use App\Models\Pago;
 use App\Models\Periodo;
-use App\Models\PeriodoPrograma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -436,35 +435,9 @@ class PagoController extends Controller
 
     private function generarMatricula(Aspirante $aspirante): string
     {
-        $periodo = Periodo::where('nombre', $aspirante->generacion)->first();
+        $periodo = Periodo::where('nombre', $aspirante->generacion)->first() ?? new Periodo();
 
-        $yy = $periodo
-            ? $periodo->fecha_inicio_registro->format('y')
-            : now()->format('y');
-
-        $mes = $periodo
-            ? (int) $periodo->fecha_inicio_registro->format('n')
-            : (int) now()->format('n');
-        $p = match(true) {
-            $mes >= 9              => 1,
-            $mes >= 1 && $mes <= 4 => 2,
-            default                => 3,
-        };
-
-        $pp = PeriodoPrograma::where('periodo_id', $periodo?->id)
-            ->where('programa_id', $aspirante->programa_id)
-            ->first();
-
-        $g = $pp?->numero_generacion ?? 1;
-        $c = $pp?->numero_carrera ?? ($aspirante->programa->numero_carrera ?? 0);
-
-        $prefix = $yy . $p . $g . $c;
-
-        $count = Alumno::where('programa_id', $aspirante->programa_id)
-            ->where('periodo_id', $periodo?->id)
-            ->count() + 1;
-
-        return $prefix . str_pad($count, 4, '0', STR_PAD_LEFT);
+        return Alumno::generarMatricula($periodo, $aspirante->programa);
     }
 
     private function configurarMP(): void
