@@ -180,7 +180,7 @@
             </div>
 
             {{-- Fila 2: Estado + resumen --}}
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
 
                 {{-- Estado administrativo --}}
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex items-center gap-4 px-5 py-4">
@@ -249,6 +249,25 @@
                     <div>
                         <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Kárdex</p>
                         <p class="text-sm font-bold mt-0.5" style="color: #0F4229;">Ver / Imprimir</p>
+                    </div>
+                </a>
+
+                {{-- Documentos --}}
+                <a href="{{ route('alumno.documentos.index') }}"
+                   class="bg-white rounded-2xl shadow-sm overflow-hidden flex items-center gap-4 px-5 py-4
+                          hover:shadow-md transition-shadow duration-150">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                         style="background-color: #fdf8ec;">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             style="color: #D4AF37;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293
+                                     l4.414 4.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Documentos</p>
+                        <p class="text-sm font-bold mt-0.5" style="color: #D4AF37;">Subir / Ver</p>
                     </div>
                 </a>
 

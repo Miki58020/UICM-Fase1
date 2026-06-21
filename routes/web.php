@@ -7,6 +7,7 @@ use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AspiranteController;
 use App\Http\Controllers\AclaracionCalificacionController;
 use App\Http\Controllers\CalificacionController;
+use App\Http\Controllers\DocumentoAlumnoController;
 use App\Http\Controllers\CargaAcademicaController;
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\HomeController;
@@ -72,6 +73,8 @@ Route::middleware(['auth', 'rol:alumno'])->group(function () {
     Route::get('/alumno/kardex', [AlumnoController::class, 'kardex'])->name('alumno.kardex');
     Route::get('/alumno/comprobante/{pago}', [AlumnoController::class, 'comprobante'])->name('alumno.comprobante');
     Route::post('/alumno/cambiar-password', [AlumnoController::class, 'cambiarPassword'])->name('alumno.cambiar-password');
+    Route::get('/alumno/documentos', [DocumentoAlumnoController::class, 'index'])->name('alumno.documentos.index');
+    Route::post('/alumno/documentos/{tipo}', [DocumentoAlumnoController::class, 'subir'])->name('alumno.documentos.subir');
 });
 
 // Polling de estado del alumno — solo requiere auth (sin CheckRol para no entrar en bucle de kick)

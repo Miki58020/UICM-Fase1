@@ -58,6 +58,11 @@ class Alumno extends Model
         return $this->hasMany(Calificacion::class);
     }
 
+    public function documentos()
+    {
+        return $this->hasMany(DocumentoAlumno::class);
+    }
+
     public function getNombreCompletoAttribute(): string
     {
         return "{$this->nombre} {$this->apellido_paterno} {$this->apellido_materno}";
