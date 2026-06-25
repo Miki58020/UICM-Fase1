@@ -95,6 +95,9 @@ Route::middleware(['auth', 'rol:finanzas'])->group(function () {
     Route::patch('/finanzas/pagos/{pago}/rechazar', [PagoController::class, 'rechazar'])->name('finanzas.pagos.rechazar');
     Route::get('/finanzas/estadisticas', [PagoController::class, 'estadisticas'])->name('finanzas.estadisticas');
     Route::get('/finanzas/alumnos', [PagoController::class, 'alumnosEstadoPago'])->name('finanzas.alumnos');
+
+    Route::get('/finanzas/tarifas', [TarifaController::class, 'index'])->name('finanzas.tarifas.index');
+    Route::patch('/finanzas/tarifas/{tarifa}', [TarifaController::class, 'update'])->name('finanzas.tarifas.update');
 });
 
 // Módulo Control Escolar — Aspirantes e inscripciones
@@ -120,15 +123,12 @@ Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
     Route::post('/admin/reinscripciones/{alumno}/completar', [ReinscripcionController::class, 'completar'])->name('admin.reinscripciones.completar');
 });
 
-// Módulo admin — Gestión de usuarios del sistema y tarifas
+// Módulo admin — Gestión de usuarios del sistema
 Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::get('/admin/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios.index');
     Route::post('/admin/usuarios', [UsuarioController::class, 'store'])->name('admin.usuarios.store');
     Route::patch('/admin/usuarios/{usuario}', [UsuarioController::class, 'update'])->name('admin.usuarios.update');
     Route::delete('/admin/usuarios/{usuario}', [UsuarioController::class, 'destroy'])->name('admin.usuarios.destroy');
-
-    Route::get('/admin/tarifas', [TarifaController::class, 'index'])->name('admin.tarifas.index');
-    Route::patch('/admin/tarifas/{tarifa}', [TarifaController::class, 'update'])->name('admin.tarifas.update');
 
     // APIs externas (MercadoPago, correo)
     Route::get('/admin/apis', [ConfiguracionApisController::class, 'index'])->name('admin.apis.index');

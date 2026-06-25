@@ -335,18 +335,6 @@
                 <span class="nav-link-text">Usuarios del sistema</span>
             </a>
 
-            <a href="{{ route('admin.tarifas.index') }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Conceptos"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.tarifas.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span class="nav-link-text">Conceptos de pago</span>
-            </a>
-
             <a href="{{ route('admin.pagina-principal.index') }}"
                @click="sidebarOpen = false"
                data-tooltip="Página principal"
@@ -667,6 +655,42 @@
                         {{ $pagosPendientes }}
                     </span>
                 @endif
+            </a>
+
+            <a href="{{ route('finanzas.tarifas.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Conceptos"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('finanzas.tarifas.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="nav-link-text">Conceptos de pago</span>
+            </a>
+
+            <a href="{{ route('finanzas.estadisticas') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Estadísticas"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('finanzas.estadisticas') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm6 0V9a2 2 0 00-2-2h-2a2 2 0 00-2 2v10a2 2 0 002 2h2a2 2 0 002-2zm6 0V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v14a2 2 0 002 2h2a2 2 0 002-2z"/>
+                </svg>
+                <span class="nav-link-text">Estadísticas</span>
+            </a>
+
+            <a href="{{ route('finanzas.alumnos') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Alumnos"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('finanzas.alumnos') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-3.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-4-4"/>
+                </svg>
+                <span class="nav-link-text">Alumnos al corriente</span>
             </a>
             @endif
 

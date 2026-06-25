@@ -32,6 +32,7 @@ $nivelLabel = fn($n) => match($n) {
 
 $regInicio = $periodoActivo?->fecha_inicio_registro?->format('Y-m-d');
 $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
+$finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
 @endphp
 
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
@@ -125,11 +126,16 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
                                             Atraso después del día {{ $tarifa->dia_limite_pago ?? '—' }} de cada mes
                                         </p>
                                     @endif
+                                    @if($key === 'cuatrimestre' && $tarifa->dias_anticipacion_cobro && $tarifa->dias_para_pagar)
+                                        <p class="text-xs text-gray-400 mt-0.5">
+                                            Cobro {{ $tarifa->dias_anticipacion_cobro }} día(s) antes de fin de clases, {{ $tarifa->dias_para_pagar }} día(s) para pagar
+                                        </p>
+                                    @endif
                                 @endif
                             </div>
 
                             {{-- Botón editar --}}
-                            <button onclick="abrirModal({{ $tarifa->id }}, '{{ $nivelLabel($tarifa->nivel) }}', '{{ $info['label'] }}', '{{ $key }}', {{ $tarifa->monto }}, {{ $tarifa->descuento }}, {{ $tarifa->descuento_fecha_inicio?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_inicio->format('Y-m-d')."'" : 'null' }}, {{ $tarifa->descuento_fecha_fin?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_fin->format('Y-m-d')."'" : 'null' }}, {{ $tarifa->dia_limite_pago ?? 'null' }}, {{ $tarifa->dias_descuento_pronto_pago ?? 'null' }})"
+                            <button onclick="abrirModal({{ $tarifa->id }}, '{{ $nivelLabel($tarifa->nivel) }}', '{{ $info['label'] }}', '{{ $key }}', {{ $tarifa->monto }}, {{ $tarifa->descuento }}, {{ $tarifa->descuento_fecha_inicio?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_inicio->format('Y-m-d')."'" : 'null' }}, {{ $tarifa->descuento_fecha_fin?->format('Y-m-d') ? "'".$tarifa->descuento_fecha_fin->format('Y-m-d')."'" : 'null' }}, {{ $tarifa->dia_limite_pago ?? 'null' }}, {{ $tarifa->dias_descuento_pronto_pago ?? 'null' }}, {{ $tarifa->dias_anticipacion_cobro ?? 'null' }}, {{ $tarifa->dias_para_pagar ?? 'null' }})"
                                     class="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-200 flex-shrink-0"
                                     style="background-color: {{ $info['color'] }};"
                                     onmouseover="this.style.opacity='0.85'"
@@ -202,41 +208,67 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
                         <p class="mt-1 text-xs text-gray-400">Ingresa 0 si no aplica descuento.</p>
                     </div>
 
+                    {{-- Días de cobro (solo Cuatrimestre) --}}
+                    <div id="modal-cuatri-dias" class="hidden">
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Días de anticipación a fin de clases</label>
+                                <input type="number" name="dias_anticipacion_cobro" id="modal-dias-anticipacion"
+                                       min="1" max="90" oninput="actualizarVentanaCuatrimestre()"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Días para pagar</label>
+                                <input type="number" name="dias_para_pagar" id="modal-dias-para-pagar"
+                                       min="1" max="60" oninput="actualizarVentanaCuatrimestre()"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                            </div>
+                        </div>
+                        @if(!$finClases)
+                            <p class="text-xs font-bold px-2 py-1 rounded-lg inline-block" style="background-color:#fef4e8; color:#b45309;">
+                                Configura primero la fecha de fin de clases del cuatrimestre activo.
+                            </p>
+                        @endif
+                    </div>
+
                     {{-- Vigencia del descuento (Inscripción / Cuatrimestre) --}}
                     <div id="modal-descuento-fechas" class="hidden">
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
                             Vigencia del descuento
                         </label>
 
-                        @if($regInicio && $regFin)
-                            <span class="inline-block mb-3 text-xs font-bold px-2 py-1 rounded-lg"
-                                  style="background-color:#fef4e8; color:#b45309;">
+                        {{-- Badge estático: inscripción (rango fijo del periodo de registro) --}}
+                        <span id="modal-rango-inscripcion" class="hidden inline-block mb-3 text-xs font-bold px-2 py-1 rounded-lg"
+                              style="background-color:#fef4e8; color:#b45309;">
+                            @if($regInicio && $regFin)
                                 Rango permitido: {{ \Illuminate\Support\Carbon::parse($regInicio)->format('d/m/Y') }} - {{ \Illuminate\Support\Carbon::parse($regFin)->format('d/m/Y') }}
-                            </span>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs text-gray-400 mb-1">Desde</label>
-                                    <input type="date" name="descuento_fecha_inicio" id="modal-descuento-inicio"
-                                           min="{{ $regInicio }}" max="{{ $regFin }}"
-                                           class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
-                                           style="--tw-ring-color: #0F4229;">
-                                </div>
-                                <div>
-                                    <label class="block text-xs text-gray-400 mb-1">Hasta</label>
-                                    <input type="date" name="descuento_fecha_fin" id="modal-descuento-fin"
-                                           min="{{ $regInicio }}" max="{{ $regFin }}"
-                                           class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
-                                           style="--tw-ring-color: #0F4229;">
-                                </div>
-                            </div>
-                        @else
-                            <span class="inline-block text-xs font-bold px-2 py-1 rounded-lg"
-                                  style="background-color:#fef4e8; color:#b45309;">
+                            @else
                                 Configura primero el rango de inscripción del cuatrimestre activo para poder programar un descuento.
-                            </span>
-                            <input type="hidden" name="descuento_fecha_inicio" id="modal-descuento-inicio" value="">
-                            <input type="hidden" name="descuento_fecha_fin" id="modal-descuento-fin" value="">
-                        @endif
+                            @endif
+                        </span>
+
+                        {{-- Badge dinámico: cuatrimestre (calculado en JS a partir de los días de cobro) --}}
+                        <span id="modal-rango-cuatrimestre" class="hidden inline-block mb-3 text-xs font-bold px-2 py-1 rounded-lg"
+                              style="background-color:#fef4e8; color:#b45309;">
+                            Define los días de anticipación y para pagar para calcular la ventana.
+                        </span>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Desde</label>
+                                <input type="date" name="descuento_fecha_inicio" id="modal-descuento-inicio"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Hasta</label>
+                                <input type="date" name="descuento_fecha_fin" id="modal-descuento-fin"
+                                       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
+                                       style="--tw-ring-color: #0F4229;">
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Días del mes (solo Colegiatura) --}}
@@ -287,11 +319,15 @@ $regFin    = $periodoActivo?->fecha_fin_registro?->format('Y-m-d');
 
 @push('scripts')
 <script>
-function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, descFin, diaLimite, diasDescuento) {
+const FIN_CLASES = {{ $finClases ? "'".$finClases."'" : 'null' }};
+let modalTipoKey = null;
+
+function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, descFin, diaLimite, diasDescuento, diasAnticipacion, diasParaPagar) {
+    modalTipoKey = tipoKey;
     document.getElementById('modal-info').textContent = nivel + ' — ' + tipo;
     document.getElementById('modal-monto').value = monto;
     document.getElementById('modal-descuento').value = descuento;
-    document.getElementById('form-editar').action = '/admin/tarifas/' + id;
+    document.getElementById('form-editar').action = '/finanzas/tarifas/' + id;
 
     const fechasWrap = document.getElementById('modal-descuento-fechas');
     const inputInicio = document.getElementById('modal-descuento-inicio');
@@ -299,14 +335,27 @@ function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, desc
     const diasWrap     = document.getElementById('modal-descuento-dias');
     const inputDiaLimite = document.getElementById('modal-dia-limite');
     const inputDiasDescuento = document.getElementById('modal-dias-descuento');
+    const cuatriDiasWrap = document.getElementById('modal-cuatri-dias');
+    const inputDiasAnticipacion = document.getElementById('modal-dias-anticipacion');
+    const inputDiasParaPagar = document.getElementById('modal-dias-para-pagar');
+    const badgeInscripcion = document.getElementById('modal-rango-inscripcion');
+    const badgeCuatrimestre = document.getElementById('modal-rango-cuatrimestre');
 
     if (tipoKey === 'inscripcion' || tipoKey === 'cuatrimestre') {
         fechasWrap.classList.remove('hidden');
     } else {
         fechasWrap.classList.add('hidden');
     }
+    badgeInscripcion.classList.toggle('hidden', tipoKey !== 'inscripcion');
+    badgeCuatrimestre.classList.toggle('hidden', tipoKey !== 'cuatrimestre');
+
     inputInicio.value = descInicio || '';
     inputFin.value    = descFin || '';
+
+    if (tipoKey === 'inscripcion') {
+        inputInicio.min = inputFin.min = '{{ $regInicio }}';
+        inputInicio.max = inputFin.max = '{{ $regFin }}';
+    }
 
     if (tipoKey === 'colegiatura') {
         diasWrap.classList.remove('hidden');
@@ -316,8 +365,52 @@ function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, desc
     inputDiaLimite.value = diaLimite || '';
     inputDiasDescuento.value = diasDescuento || '';
 
+    if (tipoKey === 'cuatrimestre') {
+        cuatriDiasWrap.classList.remove('hidden');
+    } else {
+        cuatriDiasWrap.classList.add('hidden');
+    }
+    inputDiasAnticipacion.value = diasAnticipacion || '';
+    inputDiasParaPagar.value = diasParaPagar || '';
+
+    if (tipoKey === 'cuatrimestre') {
+        actualizarVentanaCuatrimestre();
+    }
+
     actualizarPreview();
     document.getElementById('modal-editar').classList.remove('hidden');
+}
+
+function actualizarVentanaCuatrimestre() {
+    if (modalTipoKey !== 'cuatrimestre') return;
+
+    const badge = document.getElementById('modal-rango-cuatrimestre');
+    const inputInicio = document.getElementById('modal-descuento-inicio');
+    const inputFin    = document.getElementById('modal-descuento-fin');
+    const anticipacion = parseInt(document.getElementById('modal-dias-anticipacion').value) || 0;
+    const paraPagar     = parseInt(document.getElementById('modal-dias-para-pagar').value) || 0;
+
+    if (!FIN_CLASES || !anticipacion || !paraPagar) {
+        badge.textContent = 'Define los días de anticipación y para pagar para calcular la ventana.';
+        inputInicio.removeAttribute('min');
+        inputInicio.removeAttribute('max');
+        inputFin.removeAttribute('min');
+        inputFin.removeAttribute('max');
+        return;
+    }
+
+    const fin = new Date(FIN_CLASES + 'T00:00:00');
+    const apertura = new Date(fin);
+    apertura.setDate(apertura.getDate() - anticipacion);
+    const vencimiento = new Date(apertura);
+    vencimiento.setDate(vencimiento.getDate() + paraPagar);
+
+    const toIso = (d) => d.toISOString().slice(0, 10);
+    const toEs  = (d) => toIso(d).split('-').reverse().join('/');
+
+    badge.textContent = 'Ventana de pago: ' + toEs(apertura) + ' - ' + toEs(vencimiento);
+    inputInicio.min = inputFin.min = toIso(apertura);
+    inputInicio.max = inputFin.max = toIso(vencimiento);
 }
 
 function cerrarModal() {

@@ -10,6 +10,7 @@ class TarifaInscripcion extends Model
     protected $fillable = [
         'nivel', 'tipo', 'monto', 'descuento', 'descuento_fecha_inicio', 'descuento_fecha_fin',
         'dia_limite_pago', 'dias_descuento_pronto_pago',
+        'dias_anticipacion_cobro', 'dias_para_pagar',
     ];
     protected $casts    = [
         'monto'                  => 'float',
@@ -49,6 +50,23 @@ class TarifaInscripcion extends Model
         }
 
         return $fecha->day <= $this->dias_descuento_pronto_pago;
+    }
+
+    /**
+     * Para cuatrimestre: ventana en la que se genera y se puede pagar el cobro de
+     * reinscripción, calculada a partir de fecha_fin_clases del periodo y los días
+     * de anticipación/para pagar configurados en esta tarifa.
+     */
+    public function ventanaPagoCuatrimestre(Periodo $periodo): ?array
+    {
+        if (!$periodo->fecha_fin_clases || !$this->dias_anticipacion_cobro || !$this->dias_para_pagar) {
+            return null;
+        }
+
+        $apertura = $periodo->fecha_fin_clases->copy()->subDays($this->dias_anticipacion_cobro);
+        $vencimiento = $apertura->copy()->addDays($this->dias_para_pagar);
+
+        return [$apertura, $vencimiento];
     }
 
     public function getPrecioFinalAttribute(): float

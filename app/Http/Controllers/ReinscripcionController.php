@@ -6,7 +6,6 @@ use App\Models\Alumno;
 use App\Models\Grupo;
 use App\Models\Pago;
 use App\Models\Periodo;
-use App\Models\TarifaInscripcion;
 use Illuminate\Http\Request;
 
 class ReinscripcionController extends Controller
@@ -37,37 +36,12 @@ class ReinscripcionController extends Controller
     {
         $periodoActivo = Periodo::where('estado', 'activo')->firstOrFail();
 
-        $existente = Pago::where('alumno_id', $alumno->id)
-            ->where('concepto', 'reinscripcion')
-            ->where('periodo', $periodoActivo->nombre)
-            ->whereIn('estado', ['pendiente', 'aprobado'])
-            ->first();
+        $pago = Pago::generarReinscripcion($alumno, $periodoActivo);
 
-        if ($existente) {
+        if (!$pago) {
             return redirect()->route('admin.reinscripciones.index')
                 ->with('error', 'Este alumno ya tiene un cobro de reinscripción activo para este período.');
         }
-
-        $tarifa = TarifaInscripcion::where('nivel', $alumno->programa?->nivel)
-            ->where('tipo', 'cuatrimestre')
-            ->first();
-
-        $monto = $tarifa?->precio_final ?? match ($alumno->programa?->nivel) {
-            'maestria'  => 4000.00,
-            'doctorado' => 5000.00,
-            default     => 3000.00,
-        };
-
-        Pago::create([
-            'alumno_id'      => $alumno->id,
-            'concepto'       => 'reinscripcion',
-            'periodo'        => $periodoActivo->nombre,
-            'monto'          => $monto,
-            'descuento'      => $tarifa && $tarifa->descuentoVigente() ? $tarifa->descuento : 0,
-            'monto_original' => $tarifa?->monto,
-            'fecha_vencimiento' => $periodoActivo->fecha_fin_registro,
-            'estado'         => 'pendiente',
-        ]);
 
         return redirect()->route('admin.reinscripciones.index')
             ->with('success', "Cobro de reinscripción generado para {$alumno->nombre_completo}.");

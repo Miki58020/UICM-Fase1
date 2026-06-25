@@ -359,8 +359,8 @@ class PagoController extends Controller
         abort_if($pago->alumno_id !== $alumno->id, 403);
         abort_if($pago->estado !== 'pendiente', 403, 'Este pago ya fue procesado.');
 
-        // La colegiatura tiene descuento por pronto pago: el monto se recalcula
-        // siempre con la fecha de hoy antes de generar el cobro en Mercado Pago.
+        // Colegiatura y reinscripción tienen descuento vigente por fechas: el monto se
+        // recalcula siempre con la fecha de hoy antes de generar el cobro en Mercado Pago.
         if ($pago->concepto === 'colegiatura') {
             $tarifa = TarifaInscripcion::where('nivel', $alumno->programa->nivel)
                 ->where('tipo', 'colegiatura')
@@ -370,6 +370,18 @@ class PagoController extends Controller
                 $pago->update([
                     'monto'          => $tarifa->precioParaFecha(now()),
                     'descuento'      => $tarifa->descuentoVigenteEnFecha(now()) ? $tarifa->descuento : 0,
+                    'monto_original' => $tarifa->monto,
+                ]);
+            }
+        } elseif ($pago->concepto === 'reinscripcion') {
+            $tarifa = TarifaInscripcion::where('nivel', $alumno->programa->nivel)
+                ->where('tipo', 'cuatrimestre')
+                ->first();
+
+            if ($tarifa) {
+                $pago->update([
+                    'monto'          => $tarifa->precio_final,
+                    'descuento'      => $tarifa->descuentoVigente() ? $tarifa->descuento : 0,
                     'monto_original' => $tarifa->monto,
                 ]);
             }

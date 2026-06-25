@@ -36,4 +36,47 @@ class Pago extends Model
             && $this->fecha_vencimiento !== null
             && $this->fecha_vencimiento->isPast();
     }
+
+    /**
+     * Genera el cobro de reinscripción de un alumno para un periodo, evitando duplicar
+     * si ya tiene uno activo. Usado tanto por el comando automático como por el botón
+     * manual de control escolar.
+     */
+    public static function generarReinscripcion(Alumno $alumno, Periodo $periodo): ?self
+    {
+        $existente = static::where('alumno_id', $alumno->id)
+            ->where('concepto', 'reinscripcion')
+            ->where('periodo', $periodo->nombre)
+            ->whereIn('estado', ['pendiente', 'aprobado'])
+            ->first();
+
+        if ($existente) {
+            return null;
+        }
+
+        $tarifa = TarifaInscripcion::where('nivel', $alumno->programa?->nivel)
+            ->where('tipo', 'cuatrimestre')
+            ->first();
+
+        $monto = $tarifa?->precio_final ?? match ($alumno->programa?->nivel) {
+            'maestria'  => 4000.00,
+            'doctorado' => 5000.00,
+            default     => 3000.00,
+        };
+
+        $fechaVencimiento = $tarifa?->dias_para_pagar
+            ? now()->addDays($tarifa->dias_para_pagar)
+            : $periodo->fecha_fin_registro;
+
+        return static::create([
+            'alumno_id'         => $alumno->id,
+            'concepto'          => 'reinscripcion',
+            'periodo'           => $periodo->nombre,
+            'monto'             => $monto,
+            'descuento'         => $tarifa && $tarifa->descuentoVigente() ? $tarifa->descuento : 0,
+            'monto_original'    => $tarifa?->monto,
+            'fecha_vencimiento' => $fechaVencimiento,
+            'estado'            => 'pendiente',
+        ]);
+    }
 }
