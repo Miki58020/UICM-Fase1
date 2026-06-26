@@ -221,8 +221,9 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if ($estadoReinsc === 'sin_cobro')
                                     @if ($pagoReinsc && $pagoReinsc->estado === 'rechazado')
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block"></span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                              style="background-color: #dc2626;">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                             Pago rechazado
                                         </span>
                                     @else

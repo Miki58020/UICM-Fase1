@@ -21,33 +21,6 @@ $gruposJson = $grupos->map(fn($g) => [
         showModal: false,
         editando: null,
         form: { estado: '', cuatrimestre_actual: '', password: '' },
-        busqueda: '',
-        filtroPrograma: '',
-        filtroEstado: '',
-        filtrar() {
-            this.$nextTick(() => {
-                const filas = this.$refs.tbody.querySelectorAll('tr[data-nombre]');
-                let visibles = 0;
-                filas.forEach(f => {
-                    const texto     = this.busqueda.toLowerCase();
-                    const nombre    = f.dataset.nombre.toLowerCase();
-                    const matricula = f.dataset.matricula.toLowerCase();
-                    const email     = f.dataset.email.toLowerCase();
-                    const programa  = f.dataset.programa;
-                    const estado    = f.dataset.estado;
-
-                    const pasaBusqueda = !texto || nombre.includes(texto) || matricula.includes(texto) || email.includes(texto);
-                    const pasaPrograma = !this.filtroPrograma || programa === this.filtroPrograma;
-                    const pasaEstado   = !this.filtroEstado || (this.filtroEstado === 'inactivo' ? estado !== 'activo' : estado === this.filtroEstado);
-
-                    const mostrar = pasaBusqueda && pasaPrograma && pasaEstado;
-                    f.style.display = mostrar ? '' : 'none';
-                    if (mostrar) visibles++;
-                });
-                this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
-                this.$refs.contadorVisible.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
-            });
-        },
         grupos: window.__gruposAlumnos || [],
         gruposFiltrados() {
             if (!this.editando) return [];
@@ -72,36 +45,30 @@ $gruposJson = $grupos->map(fn($g) => [
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
-        {{-- Contadores --}}
+        {{-- Contadores (también filtran por estado) --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <button type="button"
-                    @click="filtroEstado = ''; filtrar()"
-                    :class="filtroEstado === '' ? 'ring-2 ring-green-700' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #0F4229;">
+            <a href="{{ route('admin.alumnos.index', array_filter(['q' => request('q'), 'programa' => request('programa')])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
+               style="border-color: #0F4229; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total de alumnos</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $conteo['total'] }}</p>
-            </button>
-            <button type="button"
-                    @click="filtroEstado = 'activo'; filtrar()"
-                    :class="filtroEstado === 'activo' ? 'ring-2 ring-yellow-500' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #D4AF37;">
+            </a>
+            <a href="{{ route('admin.alumnos.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'activo'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
+               style="border-color: #D4AF37; {{ request('estado') === 'activo' ? 'box-shadow: 0 0 0 2px #D4AF37;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Activos</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">{{ $conteo['activos'] }}</p>
-            </button>
-            <button type="button"
-                    @click="filtroEstado = 'inactivo'; filtrar()"
-                    :class="filtroEstado === 'inactivo' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #9ca3af;">
+            </a>
+            <a href="{{ route('admin.alumnos.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'inactivo'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
+               style="border-color: #9ca3af; {{ request('estado') === 'inactivo' ? 'box-shadow: 0 0 0 2px #9ca3af;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Inactivos / baja</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-400">{{ $conteo['inactivos'] }}</p>
-            </button>
+            </a>
         </div>
 
         {{-- Búsqueda y filtros --}}
-        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <form method="GET" action="{{ route('admin.alumnos.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
 
             <div class="relative flex-1">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
@@ -110,8 +77,8 @@ $gruposJson = $grupos->map(fn($g) => [
                           d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                 </svg>
                 <input type="text"
-                       x-model="busqueda"
-                       @input="filtrar()"
+                       name="q"
+                       value="{{ request('q') }}"
                        placeholder="Buscar por nombre, matrícula o correo…"
                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
@@ -124,14 +91,14 @@ $gruposJson = $grupos->map(fn($g) => [
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                 </svg>
-                <select x-model="filtroPrograma"
-                        @change="filtrar()"
+                <select name="programa"
+                        onchange="this.form.submit()"
                         class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                         onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                     <option value="">Todos los programas</option>
                     @foreach($programas as $programa)
-                        <option value="{{ $programa->id }}">{{ $programa->nombre }}</option>
+                        <option value="{{ $programa->id }}" @selected(request('programa') == $programa->id)>{{ $programa->nombre }}</option>
                     @endforeach
                 </select>
             </div>
@@ -142,28 +109,43 @@ $gruposJson = $grupos->map(fn($g) => [
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
                 </svg>
-                <select x-model="filtroEstado"
-                        @change="filtrar()"
+                <select name="estado"
+                        onchange="this.form.submit()"
                         class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                         onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                    <option value="">Todos los estados</option>
-                    <option value="activo">Activo</option>
-                    <option value="inactivo">Inactivo</option>
-                    <option value="baja">Baja</option>
+                    <option value="" @selected(!request('estado'))>Todos los estados</option>
+                    <option value="activo" @selected(request('estado') === 'activo')>Activo</option>
+                    <option value="inactivo" @selected(request('estado') === 'inactivo')>Inactivo</option>
+                    <option value="baja" @selected(request('estado') === 'baja')>Baja</option>
                 </select>
             </div>
-        </div>
+
+            <button type="submit"
+                    class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"
+                    style="background-color: #0F4229;"
+                    onmouseover="this.style.backgroundColor='#0a2e1c'"
+                    onmouseout="this.style.backgroundColor='#0F4229'">
+                Buscar
+            </button>
+
+            @if(request('q') || request('programa') || request('estado'))
+            <a href="{{ route('admin.alumnos.index') }}"
+               class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
+                Limpiar
+            </a>
+            @endif
+        </form>
 
         {{-- Tabla --}}
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
-            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-[350px]">
+            <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
                 <h2 class="text-sm font-semibold text-gray-700">Listado de alumnos</h2>
-                <span class="text-xs text-gray-400" x-ref="contadorVisible">{{ $alumnos->count() }} registros</span>
+                <span class="text-xs text-gray-400">{{ $alumnos->total() }} registros</span>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-auto flex-1">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -175,14 +157,9 @@ $gruposJson = $grupos->map(fn($g) => [
                             <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100" x-ref="tbody">
+                    <tbody class="divide-y divide-gray-100">
                         @forelse($alumnos as $alumno)
-                        <tr class="hover:bg-gray-50 transition-colors duration-100"
-                            data-nombre="{{ strtolower($alumno->nombre_completo) }}"
-                            data-matricula="{{ strtolower($alumno->matricula) }}"
-                            data-email="{{ strtolower($alumno->email) }}"
-                            data-programa="{{ $alumno->programa_id }}"
-                            data-estado="{{ $alumno->estado }}">
+                        <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
@@ -211,15 +188,16 @@ $gruposJson = $grupos->map(fn($g) => [
 
                             <td class="px-6 py-4">
                                 @php
-                                    $estadoColor = match($alumno->estado) {
-                                        'activo'   => ['bg' => '#dcfce7', 'text' => '#15803d'],
-                                        'inactivo' => ['bg' => '#fef9c3', 'text' => '#854d0e'],
-                                        'baja'     => ['bg' => '#fee2e2', 'text' => '#b91c1c'],
-                                        default    => ['bg' => '#f3f4f6', 'text' => '#6b7280'],
+                                    $colorEstado = match($alumno->estado) {
+                                        'activo'   => '#0F4229',
+                                        'inactivo' => '#EFAD5A',
+                                        'baja'     => '#dc2626',
+                                        default    => '#9ca3af',
                                     };
                                 @endphp
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize"
-                                      style="background-color: {{ $estadoColor['bg'] }}; color: {{ $estadoColor['text'] }};">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white capitalize"
+                                      style="background-color: {{ $colorEstado }};">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                     {{ $alumno->estado }}
                                 </span>
                             </td>
@@ -251,24 +229,21 @@ $gruposJson = $grupos->map(fn($g) => [
 
                         </tr>
                         @empty
-                        @endforelse
-
-                        <tr x-ref="sinResultados" style="display:none;">
-                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
-                                No se encontraron alumnos con ese criterio.
-                            </td>
-                        </tr>
-
-                        @if($alumnos->isEmpty())
                         <tr>
                             <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
-                                No hay alumnos registrados.
+                                {{ request('q') || request('programa') || request('estado') ? 'No se encontraron alumnos con ese criterio.' : 'No hay alumnos registrados.' }}
                             </td>
                         </tr>
-                        @endif
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+
+            @if($alumnos->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+                {{ $alumnos->links() }}
+            </div>
+            @endif
         </div>
 
     </div>

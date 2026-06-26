@@ -16,10 +16,32 @@ use Normalizer;
 
 class AspiranteController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $aspirantes = Aspirante::with('programa')->latest()->get();
-        return view('admin.aspirantes.index', compact('aspirantes'));
+        $conteo = [
+            'total'     => Aspirante::count(),
+            'pendiente' => Aspirante::where('estado', 'pendiente')->count(),
+            'aprobado'  => Aspirante::where('estado', 'aprobado')->count(),
+            'rechazado' => Aspirante::where('estado', 'rechazado')->count(),
+        ];
+
+        $aspirantes = Aspirante::with('programa')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = $request->q;
+                $query->where(function ($w) use ($q) {
+                    $w->where('folio', 'like', "%{$q}%")
+                        ->orWhere('nombre', 'like', "%{$q}%")
+                        ->orWhere('apellido_paterno', 'like', "%{$q}%")
+                        ->orWhere('apellido_materno', 'like', "%{$q}%")
+                        ->orWhereHas('programa', fn ($p) => $p->where('nombre', 'like', "%{$q}%"));
+                });
+            })
+            ->when($request->filled('estado'), fn ($query) => $query->where('estado', $request->estado))
+            ->latest()
+            ->paginate(50)
+            ->withQueryString();
+
+        return view('admin.aspirantes.index', compact('aspirantes', 'conteo'));
     }
 
     public function show(Aspirante $aspirante)

@@ -3,7 +3,8 @@
 @section('title', 'Capturar calificaciones | UICM')
 
 @section('content')
-<section class="bg-uicm-gray min-h-screen py-12 px-4">
+<section class="bg-uicm-gray min-h-screen py-12 px-4"
+         x-data="{ confirmarEnvio: false }">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         {{-- Encabezado --}}
@@ -56,8 +57,9 @@
         </div>
         @endif
 
-        {{-- Indicaciones --}}
-        <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-xl px-5 py-3 mb-6">
+        {{-- Indicaciones de flujo --}}
+        @if ($puedeCapturar)
+        <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-xl px-5 py-3 mb-4">
             <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
@@ -67,6 +69,31 @@
                 Mínimo aprobatorio: <strong class="text-gray-700">7.0</strong>.
             </p>
         </div>
+        <div class="flex items-start gap-3 rounded-xl px-5 py-3 mb-6 border"
+             style="background-color: #f0f9f4; border-color: #a7d7b8;">
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 style="color: #0F4229;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-xs" style="color: #0F4229;">
+                <strong>Flujo de captura:</strong>
+                Guarda el borrador tantas veces como necesites mientras capturas.
+                Cuando termines, usa <strong>"Enviar a revisión"</strong> para que control escolar pueda revisar y aprobar las calificaciones.
+                Las calificaciones <strong>no son visibles para los alumnos</strong> hasta que control escolar las apruebe.
+            </p>
+        </div>
+        @else
+        <div class="flex items-start gap-3 bg-white border border-gray-200 rounded-xl px-5 py-3 mb-6">
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-xs text-gray-500">
+                El <strong class="text-gray-700">Extraordinario</strong> solo está disponible cuando la calificación final ya está guardada y es reprobatoria.
+                Mínimo aprobatorio: <strong class="text-gray-700">7.0</strong>.
+            </p>
+        </div>
+        @endif
 
         <form method="POST" action="{{ route('profesor.calificaciones.guardar', $carga->id) }}">
             @csrf
@@ -148,17 +175,24 @@
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     @if ($calFinal !== null)
                                         @if ($aprobado)
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
                                                   style="background-color: #0F4229;">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                                 Aprobado
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                                  style="background-color: #dc2626;">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                                 Reprobado
                                             </span>
                                         @endif
                                     @else
-                                        <span class="text-xs text-gray-400">Pendiente</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                              style="background-color: #EFAD5A;">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                            Pendiente
+                                        </span>
                                     @endif
                                 </td>
 
@@ -215,19 +249,38 @@
                 </div>
             </div>
 
-            {{-- Botón guardar --}}
+            {{-- Botones: Guardar borrador + Enviar a revisión --}}
             @if ($puedeCapturar)
-            <div class="flex justify-end">
+            @php $tieneBorrador = $calificaciones->isNotEmpty(); @endphp
+            <div class="flex flex-col sm:flex-row items-center justify-end gap-3">
+
                 <button type="submit"
-                        class="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-bold text-white shadow-sm transition-colors"
+                        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors"
+                        style="border-color: #0F4229; color: #0F4229; background: transparent;"
+                        onmouseover="this.style.backgroundColor='#f0f9f4'"
+                        onmouseout="this.style.backgroundColor='transparent'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                    </svg>
+                    Guardar borrador
+                </button>
+
+                @if ($tieneBorrador && $carga->estado_revision !== 'aprobado')
+                <button type="button"
+                        @click="confirmarEnvio = true"
+                        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors"
                         style="background-color: #0F4229;"
                         onmouseover="this.style.backgroundColor='#0a2e1c'"
                         onmouseout="this.style.backgroundColor='#0F4229'">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                     </svg>
-                    Guardar calificaciones
+                    Enviar a revisión
                 </button>
+                @endif
+
             </div>
             @endif
 
@@ -236,4 +289,71 @@
 
     </div>
 </section>
+
+{{-- Modal confirmación de envío --}}
+<div x-show="confirmarEnvio"
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @keydown.escape.window="confirmarEnvio = false"
+     class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm"
+     style="display: none;">
+
+    <div x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="bg-white rounded-2xl shadow-xl w-full max-w-md"
+         @click.stop>
+
+        <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
+
+        <div class="px-6 py-5">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                     style="background-color: #f0f9f4;">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         style="color: #0F4229;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-gray-900">¿Enviar a control escolar?</h3>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ $carga->materia->nombre }} — Grupo {{ $carga->grupo->clave }}</p>
+                </div>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-6">
+                Una vez enviadas, no podrás modificar las calificaciones hasta que control escolar las revise.
+                Si detectan algún error, te notificarán y podrás volver a capturarlas.
+            </p>
+
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" @click="confirmarEnvio = false"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100
+                               hover:bg-gray-200 transition-colors">
+                    Cancelar
+                </button>
+
+                <form method="POST" action="{{ route('profesor.calificaciones.enviar', $carga->id) }}">
+                    @csrf
+                    <button type="submit"
+                            class="px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors"
+                            style="background-color: #0F4229;"
+                            onmouseover="this.style.backgroundColor='#0a2e1c'"
+                            onmouseout="this.style.backgroundColor='#0F4229'">
+                        Confirmar envío
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

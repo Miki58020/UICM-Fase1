@@ -146,8 +146,9 @@
                                     <form method="POST" action="{{ route('admin.pagina-principal.oferta.toggle', $prog) }}">
                                         @csrf @method('PATCH')
                                         <button type="submit"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors duration-150
-                                                       {{ $prog->activo ? 'border-yellow-300 text-yellow-700 hover:bg-yellow-50' : 'border-green-300 text-green-700 hover:bg-green-50' }}">
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150
+                                                       {{ $prog->activo ? 'bg-gray-400 hover:bg-gray-500' : '' }}"
+                                                @if(!$prog->activo) style="background-color: #EFAD5A;" onmouseover="this.style.backgroundColor='#e09a3a'" onmouseout="this.style.backgroundColor='#EFAD5A'" @endif>
                                             {{ $prog->activo ? 'Desactivar' : 'Activar' }}
                                         </button>
                                     </form>
@@ -340,8 +341,9 @@
                                 </button>
                                 @else
                                 <button type="submit"
-                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors duration-150
-                                               {{ $img->activo ? 'border-yellow-300 text-yellow-700 hover:bg-yellow-50' : 'border-green-300 text-green-700 hover:bg-green-50' }}">
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150
+                                               {{ $img->activo ? 'bg-gray-400 hover:bg-gray-500' : '' }}"
+                                        @if(!$img->activo) style="background-color: #EFAD5A;" onmouseover="this.style.backgroundColor='#e09a3a'" onmouseout="this.style.backgroundColor='#EFAD5A'" @endif>
                                     {{ $img->activo ? 'Ocultar' : 'Mostrar' }}
                                 </button>
                                 @endif
@@ -542,8 +544,9 @@
                                     <form method="POST" action="{{ route('admin.pagina-principal.intereses.toggle', $item) }}">
                                         @csrf @method('PATCH')
                                         <button type="submit"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors duration-150
-                                                       {{ $item->activo ? 'border-yellow-300 text-yellow-700 hover:bg-yellow-50' : 'border-green-300 text-green-700 hover:bg-green-50' }}">
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150
+                                                       {{ $item->activo ? 'bg-gray-400 hover:bg-gray-500' : '' }}"
+                                                @if(!$item->activo) style="background-color: #EFAD5A;" onmouseover="this.style.backgroundColor='#e09a3a'" onmouseout="this.style.backgroundColor='#EFAD5A'" @endif>
                                             {{ $item->activo ? 'Desactivar' : 'Activar' }}
                                         </button>
                                     </form>

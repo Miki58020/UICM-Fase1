@@ -67,7 +67,7 @@
         .badge { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 11px; font-weight: bold; }
         .badge-aprobado { background: #dcfce7; color: #166534; }
         .badge-reprobado { background: #fee2e2; color: #991b1b; }
-        .badge-pendiente { background: #f3f4f6; color: #9ca3af; }
+        .badge-pendiente { background: #fef3c7; color: #92400e; }
 
         /* Resumen */
         .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }

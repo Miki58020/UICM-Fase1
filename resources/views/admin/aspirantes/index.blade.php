@@ -4,28 +4,7 @@
 
 @section('content')
 
-<section
-    x-data="{
-        busqueda: '',
-        filtroEstado: '',
-        filtrar() {
-            this.$nextTick(() => {
-                const filas = this.$refs.tbody.querySelectorAll('tr[data-nombre]');
-                let visibles = 0;
-                filas.forEach(f => {
-                    const texto = this.busqueda.toLowerCase();
-                    const pasaBusqueda = !texto || f.dataset.nombre.toLowerCase().includes(texto) || f.dataset.folio.toLowerCase().includes(texto) || f.dataset.programa.toLowerCase().includes(texto);
-                    const pasaEstado  = !this.filtroEstado || f.dataset.estado === this.filtroEstado;
-                    const mostrar = pasaBusqueda && pasaEstado;
-                    f.style.display = mostrar ? '' : 'none';
-                    if (mostrar) visibles++;
-                });
-                this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
-                this.$refs.contadorVisible.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
-            });
-        }
-    }"
-    class="bg-uicm-gray min-h-screen py-12 px-4">
+<section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         {{-- ── Encabezado de módulo ── --}}
@@ -42,62 +21,53 @@
         {{-- ── Contadores rápidos ── --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
 
-            <button type="button"
-                    @click="filtroEstado = ''; filtrar()"
-                    :class="filtroEstado === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #6B7280;">
+            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q')])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #6B7280; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
-                    {{ $aspirantes->count() }}
+                    {{ $conteo['total'] }}
                 </p>
-            </button>
+            </a>
 
-            <button type="button"
-                    @click="filtroEstado = 'pendiente'; filtrar()"
-                    :class="filtroEstado === 'pendiente' ? 'ring-2' : 'hover:shadow-md'"
-                    :style="filtroEstado === 'pendiente' ? 'ring-color: #EFAD5A;' : ''"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #EFAD5A;">
+            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'estado' => 'pendiente'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #EFAD5A; {{ request('estado') === 'pendiente' ? 'box-shadow: 0 0 0 2px #EFAD5A;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Pendientes</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">
-                    {{ $aspirantes->where('estado', 'pendiente')->count() }}
+                    {{ $conteo['pendiente'] }}
                 </p>
-            </button>
+            </a>
 
-            <button type="button"
-                    @click="filtroEstado = 'aprobado'; filtrar()"
-                    :class="filtroEstado === 'aprobado' ? 'ring-2 ring-green-700' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #0F4229;">
+            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'estado' => 'aprobado'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #0F4229; {{ request('estado') === 'aprobado' ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Aprobados</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">
-                    {{ $aspirantes->where('estado', 'aprobado')->count() }}
+                    {{ $conteo['aprobado'] }}
                 </p>
-            </button>
+            </a>
 
-            <button type="button"
-                    @click="filtroEstado = 'rechazado'; filtrar()"
-                    :class="filtroEstado === 'rechazado' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #9ca3af;">
+            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'estado' => 'rechazado'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #9ca3af; {{ request('estado') === 'rechazado' ? 'box-shadow: 0 0 0 2px #9ca3af;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazados</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
-                    {{ $aspirantes->where('estado', 'rechazado')->count() }}
+                    {{ $conteo['rechazado'] }}
                 </p>
-            </button>
+            </a>
 
         </div>
 
         {{-- ── Búsqueda y filtro ── --}}
-        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <form method="GET" action="{{ route('admin.aspirantes.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
             <div class="relative flex-1">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                 </svg>
-                <input type="text" x-model="busqueda" @input="filtrar()"
+                <input type="text" name="q" value="{{ request('q') }}"
                        placeholder="Buscar por folio, nombre o programa…"
                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
@@ -109,34 +79,47 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
                 </svg>
-                <select x-model="filtroEstado" @change="filtrar()"
+                <select name="estado" onchange="this.form.submit()"
                         class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                         onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                    <option value="">Todos los estados</option>
-                    <option value="pendiente">Pendiente</option>
-                    <option value="aprobado">Aprobado</option>
-                    <option value="rechazado">Rechazado</option>
+                    <option value="" @selected(!request('estado'))>Todos los estados</option>
+                    <option value="pendiente" @selected(request('estado') === 'pendiente')>Pendiente</option>
+                    <option value="aprobado" @selected(request('estado') === 'aprobado')>Aprobado</option>
+                    <option value="rechazado" @selected(request('estado') === 'rechazado')>Rechazado</option>
                 </select>
             </div>
-        </div>
+            <button type="submit"
+                    class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"
+                    style="background-color: #0F4229;"
+                    onmouseover="this.style.backgroundColor='#0a2e1c'"
+                    onmouseout="this.style.backgroundColor='#0F4229'">
+                Buscar
+            </button>
+            @if(request('q') || request('estado'))
+            <a href="{{ route('admin.aspirantes.index') }}"
+               class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
+                Limpiar
+            </a>
+            @endif
+        </form>
 
         {{-- ── Card tabla ── --}}
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-[350px]">
 
             {{-- Barra superior verde --}}
-            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+            <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
 
             {{-- Cabecera card --}}
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
                 <h2 class="text-sm font-semibold text-gray-700">
                     Lista de aspirantes
                 </h2>
-                <span class="text-xs text-gray-400" x-ref="contadorVisible">{{ $aspirantes->count() }} registros</span>
+                <span class="text-xs text-gray-400">{{ $aspirantes->total() }} registros</span>
             </div>
 
-            {{-- Tabla con scroll horizontal en móvil --}}
-            <div class="overflow-x-auto">
+            {{-- Tabla con scroll --}}
+            <div class="overflow-auto flex-1">
                 <table class="w-full text-sm">
 
                     <thead>
@@ -149,13 +132,9 @@
                         </tr>
                     </thead>
 
-                    <tbody class="divide-y divide-gray-100" x-ref="tbody">
+                    <tbody class="divide-y divide-gray-100">
                         @forelse ($aspirantes as $asp)
-                        <tr class="hover:bg-gray-50 transition-colors duration-100"
-                            data-folio="{{ strtolower($asp->folio) }}"
-                            data-nombre="{{ strtolower($asp->nombre_completo) }}"
-                            data-programa="{{ strtolower($asp->programa->nombre ?? '') }}"
-                            data-estado="{{ $asp->estado }}">
+                        <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                             {{-- Folio --}}
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-600 whitespace-nowrap">
@@ -187,8 +166,9 @@
                                         Aprobado
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block"></span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                          style="background-color: #dc2626;">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                         Rechazado
                                     </span>
                                 @endif
@@ -216,19 +196,20 @@
                         @empty
                         <tr>
                             <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
-                                No hay aspirantes registrados.
+                                {{ request('q') || request('estado') ? 'No se encontraron aspirantes con ese criterio.' : 'No hay aspirantes registrados.' }}
                             </td>
                         </tr>
                         @endforelse
-                        <tr x-ref="sinResultados" style="display:none;">
-                            <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
-                                No se encontraron aspirantes con ese criterio.
-                            </td>
-                        </tr>
                     </tbody>
 
                 </table>
             </div>
+
+            @if($aspirantes->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+                {{ $aspirantes->links() }}
+            </div>
+            @endif
 
         </div>{{-- /card --}}
 

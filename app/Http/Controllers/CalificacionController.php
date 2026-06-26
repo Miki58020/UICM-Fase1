@@ -142,20 +142,22 @@ class CalificacionController extends Controller
             return back()->withErrors([implode(' ', $errores)]);
         }
 
-        // Recalcular creditos_acumulados para los alumnos con calificaciones en este grupo
         if ($guardadas > 0) {
-            $carga->update([
-                'estado_revision' => 'pendiente',
-                'motivo_rechazo'  => null,
-                'revisado_por'    => null,
-                'revisado_at'     => null,
-            ]);
+            // Si estaba rechazado, vuelve a borrador para que el profe lo reenvíe explícitamente
+            if ($carga->estado_revision === 'rechazado') {
+                $carga->update([
+                    'estado_revision' => null,
+                    'motivo_rechazo'  => null,
+                    'revisado_por'    => null,
+                    'revisado_at'     => null,
+                ]);
+            }
 
             $this->recalcularCreditos($alumnosDelGrupo);
         }
 
         return back()->with('success', $guardadas > 0
-            ? 'Calificaciones guardadas correctamente. Quedan pendientes de revisión por control escolar.'
+            ? 'Borrador guardado. Cuando termines, usa "Enviar a revisión" para mandarlo a control escolar.'
             : 'No se realizaron cambios.');
     }
 
@@ -164,6 +166,28 @@ class CalificacionController extends Controller
     {
         Alumno::whereIn('id', $alumnoIds)->get()
             ->each(fn (Alumno $alumno) => $alumno->recalcularCreditosAcumulados());
+    }
+
+    // El profesor confirma el envío a control escolar para revisión
+    public function enviar(CargaAcademica $carga)
+    {
+        $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
+        abort_if($carga->profesor_id !== $profesor->id, 403);
+        abort_if($carga->estado_revision === 'aprobado', 403);
+
+        if (!Calificacion::where('carga_academica_id', $carga->id)->exists()) {
+            return back()->withErrors(['Debes guardar al menos una calificación antes de enviar a revisión.']);
+        }
+
+        $carga->update([
+            'estado_revision' => 'pendiente',
+            'motivo_rechazo'  => null,
+            'revisado_por'    => null,
+            'revisado_at'     => null,
+        ]);
+
+        return redirect()->route('profesor.calificaciones.index')
+            ->with('success', 'Calificaciones enviadas a control escolar para revisión.');
     }
 
     // Cambio de contraseña del profesor desde su portal

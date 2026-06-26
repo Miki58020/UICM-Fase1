@@ -9,20 +9,12 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\View\View;
 
 class PasswordResetLinkController extends Controller
 {
     /**
-     * Display the password reset link request view.
-     */
-    public function create(): View
-    {
-        return view('auth.forgot-password');
-    }
-
-    /**
-     * Handle an incoming password reset link request.
+     * Recibe la solicitud de "olvidé mi contraseña" desde el modal de login
+     * y crea una SolicitudContrasena para que Control Escolar/Admin la atienda.
      */
     public function store(Request $request): RedirectResponse
     {

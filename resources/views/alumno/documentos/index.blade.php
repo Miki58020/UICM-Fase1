@@ -28,10 +28,10 @@
                 $doc = $item['documento'];
                 $estado = !$doc ? 'sin_subir' : ($doc->estaVencido() ? 'vencido' : ($doc->porVencer() ? 'por_vencer' : 'vigente'));
                 $badge = [
-                    'sin_subir'  => ['bg-gray-100 text-gray-500', 'Sin subir'],
-                    'vigente'    => ['bg-green-100 text-green-700', 'Vigente'],
-                    'por_vencer' => ['bg-amber-100 text-amber-700', 'Próximo a vencer'],
-                    'vencido'    => ['bg-red-100 text-red-700', 'Vencido'],
+                    'sin_subir'  => ['#9ca3af', 'Sin subir'],
+                    'vigente'    => ['#0F4229', 'Vigente'],
+                    'por_vencer' => ['#EFAD5A', 'Próximo a vencer'],
+                    'vencido'    => ['#dc2626', 'Vencido'],
                 ][$estado];
             @endphp
             <div class="bg-white rounded-2xl shadow-md overflow-hidden" x-data="{ subiendo: false }">
@@ -53,7 +53,9 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $badge[0] }}">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                              style="background-color: {{ $badge[0] }};">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                             {{ $badge[1] }}
                         </span>
                         <button type="button" @click="subiendo = !subiendo"

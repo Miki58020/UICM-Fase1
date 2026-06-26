@@ -140,11 +140,12 @@
                             <tbody class="divide-y divide-gray-100">
                                 @foreach ($cargasPeriodo as $carga)
                                 @php
-                                    $estadoBadge = [
-                                        'pendiente' => ['bg-amber-100 text-amber-700', 'Pendiente'],
-                                        'aprobado'  => ['bg-green-100 text-green-700', 'Aprobado'],
-                                        'rechazado' => ['bg-red-100 text-red-700', 'Rechazado'],
-                                    ][$carga->estado_revision];
+                                    $estadoBadge = match($carga->estado_revision) {
+                                        'pendiente' => ['#EFAD5A', 'En revisión'],
+                                        'aprobado'  => ['#0F4229', 'Aprobado'],
+                                        'rechazado' => ['#dc2626', 'Rechazado'],
+                                        default     => ['#9ca3af', 'Sin enviar'],
+                                    };
                                 @endphp
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-700">
@@ -161,7 +162,9 @@
                                         {{ $carga->aula ?? '—' }}
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $estadoBadge[0] }}">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                              style="background-color: {{ $estadoBadge[0] }};">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                             {{ $estadoBadge[1] }}
                                         </span>
                                         @if ($carga->estado_revision === 'rechazado' && $carga->motivo_rechazo)

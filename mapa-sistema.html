@@ -68,6 +68,7 @@
       <nav class="flex gap-1 flex-wrap">
         <button @click="tab='flujo'"    :class="tab==='flujo'    ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Flujo de Inscripción</button>
         <button @click="tab='academico'" :class="tab==='academico' ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Módulo Académico</button>
+        <button @click="tab='finanzas'" :class="tab==='finanzas' ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Finanzas</button>
         <button @click="tab='entidades'" :class="tab==='entidades' ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Entidades</button>
         <button @click="tab='roles'"    :class="tab==='roles'    ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Roles y Permisos</button>
         <button @click="tab='estados'"  :class="tab==='estados'  ? 'tab-active' : 'bg-white/10 text-white/80 hover:bg-white/20'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">Estados</button>
@@ -447,21 +448,24 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-1">
                   <p class="font-extrabold text-gray-900">Calificación</p>
-                  <span class="text-xs px-2 py-0.5 rounded-full font-semibold bg-rose-50 text-rose-700">Profesor + Coordinación</span>
+                  <span class="text-xs px-2 py-0.5 rounded-full font-semibold bg-rose-50 text-rose-700">Profesor → revisión → Coordinación</span>
                 </div>
-                <p class="text-sm text-gray-500">Une <strong>Alumno + CargaAcademica</strong>. El profesor captura por tipo (parcial 1, parcial 2, extraordinario). La coordinación solo consulta.</p>
+                <p class="text-sm text-gray-500">Une <strong>Alumno + CargaAcademica</strong>. El profesor guarda en borrador y luego envía explícitamente a revisión. Coordinación aprueba o rechaza con motivo.</p>
                 <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                   <div class="bg-gray-50 rounded-lg p-2">
                     <p class="font-bold text-gray-700 mb-0.5">Tipos</p>
-                    <p>parcial · extraordinario</p>
+                    <p>final · extraordinario</p>
                   </div>
                   <div class="bg-gray-50 rounded-lg p-2">
                     <p class="font-bold text-gray-700 mb-0.5">Aprobatorio</p>
                     <p>≥ 7.0</p>
                   </div>
                   <div class="bg-rose-50 text-rose-700 rounded-lg p-2 font-semibold">
-                    Extraord. requiere parcial 1 y 2
+                    Definitivo = extraord. si existe, si no = final
                   </div>
+                </div>
+                <div class="mt-2 p-2 rounded-lg bg-sky-50 text-xs text-sky-800">
+                  <strong>Flujo 2 pasos:</strong> Guardar borrador → "Enviar a revisión" (estado: pendiente) → coordinación Aprueba (visible al alumno) o Rechaza con motivo → profesor corrige y reenvía
                 </div>
               </div>
             </div>
@@ -494,9 +498,10 @@
                     <p>Lic: 216 · Maest: 120 · Doc: 198 cr.</p>
                   </div>
                   <div class="bg-yellow-50 text-yellow-800 rounded-lg p-2 font-semibold">
-                    Final = extraord. si existe, si no = avg(P1, P2)
+                    Definitivo = extraord. si existe, si no = calificación final
                   </div>
                 </div>
+                <p class="text-xs text-gray-400 mt-1.5">Solo se acumulan créditos de cargas con <code class="bg-gray-100 px-1 rounded">estado_revision = aprobado</code>.</p>
                 <div class="mt-2 flex flex-wrap gap-2 text-xs">
                   <span class="bg-green-50 text-green-700 rounded-lg px-3 py-1.5 font-semibold">Alumno ve kárdex en /alumno/kardex</span>
                   <span class="bg-indigo-50 text-indigo-700 rounded-lg px-3 py-1.5">Coordinación ve cobertura en /admin/programas</span>
@@ -515,11 +520,117 @@
           <li>Coordinación va a <strong>Cuatrimestres → tab Carreras</strong> y hace clic en <strong>"Agregar carrera"</strong>.</li>
           <li>Elige el programa e indica cuántos grupos crear → el sistema crea los <strong>Grupos</strong> automáticamente con clave estructurada (<code class="bg-gray-100 px-1 rounded">LEI-2026-2-A</code>).</li>
           <li>Hace clic en <strong>"Generar carga"</strong> en <code class="bg-gray-100 px-1 rounded">/admin/carga-academica</code>.</li>
-          <li>Sistema busca todas las <strong>Materias activas</strong> del programa con el mismo cuatrimestre del grupo.</li>
-          <li>Crea un registro <code>CargaAcademica</code> por cada materia (<code>firstOrCreate</code> evita duplicados).</li>
-          <li>Coordinación asigna <strong>Profesor, Horario y Aula</strong> a cada carga individualmente.</li>
-          <li>Profesor ve sus cargas en <code class="bg-gray-100 px-1 rounded">/profesor/calificaciones</code> y captura notas.</li>
+          <li>Sistema busca todas las <strong>Materias activas</strong> del programa con el mismo cuatrimestre del grupo. Crea <code>CargaAcademica</code> por cada materia (<code>firstOrCreate</code>), con <code>estado_revision = null</code> (sin enviar).</li>
+          <li>Coordinación asigna <strong>Profesor, Horario y Aula</strong> a cada carga. El horario es por mes/día (<code class="bg-gray-100 px-1 rounded">Sábados — Enero 2026</code>).</li>
+          <li>Profesor ve sus cargas en <code class="bg-gray-100 px-1 rounded">/profesor/calificaciones</code>, captura <strong>final</strong> y/o <strong>extraordinario</strong> en borrador.</li>
+          <li>Al terminar, presiona <strong>"Enviar a revisión"</strong> → <code>estado_revision = pendiente</code>.</li>
+          <li>Coordinación <strong>Aprueba</strong> (calificaciones visibles al alumno en kárdex) o <strong>Rechaza</strong> con motivo → profesor corrige y reenvía.</li>
         </ol>
+        <div class="mt-3 p-3 bg-blue-50 rounded-xl text-xs text-blue-800">
+          <strong>Migración CSV:</strong> Control Escolar puede importar alumnos masivamente desde un archivo CSV en <code>/admin/alumnos/importar</code>. Los alumnos migrados tienen <code>migrado = true</code> y pueden no tener <code>aspirante_id</code>.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAB: FINANZAS                                                   -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div x-show="tab==='finanzas'" x-cloak>
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Módulo de Finanzas</h2>
+      <p class="text-sm text-gray-500 mb-6">Pagos de alumnos, estadísticas y tarifas. Accedido por el rol <strong>finanzas</strong>; los alumnos ven su propia vista desde el portal.</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Conceptos de pago -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#10b981;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <p class="font-extrabold text-sm text-gray-900">Conceptos de pago</p>
+          </div>
+          <div class="px-5 py-4 space-y-3 text-xs">
+            <div class="rounded-xl p-3 bg-amber-50 border border-amber-200">
+              <p class="font-bold text-amber-800">inscripcion</p>
+              <p class="text-gray-600 mt-0.5">Generado al aprobar el expediente del aspirante. Ligado a <code>aspirante_id</code>. Al aprobarse → se crea el registro <strong>Alumno</strong>.</p>
+            </div>
+            <div class="rounded-xl p-3 bg-green-50 border border-green-200">
+              <p class="font-bold text-green-800">reinscripcion</p>
+              <p class="text-gray-600 mt-0.5">Generado por Control Escolar para el siguiente cuatrimestre. Ligado a <code>alumno_id</code>. El alumno puede pagar en línea desde su portal.</p>
+            </div>
+            <div class="rounded-xl p-3 bg-blue-50 border border-blue-200">
+              <p class="font-bold text-blue-800">colegiatura</p>
+              <p class="text-gray-600 mt-0.5">Pago mensual recurrente. Ligado a <code>alumno_id</code>. Puede incluir descuentos por pronto pago.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flujo de pago en línea -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#D4AF37;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <p class="font-extrabold text-sm text-gray-900">Pago en línea (MercadoPago)</p>
+          </div>
+          <div class="px-5 py-4 space-y-2 text-xs text-gray-600">
+            <div class="flex items-start gap-2">
+              <span class="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xs" style="background:#0F4229;">1</span>
+              <p>Alumno hace clic en "Pagar" en <code>/alumno/finanzas</code> para un pago pendiente.</p>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xs" style="background:#0F4229;">2</span>
+              <p>Sistema crea preference en MercadoPago → redirige al Checkout de MP.</p>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xs" style="background:#0F4229;">3</span>
+              <p>MP dispara webhook a <code>/pagos/webhook</code> → sistema actualiza <code>Pago.estado = aprobado</code> y guarda <code>mp_payment_id</code>.</p>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xs" style="background:#0F4229;">4</span>
+              <p>Finanzas puede verificar manualmente o el webhook lo hace automático.</p>
+            </div>
+            <div class="mt-2 p-2 rounded-lg bg-amber-50 text-amber-800">
+              <strong>Config MP:</strong> access_token, public_key y sandbox_mode se guardan en BD, editables desde <code>/admin/apis</code> (pestaña MercadoPago).
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarifas -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#0F4229;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <p class="font-extrabold text-sm text-gray-900">Tarifas por nivel</p>
+          </div>
+          <div class="px-5 py-4 text-xs text-gray-600 space-y-2">
+            <p>Las tarifas se configuran en <code>/finanzas/tarifas</code> y se aplican según el <strong>nivel</strong> del programa del alumno.</p>
+            <div class="grid grid-cols-3 gap-2 mt-2">
+              <div class="bg-gray-50 rounded-lg p-2 text-center">
+                <p class="font-bold text-gray-700">Licenciatura</p>
+                <p class="text-gray-500 mt-0.5">inscripción + reinscripción</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-2 text-center">
+                <p class="font-bold text-gray-700">Maestría</p>
+                <p class="text-gray-500 mt-0.5">inscripción + reinscripción</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-2 text-center">
+                <p class="font-bold text-gray-700">Doctorado</p>
+                <p class="text-gray-500 mt-0.5">inscripción + reinscripción</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Portal finanzas alumno -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <div class="h-1.5" style="background:#6366f1;"></div>
+          <div class="px-5 py-4 border-b border-gray-100">
+            <p class="font-extrabold text-sm text-gray-900">Vista finanzas del alumno (/alumno/finanzas)</p>
+          </div>
+          <div class="px-5 py-4 text-xs text-gray-600 space-y-1.5">
+            <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Historial de todos sus pagos con estado (pendiente / aprobado / rechazado)</span></p>
+            <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Botón "Pagar en línea" para pagos pendientes vía MercadoPago</span></p>
+            <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Descargar comprobante de pagos aprobados</span></p>
+            <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Resumen de estado de cuenta (adeudo / al corriente)</span></p>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -643,19 +754,23 @@
             <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
               <div><span class="font-mono bg-gray-200 px-1 rounded">matricula</span> único</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">user_id</span> nullable FK</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">aspirante_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">aspirante_id</span> nullable FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">programa_id</span> FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">grupo_id</span> nullable FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">cuatrimestre_actual</span> 1-12</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">creditos_acumulados</span> auto-update al guardar califs.</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> enum</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">creditos_acumulados</span> auto-update</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> activo|inactivo|baja</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">email</span> correo personal</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">migrado</span> bool — vino de CSV</div>
             </div>
-            <p class="text-xs font-semibold text-yellow-700 mt-2 bg-yellow-50 rounded px-2 py-1"><code>creditos_acumulados</code> se recalcula automáticamente cada vez que el profesor guarda calificaciones en el grupo del alumno.</p>
+            <p class="text-xs font-semibold text-yellow-700 mt-2 bg-yellow-50 rounded px-2 py-1"><code>creditos_acumulados</code> se recalcula al aprobar calificaciones. Solo cuenta cargas con <code>estado_revision = aprobado</code>.</p>
+            <p class="text-xs font-semibold text-blue-700 mt-1 bg-blue-50 rounded px-2 py-1">Un alumno puede tener dos matrículas si estudia doble carrera (no hay restricción unique por email/CURP a nivel alumno).</p>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
             <div class="text-xs space-y-0.5 text-gray-600">
               <p>→ belongsTo <strong>User</strong>, <strong>Aspirante</strong>, <strong>Programa</strong>, <strong>Grupo</strong></p>
-              <p>→ hasMany <strong>Pago</strong> (reinscripciones)</p>
+              <p>→ hasMany <strong>Pago</strong> (reinscripciones + colegiatura)</p>
               <p>→ hasMany <strong>Calificacion</strong></p>
+              <p>→ hasMany <strong>DocumentoAlumno</strong></p>
             </div>
           </div>
         </div>
@@ -786,10 +901,17 @@
               <div><span class="font-mono bg-gray-200 px-1 rounded">materia_id</span> FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">periodo_id</span> FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">profesor_id</span> nullable FK</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">horario</span> Lun-Mié 08-10</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">horario</span> Sábados — Enero 2026</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">aula</span> A-101</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">estado_revision</span> null|pendiente|aprobado|rechazado</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">motivo_rechazo</span> nullable text</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">revisado_por</span> nullable FK user</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">revisado_at</span> nullable timestamp</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">fecha_inicio</span> nullable date</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">fecha_fin</span> nullable date</div>
             </div>
             <p class="text-xs font-semibold text-sky-700 mt-2 bg-sky-50 rounded px-2 py-1">Unique: (grupo_id, materia_id, periodo_id)</p>
+            <p class="text-xs font-semibold text-amber-700 mt-1 bg-amber-50 rounded px-2 py-1"><code>estado_revision = null</code> → borrador · <code>pendiente</code> → en revisión · <code>aprobado</code> → visible al alumno · <code>rechazado</code> → profesor re-edita</p>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
             <div class="text-xs space-y-0.5 text-gray-600">
               <p>→ belongsTo <strong>Grupo</strong>, <strong>Materia</strong>, <strong>Periodo</strong>, <strong>Profesor</strong></p>
@@ -805,19 +927,18 @@
             <span class="text-2xl">📝</span>
             <div>
               <p class="font-extrabold text-gray-900">Calificacion</p>
-              <p class="text-xs text-gray-400">calificaciones · tipo: parcial|extraordinario</p>
+              <p class="text-xs text-gray-400">calificaciones · tipo: final|extraordinario</p>
             </div>
           </div>
           <div x-show="abierto==='calificacion'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
             <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
               <div><span class="font-mono bg-gray-200 px-1 rounded">alumno_id</span> FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">carga_academica_id</span> FK</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">tipo</span> parcial|extraord.</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">numero</span> 1 o 2</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">tipo</span> final|extraordinario</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">calificacion</span> 0.0-10.0</div>
             </div>
-            <p class="text-xs font-semibold text-rose-700 mt-2 bg-rose-50 rounded px-2 py-1">Unique: (alumno, carga, tipo, numero)</p>
-            <p class="text-xs font-semibold text-rose-600 mt-1 bg-rose-50 rounded px-2 py-1">Extraordinario requiere ambos parciales</p>
+            <p class="text-xs font-semibold text-rose-700 mt-2 bg-rose-50 rounded px-2 py-1">Unique: (alumno_id, carga_academica_id, tipo)</p>
+            <p class="text-xs font-semibold text-amber-700 mt-1 bg-amber-50 rounded px-2 py-1">Definitivo = extraordinario si existe, si no = final. Solo se acumula si carga está <strong>aprobada</strong>.</p>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
             <div class="text-xs space-y-0.5 text-gray-600">
               <p>→ belongsTo <strong>Alumno</strong>, <strong>CargaAcademica</strong></p>
@@ -854,6 +975,59 @@
           </div>
         </div>
 
+        <!-- DocumentoAlumno -->
+        <div @click="abierto = abierto === 'docAlumno' ? null : 'docAlumno'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#6366f1;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">📄</span>
+            <div>
+              <p class="font-extrabold text-gray-900">DocumentoAlumno</p>
+              <p class="text-xs text-gray-400">documentos_alumno · documentos con vigencia</p>
+            </div>
+          </div>
+          <div x-show="abierto==='docAlumno'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">alumno_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">tipo</span> acta|curp|cert.|id|foto…</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">ruta</span> path del archivo</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">fecha_vigencia</span> nullable date</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> vigente|por_vencer|vencido</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">subido_at</span> timestamp</div>
+            </div>
+            <p class="text-xs font-semibold text-indigo-700 mt-2 bg-indigo-50 rounded px-2 py-1">El alumno sube sus documentos desde <code>/alumno/documentos</code>. El sistema calcula el estado por vigencia.</p>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>Alumno</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- AclaracionCalificacion -->
+        <div @click="abierto = abierto === 'aclaracion' ? null : 'aclaracion'" class="bg-white rounded-2xl shadow cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
+          <div class="h-1.5" style="background:#ec4899;"></div>
+          <div class="px-5 py-4 flex items-center gap-3">
+            <span class="text-2xl">💬</span>
+            <div>
+              <p class="font-extrabold text-gray-900">AclaracionCalificacion</p>
+              <p class="text-xs text-gray-400">aclaraciones · solicitudes de revisión de nota</p>
+            </div>
+          </div>
+          <div x-show="abierto==='aclaracion'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+              <div><span class="font-mono bg-gray-200 px-1 rounded">alumno_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">carga_academica_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">motivo</span> text</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> pendiente|resuelto</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">respuesta</span> nullable text</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">respondido_at</span> nullable timestamp</div>
+            </div>
+            <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
+            <div class="text-xs space-y-0.5 text-gray-600">
+              <p>→ belongsTo <strong>Alumno</strong>, <strong>CargaAcademica</strong></p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -878,8 +1052,7 @@
           </div>
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Usuarios del sistema (crear/editar/borrar)</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Tarifas de inscripción por nivel</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Configuración de Mercado Pago</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Panel APIs: Mercado Pago + Correo (config almacenada en BD, editable desde /admin/apis)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>CMS de página principal (carrusel, programas, intereses)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Mensajes de contacto + respuestas</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: admin.aspirantes.index</span></li>
@@ -918,9 +1091,12 @@
             <p class="text-xs text-gray-400">Validación de pagos</p>
           </div>
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver listado de pagos (inscripción y reinscripción)</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver detalle del comprobante de cada pago</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Aprobar o rechazar pagos con observaciones</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Listado de pagos (inscripción, reinscripción, colegiatura) con filtros</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Aprobar o rechazar pagos con observaciones y comprobante</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Exportar pagos a CSV (/finanzas/pagos/exportar)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Dashboard estadísticas: ingresos por mes, concepto, estado (/finanzas/estadisticas)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Estado de alumnos: al corriente / con adeudo (/finanzas/alumnos)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Tarifas: inscripción y reinscripción por nivel (/finanzas/tarifas)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: finanzas.pagos.index</span></li>
           </ul>
         </div>
@@ -942,8 +1118,10 @@
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Grupos (se crean automáticamente al agregar carrera al cuatrimestre)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Materias (crear/editar/activar)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Profesores (crear, generar acceso)</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Carga académica (generar + asignar prof/horario/aula)</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver calificaciones (solo lectura)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Carga académica (generar + asignar prof/horario por mes/aula)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Calificaciones: ver calificaciones enviadas por profesores (badges: sin enviar / en revisión / aprobado / rechazado)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Aprobar o rechazar calificaciones con motivo de rechazo</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Aclaraciones de calificación enviadas por alumnos</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Contraseñas de profesores</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: admin.materias.index</span></li>
           </ul>
@@ -960,8 +1138,10 @@
             <p class="text-xs text-gray-400">Captura de calificaciones</p>
           </div>
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver sus cargas académicas asignadas</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Capturar notas (parcial 1, parcial 2, extraordinario)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver sus cargas académicas asignadas con badge de estado (sin enviar / en revisión / aprobado / rechazado)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Capturar calificaciones <strong>final</strong> y <strong>extraordinario</strong> en modo borrador</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Enviar a revisión explícitamente (botón "Enviar a revisión", requiere al menos 1 calificación guardada)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Si coordinación rechaza → puede ver el motivo y volver a editar</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Solo ve las cargas donde está asignado</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cambiar su contraseña de portal</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: profesor.calificaciones.index</span></li>
@@ -979,12 +1159,11 @@
             <p class="text-xs text-gray-400">Portal estudiantil</p>
           </div>
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver su dashboard personal (/alumno)</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Consultar sus calificaciones</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Kárdex académico (/alumno/kardex): calificaciones, créditos acumulados vs plan, promedio, imprimible</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver y descargar comprobantes de pago</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cambiar su contraseña</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Check-estado (polling de sesión activa)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Dashboard personal (/alumno): grupo, materias, próximos pagos</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Kárdex académico (/alumno/kardex): calificaciones aprobadas, créditos acumulados vs plan, promedio, imprimible</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Finanzas (/alumno/finanzas): historial de pagos, estado de cuenta, pagar reinscripción en línea vía MercadoPago</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Documentos (/alumno/documentos): subir y consultar documentos personales con vigencia</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cambiar contraseña y foto de perfil</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: alumno.dashboard</span></li>
           </ul>
         </div>
@@ -1091,6 +1270,33 @@
           </div>
         </div>
 
+        <!-- CargaAcademica estado_revision -->
+        <div class="bg-white rounded-2xl shadow overflow-hidden sm:col-span-2">
+          <div class="h-1.5" style="background:#0ea5e9;"></div>
+          <div class="px-5 pt-4 pb-4">
+            <p class="font-extrabold text-gray-900 mb-3">🗓️ CargaAcademica.estado_revision</p>
+            <p class="text-xs text-gray-400 mb-3">Flujo de dos pasos: el profesor guarda notas como borrador antes de enviarlas a revisión de coordinación.</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">null — Sin enviar</span>
+                <span class="text-gray-400 text-sm">→</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#fef9ec; color:#92670b;">pendiente</span>
+                <span class="text-gray-400 text-sm">→</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#dcfce7; color:#166534;">aprobado</span>
+              </div>
+              <p class="text-xs text-gray-400 ml-4">Profesor presiona "Enviar a revisión" → coordinación aprueba → calificaciones visibles en kárdex del alumno, créditos acumulados</p>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:#fef9ec; color:#92670b;">pendiente</span>
+                <span class="text-gray-400 text-sm">→</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">rechazado</span>
+                <span class="text-gray-400 text-sm">→ (profesor edita) →</span>
+                <span class="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">null — borrador</span>
+              </div>
+              <p class="text-xs text-gray-400 ml-4">Coordinación rechaza con motivo → estado vuelve a null → profesor corrige y puede reenviar</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Tracking aspirante (pasos) -->
         <div class="bg-white rounded-2xl shadow overflow-hidden sm:col-span-2">
           <div class="h-1.5" style="background:#0F4229;"></div>
@@ -1126,6 +1332,25 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- Seguridad -->
+      <div class="mt-5 bg-white rounded-2xl shadow p-5">
+        <p class="font-extrabold text-sm text-gray-800 mb-3">🔒 Seguridad del sistema</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2 border-red-500">
+            <p class="font-bold text-gray-700">Rate limiting progresivo en login</p>
+            <p class="text-gray-500 mt-0.5">Bloqueo por IP progresivo: 1 min → 5 min → 15 min → 1 h. Mensajes de error genéricos (no indica qué campo falló). Tabla <code>login_attempts</code>.</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2 border-amber-500">
+            <p class="font-bold text-gray-700">Auditoría SQL</p>
+            <p class="text-gray-500 mt-0.5">Revisión de todas las queries sin uso de parámetros enlazados. Sin hallazgos de inyección SQL. Laravel Query Builder y Eloquent son seguros por defecto.</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2" style="border-color:#0F4229;">
+            <p class="font-bold text-gray-700">Aislamiento por rol</p>
+            <p class="text-gray-500 mt-0.5">Middleware <code>rol:X</code> en todas las rutas. El profesor solo ve sus cargas. El alumno solo ve sus datos. <code>abort_if</code> en controllers como segunda capa.</p>
+          </div>
+        </div>
       </div>
 
       <!-- Correos del sistema -->
@@ -1167,7 +1392,7 @@
   </main>
 
   <footer class="text-center py-6 text-xs text-gray-400 mt-4">
-    UICM — Mapa del Sistema · Actualizado el 17 Jun 2026 · Solo para referencia interna
+    UICM — Mapa del Sistema · Actualizado el 25 Jun 2026 · Solo para referencia interna
   </footer>
 
 </body>

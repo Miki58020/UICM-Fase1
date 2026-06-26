@@ -15,22 +15,39 @@ use Illuminate\Support\Facades\Mail;
 
 class AlumnoController extends Controller
 {
-    public function listado()
+    public function listado(Request $request)
     {
+        $conteo = [
+            'total'     => Alumno::count(),
+            'activos'   => Alumno::where('estado', 'activo')->count(),
+            'inactivos' => Alumno::where('estado', '!=', 'activo')->count(),
+        ];
+
         $alumnos = Alumno::with(['programa', 'grupo', 'user'])
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = $request->q;
+                $query->where(function ($w) use ($q) {
+                    $w->where('nombre', 'like', "%{$q}%")
+                        ->orWhere('apellido_paterno', 'like', "%{$q}%")
+                        ->orWhere('apellido_materno', 'like', "%{$q}%")
+                        ->orWhere('matricula', 'like', "%{$q}%")
+                        ->orWhere('email', 'like', "%{$q}%");
+                });
+            })
+            ->when($request->filled('programa'), fn ($query) => $query->where('programa_id', $request->programa))
+            ->when($request->filled('estado'), function ($query) use ($request) {
+                $request->estado === 'inactivo'
+                    ? $query->where('estado', '!=', 'activo')
+                    : $query->where('estado', $request->estado);
+            })
             ->orderBy('apellido_paterno')
             ->orderBy('apellido_materno')
             ->orderBy('nombre')
-            ->get();
+            ->paginate(50)
+            ->withQueryString();
 
         $programas = \App\Models\Programa::orderBy('nombre')->get();
         $grupos    = \App\Models\Grupo::with('programa')->orderBy('clave')->get();
-
-        $conteo = [
-            'total'    => $alumnos->count(),
-            'activos'  => $alumnos->where('estado', 'activo')->count(),
-            'inactivos'=> $alumnos->where('estado', '!=', 'activo')->count(),
-        ];
 
         return view('admin.alumnos.index', compact('alumnos', 'programas', 'grupos', 'conteo'));
     }
@@ -184,7 +201,10 @@ class AlumnoController extends Controller
     {
         $alumno = Alumno::where('user_id', Auth::id())->firstOrFail();
 
-        abort_if($pago->aspirante_id !== $alumno->aspirante_id, 403);
+        $esSuyo = ($pago->alumno_id === $alumno->id)
+               || ($pago->aspirante_id !== null && $pago->aspirante_id === $alumno->aspirante_id);
+
+        abort_if(!$esSuyo, 403);
 
         return view('alumno.comprobante', compact('pago', 'alumno'));
     }

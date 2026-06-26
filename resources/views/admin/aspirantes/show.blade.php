@@ -27,7 +27,7 @@
                     <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
                         Expediente de aspirante
                     </p>
-                    <h1 class="text-xl font-extrabold text-gray-900">
+                    <h1 class="text-2xl font-extrabold text-gray-900">
                         {{ $aspirante->nombre_completo }}
                     </h1>
                     <p class="text-sm text-gray-500 mt-0.5 font-mono">{{ $aspirante->folio }}</p>
@@ -48,8 +48,9 @@
                             Aprobado
                         </span>
                     @else
-                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-gray-600 bg-gray-200">
-                            <span class="w-2 h-2 rounded-full bg-gray-400 inline-block"></span>
+                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white"
+                              style="background-color: #dc2626;">
+                            <span class="w-2 h-2 rounded-full bg-white opacity-80 inline-block"></span>
                             Rechazado
                         </span>
                     @endif
@@ -369,7 +370,10 @@
                                 onclick="document.getElementById('form-rechazar').classList.toggle('hidden')"
                                 class="inline-flex items-center justify-center gap-2
                                        px-6 py-3 rounded-xl text-sm font-bold text-white
-                                       bg-gray-400 hover:bg-gray-500 transition-colors duration-200 shadow-sm">
+                                       transition-colors duration-200 shadow-sm"
+                                style="background-color: #dc2626;"
+                                onmouseover="this.style.backgroundColor='#b91c1c'"
+                                onmouseout="this.style.backgroundColor='#dc2626'">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
@@ -394,7 +398,10 @@
                                 <p class="text-xs text-red-500 mb-2">{{ $message }}</p>
                             @enderror
                             <button type="submit"
-                                    class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gray-500 hover:bg-gray-600 transition-colors shadow-sm">
+                                    class="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-colors shadow-sm"
+                                    style="background-color: #dc2626;"
+                                    onmouseover="this.style.backgroundColor='#b91c1c'"
+                                    onmouseout="this.style.backgroundColor='#dc2626'">
                                 Confirmar rechazo
                             </button>
                         </form>

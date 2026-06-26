@@ -672,10 +672,10 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Horario</label>
                     <input type="text" id="asig-horario" name="horario"
-                           placeholder="Ej. Lun-Mié 08:00-10:00"
+                           placeholder="Ej. Sábados - Enero 2026"
                            maxlength="50"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
-                    <p class="mt-1 text-xs text-gray-400">Días abreviados y horario en formato 24h.</p>
+                    <p class="mt-1 text-xs text-gray-400">Día(s) de la semana y mes en que se imparte.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Aula</label>

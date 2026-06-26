@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContrasenaActualizada;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class PerfilController extends Controller
@@ -27,5 +30,23 @@ class PerfilController extends Controller
         $user->update(['foto' => $path]);
 
         return redirect()->route('dashboard')->with('success', 'Foto de perfil actualizada.');
+    }
+
+    public function cambiarPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'password.required'  => 'Ingresa la nueva contraseña.',
+            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+        ]);
+
+        $user = auth()->user();
+        $user->update(['password' => Hash::make($request->password)]);
+
+        Mail::to($user->email)->send(new ContrasenaActualizada($user, $request->password));
+
+        return redirect()->route('dashboard')->with('success', 'Contraseña actualizada correctamente. Se envió confirmación a tu correo.');
     }
 }

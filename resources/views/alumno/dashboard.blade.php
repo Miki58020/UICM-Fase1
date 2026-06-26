@@ -481,16 +481,21 @@
                                 <td class="px-4 py-3 text-center">
                                     @if ($calFinal !== null)
                                         @if ($aprobado)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #0F4229;">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                                 Aprobado
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #dc2626;">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                                 Reprobado
                                             </span>
                                         @endif
                                     @else
-                                        <span class="text-xs text-gray-400">Pendiente</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #EFAD5A;">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                            Pendiente
+                                        </span>
                                     @endif
                                 </td>
                             </tr>
@@ -597,8 +602,9 @@
                                             Pagado
                                         </span>
                                     @elseif ($pago->estado === 'rechazado')
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block"></span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                              style="background-color: #dc2626;">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                             Rechazado
                                         </span>
                                     @else

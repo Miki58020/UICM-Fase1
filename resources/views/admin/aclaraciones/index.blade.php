@@ -62,8 +62,12 @@
                             el {{ $aclaracion->created_at->format('d/m/Y H:i') }}
                         </p>
                     </div>
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
-                          {{ $aclaracion->estado === 'pendiente' ? 'bg-amber-100 text-amber-700' : ($aclaracion->estado === 'aprobada' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700') }}">
+                    @php
+                        $colorEstado = ['pendiente' => '#EFAD5A', 'aprobada' => '#0F4229'][$aclaracion->estado] ?? '#dc2626';
+                    @endphp
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                          style="background-color: {{ $colorEstado }};">
+                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                         {{ ucfirst($aclaracion->estado) }}
                     </span>
                 </div>
@@ -93,7 +97,8 @@
                         </button>
                     </form>
                     <button type="button" @click="rechazando = true"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-red-100 text-red-700">
+                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
+                            style="background-color: #dc2626;">
                         Rechazar
                     </button>
                 </div>

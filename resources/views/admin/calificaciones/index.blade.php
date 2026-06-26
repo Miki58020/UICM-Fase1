@@ -174,11 +174,12 @@
             @foreach ($cargasConCalif as $carga)
             @php
                 $alumnos = $grupo->alumnos;
-                $estadoBadge = [
-                    'pendiente' => ['bg-amber-100 text-amber-700', 'Pendiente de revisión'],
-                    'aprobado'  => ['bg-green-100 text-green-700', 'Aprobado por control escolar'],
-                    'rechazado' => ['bg-red-100 text-red-700', 'Rechazado'],
-                ][$carga->estado_revision];
+                $estadoBadge = match($carga->estado_revision) {
+                    'pendiente' => ['#EFAD5A', 'Pendiente de revisión'],
+                    'aprobado'  => ['#0F4229', 'Aprobado por control escolar'],
+                    'rechazado' => ['#dc2626', 'Rechazado · Esperando reenvío del profesor'],
+                    default     => ['#9ca3af', 'Sin enviar — el profesor aún no ha enviado calificaciones'],
+                };
             @endphp
             <div class="bg-white rounded-2xl shadow-md overflow-hidden" x-data="{ rechazando: false }">
 
@@ -210,7 +211,9 @@
                                 ⚠ Calificaciones idénticas
                             </span>
                         @endif
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $estadoBadge[0] }}">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                              style="background-color: {{ $estadoBadge[0] }};">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                             {{ $estadoBadge[1] }}
                         </span>
                         @php
@@ -228,7 +231,7 @@
                 </div>
                 @endif
 
-                @if ($conCalif > 0)
+                @if ($carga->estado_revision === 'pendiente' && $conCalif > 0)
                 <div class="px-6 py-3 border-b border-gray-100 flex items-center justify-end gap-2" x-show="!rechazando">
                     <form method="POST" action="{{ route('admin.calificaciones.aprobar', $carga) }}">
                         @csrf
@@ -239,7 +242,8 @@
                         </button>
                     </form>
                     <button type="button" @click="rechazando = true"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-red-100 text-red-700">
+                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
+                            style="background-color: #dc2626;">
                         Rechazar
                     </button>
                 </div>
@@ -260,6 +264,11 @@
                 </div>
                 @endif
 
+                @if ($carga->estado_revision === null)
+                <div class="px-6 py-8 text-center text-sm text-gray-400">
+                    El profesor aún no ha enviado las calificaciones a revisión.
+                </div>
+                @else
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
@@ -314,13 +323,18 @@
                                                 Aprobado
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-red-400 inline-block"></span>
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                                  style="background-color: #dc2626;">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                                 Reprobado
                                             </span>
                                         @endif
                                     @else
-                                        <span class="text-xs text-gray-400">Pendiente</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                              style="background-color: #EFAD5A;">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                            Pendiente
+                                        </span>
                                     @endif
                                 </td>
                             </tr>
@@ -334,6 +348,7 @@
                         </tbody>
                     </table>
                 </div>
+                @endif
             </div>
             @endforeach
 

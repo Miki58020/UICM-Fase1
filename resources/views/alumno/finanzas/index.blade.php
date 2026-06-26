@@ -104,9 +104,15 @@
                             </td>
                             <td class="px-6 py-4 text-center whitespace-nowrap">
                                 @if ($pago->estaVencido())
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Atrasado</span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #dc2626;">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                        Atrasado
+                                    </span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Pendiente</span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #EFAD5A;">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                        Pendiente
+                                    </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right whitespace-nowrap">
@@ -160,13 +166,19 @@
                             </td>
                             <td class="px-6 py-4 text-center whitespace-nowrap">
                                 @if ($pago->estado === 'aprobado')
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #0F4229;">Pagado</span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #0F4229;">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                        Pagado
+                                    </span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Rechazado</span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #dc2626;">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                        Rechazado
+                                    </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right whitespace-nowrap">
-                                @if ($pago->estado === 'aprobado' && $pago->aspirante_id)
+                                @if ($pago->estado === 'aprobado')
                                     <a href="{{ route('alumno.comprobante', $pago) }}" target="_blank"
                                        class="text-xs font-semibold" style="color: #0F4229;">Ver comprobante</a>
                                 @else

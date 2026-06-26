@@ -20,7 +20,6 @@ use App\Http\Controllers\PaginaPrincipalController;
 use App\Http\Controllers\PeriodoController;
 use App\Http\Controllers\PeriodoProgramaController;
 use App\Http\Controllers\ProgramaController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfesorController;
 use App\Http\Controllers\ReinscripcionController;
 use App\Http\Controllers\SolicitudContrasenaController;
@@ -64,6 +63,7 @@ Route::middleware(['auth', 'rol:profesor'])->group(function () {
     Route::get('/profesor/calificaciones', [CalificacionController::class, 'indexProfesor'])->name('profesor.calificaciones.index');
     Route::get('/profesor/calificaciones/{carga}/capturar', [CalificacionController::class, 'capturar'])->name('profesor.calificaciones.capturar');
     Route::post('/profesor/calificaciones/{carga}/guardar', [CalificacionController::class, 'guardar'])->name('profesor.calificaciones.guardar');
+    Route::post('/profesor/calificaciones/{carga}/enviar', [CalificacionController::class, 'enviar'])->name('profesor.calificaciones.enviar');
     Route::post('/profesor/cambiar-password', [CalificacionController::class, 'cambiarPassword'])->name('profesor.cambiar-password');
     Route::post('/profesor/calificaciones/{carga}/aclaracion/{alumno}', [AclaracionCalificacionController::class, 'solicitar'])->name('profesor.aclaraciones.solicitar');
 });
@@ -223,7 +223,7 @@ Route::get('/admin/archivo/{path}', function (string $path) {
 })->middleware('auth')->where('path', '.*')->name('admin.archivo');
 
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->name('dashboard');
 
 Route::post('/admin/notificar/{rol}', [App\Http\Controllers\NotificacionDepartamentoController::class, 'enviar'])
@@ -232,11 +232,8 @@ Route::post('/admin/notificar/{rol}', [App\Http\Controllers\NotificacionDepartam
     ->where('rol', 'control_escolar|finanzas|coordinacion|admin');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
     Route::post('/perfil/foto', [\App\Http\Controllers\PerfilController::class, 'updateFoto'])->name('perfil.foto');
+    Route::post('/perfil/cambiar-password', [\App\Http\Controllers\PerfilController::class, 'cambiarPassword'])->name('perfil.cambiar-password');
 });
 
 require __DIR__ . '/auth.php';

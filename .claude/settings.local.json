@@ -160,7 +160,15 @@
       "Bash(npx --yes playwright --version)",
       "Bash(sort -k6,7)",
       "Bash(mkdir -p resources/views/finanzas/tarifas)",
-      "Bash(mv resources/views/admin/tarifas/index.blade.php resources/views/finanzas/tarifas/index.blade.php)"
+      "Bash(mv resources/views/admin/tarifas/index.blade.php resources/views/finanzas/tarifas/index.blade.php)",
+      "Bash(netstat -ano)",
+      "Bash(grep -n \"register\\\\|RegisteredUserController\" routes/*.php)",
+      "Bash(cat routes/auth.php)",
+      "Bash(wc -l /tmp_defined.txt)",
+      "Bash(cat /tmp_defined.txt)",
+      "Bash(find resources/views/vendor -iname \"*pagination*\")",
+      "Bash(grep -rn \"Paginator::\" app/Providers/*.php)",
+      "Bash(python -c ' *)"
     ]
   }
 }

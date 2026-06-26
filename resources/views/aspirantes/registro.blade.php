@@ -10,7 +10,7 @@
         {{-- Encabezado de página --}}
         <div class="text-center mb-8">
             <p class="text-uicm-gold text-xs font-bold uppercase tracking-widest mb-2">Admisiones</p>
-            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">Registro de Aspirante</h1>
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-3">Registro de Aspirante</h1>
             {{-- Línea decorativa oro --}}
             <div class="mx-auto w-20 h-1 rounded-full" style="background-color: #D4AF37;"></div>
         </div>

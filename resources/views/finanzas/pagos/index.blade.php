@@ -4,28 +4,7 @@
 
 @section('content')
 
-<section
-    x-data="{
-        busqueda: '',
-        filtroEstado: '',
-        filtrar() {
-            this.$nextTick(() => {
-                const filas = this.$refs.tbody.querySelectorAll('tr[data-nombre]');
-                let visibles = 0;
-                filas.forEach(f => {
-                    const texto = this.busqueda.toLowerCase();
-                    const pasaBusqueda = !texto || f.dataset.nombre.toLowerCase().includes(texto) || f.dataset.folio.toLowerCase().includes(texto);
-                    const pasaEstado  = !this.filtroEstado || f.dataset.estado === this.filtroEstado;
-                    const mostrar = pasaBusqueda && pasaEstado;
-                    f.style.display = mostrar ? '' : 'none';
-                    if (mostrar) visibles++;
-                });
-                this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
-                this.$refs.contadorVisible.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
-            });
-        }
-    }"
-    class="bg-uicm-gray min-h-screen py-12 px-4">
+<section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         {{-- Encabezado de módulo --}}
@@ -52,7 +31,16 @@
         </div>
 
         {{-- Filtros de servidor --}}
-        <form method="GET" class="bg-white rounded-2xl shadow-md px-6 py-5 mb-6 grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <form method="GET" class="bg-white rounded-2xl shadow-md px-6 py-5 mb-6 grid grid-cols-1 sm:grid-cols-5 gap-4">
+            @if(request('estado'))
+                <input type="hidden" name="estado" value="{{ request('estado') }}">
+            @endif
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Buscar</label>
+                <input type="text" name="q" value="{{ request('q') }}"
+                       placeholder="Folio, matrícula o nombre…"
+                       class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
+            </div>
             <div>
                 <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Concepto</label>
                 <select name="concepto" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
@@ -72,14 +60,20 @@
                 <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}"
                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
             </div>
-            <div class="flex items-end gap-2">
+            <div class="flex items-end gap-2 sm:col-span-5">
                 <button type="submit"
-                        class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+                        class="px-4 py-2.5 rounded-xl text-sm font-bold text-white"
                         style="background-color: #0F4229;">
                     Filtrar
                 </button>
+                @if(request('q') || request('concepto') || request('estado') || request('fecha_desde') || request('fecha_hasta'))
+                <a href="{{ route('finanzas.pagos.index') }}"
+                   class="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
+                    Limpiar
+                </a>
+                @endif
                 <a href="{{ route('finanzas.pagos.exportar', request()->query()) }}"
-                   class="flex-1 text-center px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+                   class="ml-auto px-4 py-2.5 rounded-xl text-sm font-bold text-white"
                    style="background-color: #D4AF37;">
                     Exportar CSV
                 </a>
@@ -90,96 +84,56 @@
         {{-- Contadores --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
 
-            <button type="button"
-                    @click="filtroEstado = ''; filtrar()"
-                    :class="filtroEstado === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #6B7280;">
+            @php $baseParams = request()->except(['estado', 'page']); @endphp
+            <a href="{{ route('finanzas.pagos.index', $baseParams) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #6B7280; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
-                    {{ $pagos->count() }}
+                    {{ $conteo['total'] }}
                 </p>
-            </button>
+            </a>
 
-            <button type="button"
-                    @click="filtroEstado = 'pendiente'; filtrar()"
-                    :class="filtroEstado === 'pendiente' ? 'ring-2' : 'hover:shadow-md'"
-                    :style="filtroEstado === 'pendiente' ? 'ring-color: #EFAD5A;' : ''"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #EFAD5A;">
+            <a href="{{ route('finanzas.pagos.index', $baseParams + ['estado' => 'pendiente']) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #EFAD5A; {{ request('estado') === 'pendiente' ? 'box-shadow: 0 0 0 2px #EFAD5A;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">En revisión</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">
-                    {{ $pagos->where('estado', 'pendiente')->count() }}
+                    {{ $conteo['pendiente'] }}
                 </p>
-            </button>
+            </a>
 
-            <button type="button"
-                    @click="filtroEstado = 'aprobado'; filtrar()"
-                    :class="filtroEstado === 'aprobado' ? 'ring-2 ring-green-700' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #0F4229;">
+            <a href="{{ route('finanzas.pagos.index', $baseParams + ['estado' => 'aprobado']) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #0F4229; {{ request('estado') === 'aprobado' ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Validados</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">
-                    {{ $pagos->where('estado', 'aprobado')->count() }}
+                    {{ $conteo['aprobado'] }}
                 </p>
-            </button>
+            </a>
 
-            <button type="button"
-                    @click="filtroEstado = 'rechazado'; filtrar()"
-                    :class="filtroEstado === 'rechazado' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #9ca3af;">
+            <a href="{{ route('finanzas.pagos.index', $baseParams + ['estado' => 'rechazado']) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #9ca3af; {{ request('estado') === 'rechazado' ? 'box-shadow: 0 0 0 2px #9ca3af;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazados</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
-                    {{ $pagos->where('estado', 'rechazado')->count() }}
+                    {{ $conteo['rechazado'] }}
                 </p>
-            </button>
+            </a>
 
-        </div>
-
-        {{-- Búsqueda y filtro --}}
-        <div class="flex flex-col sm:flex-row gap-3 mb-6">
-            <div class="relative flex-1">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-                </svg>
-                <input type="text" x-model="busqueda" @input="filtrar()"
-                       placeholder="Buscar por folio o nombre…"
-                       class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
-                       onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-            </div>
-            <div class="relative sm:w-52">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
-                </svg>
-                <select x-model="filtroEstado" @change="filtrar()"
-                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
-                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                    <option value="">Todos los estados</option>
-                    <option value="pendiente">En revisión</option>
-                    <option value="aprobado">Validado</option>
-                    <option value="rechazado">Rechazado</option>
-                </select>
-            </div>
         </div>
 
         {{-- Card tabla --}}
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-[350px]">
 
-            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+            <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
 
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
                 <h2 class="text-sm font-semibold text-gray-700">Comprobantes recibidos</h2>
-                <span class="text-xs text-gray-400" x-ref="contadorVisible">{{ $pagos->count() }} registros</span>
+                <span class="text-xs text-gray-400">{{ $pagos->total() }} registros</span>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-auto flex-1">
                 <table class="w-full text-sm">
 
                     <thead>
@@ -195,17 +149,14 @@
                         </tr>
                     </thead>
 
-                    <tbody class="divide-y divide-gray-100" x-ref="tbody">
+                    <tbody class="divide-y divide-gray-100">
                         @forelse ($pagos as $pago)
                         @php
                             $refTexto     = $pago->aspirante?->folio ?? ($pago->alumno ? 'MAT-'.$pago->alumno->matricula : '—');
                             $nombreTexto  = $pago->aspirante?->nombre_completo ?? $pago->alumno?->nombre_completo ?? '—';
                             $programaNombre = $pago->aspirante?->programa?->nombre ?? $pago->alumno?->programa?->nombre ?? '—';
                         @endphp
-                        <tr class="hover:bg-gray-50 transition-colors duration-100"
-                            data-folio="{{ strtolower($refTexto) }}"
-                            data-nombre="{{ strtolower($nombreTexto) }}"
-                            data-estado="{{ $pago->estado }}">
+                        <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-600 whitespace-nowrap">
                                 {{ $refTexto }}
@@ -257,8 +208,9 @@
                                         Validado
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block"></span>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                          style="background-color: #dc2626;">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                         Rechazado
                                     </span>
                                 @endif
@@ -287,19 +239,20 @@
                         @empty
                         <tr>
                             <td colspan="8" class="px-6 py-10 text-center text-sm text-gray-400">
-                                No hay comprobantes registrados.
+                                {{ request()->anyFilled(['q', 'concepto', 'estado', 'fecha_desde', 'fecha_hasta']) ? 'No se encontraron pagos con ese criterio.' : 'No hay comprobantes registrados.' }}
                             </td>
                         </tr>
                         @endforelse
-                        <tr x-ref="sinResultados" style="display:none;">
-                            <td colspan="8" class="px-6 py-10 text-center text-sm text-gray-400">
-                                No se encontraron pagos con ese criterio.
-                            </td>
-                        </tr>
                     </tbody>
 
                 </table>
             </div>
+
+            @if($pagos->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+                {{ $pagos->links() }}
+            </div>
+            @endif
 
         </div>{{-- /card --}}
 

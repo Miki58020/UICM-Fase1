@@ -110,6 +110,8 @@
       x-data="{
           sidebarOpen: false,
           sidebarCollapsed: localStorage.getItem('uicm_sidebar') === '1',
+          modalCambiarPassword: {{ $errors->has('password') ? 'true' : 'false' }},
+          userMenuOpen: false,
           toggleCollapse() {
               this.sidebarCollapsed = !this.sidebarCollapsed;
               localStorage.setItem('uicm_sidebar', this.sidebarCollapsed ? '1' : '0');
@@ -194,6 +196,9 @@
                         $apellidoPaterno = auth()->user()->apellido_paterno ?? '';
                     }
                     $nombreMostrado = trim($norm($primerNombre) . ' ' . $norm($apellidoPaterno));
+                    // Foto de perfil: primero la del usuario, luego la del aspirante (solo alumnos)
+                    $fotoPerfil = auth()->user()->foto
+                        ?: (auth()->user()->alumno?->aspirante?->foto_url ?? null);
                 @endphp
                 <span class="hidden md:block absolute left-64 pl-6 text-sm font-medium text-gray-600 whitespace-nowrap">
                     <span class="font-bold" style="color: #0F4229;">{{ $rolLabel }}</span>
@@ -202,26 +207,102 @@
                 </span>
                 @endauth
 
-                {{-- Lado derecho --}}
+                {{-- Lado derecho: dropdown de usuario --}}
                 @auth
-                <div class="flex items-center gap-3">
-                    <form method="POST" action="{{ route('logout') }}"
-                          onsubmit="localStorage.setItem('uicm_logout', Date.now()); sessionStorage.removeItem('uicm_tab_alive');">
-                        @csrf
-                        <button type="submit"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold
-                                       text-white transition-colors duration-200"
-                                style="background-color: #0F4229;"
-                                onmouseover="this.style.backgroundColor='#0a2e1c'"
-                                onmouseout="this.style.backgroundColor='#0F4229'">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="relative">
+
+                    {{-- Trigger: foto/iniciales + nombre + chevron --}}
+                    <button @click="userMenuOpen = !userMenuOpen"
+                            @keydown.escape.window="userMenuOpen = false"
+                            class="flex items-center gap-2 px-2 py-1.5 rounded-xl transition-colors duration-150 hover:bg-gray-100">
+                        <div class="w-8 h-8 rounded-full flex-shrink-0 overflow-hidden border-2"
+                             style="border-color: #0F4229;">
+                            @if($fotoPerfil)
+                                <img src="{{ route('admin.archivo', ['path' => $fotoPerfil]) }}"
+                                     alt="Foto de perfil"
+                                     class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-white text-xs font-extrabold"
+                                     style="background-color: #0F4229;">
+                                    {{ strtoupper(substr($primerNombre, 0, 1)) }}{{ $apellidoPaterno ? strtoupper(substr($apellidoPaterno, 0, 1)) : '' }}
+                                </div>
+                            @endif
+                        </div>
+                        <span class="hidden sm:block md:hidden text-sm font-medium text-gray-700 max-w-[130px] truncate">
+                            {{ $nombreMostrado }}
+                        </span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-150 flex-shrink-0"
+                             :class="userMenuOpen && 'rotate-180'"
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+
+                    {{-- Panel desplegable --}}
+                    <div x-show="userMenuOpen"
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 -translate-y-1 scale-95"
+                         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         @click.outside="userMenuOpen = false"
+                         class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50"
+                         style="display:none;">
+
+                        {{-- Encabezado: foto + rol + nombre --}}
+                        <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden border-2"
+                                 style="border-color: #0F4229;">
+                                @if($fotoPerfil)
+                                    <img src="{{ route('admin.archivo', ['path' => $fotoPerfil]) }}"
+                                         alt="Foto de perfil"
+                                         class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-white text-sm font-extrabold"
+                                         style="background-color: #0F4229;">
+                                        {{ strtoupper(substr($primerNombre, 0, 1)) }}{{ $apellidoPaterno ? strtoupper(substr($apellidoPaterno, 0, 1)) : '' }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs font-extrabold truncate" style="color: #0F4229;">{{ $rolLabel }}</p>
+                                <p class="text-sm font-medium text-gray-700 truncate mt-0.5">{{ $nombreMostrado }}</p>
+                            </div>
+                        </div>
+
+                        {{-- Cambiar contraseña --}}
+                        <button type="button"
+                                @click="userMenuOpen = false; $nextTick(() => { modalCambiarPassword = true })"
+                                class="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700
+                                       hover:bg-gray-50 transition-colors duration-150 text-left">
+                            <svg class="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7
-                                         a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                      d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
+                                         a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                             </svg>
-                            <span class="hidden sm:inline">Cerrar sesión</span>
+                            Cambiar contraseña
                         </button>
-                    </form>
+
+                        <div class="border-t border-gray-100 mx-3"></div>
+
+                        {{-- Cerrar sesión --}}
+                        <form method="POST" action="{{ route('logout') }}"
+                              onsubmit="localStorage.setItem('uicm_logout', Date.now()); sessionStorage.removeItem('uicm_tab_alive');">
+                            @csrf
+                            <button type="submit"
+                                    class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600
+                                           hover:bg-red-50 transition-colors duration-150 text-left">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7
+                                             a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                Cerrar sesión
+                            </button>
+                        </form>
+
+                    </div>
                 </div>
                 @else
                 {{-- Navbar público --}}
@@ -590,6 +671,18 @@
                 @endif
             </a>
 
+            <a href="{{ route('admin.reinscripciones.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Reinscripciones"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.reinscripciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <span class="nav-link-text">Reinscripciones</span>
+            </a>
+
             <a href="{{ route('admin.alumnos.index') }}"
                @click="sidebarOpen = false"
                data-tooltip="Alumnos"
@@ -723,7 +816,7 @@
                @click="sidebarOpen = false"
                data-tooltip="Mi portal"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('alumno.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                      {{ request()->routeIs('alumno.dashboard') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012
@@ -731,12 +824,163 @@
                 </svg>
                 <span class="nav-link-text">Mi portal</span>
             </a>
+
+            <a href="{{ route('alumno.kardex') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Kárdex"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('alumno.kardex') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+                             M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2
+                             m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                </svg>
+                <span class="nav-link-text">Kárdex</span>
+            </a>
+
+            <a href="{{ route('alumno.finanzas.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Finanzas"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('alumno.finanzas.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6
+                             a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
+                </svg>
+                <span class="nav-link-text">Finanzas</span>
+            </a>
+
+            <a href="{{ route('alumno.documentos.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Documentos"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('alumno.documentos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293
+                             l4.414 4.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="nav-link-text">Documentos</span>
+            </a>
             @endif
 
         </nav>
 
 
     </aside>
+    @endauth
+
+    {{-- ===== MODAL: CAMBIAR CONTRASEÑA (todos los roles) ===== --}}
+    @auth
+    @php
+        $cambiarPasswordRoute = match(auth()->user()->rol) {
+            'alumno'  => route('alumno.cambiar-password'),
+            'profesor' => route('profesor.cambiar-password'),
+            default   => route('perfil.cambiar-password'),
+        };
+    @endphp
+    @if(true)
+    <div x-show="modalCambiarPassword"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+         style="display: none;">
+
+        <div x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
+             @click.outside="modalCambiarPassword = false">
+
+            <div class="h-1.5 w-full" style="background-color: #EFAD5A;"></div>
+
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         style="color: #EFAD5A;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
+                                 a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                    </svg>
+                    <h2 class="text-sm font-bold text-gray-800">Cambiar contraseña</h2>
+                </div>
+                <button type="button" @click="modalCambiarPassword = false"
+                        class="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400
+                               hover:text-gray-600 hover:bg-gray-100 transition-colors duration-150">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form method="POST" action="{{ $cambiarPasswordRoute }}" class="px-6 py-5 space-y-4"
+                  x-data="{ showPwd: false }">
+                @csrf
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                        Nueva contraseña <span class="normal-case font-normal text-gray-400">(mín. 8 caracteres)</span>
+                    </label>
+                    <input :type="showPwd ? 'text' : 'password'" name="password" required
+                           class="w-full px-4 py-2.5 text-sm border rounded-xl bg-white focus:outline-none
+                                  @error('password') border-red-400 @else border-gray-300 @enderror"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.15)'"
+                           onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                    @error('password')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                        Confirmar contraseña
+                    </label>
+                    <input :type="showPwd ? 'text' : 'password'" name="password_confirmation" required
+                           class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.15)'"
+                           onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                </div>
+
+                <div class="flex items-center justify-end gap-2">
+                    <button type="button" @click="showPwd = !showPwd"
+                            class="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 transition-colors select-none">
+                        <svg x-show="!showPwd" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        <svg x-show="showPwd" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 4.411m0 0L21 21"/>
+                        </svg>
+                        <span x-text="showPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'"></span>
+                    </button>
+                </div>
+
+                <div class="flex gap-3 pt-1">
+                    <button type="button" @click="modalCambiarPassword = false"
+                            class="flex-1 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors duration-150"
+                            style="border-color: #0F4229; color: #0F4229;"
+                            onmouseover="this.style.backgroundColor='#f0f9f4'"
+                            onmouseout="this.style.backgroundColor='transparent'">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-200"
+                            style="background-color: #0F4229;"
+                            onmouseover="this.style.backgroundColor='#0a2e1c'"
+                            onmouseout="this.style.backgroundColor='#0F4229'">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
     @endauth
 
     {{-- ===== CONTENIDO PRINCIPAL ===== --}}

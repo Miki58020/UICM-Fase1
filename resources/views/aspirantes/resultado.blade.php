@@ -24,7 +24,7 @@
     };
 
     $badgeColor = match(true) {
-        $pasoActual === 1 => '#9ca3af',
+        $pasoActual === 1 => '#dc2626',
         $pasoActual === 5 => '#0F4229',
         default           => '#EFAD5A',
     };

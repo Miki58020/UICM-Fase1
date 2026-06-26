@@ -29,7 +29,7 @@
                     </div>
 
                     {{-- Título --}}
-                    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">
+                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">
                         ¡Solicitud registrada!
                     </h1>
                     <div class="mx-auto w-16 h-1 rounded-full mb-6" style="background-color: #D4AF37;"></div>

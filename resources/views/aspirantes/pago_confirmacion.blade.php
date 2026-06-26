@@ -21,7 +21,7 @@
                     </svg>
                 </div>
 
-                <h1 class="text-xl font-extrabold text-gray-900 mb-2">¡Pago confirmado!</h1>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">¡Pago confirmado!</h1>
                 <div class="w-12 h-0.5 mx-auto my-4" style="background-color: #D4AF37;"></div>
 
                 <div class="flex justify-center mb-5">
@@ -69,7 +69,7 @@
                     </svg>
                 </div>
 
-                <h1 class="text-xl font-extrabold text-gray-900 mb-2">Pago en proceso</h1>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Pago en proceso</h1>
                 <div class="w-12 h-0.5 mx-auto my-4" style="background-color: #D4AF37;"></div>
 
                 <div class="flex justify-center mb-5">
@@ -129,7 +129,7 @@
                     </svg>
                 </div>
 
-                <h1 class="text-xl font-extrabold text-gray-900 mb-2">Pago no completado</h1>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Pago no completado</h1>
                 <div class="w-12 h-0.5 mx-auto my-4 bg-red-300"></div>
 
                 <div class="flex justify-center mb-5">

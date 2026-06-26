@@ -63,7 +63,7 @@ class CargaAcademicaController extends Controller
         foreach ($materias as $materia) {
             CargaAcademica::firstOrCreate(
                 ['grupo_id' => $grupo->id, 'materia_id' => $materia->id, 'periodo_id' => $grupo->periodo_id],
-                ['profesor_id' => null, 'horario' => null, 'aula' => null]
+                ['profesor_id' => null, 'horario' => null, 'aula' => null, 'estado_revision' => null]
             );
         }
     }

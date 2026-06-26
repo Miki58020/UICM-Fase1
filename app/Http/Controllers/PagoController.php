@@ -469,9 +469,16 @@ class PagoController extends Controller
 
     public function index(Request $request)
     {
-        $pagos = $this->pagosFiltrados($request)->get();
+        $conteo = [
+            'total'     => Pago::count(),
+            'pendiente' => Pago::where('estado', 'pendiente')->count(),
+            'aprobado'  => Pago::where('estado', 'aprobado')->count(),
+            'rechazado' => Pago::where('estado', 'rechazado')->count(),
+        ];
 
-        return view('finanzas.pagos.index', compact('pagos'));
+        $pagos = $this->pagosFiltrados($request)->paginate(50)->withQueryString();
+
+        return view('finanzas.pagos.index', compact('pagos', 'conteo'));
     }
 
     public function exportar(Request $request)
@@ -562,6 +569,17 @@ class PagoController extends Controller
             ->when($request->filled('estado'), fn ($q) => $q->where('estado', $request->estado))
             ->when($request->filled('fecha_desde'), fn ($q) => $q->whereDate('created_at', '>=', $request->fecha_desde))
             ->when($request->filled('fecha_hasta'), fn ($q) => $q->whereDate('created_at', '<=', $request->fecha_hasta))
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $texto = $request->q;
+                $query->where(function ($w) use ($texto) {
+                    $w->whereHas('aspirante', fn ($a) => $a->where('folio', 'like', "%{$texto}%")
+                            ->orWhere('nombre', 'like', "%{$texto}%")
+                            ->orWhere('apellido_paterno', 'like', "%{$texto}%"))
+                        ->orWhereHas('alumno', fn ($al) => $al->where('matricula', 'like', "%{$texto}%")
+                            ->orWhere('nombre', 'like', "%{$texto}%")
+                            ->orWhere('apellido_paterno', 'like', "%{$texto}%"));
+                });
+            })
             ->latest();
     }
 
