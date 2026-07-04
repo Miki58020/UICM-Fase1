@@ -108,7 +108,28 @@ class AlumnoController extends Controller
 
         $pagos = $alumno->todosLosPagos()->sortByDesc('created_at');
 
-        return view('alumno.dashboard', compact('alumno', 'carga', 'totalCreditos', 'calificaciones', 'pagos'));
+        // Promedio general desde calificaciones aprobadas por control escolar
+        $todasCalif = Calificacion::where('alumno_id', $alumno->id)
+            ->with('cargaAcademica')
+            ->get()
+            ->filter(fn($c) => $c->cargaAcademica?->estado_revision === 'aprobado');
+
+        $calFinals = $todasCalif->groupBy('carga_academica_id')->map(function ($grupo) {
+            $ex    = $grupo->firstWhere('tipo', 'extraordinario');
+            $final = $grupo->firstWhere('tipo', 'final');
+            return $ex ? $ex->calificacion : $final?->calificacion;
+        })->filter(fn($v) => $v !== null);
+
+        $promedioGeneral = $calFinals->isNotEmpty() ? round($calFinals->avg(), 1) : null;
+
+        // Estado de pagos
+        $pagosPendientes  = $pagos->whereIn('estado', ['pendiente', 'en_revision'])->count();
+        $pagosVencidos    = $pagos->filter(fn($p) => method_exists($p, 'estaVencido') && $p->estaVencido())->count();
+
+        return view('alumno.dashboard', compact(
+            'alumno', 'carga', 'totalCreditos', 'calificaciones', 'pagos',
+            'promedioGeneral', 'pagosPendientes', 'pagosVencidos'
+        ));
     }
 
     public function cambiarPassword(Request $request)
@@ -138,19 +159,26 @@ class AlumnoController extends Controller
 
     public function kardex()
     {
+        return $this->kardexData('alumno.kardex');
+    }
+
+    public function kardexImprimir()
+    {
+        return $this->kardexData('alumno.kardex-imprimir');
+    }
+
+    private function kardexData(string $view): \Illuminate\View\View
+    {
         $alumno = Alumno::where('user_id', Auth::id())
             ->with(['programa', 'grupo.periodo', 'periodo'])
             ->firstOrFail();
 
-        // Materias del grupo actual (aunque aún no tengan calificación)
         $cargasActuales = $alumno->grupo_id
             ? CargaAcademica::where('grupo_id', $alumno->grupo_id)
                 ->with(['materia', 'profesor', 'periodo'])
                 ->get()
             : collect();
 
-        // Historial completo: cualquier carga académica (de cualquier cuatrimestre cursado)
-        // en la que el alumno tenga al menos una calificación ya aprobada por control escolar
         $calificaciones = Calificacion::where('alumno_id', $alumno->id)
             ->with('cargaAcademica.materia', 'cargaAcademica.profesor', 'cargaAcademica.periodo')
             ->get()
@@ -158,13 +186,12 @@ class AlumnoController extends Controller
             ->groupBy('carga_academica_id');
 
         $cargasHistoricas = $calificaciones->map(fn($grupo) => $grupo->first()->cargaAcademica)->filter();
-
         $cargas = $cargasActuales->concat($cargasHistoricas)->unique('id');
 
         $materias = $cargas->map(function ($c) use ($calificaciones) {
-            $calif = $calificaciones->get($c->id, collect());
-            $final = $calif->firstWhere('tipo', 'final');
-            $ex = $calif->firstWhere('tipo', 'extraordinario');
+            $calif    = $calificaciones->get($c->id, collect());
+            $final    = $calif->firstWhere('tipo', 'final');
+            $ex       = $calif->firstWhere('tipo', 'extraordinario');
             $calFinal = $ex ? $ex->calificacion : $final?->calificacion;
             return [
                 'carga'    => $c,
@@ -187,13 +214,11 @@ class AlumnoController extends Controller
         $aprobadas  = $materias->filter(fn($m) => $m['calFinal'] !== null && $m['aprobado'])->count();
         $reprobadas = $materias->filter(fn($m) => $m['calFinal'] !== null && !$m['aprobado'])->count();
         $pendientes = $materias->filter(fn($m) => $m['calFinal'] === null)->count();
-
         $totalCreditosPrograma = $alumno->programa?->total_creditos ?? 0;
 
-        return view('alumno.kardex', compact(
+        return view($view, compact(
             'alumno', 'porCuatrimestre', 'promedioGeneral',
-            'aprobadas', 'reprobadas', 'pendientes',
-            'totalCreditosPrograma'
+            'aprobadas', 'reprobadas', 'pendientes', 'totalCreditosPrograma'
         ));
     }
 

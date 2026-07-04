@@ -3,5 +3,5 @@
 return [
     'failed'   => 'Correo o contraseña incorrectos.',
     'password' => 'La contraseña es incorrecta.',
-    'throttle' => 'Demasiados intentos. Por favor espera :seconds segundos.',
+    'throttle' => 'Demasiados intentos fallidos. Cuenta bloqueada temporalmente — intenta de nuevo en :minutes minuto(s).',
 ];

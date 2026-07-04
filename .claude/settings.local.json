@@ -168,7 +168,8 @@
       "Bash(cat /tmp_defined.txt)",
       "Bash(find resources/views/vendor -iname \"*pagination*\")",
       "Bash(grep -rn \"Paginator::\" app/Providers/*.php)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Skill(claude-api)"
     ]
   }
 }

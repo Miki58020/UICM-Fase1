@@ -383,15 +383,6 @@
             {{-- Cuerpo --}}
             <div class="px-6 py-5 space-y-4">
 
-                {{-- Errores de validación --}}
-                @if ($errors->any())
-                    <div class="px-4 py-3 rounded-xl text-xs text-red-700 bg-red-50 border border-red-200 space-y-1">
-                        @foreach ($errors->all() as $error)
-                            <p>{{ $error }}</p>
-                        @endforeach
-                    </div>
-                @endif
-
                 {{-- Nombre completo --}}
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
