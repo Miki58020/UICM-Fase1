@@ -44,4 +44,23 @@ class ConfiguracionCorreoController extends Controller
         return redirect()->route('admin.apis.index', ['tab' => 'correo'])
             ->with('success', 'Remitente actualizado correctamente.');
     }
+
+    public function updateDominio(Request $request, ConfiguracionCorreo $configuracion)
+    {
+        $request->validate([
+            'dominio_institucional' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$/',
+            ],
+        ], [
+            'dominio_institucional.regex' => 'El dominio no es válido. Ejemplo correcto: uicm.edu.mx',
+        ]);
+
+        $configuracion->update(['dominio_institucional' => strtolower($request->dominio_institucional)]);
+
+        return redirect()->route('admin.apis.index', ['tab' => 'correo'])
+            ->with('success', 'Dominio institucional actualizado. Las nuevas cuentas usarán @' . $request->dominio_institucional . '.');
+    }
 }

@@ -137,6 +137,7 @@ Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::patch('/admin/apis/mercadopago/{configuracion}/urls', [ConfiguracionMercadopagoController::class, 'updateUrls'])->name('admin.apis.mercadopago.urls');
     Route::patch('/admin/apis/correo/{configuracion}/conexion', [ConfiguracionCorreoController::class, 'updateConexion'])->name('admin.apis.correo.conexion');
     Route::patch('/admin/apis/correo/{configuracion}/remitente', [ConfiguracionCorreoController::class, 'updateRemitente'])->name('admin.apis.correo.remitente');
+    Route::patch('/admin/apis/correo/{configuracion}/dominio', [ConfiguracionCorreoController::class, 'updateDominio'])->name('admin.apis.correo.dominio');
 
     Route::get('/admin/pagina-principal', [PaginaPrincipalController::class, 'index'])->name('admin.pagina-principal.index');
     Route::post('/admin/pagina-principal/contacto', [PaginaPrincipalController::class, 'updateContacto'])->name('admin.pagina-principal.contacto');

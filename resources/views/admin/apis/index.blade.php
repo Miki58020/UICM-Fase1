@@ -26,7 +26,7 @@ $mailerLabel = fn($m) => match($m) {
 };
 
 $tabActivo = $tabInicial;
-if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $errors->has('username') || $errors->has('password') || $errors->has('from_address') || $errors->has('from_name')) {
+if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $errors->has('username') || $errors->has('password') || $errors->has('from_address') || $errors->has('from_name') || $errors->has('dominio_institucional')) {
     $tabActivo = 'correo';
 } elseif ($errors->has('public_key') || $errors->has('access_token') || $errors->has('back_url_success') || $errors->has('back_url_pending') || $errors->has('back_url_failure') || $errors->has('notification_url')) {
     $tabActivo = 'mercadopago';
@@ -276,6 +276,56 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                     </table>
                 </div>
             </div>
+
+            {{-- CARD: DOMINIO INSTITUCIONAL --}}
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-700">Dominio institucional</h2>
+                        <p class="text-xs text-gray-400 mt-0.5">Dominio usado al generar correos de alumnos nuevos</p>
+                    </div>
+                    <button onclick="document.getElementById('modal-correo-dominio').classList.remove('hidden')"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-200"
+                            style="background-color: #D4AF37;"
+                            onmouseover="this.style.backgroundColor='#b8962e'"
+                            onmouseout="this.style.backgroundColor='#D4AF37'">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        Editar
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-3">Campo</th>
+                                <th class="px-6 py-3">Valor actual</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-semibold text-gray-700 whitespace-nowrap">Dominio</td>
+                                <td class="px-6 py-4 font-mono text-gray-600 text-xs">{{ $configCorreo?->dominio_institucional ?? 'uicm.edu.mx' }}</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-semibold text-gray-700 whitespace-nowrap">Formato de correo generado</td>
+                                <td class="px-6 py-4 font-mono text-gray-400 text-xs">matricula@{{ $configCorreo?->dominio_institucional ?? 'uicm.edu.mx' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="px-6 py-3 bg-amber-50 border-t border-amber-100">
+                    <p class="text-xs text-amber-700">
+                        <span class="font-semibold">Nota:</span> Cambiar el dominio solo afecta las cuentas que se creen a partir de ese momento. Las cuentas existentes conservan su correo actual.
+                    </p>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -645,6 +695,62 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
     </div>
 </div>
 
+{{-- ═══ MODAL: CORREO DOMINIO ═══ --}}
+<div id="modal-correo-dominio" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+        <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div>
+                <h2 class="text-base font-bold" style="color: #0F4229;">Editar dominio institucional</h2>
+                <p class="text-xs text-gray-400 mt-0.5">Solo afecta las cuentas que se creen a partir de ahora</p>
+            </div>
+            <button type="button" onclick="document.getElementById('modal-correo-dominio').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <form method="POST"
+              action="{{ route('admin.apis.correo.dominio', $configCorreo) }}"
+              class="px-6 py-5 space-y-4">
+            @csrf
+            @method('PATCH')
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Dominio</label>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500 font-mono">matricula@</span>
+                    <input type="text"
+                           name="dominio_institucional"
+                           value="{{ old('dominio_institucional', $configCorreo?->dominio_institucional ?? 'uicm.edu.mx') }}"
+                           placeholder="uicm.edu.mx"
+                           class="flex-1 border border-gray-300 rounded-xl px-4 py-2.5 text-sm font-mono text-gray-800 focus:outline-none"
+                           onfocus="this.style.borderColor='#D4AF37'; this.style.boxShadow='0 0 0 3px rgba(212,175,55,0.15)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                </div>
+                <p class="text-xs text-gray-400 mt-1.5">Solo el dominio, sin el @. Ejemplo: <span class="font-mono">uicm.edu.mx</span></p>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
+                <button type="button" onclick="document.getElementById('modal-correo-dominio').classList.add('hidden')"
+                        class="px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="px-5 py-2 text-sm font-bold text-white rounded-lg transition-colors duration-200 shadow-sm"
+                        style="background-color: #D4AF37;"
+                        onmouseover="this.style.backgroundColor='#b8962e'"
+                        onmouseout="this.style.backgroundColor='#D4AF37'">
+                    Guardar dominio
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @push('scripts')
 <script>
 @if($errors->any())
@@ -656,6 +762,8 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
         document.getElementById('modal-correo-conexion').classList.remove('hidden');
     @elseif($errors->has('from_address') || $errors->has('from_name'))
         document.getElementById('modal-correo-remitente').classList.remove('hidden');
+    @elseif($errors->has('dominio_institucional'))
+        document.getElementById('modal-correo-dominio').classList.remove('hidden');
     @endif
 @endif
 </script>

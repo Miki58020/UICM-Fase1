@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\BienvenidaAlumno;
 use App\Models\Alumno;
 use App\Models\CargaAcademica;
+use App\Models\ConfiguracionCorreo;
 use App\Models\Grupo;
 use App\Models\Materia;
 use App\Models\Periodo;
@@ -204,6 +205,7 @@ class CargaAcademicaController extends Controller
         $espacioDisponible = $grupoActual->capacidad - $grupoActual->alumnos_count;
         $gruposCreados = [];
         $creados = 0;
+        $dominio = ConfiguracionCorreo::dominio();
 
         foreach ($validas as $d) {
             if ($espacioDisponible <= 0) {
@@ -218,7 +220,7 @@ class CargaAcademicaController extends Controller
 
             $user = User::create([
                 'name'     => trim("{$d['nombre']} {$d['apellido_paterno']} {$d['apellido_materno']}"),
-                'email'    => strtolower($matricula) . '@uicm.edu.mx',
+                'email'    => strtolower($matricula) . '@' . $dominio,
                 'password' => Hash::make($password),
                 'rol'      => 'alumno',
             ]);

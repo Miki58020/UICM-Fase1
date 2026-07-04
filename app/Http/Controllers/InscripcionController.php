@@ -6,6 +6,7 @@ use App\Mail\BienvenidaAlumno;
 use App\Mail\ReenvioCredenciales;
 use App\Models\Alumno;
 use App\Models\Aspirante;
+use App\Models\ConfiguracionCorreo;
 use App\Models\Grupo;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -62,7 +63,7 @@ class InscripcionController extends Controller
 
         $password = Str::random(8);
 
-        $emailInstitucional = strtolower($alumno->matricula) . '@uicm.edu.mx';
+        $emailInstitucional = strtolower($alumno->matricula) . '@' . ConfiguracionCorreo::dominio();
 
         $user = User::create([
             'name'     => $alumno->nombre_completo,

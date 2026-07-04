@@ -16,6 +16,7 @@ class ConfiguracionCorreo extends Model
         'password',
         'from_address',
         'from_name',
+        'dominio_institucional',
         'activo',
     ];
 
@@ -28,6 +29,11 @@ class ConfiguracionCorreo extends Model
     public static function activa(): ?self
     {
         return self::where('activo', true)->first();
+    }
+
+    public static function dominio(): string
+    {
+        return self::activa()?->dominio_institucional ?? 'uicm.edu.mx';
     }
 
     public function passwordSeguro(): ?string
