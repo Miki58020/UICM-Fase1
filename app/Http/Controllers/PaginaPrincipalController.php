@@ -39,7 +39,8 @@ class PaginaPrincipalController extends Controller
         ConfiguracionSitio::set('telefono', $request->telefono);
         ConfiguracionSitio::set('horario',  $request->horario);
 
-        return back()->with('success_contacto', 'Información de contacto actualizada.')->with('tab_activo', 'contacto');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_contacto', 'Información de contacto actualizada.')->with('tab_activo', 'contacto');
     }
 
     // ── Carrusel ──────────────────────────────────────────────────────────────
@@ -59,7 +60,8 @@ class PaginaPrincipalController extends Controller
         ]);
 
         if (CarruselImagen::count() >= self::MAX_TOTAL) {
-            return back()->with('success_carrusel', null)
+            return redirect()->route('admin.pagina-principal.index')
+                ->with('success_carrusel', null)
                 ->withErrors(['imagen' => 'Límite de almacenamiento alcanzado (' . self::MAX_TOTAL . ' imágenes). Elimina alguna para continuar.'])
                 ->with('tab_activo', 'carrusel');
         }
@@ -78,7 +80,8 @@ class PaginaPrincipalController extends Controller
             ? 'Imagen agregada al carrusel.'
             : 'Imagen guardada como inactiva (ya hay ' . self::MAX_ACTIVAS . ' activas). Oculta alguna para activarla.';
 
-        return back()->with('success_carrusel', $msg)->with('tab_activo', 'carrusel');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_carrusel', $msg)->with('tab_activo', 'carrusel');
     }
 
     public function destroyImagen(CarruselImagen $imagen)
@@ -86,18 +89,21 @@ class PaginaPrincipalController extends Controller
         Storage::disk('public')->delete($imagen->imagen_path);
         $imagen->delete();
 
-        return back()->with('success_carrusel', 'Imagen eliminada del carrusel.')->with('tab_activo', 'carrusel');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_carrusel', 'Imagen eliminada del carrusel.')->with('tab_activo', 'carrusel');
     }
 
     public function toggleImagen(CarruselImagen $imagen)
     {
         if (!$imagen->activo && CarruselImagen::where('activo', true)->count() >= self::MAX_ACTIVAS) {
-            return back()->with('tab_activo', 'carrusel')
+            return redirect()->route('admin.pagina-principal.index')
+                ->with('tab_activo', 'carrusel')
                 ->withErrors(['imagen' => 'Ya hay ' . self::MAX_ACTIVAS . ' imágenes activas. Oculta alguna antes de activar otra.']);
         }
 
         $imagen->update(['activo' => !$imagen->activo]);
-        return back()->with('success_carrusel', 'Estado de la imagen actualizado.')->with('tab_activo', 'carrusel');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_carrusel', 'Estado de la imagen actualizado.')->with('tab_activo', 'carrusel');
     }
 
     // ── Oferta educativa ──────────────────────────────────────────────────────
@@ -122,7 +128,8 @@ class PaginaPrincipalController extends Controller
             'orden'       => $orden,
         ]);
 
-        return back()->with('success_oferta', 'Programa agregado a la oferta educativa.')->with('tab_activo', 'oferta');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_oferta', 'Programa agregado a la oferta educativa.')->with('tab_activo', 'oferta');
     }
 
     public function updatePrograma(Request $request, OfertaPrograma $programa)
@@ -141,19 +148,22 @@ class PaginaPrincipalController extends Controller
             'puntos_clave' => $this->parsearPuntos($request->puntos_clave),
         ]);
 
-        return back()->with('success_oferta', 'Programa actualizado correctamente.')->with('tab_activo', 'oferta');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_oferta', 'Programa actualizado correctamente.')->with('tab_activo', 'oferta');
     }
 
     public function destroyPrograma(OfertaPrograma $programa)
     {
         $programa->delete();
-        return back()->with('success_oferta', 'Programa eliminado de la oferta educativa.')->with('tab_activo', 'oferta');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_oferta', 'Programa eliminado de la oferta educativa.')->with('tab_activo', 'oferta');
     }
 
     public function togglePrograma(OfertaPrograma $programa)
     {
         $programa->update(['activo' => !$programa->activo]);
-        return back()->with('success_oferta', 'Estado del programa actualizado.')->with('tab_activo', 'oferta');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_oferta', 'Estado del programa actualizado.')->with('tab_activo', 'oferta');
     }
 
     // ── Intereses de contacto ─────────────────────────────────────────────────
@@ -173,7 +183,8 @@ class PaginaPrincipalController extends Controller
             'orden'    => $orden,
         ]);
 
-        return back()->with('success_contacto', 'Interés agregado correctamente.')->with('tab_activo', 'contacto');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_contacto', 'Interés agregado correctamente.')->with('tab_activo', 'contacto');
     }
 
     public function updateInteres(Request $request, ContactoInteres $interes)
@@ -186,19 +197,22 @@ class PaginaPrincipalController extends Controller
 
         $interes->update(['etiqueta' => $request->etiqueta]);
 
-        return back()->with('success_contacto', 'Interés actualizado.')->with('tab_activo', 'contacto');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_contacto', 'Interés actualizado.')->with('tab_activo', 'contacto');
     }
 
     public function destroyInteres(ContactoInteres $interes)
     {
         $interes->delete();
-        return back()->with('success_contacto', 'Interés eliminado.')->with('tab_activo', 'contacto');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_contacto', 'Interés eliminado.')->with('tab_activo', 'contacto');
     }
 
     public function toggleInteres(ContactoInteres $interes)
     {
         $interes->update(['activo' => !$interes->activo]);
-        return back()->with('success_contacto', 'Estado del interés actualizado.')->with('tab_activo', 'contacto');
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_contacto', 'Estado del interés actualizado.')->with('tab_activo', 'contacto');
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

@@ -11,9 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [
-            \App\Http\Middleware\NoCacheHeaders::class,
-        ]);
+        $middleware->web(
+            append: [
+                \App\Http\Middleware\NoCacheHeaders::class,
+            ],
+            replace: [
+                \Illuminate\Session\Middleware\StartSession::class => \App\Http\Middleware\StartSession::class,
+            ],
+        );
         $middleware->alias([
             'rol' => \App\Http\Middleware\CheckRol::class,
         ]);

@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
 
 class UsuarioController extends Controller
 {
-    private const ROLES = ['admin', 'control_escolar', 'finanzas', 'coordinacion'];
+    public const ROLES = ['admin', 'control_escolar', 'finanzas', 'coordinacion'];
 
     public function index()
     {

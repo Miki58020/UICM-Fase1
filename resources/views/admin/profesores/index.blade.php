@@ -409,13 +409,13 @@
                         type="email"
                         name="correo"
                         x-model="form.correo"
-                        placeholder="Ej. nombre.apellido@uicm.edu.mx"
+                        placeholder="Ej. usuario@correo.com"
                         maxlength="150"
                         class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800
                                placeholder-gray-400 outline-none transition-all duration-150"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
                         onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none'">
-                    <p class="mt-1 text-xs text-gray-400">Usar dominio institucional @uicm.edu.mx.</p>
+                    <p class="mt-1 text-xs text-gray-400">Debe ser un correo electrónico válido y único en el sistema.</p>
                 </div>
 
                 {{-- Teléfono + Especialidad en fila --}}

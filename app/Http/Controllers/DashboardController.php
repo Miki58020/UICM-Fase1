@@ -107,7 +107,7 @@ class DashboardController extends Controller
             ->count();
 
         return [
-            'totalUsuariosSistema'  => User::whereNotIn('rol', ['alumno'])->count(),
+            'totalUsuariosSistema'  => User::whereIn('rol', UsuarioController::ROLES)->count(),
             'aspirantesEnProceso'   => $ceAspirantes + $ceInscripciones,
             'mensajesPendientes'    => $adminMensajes,
             'solicitudesPendientes' => SolicitudContrasena::where('estado', 'pendiente')->count(),

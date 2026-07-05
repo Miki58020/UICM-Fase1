@@ -339,12 +339,12 @@ $rolesLabels = [
                         Correo electrónico <span class="text-red-400">*</span>
                     </label>
                     <input type="email" name="email" x-model="form.email"
-                           placeholder="Ej. usuario@uicm.edu.mx"
+                           placeholder="Ej. usuario@correo.com"
                            maxlength="150"
                            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                    <p class="mt-1 text-xs text-gray-400">Usar dominio institucional @uicm.edu.mx.</p>
+                    <p class="mt-1 text-xs text-gray-400">Debe ser un correo electrónico válido y único en el sistema.</p>
                 </div>
 
                 {{-- Contraseña --}}
