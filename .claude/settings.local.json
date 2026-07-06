@@ -169,7 +169,9 @@
       "Bash(find resources/views/vendor -iname \"*pagination*\")",
       "Bash(grep -rn \"Paginator::\" app/Providers/*.php)",
       "Bash(python -c ' *)",
-      "Skill(claude-api)"
+      "Skill(claude-api)",
+      "Bash(grep -n \"modo\" app/Models/Periodo.php)",
+      "Bash(grep -rn \"'modo'\\\\|modo_automatico\\\\|automatico\" database/migrations/*periodo*)"
     ]
   }
 }

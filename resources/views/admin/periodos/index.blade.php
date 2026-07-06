@@ -80,7 +80,24 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
     </div>
 
     {{-- ══ TAB: CUATRIMESTRES ══ --}}
-    <div x-show="tab === 'cuatrimestres'" x-cloak>
+    <div x-show="tab === 'cuatrimestres'" x-cloak
+         x-data="{
+             busqueda: '',
+             filtrar() {
+                 this.$nextTick(() => {
+                     const filas = this.$refs.tbodyCuatrimestres.querySelectorAll('tr[data-nombre]');
+                     let visibles = 0;
+                     filas.forEach(f => {
+                         const texto = this.busqueda.toLowerCase();
+                         const pasa = !texto || f.dataset.nombre.includes(texto) || f.dataset.label.includes(texto);
+                         f.style.display = pasa ? '' : 'none';
+                         if (pasa) visibles++;
+                     });
+                     this.$refs.sinResultadosCuatrimestres.style.display = visibles === 0 ? '' : 'none';
+                     this.$refs.contadorCuatrimestres.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
+                 });
+             }
+         }">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total</p>
@@ -100,11 +117,24 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
             </div>
         </div>
 
+        <div class="relative mb-6">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+            </svg>
+            <input type="text" x-model="busqueda" @input="filtrar()"
+                   placeholder="Buscar por clave o nombre…"
+                   class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
+                   onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                   onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+        </div>
+
         <div class="bg-white rounded-2xl shadow-md overflow-hidden">
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Listado de cuatrimestres</h2>
-                <span class="text-xs text-gray-400">{{ $periodos->count() }} registro{{ $periodos->count() !== 1 ? 's' : '' }}</span>
+                <span class="text-xs text-gray-400" x-ref="contadorCuatrimestres">{{ $periodos->count() }} registro{{ $periodos->count() !== 1 ? 's' : '' }}</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -117,10 +147,12 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                             <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-gray-100" x-ref="tbodyCuatrimestres">
                         @forelse($periodos as $periodo)
                         <tr class="hover:bg-gray-50 transition-colors duration-100"
                             data-periodo-id="{{ $periodo->id }}"
+                            data-nombre="{{ strtolower($periodo->nombre) }}"
+                            data-label="{{ strtolower($periodo->label) }}"
                             data-inicio-reg="{{ $periodo->fecha_inicio_registro?->format('Y-m-d') ?? '' }}"
                             data-fin-reg="{{ $periodo->fecha_fin_registro?->format('Y-m-d') ?? '' }}">
                             <td class="px-6 py-4 font-mono text-xs font-bold whitespace-nowrap" style="color: #0F4229;">
@@ -168,6 +200,11 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                             </td>
                         </tr>
                         @endforelse
+                        <tr x-ref="sinResultadosCuatrimestres" style="display: none;">
+                            <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
+                                Ningún cuatrimestre coincide con la búsqueda.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -175,7 +212,31 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
     </div>{{-- /tab cuatrimestres --}}
 
     {{-- ══ TAB: INSCRIPCIONES ══ --}}
-    <div x-show="tab === 'inscripciones'" x-cloak>
+    <div x-show="tab === 'inscripciones'" x-cloak
+         x-data="{
+             busqueda: '',
+             filtroModo: '',
+             filtroEstado: '',
+             filtrar() {
+                 this.$nextTick(() => {
+                     const filas = this.$refs.tbodyInscripciones.querySelectorAll('tr[data-periodo-id]');
+                     let visibles = 0;
+                     filas.forEach(f => {
+                         const texto = this.busqueda.toLowerCase();
+                         const pasaBusq   = !texto
+                             || f.dataset.nombre.toLowerCase().includes(texto)
+                             || f.dataset.label.toLowerCase().includes(texto);
+                         const pasaModo   = !this.filtroModo   || f.dataset.modo   === this.filtroModo;
+                         const pasaEstado = !this.filtroEstado || f.dataset.estado === this.filtroEstado;
+                         const mostrar = pasaBusq && pasaModo && pasaEstado;
+                         f.style.display = mostrar ? '' : 'none';
+                         if (mostrar) visibles++;
+                     });
+                     this.$refs.sinResultadosInscripciones.style.display = visibles === 0 ? '' : 'none';
+                     this.$refs.contadorInscripciones.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
+                 });
+             }
+         }">
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total</p>
@@ -191,11 +252,48 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
             </div>
         </div>
 
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+            <div class="relative flex-1">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                </svg>
+                <input type="text" x-model="busqueda" @input="filtrar()"
+                       placeholder="Buscar por cuatrimestre…"
+                       class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
+                       onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+            </div>
+            <div class="relative sm:w-44">
+                <select x-model="filtroModo" @change="filtrar()"
+                        class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <option value="">Todos los modos</option>
+                    <option value="auto">Auto</option>
+                    <option value="manual">Manual</option>
+                </select>
+            </div>
+            <div class="relative sm:w-44">
+                <select x-model="filtroEstado" @change="filtrar()"
+                        class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                    <option value="cerrado">Cerrado</option>
+                    <option value="sin_configurar">Sin configurar</option>
+                </select>
+            </div>
+        </div>
+
         <div class="bg-white rounded-2xl shadow-md overflow-hidden">
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Periodos de inscripción</h2>
-                <span class="text-xs text-gray-400">{{ $periodos->count() }} registro{{ $periodos->count() !== 1 ? 's' : '' }}</span>
+                <span class="text-xs text-gray-400" x-ref="contadorInscripciones">{{ $periodos->count() }} registro{{ $periodos->count() !== 1 ? 's' : '' }}</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -209,12 +307,14 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                             <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-gray-100" x-ref="tbodyInscripciones">
                         @forelse($periodos as $periodo)
                         <tr class="hover:bg-gray-50 transition-colors duration-100"
                             data-periodo-id="{{ $periodo->id }}"
                             data-nombre="{{ $periodo->nombre }}"
                             data-label="{{ addslashes($periodo->label) }}"
+                            data-modo="{{ !$periodo->fecha_inicio_registro ? '' : ($periodo->auto ? 'auto' : 'manual') }}"
+                            data-estado="{{ !$periodo->fecha_inicio_registro ? 'sin_configurar' : $periodo->estado }}"
                             data-inicio-clases="{{ $periodo->fecha_inicio_clases?->format('Y-m-d') ?? '' }}"
                             data-fin-clases="{{ $periodo->fecha_fin_clases?->format('Y-m-d') ?? '' }}">
                             <td class="px-6 py-4">
@@ -341,6 +441,11 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                             </td>
                         </tr>
                         @endforelse
+                        <tr x-ref="sinResultadosInscripciones" style="display: none;">
+                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
+                                Ningún periodo coincide con la búsqueda o los filtros.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -378,7 +483,31 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
             $totalGrupos      = $gruposDelPeriodo->count();
             $totalAlumnos     = $gruposDelPeriodo->sum('alumnos_count');
         @endphp
-        <div x-show="periodoId === {{ $p->id }}" x-cloak>
+        <div x-show="periodoId === {{ $p->id }}" x-cloak
+             x-data="{
+                 busqueda: '',
+                 filtroNivel: '',
+                 filtroEstado: '',
+                 filtrar() {
+                     this.$nextTick(() => {
+                         const filas = this.$refs.tbodyCarreras.querySelectorAll('tr[data-nombre]');
+                         let visibles = 0;
+                         filas.forEach(f => {
+                             const texto = this.busqueda.toLowerCase();
+                             const pasaBusq   = !texto
+                                 || f.dataset.nombre.includes(texto)
+                                 || f.dataset.clave.includes(texto);
+                             const pasaNivel  = !this.filtroNivel  || f.dataset.nivel  === this.filtroNivel;
+                             const pasaEstado = !this.filtroEstado || f.dataset.activo === this.filtroEstado;
+                             const mostrar = pasaBusq && pasaNivel && pasaEstado;
+                             f.style.display = mostrar ? '' : 'none';
+                             if (mostrar) visibles++;
+                         });
+                         this.$refs.sinResultadosCarreras.style.display = visibles === 0 ? '' : 'none';
+                         this.$refs.contadorCarreras.textContent = visibles + ' carrera' + (visibles !== 1 ? 's' : '');
+                     });
+                 }
+             }">
             <div class="grid grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
                     <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Carreras</p>
@@ -393,11 +522,48 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                     <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $totalAlumnos }}</p>
                 </div>
             </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                <div class="relative flex-1">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                    </svg>
+                    <input type="text" x-model="busqueda" @input="filtrar()"
+                           placeholder="Buscar por nombre o clave…"
+                           class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                </div>
+                <div class="relative sm:w-48">
+                    <select x-model="filtroNivel" @change="filtrar()"
+                            class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                        <option value="">Todos los niveles</option>
+                        <option value="licenciatura">Licenciatura</option>
+                        <option value="maestria">Maestría</option>
+                        <option value="doctorado">Doctorado</option>
+                    </select>
+                </div>
+                <div class="relative sm:w-44">
+                    <select x-model="filtroEstado" @change="filtrar()"
+                            class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                        <option value="">Todos los estados</option>
+                        <option value="1">Activa</option>
+                        <option value="0">Pausada</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
                 <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <h2 class="text-sm font-semibold text-gray-700">{{ $p->label }}</h2>
-                    <span class="text-xs text-gray-400">{{ $totalCarreras }} carrera{{ $totalCarreras !== 1 ? 's' : '' }}</span>
+                    <span class="text-xs text-gray-400" x-ref="contadorCarreras">{{ $totalCarreras }} carrera{{ $totalCarreras !== 1 ? 's' : '' }}</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -410,13 +576,17 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                                 <th class="px-6 py-3 text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-gray-100" x-ref="tbodyCarreras">
                             @forelse($p->programas as $prog)
                             @php
                                 $gs  = $gruposPorPrograma[$prog->id] ?? collect();
                                 $cfg = $nivelCfg[$prog->nivel] ?? ['label' => ucfirst($prog->nivel), 'color' => '#9ca3af'];
                             @endphp
-                            <tr class="hover:bg-gray-50 transition-colors duration-100">
+                            <tr class="hover:bg-gray-50 transition-colors duration-100"
+                                data-nombre="{{ strtolower($prog->nombre) }}"
+                                data-clave="{{ strtolower($prog->clave) }}"
+                                data-nivel="{{ $prog->nivel }}"
+                                data-activo="{{ $prog->pivot->activo ? '1' : '0' }}">
                                 <td class="px-6 py-4">
                                     <p class="font-semibold text-gray-800">{{ $prog->nombre }}</p>
                                     <p class="text-xs text-gray-400 font-mono mt-0.5">{{ $prog->clave }}</p>
@@ -459,6 +629,9 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                             @empty
                             <tr><td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">No hay carreras configuradas. Usa "Agregar carrera".</td></tr>
                             @endforelse
+                            <tr x-ref="sinResultadosCarreras" style="display: none;">
+                                <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">Ninguna carrera coincide con la búsqueda o los filtros.</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
