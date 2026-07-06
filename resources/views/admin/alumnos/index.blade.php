@@ -46,7 +46,7 @@ $gruposJson = $grupos->map(fn($g) => [
         </div>
 
         {{-- Contadores (también filtran por estado) --}}
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             <a href="{{ route('admin.alumnos.index', array_filter(['q' => request('q'), 'programa' => request('programa')])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
                style="border-color: #0F4229; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
@@ -62,13 +62,20 @@ $gruposJson = $grupos->map(fn($g) => [
             <a href="{{ route('admin.alumnos.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'inactivo'])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
                style="border-color: #9ca3af; {{ request('estado') === 'inactivo' ? 'box-shadow: 0 0 0 2px #9ca3af;' : '' }}">
-                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Inactivos / baja</p>
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Inactivos</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-400">{{ $conteo['inactivos'] }}</p>
+            </a>
+            <a href="{{ route('admin.alumnos.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'baja'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
+               style="border-color: #EF4444; {{ request('estado') === 'baja' ? 'box-shadow: 0 0 0 2px #EF4444;' : '' }}">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Baja</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #EF4444;">{{ $conteo['baja'] }}</p>
             </a>
         </div>
 
         {{-- Búsqueda y filtros --}}
         <form method="GET" action="{{ route('admin.alumnos.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
+            <input type="hidden" name="estado" value="{{ request('estado') }}">
 
             <div class="relative flex-1">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
@@ -100,24 +107,6 @@ $gruposJson = $grupos->map(fn($g) => [
                     @foreach($programas as $programa)
                         <option value="{{ $programa->id }}" @selected(request('programa') == $programa->id)>{{ $programa->nombre }}</option>
                     @endforeach
-                </select>
-            </div>
-
-            <div class="relative sm:w-44">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
-                </svg>
-                <select name="estado"
-                        onchange="this.form.submit()"
-                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
-                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                    <option value="" @selected(!request('estado'))>Todos los estados</option>
-                    <option value="activo" @selected(request('estado') === 'activo')>Activo</option>
-                    <option value="inactivo" @selected(request('estado') === 'inactivo')>Inactivo</option>
-                    <option value="baja" @selected(request('estado') === 'baja')>Baja</option>
                 </select>
             </div>
 

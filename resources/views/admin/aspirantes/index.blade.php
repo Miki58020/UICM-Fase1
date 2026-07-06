@@ -59,8 +59,9 @@
 
         </div>
 
-        {{-- ── Búsqueda y filtro ── --}}
+        {{-- ── Búsqueda ── --}}
         <form method="GET" action="{{ route('admin.aspirantes.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
+            <input type="hidden" name="estado" value="{{ request('estado') }}">
             <div class="relative flex-1">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,22 +73,6 @@
                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-            </div>
-            <div class="relative sm:w-52">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
-                </svg>
-                <select name="estado" onchange="this.form.submit()"
-                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
-                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                    <option value="" @selected(!request('estado'))>Todos los estados</option>
-                    <option value="pendiente" @selected(request('estado') === 'pendiente')>Pendiente</option>
-                    <option value="aprobado" @selected(request('estado') === 'aprobado')>Aprobado</option>
-                    <option value="rechazado" @selected(request('estado') === 'rechazado')>Rechazado</option>
-                </select>
             </div>
             <button type="submit"
                     class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"

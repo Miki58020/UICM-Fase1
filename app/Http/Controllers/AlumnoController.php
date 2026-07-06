@@ -20,7 +20,8 @@ class AlumnoController extends Controller
         $conteo = [
             'total'     => Alumno::count(),
             'activos'   => Alumno::where('estado', 'activo')->count(),
-            'inactivos' => Alumno::where('estado', '!=', 'activo')->count(),
+            'inactivos' => Alumno::where('estado', 'inactivo')->count(),
+            'baja'      => Alumno::where('estado', 'baja')->count(),
         ];
 
         $alumnos = Alumno::with(['programa', 'grupo', 'user'])
@@ -35,11 +36,7 @@ class AlumnoController extends Controller
                 });
             })
             ->when($request->filled('programa'), fn ($query) => $query->where('programa_id', $request->programa))
-            ->when($request->filled('estado'), function ($query) use ($request) {
-                $request->estado === 'inactivo'
-                    ? $query->where('estado', '!=', 'activo')
-                    : $query->where('estado', $request->estado);
-            })
+            ->when($request->filled('estado'), fn ($query) => $query->where('estado', $request->estado))
             ->orderBy('apellido_paterno')
             ->orderBy('apellido_materno')
             ->orderBy('nombre')
