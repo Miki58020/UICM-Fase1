@@ -10,6 +10,20 @@
         filtroPeriodo: '',
         filtroPrograma: '',
         filtroCuatrimestre: '',
+        grupos: {!! \Illuminate\Support\Js::from($grupos->map(fn($g) => [
+            'clave'        => strtolower($g->clave),
+            'periodo_id'   => $g->periodo_id,
+            'programa_id'  => $g->programa_id,
+            'cuatrimestre' => $g->cuatrimestre,
+        ])) !!},
+        get visibles() {
+            return this.grupos.filter(g =>
+                (!this.busqueda || g.clave.includes(this.busqueda.toLowerCase())) &&
+                (!this.filtroPeriodo || g.periodo_id == this.filtroPeriodo) &&
+                (!this.filtroPrograma || g.programa_id == this.filtroPrograma) &&
+                (!this.filtroCuatrimestre || g.cuatrimestre == this.filtroCuatrimestre)
+            ).length;
+        }
     }"
     class="bg-uicm-gray min-h-screen py-12 px-4">
 
@@ -131,7 +145,7 @@
         <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <h2 class="text-sm font-semibold text-gray-700">Listado de grupos</h2>
-            <span class="text-xs text-gray-400">{{ $grupos->count() }} registro{{ $grupos->count() !== 1 ? 's' : '' }}</span>
+            <span class="text-xs text-gray-400" x-text="visibles + ' registro' + (visibles !== 1 ? 's' : '')">{{ $grupos->count() }} registro{{ $grupos->count() !== 1 ? 's' : '' }}</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -219,6 +233,13 @@
                         </td>
                     </tr>
                     @endforelse
+                    @if($grupos->isNotEmpty())
+                    <tr x-show="visibles === 0" x-cloak>
+                        <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
+                            Ningún grupo coincide con la búsqueda o los filtros.
+                        </td>
+                    </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
