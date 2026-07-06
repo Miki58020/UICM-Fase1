@@ -52,16 +52,13 @@ class AclaracionCalificacionController extends Controller
     }
 
     // Control escolar: bandeja de aclaraciones
-    public function index(Request $request)
+    public function index()
     {
-        $estado = $request->input('estado', 'pendiente');
-
         $aclaraciones = AclaracionCalificacion::with(['alumno', 'profesor', 'cargaAcademica.materia', 'cargaAcademica.grupo'])
-            ->when($estado !== 'todas', fn($q) => $q->where('estado', $estado))
             ->orderByDesc('created_at')
             ->get();
 
-        return view('admin.aclaraciones.index', compact('aclaraciones', 'estado'));
+        return view('admin.aclaraciones.index', compact('aclaraciones'));
     }
 
     public function aprobar(AclaracionCalificacion $aclaracion)

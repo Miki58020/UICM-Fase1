@@ -36,6 +36,7 @@
             });
         }
     }"
+    x-init="filtrar()"
     class="bg-uicm-gray min-h-screen py-12 px-4">
 
     <div class="container mx-auto px-4 lg:px-12 max-w-5xl">
