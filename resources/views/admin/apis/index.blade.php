@@ -583,7 +583,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                             </svg>
                         </button>
                     </div>
-                    <p class="text-xs text-gray-400 mt-1">Se guarda tal cual para autenticarse contra el servidor SMTP.</p>
+                    <p class="text-xs text-gray-400 mt-1">No se cifra como una contraseña de usuario: el sistema necesita recuperarla para conectarse al servidor SMTP.</p>
                 </div>
             </div>
 
