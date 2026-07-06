@@ -8,12 +8,10 @@
 $tabs = [
     'mercadopago' => [
         'label' => 'MercadoPago',
-        'desc'  => 'Credenciales y URLs usadas para procesar los pagos en línea.',
         'color' => '#0F4229',
     ],
     'correo' => [
         'label' => 'Correo electrónico',
-        'desc'  => 'Servidor SMTP y remitente usados para enviar notificaciones por correo.',
         'color' => '#D4AF37',
     ],
 ];
@@ -41,10 +39,6 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
         <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">Administración</p>
         <h1 class="text-2xl font-extrabold text-gray-900">APIs y servicios externos</h1>
         <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
-        <p class="text-sm text-gray-500 mt-3 max-w-2xl">
-            Configura aquí las credenciales de los servicios externos. Los cambios aplican de inmediato,
-            sin necesidad de modificar código ni volver a desplegar el proyecto.
-        </p>
     </div>
 
     {{-- Tabs --}}
@@ -69,8 +63,6 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
              x-transition:enter-start="opacity-0 translate-y-1"
              x-transition:enter-end="opacity-100 translate-y-0">
 
-            <p class="text-sm text-gray-500 mb-5">{{ $tabs['mercadopago']['desc'] }}</p>
-
             {{-- CARD: CREDENCIALES --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
                 <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
@@ -94,7 +86,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="px-6 py-3">Campo</th>
+                                <th class="px-6 py-3 w-64">Campo</th>
                                 <th class="px-6 py-3">Valor actual</th>
                             </tr>
                         </thead>
@@ -140,7 +132,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="px-6 py-3">Campo</th>
+                                <th class="px-6 py-3 w-64">Campo</th>
                                 <th class="px-6 py-3">URL configurada</th>
                             </tr>
                         </thead>
@@ -178,8 +170,6 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
              x-transition:enter-start="opacity-0 translate-y-1"
              x-transition:enter-end="opacity-100 translate-y-0">
 
-            <p class="text-sm text-gray-500 mb-5">{{ $tabs['correo']['desc'] }}</p>
-
             {{-- CARD: CONEXIÓN --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
                 <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
@@ -203,7 +193,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="px-6 py-3">Campo</th>
+                                <th class="px-6 py-3 w-64">Campo</th>
                                 <th class="px-6 py-3">Valor actual</th>
                             </tr>
                         </thead>
@@ -237,7 +227,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
             </div>
 
             {{-- CARD: REMITENTE --}}
-            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
                 <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
 
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
@@ -259,7 +249,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="px-6 py-3">Campo</th>
+                                <th class="px-6 py-3 w-64">Campo</th>
                                 <th class="px-6 py-3">Valor actual</th>
                             </tr>
                         </thead>
@@ -282,10 +272,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                 <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
 
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                    <div>
-                        <h2 class="text-sm font-semibold text-gray-700">Dominio institucional</h2>
-                        <p class="text-xs text-gray-400 mt-0.5">Dominio usado al generar correos de alumnos nuevos</p>
-                    </div>
+                    <h2 class="text-sm font-semibold text-gray-700">Dominio institucional</h2>
                     <button onclick="document.getElementById('modal-correo-dominio').classList.remove('hidden')"
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-200"
                             style="background-color: #D4AF37;"
@@ -302,7 +289,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="px-6 py-3">Campo</th>
+                                <th class="px-6 py-3 w-64">Campo</th>
                                 <th class="px-6 py-3">Valor actual</th>
                             </tr>
                         </thead>
@@ -313,16 +300,10 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
                             </tr>
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 font-semibold text-gray-700 whitespace-nowrap">Formato de correo generado</td>
-                                <td class="px-6 py-4 font-mono text-gray-400 text-xs">matricula@{{ $configCorreo?->dominio_institucional ?? 'uicm.edu.mx' }}</td>
+                                <td class="px-6 py-4 font-mono text-gray-600 text-xs">{{ 'matricula@' . ($configCorreo?->dominio_institucional ?? 'uicm.edu.mx') }}</td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-
-                <div class="px-6 py-3 bg-amber-50 border-t border-amber-100">
-                    <p class="text-xs text-amber-700">
-                        <span class="font-semibold">Nota:</span> Cambiar el dominio solo afecta las cuentas que se creen a partir de ese momento. Las cuentas existentes conservan su correo actual.
-                    </p>
                 </div>
             </div>
 
@@ -703,7 +684,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <div>
                 <h2 class="text-base font-bold" style="color: #0F4229;">Editar dominio institucional</h2>
-                <p class="text-xs text-gray-400 mt-0.5">Solo afecta las cuentas que se creen a partir de ahora</p>
+                <p class="text-xs text-gray-400 mt-0.5">Solo afecta las cuentas que se creen a partir de ese momento; las cuentas existentes conservan su correo actual</p>
             </div>
             <button type="button" onclick="document.getElementById('modal-correo-dominio').classList.add('hidden')"
                     class="text-gray-400 hover:text-gray-600 transition-colors">
