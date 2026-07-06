@@ -32,7 +32,7 @@
                     if (mostrar) visibles++;
                 });
                 this.contadorVisible = visibles;
-                this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
+                this.$refs.sinResultados.style.display = (visibles === 0 && {{ $totalContactos }} > 0) ? '' : 'none';
             });
         }
     }"
