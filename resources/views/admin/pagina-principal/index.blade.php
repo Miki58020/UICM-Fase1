@@ -478,15 +478,12 @@
              x-data="{ modalInteres: false, editId: null, editEtiqueta: '' }">
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <div>
-                    <h2 class="text-sm font-semibold text-gray-700">Intereses del formulario de contacto</h2>
-                    <p class="text-xs text-gray-400 mt-0.5">Opciones del dropdown "Interés principal" en el formulario público.</p>
-                </div>
+                <h2 class="text-sm font-semibold text-gray-700">Intereses del formulario de contacto</h2>
                 <button @click="modalInteres = true; editId = null; editEtiqueta = ''"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-colors duration-200"
-                        style="background-color: #0F4229;"
-                        onmouseover="this.style.backgroundColor='#0a2e1c'"
-                        onmouseout="this.style.backgroundColor='#0F4229'">
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-colors duration-200"
+                    style="background-color: #0F4229;"
+                    onmouseover="this.style.backgroundColor='#0a2e1c'"
+                    onmouseout="this.style.backgroundColor='#0F4229'">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
                     </svg>
