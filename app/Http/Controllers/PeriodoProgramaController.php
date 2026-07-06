@@ -13,31 +13,6 @@ use Illuminate\Validation\Rule;
 
 class PeriodoProgramaController extends Controller
 {
-    public function index(Periodo $periodo)
-    {
-        $periodo->load(['programas' => function ($q) {
-            $q->withPivot('numero_carrera', 'numero_generacion', 'activo')
-              ->orderByPivot('numero_carrera');
-        }]);
-
-        $gruposPorPrograma = Grupo::where('periodo_id', $periodo->id)
-            ->withCount('alumnos')
-            ->get()
-            ->groupBy('programa_id');
-
-        $programasDisponibles = Programa::where('activo', true)
-            ->whereNotIn('id', $periodo->programas->pluck('id'))
-            ->orderBy('nivel')
-            ->orderBy('nombre')
-            ->get();
-
-        return view('admin.periodos.programas', compact(
-            'periodo',
-            'programasDisponibles',
-            'gruposPorPrograma'
-        ));
-    }
-
     public function store(Request $request, Periodo $periodo)
     {
         $request->validate([

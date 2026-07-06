@@ -171,7 +171,11 @@
       "Bash(python -c ' *)",
       "Skill(claude-api)",
       "Bash(grep -n \"modo\" app/Models/Periodo.php)",
-      "Bash(grep -rn \"'modo'\\\\|modo_automatico\\\\|automatico\" database/migrations/*periodo*)"
+      "Bash(grep -rn \"'modo'\\\\|modo_automatico\\\\|automatico\" database/migrations/*periodo*)",
+      "Bash(grep -rn \"periodos/.*\\\\/programas\\\\b\" resources/views/ --include=\"*.blade.php\")",
+      "Bash(grep -rn \"route\\('admin.periodos.programas'\\)\" app/)",
+      "Bash(grep -rn \"PeriodoProgramaController\" app/ routes/ tests/)",
+      "Bash(grep -rln \"periodos.programas\\\\|periodos/programas\\\\|admin.periodos.programas\" tests/)"
     ]
   }
 }

@@ -205,7 +205,6 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::patch('/admin/periodos/{periodo}/toggle-auto', [PeriodoController::class, 'toggleAuto'])->name('admin.periodos.toggleAuto');
     Route::delete('/admin/periodos/{periodo}', [PeriodoController::class, 'destroy'])->name('admin.periodos.destroy');
 
-    Route::get('/admin/periodos/{periodo}/programas', [PeriodoProgramaController::class, 'index'])->name('admin.periodos.programas');
     Route::post('/admin/periodos/{periodo}/programas', [PeriodoProgramaController::class, 'store'])->name('admin.periodos.programas.store');
     Route::patch('/admin/periodos/{periodo}/programas/{programa}/toggle', [PeriodoProgramaController::class, 'toggle'])->name('admin.periodos.programas.toggle');
     Route::delete('/admin/periodos/{periodo}/programas/{programa}', [PeriodoProgramaController::class, 'destroy'])->name('admin.periodos.programas.destroy');
