@@ -237,19 +237,51 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                  });
              }
          }">
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
+        @php
+            $estadoInscripcion = fn($p) => !$p->fecha_inicio_registro ? 'sin_configurar' : $p->estado;
+            $conteoInscripcion = [
+                'activo'         => $periodos->filter(fn($p) => $estadoInscripcion($p) === 'activo')->count(),
+                'inactivo'       => $periodos->filter(fn($p) => $estadoInscripcion($p) === 'inactivo')->count(),
+                'cerrado'        => $periodos->filter(fn($p) => $estadoInscripcion($p) === 'cerrado')->count(),
+                'sin_configurar' => $periodos->filter(fn($p) => $estadoInscripcion($p) === 'sin_configurar')->count(),
+            ];
+        @endphp
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+            <button type="button" @click="filtroEstado = ''; filtrar()"
+                    :class="filtroEstado === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $periodos->count() }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #D4AF37;">
+            </button>
+            <button type="button" @click="filtroEstado = 'activo'; filtrar()"
+                    :class="filtroEstado === 'activo' ? 'ring-2' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #D4AF37;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Activo</p>
-                <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">{{ $periodos->where('estado','activo')->count() }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 col-span-2 sm:col-span-1" style="border-color: #9ca3af;">
+                <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">{{ $conteoInscripcion['activo'] }}</p>
+            </button>
+            <button type="button" @click="filtroEstado = 'inactivo'; filtrar()"
+                    :class="filtroEstado === 'inactivo' ? 'ring-2' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #EFAD5A;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Inactivo</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $conteoInscripcion['inactivo'] }}</p>
+            </button>
+            <button type="button" @click="filtroEstado = 'cerrado'; filtrar()"
+                    :class="filtroEstado === 'cerrado' ? 'ring-2' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #9ca3af;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Cerrados</p>
-                <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $periodos->where('estado','cerrado')->count() }}</p>
-            </div>
+                <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $conteoInscripcion['cerrado'] }}</p>
+            </button>
+            <button type="button" @click="filtroEstado = 'sin_configurar'; filtrar()"
+                    :class="filtroEstado === 'sin_configurar' ? 'ring-2 ring-gray-300' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 col-span-2 sm:col-span-1"
+                    style="border-color: #d1d5db;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Sin configurar</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-400">{{ $conteoInscripcion['sin_configurar'] }}</p>
+            </button>
         </div>
 
         <div class="flex flex-col sm:flex-row gap-3 mb-6">

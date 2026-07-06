@@ -21,7 +21,7 @@
         {{-- ── Contadores rápidos ── --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
 
-            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q')])) }}"
+            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'programa' => request('programa')])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
                style="border-color: #6B7280; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
@@ -30,7 +30,7 @@
                 </p>
             </a>
 
-            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'estado' => 'pendiente'])) }}"
+            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'pendiente'])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
                style="border-color: #EFAD5A; {{ request('estado') === 'pendiente' ? 'box-shadow: 0 0 0 2px #EFAD5A;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Pendientes</p>
@@ -39,7 +39,7 @@
                 </p>
             </a>
 
-            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'estado' => 'aprobado'])) }}"
+            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'aprobado'])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
                style="border-color: #0F4229; {{ request('estado') === 'aprobado' ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Aprobados</p>
@@ -48,7 +48,7 @@
                 </p>
             </a>
 
-            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'estado' => 'rechazado'])) }}"
+            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'rechazado'])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
                style="border-color: #9ca3af; {{ request('estado') === 'rechazado' ? 'box-shadow: 0 0 0 2px #9ca3af;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazados</p>
@@ -74,6 +74,23 @@
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
             </div>
+            <div class="relative sm:w-60">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                <select name="programa"
+                        onchange="this.form.submit()"
+                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <option value="">Todos los programas</option>
+                    @foreach($programas as $programa)
+                        <option value="{{ $programa->id }}" @selected(request('programa') == $programa->id)>{{ $programa->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
             <button type="submit"
                     class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"
                     style="background-color: #0F4229;"
@@ -81,7 +98,7 @@
                     onmouseout="this.style.backgroundColor='#0F4229'">
                 Buscar
             </button>
-            @if(request('q') || request('estado'))
+            @if(request('q') || request('estado') || request('programa'))
             <a href="{{ route('admin.aspirantes.index') }}"
                class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
                 Limpiar

@@ -95,16 +95,25 @@ $rolesLabels = [
             </button>
         </div>
 
-        {{-- Contadores por rol --}}
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        {{-- Contadores por rol (también filtran; sincronizados con el dropdown de abajo) --}}
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+            <button type="button" @click="filtroRol = ''; filtrar()"
+                    :class="filtroRol === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #6B7280;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $usuarios->count() }}</p>
+            </button>
             @foreach(['admin' => 'Administradores', 'control_escolar' => 'Control Escolar', 'finanzas' => 'Finanzas', 'coordinacion' => 'Coordinación'] as $rol => $label)
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4"
-                 style="border-color: {{ $rolesLabels[$rol]['color'] }};">
+            <button type="button" @click="filtroRol = '{{ $rol }}'; filtrar()"
+                    :class="filtroRol === '{{ $rol }}' ? 'ring-2' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: {{ $rolesLabels[$rol]['color'] }};">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">{{ $label }}</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: {{ $rolesLabels[$rol]['color'] }};">
                     {{ $conteo[$rol] }}
                 </p>
-            </div>
+            </button>
             @endforeach
         </div>
 

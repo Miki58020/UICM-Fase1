@@ -37,11 +37,14 @@ class AspiranteController extends Controller
                 });
             })
             ->when($request->filled('estado'), fn ($query) => $query->where('estado', $request->estado))
+            ->when($request->filled('programa'), fn ($query) => $query->where('programa_id', $request->programa))
             ->latest()
             ->paginate(50)
             ->withQueryString();
 
-        return view('admin.aspirantes.index', compact('aspirantes', 'conteo'));
+        $programas = Programa::orderBy('nombre')->get();
+
+        return view('admin.aspirantes.index', compact('aspirantes', 'conteo', 'programas'));
     }
 
     public function show(Aspirante $aspirante)
