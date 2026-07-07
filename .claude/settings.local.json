@@ -175,7 +175,13 @@
       "Bash(grep -rn \"periodos/.*\\\\/programas\\\\b\" resources/views/ --include=\"*.blade.php\")",
       "Bash(grep -rn \"route\\('admin.periodos.programas'\\)\" app/)",
       "Bash(grep -rn \"PeriodoProgramaController\" app/ routes/ tests/)",
-      "Bash(grep -rln \"periodos.programas\\\\|periodos/programas\\\\|admin.periodos.programas\" tests/)"
+      "Bash(grep -rln \"periodos.programas\\\\|periodos/programas\\\\|admin.periodos.programas\" tests/)",
+      "Bash(npx --version)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\MIGUEL~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Miguel--ngel-Desktop-UICM-Fase1\\\\28d831f8-a633-410e-9b28-42ec3a653aa9\\\\scratchpad\")",
+      "Bash(\"C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\" --headless --disable-gpu --hide-scrollbars --window-size=1920,900 --screenshot=\"C:\\\\Users\\\\MIGUEL~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Miguel--ngel-Desktop-UICM-Fase1\\\\28d831f8-a633-410e-9b28-42ec3a653aa9\\\\scratchpad\\\\home_900.png\" http://127.0.0.1:8000/)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\MIGUEL~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Miguel--ngel-Desktop-UICM-Fase1\\\\923f1807-48ac-43c9-8347-208ca9d049a4\\\\scratchpad\")",
+      "Bash(\"C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\" --headless --disable-gpu --hide-scrollbars --window-size=1920,900 --screenshot=\"C:\\\\Users\\\\MIGUEL~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Miguel--ngel-Desktop-UICM-Fase1\\\\923f1807-48ac-43c9-8347-208ca9d049a4\\\\scratchpad\\\\home_hero.png\" http://127.0.0.1:8000/)"
     ]
   }
 }

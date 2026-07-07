@@ -7,6 +7,7 @@ use App\Models\ConfiguracionSitio;
 use App\Models\ContactoInteres;
 use App\Models\OfertaPrograma;
 use App\Models\Periodo;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -14,6 +15,8 @@ class HomeController extends Controller
     {
         $periodoActivo = Periodo::where('estado', 'activo')->first();
         $imagenes      = CarruselImagen::where('activo', true)->orderBy('orden')->get();
+        $heroImagenPath = ConfiguracionSitio::get('hero_imagen_path', '');
+        $heroImagen     = $heroImagenPath ? Storage::disk('public')->url($heroImagenPath) : asset('images/fondo.jpg');
         $ofertaHome    = OfertaPrograma::where('activo', true)->orderBy('orden')->get()->groupBy('nivel');
         $contacto      = [
             'correo'   => ConfiguracionSitio::get('correo',   'contacto@uicm.edu.mx'),
@@ -27,7 +30,7 @@ class HomeController extends Controller
 
         $interesesContacto = ContactoInteres::where('activo', true)->orderBy('orden')->get();
 
-        return view('home.index', compact('periodoActivo', 'imagenes', 'ofertaHome', 'contacto', 'conteoProgramas', 'interesesContacto'));
+        return view('home.index', compact('periodoActivo', 'imagenes', 'ofertaHome', 'contacto', 'conteoProgramas', 'interesesContacto', 'heroImagen'));
     }
 
     public function ofertaEducativa()

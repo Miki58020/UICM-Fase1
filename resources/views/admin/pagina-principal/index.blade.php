@@ -40,7 +40,7 @@
                 :class="tab === 'carrusel' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
                 :style="tab === 'carrusel' ? 'background-color:#0F4229' : ''"
                 class="flex-1 sm:flex-none px-3 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150">
-            Carrusel
+            Imágenes
         </button>
         <button @click="tab = 'contacto'"
                 :class="tab === 'contacto' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'"
@@ -188,6 +188,112 @@
     @endphp
     <div x-show="tab === 'carrusel'" x-cloak>
 
+        {{-- Grupo: Portada --}}
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-8"
+             x-data="{
+                 archivo: null,
+                 preview: null,
+                 seleccionar(e) {
+                     const file = e.target.files[0];
+                     if (!file) return;
+                     this.archivo = file.name;
+                     const reader = new FileReader();
+                     reader.onload = (ev) => { this.preview = ev.target.result; };
+                     reader.readAsDataURL(file);
+                 },
+                 limpiar() {
+                     this.archivo = null;
+                     this.preview = null;
+                     document.getElementById('hero-imagen-upload').value = '';
+                 }
+             }">
+            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+            <div class="px-6 py-5">
+                <p class="text-sm font-bold text-gray-900 mb-3">Portada</p>
+                <div class="mb-4">
+                    <p class="text-sm font-semibold text-gray-600 mb-0.5">Imagen de fondo (portada)</p>
+                    <p class="text-xs text-gray-400">JPG, PNG o WEBP · Máx. 4 MB · Recomendado: 1920×1080 px</p>
+                </div>
+
+                <form method="POST" action="{{ route('admin.pagina-principal.hero.store') }}" enctype="multipart/form-data">
+                    @csrf
+
+                    <label for="hero-imagen-upload"
+                           class="inline-flex items-center gap-2.5 rounded-xl border-2 border-dashed cursor-pointer transition-colors duration-200 mb-4 px-4 py-2.5 max-w-full"
+                           :class="archivo ? 'border-green-400 bg-green-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-gray-400'">
+
+                        <template x-if="!archivo">
+                            <div class="flex items-center gap-2.5">
+                                <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-gray-500 truncate">Haz clic para elegir una nueva imagen de fondo</span>
+                            </div>
+                        </template>
+
+                        <template x-if="archivo">
+                            <div class="flex items-center gap-2.5">
+                                <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span class="text-sm font-semibold text-green-700 truncate" x-text="archivo"></span>
+                            </div>
+                        </template>
+                    </label>
+
+                    <input type="file" id="hero-imagen-upload" name="imagen"
+                           accept="image/jpg,image/jpeg,image/png,image/webp"
+                           class="hidden"
+                           @change="seleccionar($event)">
+
+                    @error('imagen')
+                    <p class="mb-3 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+
+                    {{-- Comparativa siempre visible: actual (fija) vs. nueva (se llena al elegir) --}}
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-400 mb-1.5">Actual</p>
+                            <img src="{{ $heroImagenUrl }}" alt="Fondo actual"
+                                 class="w-full rounded-xl object-cover shadow-sm" style="height: 160px; object-position: center;">
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold mb-1.5" :class="preview ? 'text-green-700' : 'text-gray-400'">Nueva</p>
+                            <template x-if="preview">
+                                <img :src="preview" alt="Vista previa"
+                                     class="w-full rounded-xl object-cover shadow-sm border-2 border-green-400" style="height: 160px; object-position: center;">
+                            </template>
+                            <template x-if="!preview">
+                                <div class="w-full rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center"
+                                     style="height: 160px;">
+                                    <span class="text-xs text-gray-300">Aparecerá aquí</span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3">
+                        <button type="button" x-show="archivo" x-cloak
+                                @click="limpiar()"
+                                class="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                                :disabled="!archivo"
+                                class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                                style="background-color:#0F4229;"
+                                onmouseover="if(!this.disabled) this.style.backgroundColor='#0a2e1c'"
+                                onmouseout="this.style.backgroundColor='#0F4229'">
+                            Guardar imagen de fondo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- Grupo: Carrusel de fotos --}}
+
         {{-- Subir imagen --}}
         @if($totalImagenes < $maxTotal)
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6"
@@ -210,9 +316,10 @@
              }">
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="px-6 py-5">
+                <p class="text-sm font-bold text-gray-900 mb-3">Carrusel de fotos</p>
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <p class="text-sm font-bold text-gray-900 mb-0.5">Subir nueva imagen</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-0.5">Subir nueva imagen</p>
                         <p class="text-xs text-gray-400">JPG, PNG o WEBP · Máx. 4 MB · Recomendado: 1200×500 px</p>
                     </div>
                     <span class="text-xs font-semibold px-2.5 py-1 rounded-full"
@@ -287,6 +394,7 @@
             </div>
         </div>
         @else
+        <p class="text-sm font-bold text-gray-900 mb-3">Carrusel de fotos</p>
         <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-yellow-50" style="border-color: #D4AF37;">
             <p class="text-sm font-semibold text-yellow-800">Límite de almacenamiento alcanzado ({{ $maxTotal }}/{{ $maxTotal }})</p>
             <p class="text-xs text-yellow-700 mt-0.5">Para agregar una nueva imagen, primero elimina alguna de las actuales.</p>
@@ -299,7 +407,9 @@
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Imágenes del carrusel</h2>
-                <span class="text-xs text-gray-400">{{ $activasActuales }}/{{ $maxActivas }} activas · {{ $totalImagenes }} guardadas</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full" style="background-color: #f0f9f4; color: #0F4229;">
+                    {{ $activasActuales }}/{{ $maxActivas }} activas · {{ $totalImagenes }} guardadas
+                </span>
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

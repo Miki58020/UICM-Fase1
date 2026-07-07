@@ -9,7 +9,7 @@
 
         {{-- Imagen de fondo con degradado --}}
         <div class="absolute inset-0">
-            <img src="{{ asset('images/fondo.jpg') }}" alt="Fondo UICM"
+            <img src="{{ $heroImagen }}" alt="Fondo UICM"
                  class="w-full h-full object-cover object-center">
             {{-- Degradado encima de la imagen: izquierda sólido verde, derecha transparente --}}
             <div class="absolute inset-0"

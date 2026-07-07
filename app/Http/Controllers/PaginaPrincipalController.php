@@ -21,8 +21,10 @@ class PaginaPrincipalController extends Controller
             'telefono' => ConfiguracionSitio::get('telefono', '(55) 0000 0000'),
             'horario'  => ConfiguracionSitio::get('horario',  'Lunes a viernes de 9:00 a 18:00 hrs.'),
         ];
+        $heroImagenPath = ConfiguracionSitio::get('hero_imagen_path', '');
+        $heroImagenUrl  = $heroImagenPath ? Storage::disk('public')->url($heroImagenPath) : asset('images/fondo.jpg');
 
-        return view('admin.pagina-principal.index', compact('imagenes', 'programas', 'contacto', 'intereses'));
+        return view('admin.pagina-principal.index', compact('imagenes', 'programas', 'contacto', 'intereses', 'heroImagenUrl'));
     }
 
     // ── Contacto ─────────────────────────────────────────────────────────────
@@ -104,6 +106,31 @@ class PaginaPrincipalController extends Controller
         $imagen->update(['activo' => !$imagen->activo]);
         return redirect()->route('admin.pagina-principal.index')
             ->with('success_carrusel', 'Estado de la imagen actualizado.')->with('tab_activo', 'carrusel');
+    }
+
+    // ── Imagen de fondo (hero) ───────────────────────────────────────────────
+
+    public function storeHeroImagen(Request $request)
+    {
+        $request->validate([
+            'imagen' => 'required|image|mimes:jpg,jpeg,png,webp|max:4096',
+        ], [
+            'imagen.required' => 'Selecciona una imagen.',
+            'imagen.image'    => 'El archivo debe ser una imagen.',
+            'imagen.mimes'    => 'Formatos permitidos: jpg, jpeg, png, webp.',
+            'imagen.max'      => 'La imagen no puede superar 4 MB.',
+        ]);
+
+        $pathAnterior = ConfiguracionSitio::get('hero_imagen_path', '');
+        if ($pathAnterior) {
+            Storage::disk('public')->delete($pathAnterior);
+        }
+
+        $path = $request->file('imagen')->store('hero', 'public');
+        ConfiguracionSitio::set('hero_imagen_path', $path);
+
+        return redirect()->route('admin.pagina-principal.index')
+            ->with('success_carrusel', 'Imagen de fondo actualizada.')->with('tab_activo', 'carrusel');
     }
 
     // ── Oferta educativa ──────────────────────────────────────────────────────

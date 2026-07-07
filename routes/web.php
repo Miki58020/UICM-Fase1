@@ -144,6 +144,7 @@ Route::middleware(['auth', 'rol:admin'])->group(function () {
     Route::post('/admin/pagina-principal/carrusel', [PaginaPrincipalController::class, 'storeImagen'])->name('admin.pagina-principal.carrusel.store');
     Route::delete('/admin/pagina-principal/carrusel/{imagen}', [PaginaPrincipalController::class, 'destroyImagen'])->name('admin.pagina-principal.carrusel.destroy');
     Route::patch('/admin/pagina-principal/carrusel/{imagen}/toggle', [PaginaPrincipalController::class, 'toggleImagen'])->name('admin.pagina-principal.carrusel.toggle');
+    Route::post('/admin/pagina-principal/hero', [PaginaPrincipalController::class, 'storeHeroImagen'])->name('admin.pagina-principal.hero.store');
     Route::post('/admin/pagina-principal/oferta', [PaginaPrincipalController::class, 'storePrograma'])->name('admin.pagina-principal.oferta.store');
     Route::put('/admin/pagina-principal/oferta/{programa}', [PaginaPrincipalController::class, 'updatePrograma'])->name('admin.pagina-principal.oferta.update');
     Route::delete('/admin/pagina-principal/oferta/{programa}', [PaginaPrincipalController::class, 'destroyPrograma'])->name('admin.pagina-principal.oferta.destroy');
