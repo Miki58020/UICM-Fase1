@@ -11,6 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Confiar en el proxy (ngrok en desarrollo) para que Laravel detecte correctamente el
+        // esquema HTTPS público al generar URLs con route()/url(). Sin esto, route() genera
+        // enlaces http:// que Mercado Pago rechaza en back_urls con auto_return.
+        // NOTA: revisar antes de producción — si el hosting real no pasa por un proxy de
+        // confianza, restringir "at" a las IPs del proxy en vez de '*'.
+        // No se puede usar app()->environment() aquí: el binding 'env' del contenedor todavía
+        // no existe en esta etapa del arranque y provoca un fatal error.
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(
             append: [
                 \App\Http\Middleware\NoCacheHeaders::class,

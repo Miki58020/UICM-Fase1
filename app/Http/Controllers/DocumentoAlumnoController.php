@@ -22,7 +22,20 @@ class DocumentoAlumnoController extends Controller
             return $item;
         });
 
-        return view('alumno.documentos.index', compact('alumno', 'items'));
+        $faltantes = $items->filter(fn($item) => !$item['documento'])->count();
+        $vencidos  = $items->filter(fn($item) => $item['documento']?->estaVencido())->count();
+        $porVencer = $items->filter(fn($item) => $item['documento']?->porVencer())->count();
+        $vigentes  = $items->count() - $faltantes - $vencidos - $porVencer;
+
+        // Alumnos migrados no llegan con documentos precargados: se les da 1 mes
+        // desde su alta para completar su expediente, sin ninguna sanción.
+        $plazoMigrado = ($alumno->migrado && $faltantes > 0)
+            ? $alumno->created_at->copy()->addMonth()
+            : null;
+
+        return view('alumno.documentos.index', compact(
+            'alumno', 'items', 'vencidos', 'porVencer', 'vigentes', 'faltantes', 'plazoMigrado'
+        ));
     }
 
     public function subir(Request $request, string $tipo)

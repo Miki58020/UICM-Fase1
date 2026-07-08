@@ -3,26 +3,108 @@
 @section('title', 'Mis documentos | UICM')
 
 @section('content')
-<section class="bg-uicm-gray min-h-screen py-12 px-4">
+<section class="bg-uicm-gray min-h-screen py-12 px-4"
+         x-data="{
+             filtroEstado: '',
+             filtrar() {
+                 this.$nextTick(() => {
+                     const tarjetas = this.$refs.lista.querySelectorAll('[data-estado]');
+                     let visibles = 0;
+                     tarjetas.forEach(t => {
+                         const mostrar = !this.filtroEstado || t.dataset.estado === this.filtroEstado;
+                         t.style.display = mostrar ? '' : 'none';
+                         if (mostrar) visibles++;
+                     });
+                     this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
+                 });
+             }
+         }"
+         x-init="filtrar()">
     <div class="container mx-auto px-4 lg:px-12 max-w-5xl">
 
         <div class="mb-8">
-            <a href="{{ route('alumno.dashboard') }}"
-               class="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-4 w-fit">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Mi portal
-            </a>
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">Portal del Alumno</p>
             <h1 class="text-2xl font-extrabold text-gray-900">Mis documentos</h1>
-            <p class="text-sm text-gray-500 mt-1">
-                Sube o actualiza los documentos de tu expediente. Algunos documentos tienen vigencia y deberás renovarlos cuando venzan.
-            </p>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
-        <div class="space-y-4">
+        {{-- Tarjetas resumen (también filtran la lista) --}}
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            <button type="button" @click="filtroEstado = ''; filtrar()"
+                    :class="filtroEstado === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #6B7280;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-600">{{ $items->count() }}</p>
+            </button>
+            <button type="button" @click="filtroEstado = (filtroEstado === 'vigente' ? '' : 'vigente'); filtrar()"
+                    :class="filtroEstado === 'vigente' ? 'ring-2' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #0F4229;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Vigentes</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $vigentes }}</p>
+            </button>
+            <button type="button" @click="filtroEstado = (filtroEstado === 'vencido' ? '' : 'vencido'); filtrar()"
+                    :class="filtroEstado === 'vencido' ? 'ring-2' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #dc2626;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Vencidos</p>
+                <p class="text-2xl font-extrabold mt-1 text-red-600">{{ $vencidos }}</p>
+            </button>
+            <button type="button" @click="filtroEstado = (filtroEstado === 'sin_subir' ? '' : 'sin_subir'); filtrar()"
+                    :class="filtroEstado === 'sin_subir' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #9ca3af;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Sin subir</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-400">{{ $faltantes }}</p>
+            </button>
+        </div>
+
+        @php
+            $plazoVencido = $plazoMigrado && now()->gt($plazoMigrado);
+        @endphp
+        @if ($plazoVencido || $vencidos > 0 || $porVencer > 0 || $plazoMigrado)
+            @php
+                if ($plazoVencido) {
+                    [$alertaColor, $alertaBg, $alertaEtiqueta, $alertaMensaje] = ['#dc2626', '#fef2f2', 'Atención',
+                        'Tu plazo para completar tus documentos venció el ' . $plazoMigrado->format('d/m/Y') . '. Súbelos lo antes posible.'];
+                } elseif ($vencidos > 0) {
+                    [$alertaColor, $alertaBg, $alertaEtiqueta, $alertaMensaje] = ['#dc2626', '#fef2f2', 'Atención',
+                        $vencidos === 1 ? 'Tienes 1 documento vencido. Actualízalo para mantener tu expediente al día.'
+                                        : "Tienes {$vencidos} documentos vencidos. Actualízalos para mantener tu expediente al día."];
+                } elseif ($plazoMigrado) {
+                    [$alertaColor, $alertaBg, $alertaEtiqueta, $alertaMensaje] = ['#EFAD5A', '#fffaf0', 'Aviso',
+                        'Tienes hasta el ' . $plazoMigrado->format('d/m/Y') . ' para completar tus documentos.'];
+                } else {
+                    [$alertaColor, $alertaBg, $alertaEtiqueta, $alertaMensaje] = ['#EFAD5A', '#fffaf0', 'Aviso',
+                        $porVencer === 1 ? '1 documento está próximo a vencer.' : "{$porVencer} documentos están próximos a vencer."];
+                }
+            @endphp
+            <div class="rounded-2xl shadow-md p-4 mb-6 flex flex-wrap items-center gap-3" style="background-color: {{ $alertaBg }};">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold text-white flex-shrink-0"
+                      style="background-color: {{ $alertaColor }};">
+                    <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                    {{ $alertaEtiqueta }}
+                </span>
+                <p class="text-sm" style="color: {{ $alertaColor }};">{{ $alertaMensaje }}</p>
+            </div>
+        @endif
+
+        <div class="space-y-4" x-ref="lista">
+
+            <div x-ref="sinResultados" style="display: none;" class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <div class="px-6 py-12 flex flex-col items-center text-center">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                    <p class="text-sm text-gray-500 max-w-xs">Ningún documento coincide con el filtro seleccionado.</p>
+                </div>
+            </div>
+
             @foreach ($items as $item)
             @php
                 $doc = $item['documento'];
@@ -34,7 +116,7 @@
                     'vencido'    => ['#dc2626', 'Vencido'],
                 ][$estado];
             @endphp
-            <div class="bg-white rounded-2xl shadow-md overflow-hidden" x-data="{ subiendo: false }">
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden" data-estado="{{ $estado }}" x-data="{ subiendo: false }">
                 <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
 
                 <div class="px-6 py-4 flex flex-wrap items-center justify-between gap-3">

@@ -383,20 +383,26 @@
 
             @php $rol = auth()->user()->rol; @endphp
 
-            {{-- ══ INICIO (todos los roles admin) ══ --}}
-            @if(!in_array($rol, ['alumno', 'profesor']))
-            <a href="{{ route('dashboard') }}"
+            {{-- ══ INICIO (todos los roles) ══ --}}
+            @php
+                $inicioRoute = match($rol) {
+                    'alumno'   => 'alumno.dashboard',
+                    'profesor' => 'profesor.calificaciones.index',
+                    default    => 'dashboard',
+                };
+                $inicioActivo = $rol === 'profesor' ? request()->routeIs('profesor.*') : request()->routeIs($inicioRoute);
+            @endphp
+            <a href="{{ route($inicioRoute) }}"
                @click="sidebarOpen = false"
                data-tooltip="Inicio"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('dashboard') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                      {{ $inicioActivo ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
                 <span class="nav-link-text">Inicio</span>
             </a>
-            @endif
 
             {{-- ══ ADMIN ══ --}}
             @if($rol === 'admin')
@@ -787,42 +793,25 @@
             </a>
             @endif
 
-            {{-- ══ PROFESOR ══ --}}
-            @if($rol === 'profesor')
-            <div class="nav-section-label pt-1 pb-1 px-2">
-                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Portal del Profesor</p>
-            </div>
-
-            <a href="{{ route('profesor.calificaciones.index') }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Mis materias"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('profesor.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                </svg>
-                <span class="nav-link-text">Mis materias</span>
-            </a>
-            @endif
-
             {{-- ══ ALUMNO ══ --}}
             @if($rol === 'alumno')
-            <div class="nav-section-label pt-1 pb-1 px-2">
+            <div class="nav-section-label pt-2 pb-1 px-2 mt-1 border-t border-white/10">
                 <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Portal del alumno</p>
             </div>
 
-            <a href="{{ route('alumno.dashboard') }}"
+            <a href="{{ route('alumno.materias.index') }}"
                @click="sidebarOpen = false"
-               data-tooltip="Mi portal"
+               data-tooltip="Materias"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('alumno.dashboard') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                      {{ request()->routeIs('alumno.materias.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012
-                             20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13
+                             C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13
+                             C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13
+                             C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                 </svg>
-                <span class="nav-link-text">Mi portal</span>
+                <span class="nav-link-text">Materias</span>
             </a>
 
             <a href="{{ route('alumno.kardex') }}"

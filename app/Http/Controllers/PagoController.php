@@ -420,6 +420,12 @@ class PagoController extends Controller
 
                 session([$sessionKeyPref => $preferenceId, $sessionKeyUrl => $checkoutUrl]);
                 $pago->update(['mp_preference_id' => $preferenceId]);
+            } catch (\MercadoPago\Exceptions\MPApiException $e) {
+                Log::error('MP pagarAlumno MPApiException', [
+                    'message'  => $e->getMessage(),
+                    'httpCode' => $e->getApiResponse()?->getStatusCode(),
+                    'body'     => $e->getApiResponse()?->getContent(),
+                ]);
             } catch (\Exception $e) {
                 Log::error('MP pagarAlumno error: ' . $e->getMessage());
             }

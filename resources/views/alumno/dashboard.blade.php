@@ -231,32 +231,24 @@
 
 
 {{-- ══════════════════════════════════════════
-                 TABLA: Materias asignadas
+                 TABLA: Materias asignadas (ancho completo)
             ══════════════════════════════════════════ --}}
             <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-
                 <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
-
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         style="color: #0F4229;">
+                <a href="{{ route('alumno.materias.index') }}"
+                   class="px-6 py-4 border-b border-gray-100 flex items-center gap-2 hover:bg-gray-50 transition-colors duration-100">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#0F4229;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13
                                  C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13
                                  C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13
                                  C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
-                    <h2 class="text-sm font-semibold text-gray-700">Materias asignadas</h2>
-                    <span class="ml-auto text-xs text-gray-400">
-                        {{ $carga->count() }} materias · Periodo {{ $alumno->grupo->periodo->nombre ?? '—' }}
-                    </span>
-                </div>
-
+                    <h2 class="text-sm font-semibold text-gray-700 truncate">Materias</h2>
+                </a>
                 <div class="overflow-x-auto">
                     @if ($carga->isEmpty())
-                        <div class="px-6 py-10 text-center text-sm text-gray-400">
-                            No hay materias asignadas. El grupo aún no tiene carga académica registrada.
-                        </div>
+                        <div class="px-6 py-10 text-center text-sm text-gray-400">No hay materias asignadas.</div>
                     @else
                     <table class="w-full text-sm">
                         <thead>
@@ -264,57 +256,27 @@
                                 <th class="px-6 py-3">Clave</th>
                                 <th class="px-6 py-3">Materia</th>
                                 <th class="px-6 py-3">Profesor</th>
-                                <th class="px-6 py-3">Horario</th>
-                                <th class="px-6 py-3">Aula</th>
                                 <th class="px-6 py-3 text-center">Créditos</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @foreach ($carga as $c)
                             <tr class="hover:bg-gray-50 transition-colors duration-100">
-
-                                <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-500 whitespace-nowrap">
+                                <td class="px-6 py-3.5 font-mono text-xs font-semibold text-gray-500 whitespace-nowrap">
                                     {{ $c->materia->clave }}
                                 </td>
-
-                                <td class="px-6 py-4 font-semibold text-gray-800 whitespace-nowrap">
+                                <td class="px-6 py-3.5 font-medium text-gray-800 whitespace-nowrap">
                                     {{ $c->materia->nombre }}
                                 </td>
-
-                                <td class="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                    {{ $c->profesor->nombre }}
+                                <td class="px-6 py-3.5 text-gray-500 text-xs whitespace-nowrap">
+                                    {{ $c->profesor->nombre ?? 'Sin asignar' }}
                                 </td>
-
-                                <td class="px-6 py-4 text-gray-600 whitespace-nowrap">
-                                    <span class="inline-flex items-center gap-1.5">
-                                        <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none"
-                                             stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        {{ $c->horario ?? '—' }}
-                                    </span>
-                                </td>
-
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center gap-1.5 text-gray-600">
-                                        <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none"
-                                             stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3
-                                                     m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                        </svg>
-                                        {{ $c->aula ?? '—' }}
-                                    </span>
-                                </td>
-
-                                <td class="px-6 py-4 text-center">
+                                <td class="px-6 py-3.5 text-center">
                                     <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white"
                                           style="background-color: #D4AF37;">
                                         {{ $c->materia->creditos }}
                                     </span>
                                 </td>
-
                             </tr>
                             @endforeach
                         </tbody>
@@ -323,104 +285,142 @@
                 </div>
             </div>
 
-            {{-- FIN DASHBOARD --}}
-            @if (false)
-            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            {{-- ══════════════════════════════════════════
+                 PANELES: calificaciones recientes / documentos / próximo pago
+            ══════════════════════════════════════════ --}}
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
-
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         style="color: #0F4229;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                    <h2 class="text-sm font-semibold text-gray-700">Mis calificaciones</h2>
-                    <span class="ml-auto text-xs text-gray-400">Cuatrimestre {{ $alumno->cuatrimestre_actual }}</span>
+                {{-- Calificaciones recientes --}}
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col h-[350px]">
+                    <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2 flex-shrink-0">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#0F4229;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <h2 class="text-sm font-semibold text-gray-700">Calificaciones recientes</h2>
+                    </div>
+                    <div class="divide-y divide-gray-100 overflow-auto flex-1">
+                        @forelse ($calificacionesRecientes as $cal)
+                        @php
+                            $aprobada = $cal->calificacion >= 7.0;
+                        @endphp
+                        <div class="px-6 py-3.5 flex items-center justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-gray-800 truncate">{{ $cal->cargaAcademica->materia->nombre ?? '—' }}</p>
+                                <p class="text-xs text-gray-400 capitalize">{{ $cal->tipo }}</p>
+                            </div>
+                            <span class="inline-flex items-center flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-bold"
+                                  style="background-color: {{ $aprobada ? '#f0f9f4' : '#fef2f2' }}; color: {{ $aprobada ? '#0F4229' : '#dc2626' }};">
+                                {{ number_format($cal->calificacion, 1) }}
+                            </span>
+                        </div>
+                        @empty
+                        <div class="px-6 py-10 text-center text-sm text-gray-400">Aún no tienes calificaciones registradas.</div>
+                        @endforelse
+                    </div>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="px-6 py-3">Materia</th>
-                                <th class="px-4 py-3 text-center">Final</th>
-                                <th class="px-4 py-3 text-center">Extraordinario</th>
-                                <th class="px-4 py-3 text-center">Cal. Final</th>
-                                <th class="px-4 py-3 text-center">Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @foreach ($carga as $c)
-                            @php
-                                $calif = $calificaciones->get($c->id, collect());
-                                $final = $calif->firstWhere('tipo', 'final');
-                                $ex = $calif->firstWhere('tipo', 'extraordinario');
-                                $calFinal = $ex ? $ex->calificacion : $final?->calificacion;
-                                $aprobado = $calFinal !== null && $calFinal >= 7.0;
-                            @endphp
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-3 font-medium text-gray-800 whitespace-nowrap">
-                                    {{ $c->materia->nombre }}
-                                    <span class="block text-xs text-gray-400 font-normal">{{ $c->materia->clave }}</span>
-                                </td>
-                                <td class="px-4 py-3 text-center font-semibold">
-                                    @if ($final)
-                                        <span class="{{ $final->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
-                                            {{ number_format($final->calificacion, 1) }}
-                                        </span>
-                                    @else
-                                        <span class="text-gray-300">—</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 text-center font-semibold">
-                                    @if ($ex)
-                                        <span class="{{ $ex->calificacion >= 7.0 ? 'text-green-700' : 'text-red-600' }}">
-                                            {{ number_format($ex->calificacion, 1) }}
-                                        </span>
-                                    @else
-                                        <span class="text-gray-300">—</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 text-center font-bold">
-                                    @if ($calFinal !== null)
-                                        <span class="{{ $aprobado ? 'text-green-700' : 'text-red-600' }}">
-                                            {{ number_format($calFinal, 1) }}
-                                            @if ($ex)
-                                                <span class="block text-xs font-normal text-gray-400">(extra)</span>
-                                            @endif
-                                        </span>
-                                    @else
-                                        <span class="text-gray-300">—</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 text-center">
-                                    @if ($calFinal !== null)
-                                        @if ($aprobado)
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #0F4229;">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                                                Aprobado
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #dc2626;">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                                                Reprobado
-                                            </span>
-                                        @endif
-                                    @else
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #EFAD5A;">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                                            Pendiente
-                                        </span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                {{-- Documentos por actualizar --}}
+                @php
+                    $sinPendientesDocs = $documentosAtencion->isEmpty();
+                @endphp
+                <a href="{{ route('alumno.documentos.index') }}"
+                   class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col h-[350px] hover:shadow-md transition-shadow duration-200">
+                    <div class="h-1.5 w-full flex-shrink-0" style="background-color: {{ $sinPendientesDocs ? '#0F4229' : '#EFAD5A' }};"></div>
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2 flex-shrink-0">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:{{ $sinPendientesDocs ? '#0F4229' : '#EFAD5A' }};">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <h2 class="text-sm font-semibold text-gray-700 truncate">Documentos</h2>
+                    </div>
+                    <div class="divide-y divide-gray-100 overflow-auto flex-1">
+                        @if ($plazoMigradoDocs)
+                        <div class="px-6 py-3 text-xs" style="background-color: #fffaf0; color: #b45309;">
+                            Tienes hasta el {{ $plazoMigradoDocs->format('d/m/Y') }} para completar tus documentos.
+                        </div>
+                        @endif
+                        @forelse ($documentosAtencion as $item)
+                        @php
+                            $doc = $item['documento'];
+                            $estadoDoc = !$doc ? ['#9ca3af', '#f3f4f6', 'Sin subir']
+                                : ($doc->estaVencido() ? ['#dc2626', '#fef2f2', 'Vencido']
+                                : ['#EFAD5A', '#fffaf0', 'Por vencer']);
+                        @endphp
+                        <div class="px-6 py-3.5 flex items-center justify-between gap-3">
+                            <p class="text-sm font-medium text-gray-700 truncate">{{ $item['label'] }}</p>
+                            <span class="inline-flex items-center flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-bold"
+                                  style="background-color: {{ $estadoDoc[1] }}; color: {{ $estadoDoc[0] }};">
+                                {{ $estadoDoc[2] }}
+                            </span>
+                        </div>
+                        @empty
+                        <div class="px-6 py-10 text-center text-sm text-gray-400">Todos tus documentos están en orden.</div>
+                        @endforelse
+                    </div>
+                </a>
+
+                {{-- Próximo pago --}}
+                @php
+                    $pagoAtrasado = $proximoPago && method_exists($proximoPago, 'estaVencido') && $proximoPago->estaVencido();
+                    $pagoColorPanel = !$proximoPago ? '#0F4229' : ($pagoAtrasado ? '#dc2626' : '#EFAD5A');
+                    $pagoBgPanel = !$proximoPago ? '#f0f9f4' : ($pagoAtrasado ? '#fef2f2' : '#fffaf0');
+                @endphp
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col h-[350px]">
+                    <div class="h-1.5 w-full flex-shrink-0" style="background-color: {{ $pagoColorPanel }};"></div>
+                    <a href="{{ route('alumno.finanzas.index') }}"
+                       class="px-6 py-4 border-b border-gray-100 flex items-center gap-2 flex-shrink-0 hover:bg-gray-50 transition-colors duration-100">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:{{ $pagoColorPanel }};">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h2 class="text-sm font-semibold text-gray-700 truncate">Próximo pago</h2>
+                    </a>
+                    <div class="flex-1 flex flex-col">
+                        @if ($proximoPago)
+                        <div class="px-6 py-5 flex flex-col gap-4 flex-1 justify-center">
+                            <div class="flex items-start justify-between">
+                                <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background-color: {{ $pagoBgPanel }};">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: {{ $pagoColorPanel }};">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-extrabold leading-none" style="color: {{ $pagoColorPanel }};">
+                                    ${{ number_format($proximoPago->monto, 2) }} <span class="text-sm font-medium text-gray-400">MXN</span>
+                                </p>
+                                <p class="text-sm font-semibold text-gray-700 mt-2 capitalize">{{ $proximoPago->concepto }}</p>
+                                <p class="text-xs text-gray-400">{{ $proximoPago->periodo }}{{ $proximoPago->mes ? ' · '.$proximoPago->mes : '' }}</p>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 inline-block" style="background-color: {{ $pagoColorPanel }};"></span>
+                                <span class="text-xs font-medium" style="color: {{ $pagoColorPanel }};">
+                                    {{ $pagoAtrasado ? 'Vencido el' : 'Vence el' }} {{ $proximoPago->fecha_vencimiento?->format('d/m/Y') ?? '—' }}
+                                </span>
+                            </div>
+                            <a href="{{ route('alumno.pagos.pagar', $proximoPago) }}"
+                               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"
+                               style="background-color: #0F4229;"
+                               onmouseover="this.style.backgroundColor='#0a2e1c'"
+                               onmouseout="this.style.backgroundColor='#0F4229'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Pagar ahora
+                            </a>
+                        </div>
+                        @else
+                        <div class="px-6 py-10 text-center text-sm text-gray-400 flex-1 flex items-center justify-center">
+                            No tienes pagos pendientes.
+                        </div>
+                        @endif
+                    </div>
                 </div>
+
             </div>
-            @endif
 
         </div>
     </div>

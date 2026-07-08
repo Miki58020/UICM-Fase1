@@ -40,28 +40,26 @@
                 @if ($atrasados->isEmpty())
                     <div class="px-6 py-10 text-center text-sm text-gray-400">No hay alumnos atrasados.</div>
                 @else
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            <th class="px-6 py-3">Matrícula</th>
-                            <th class="px-6 py-3">Nombre</th>
-                            <th class="px-6 py-3">Programa</th>
-                            <th class="px-6 py-3 text-center">Pagos atrasados</th>
-                            <th class="px-6 py-3 text-right">Monto atrasado</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
+                <div class="min-w-[640px]">
+                    <div class="grid grid-cols-[1fr_2.2fr_2fr_1.3fr_1.3fr] gap-x-4 px-6 py-3 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <div>Matrícula</div>
+                        <div>Nombre</div>
+                        <div>Programa</div>
+                        <div class="text-center">Pagos atrasados</div>
+                        <div>Monto atrasado</div>
+                    </div>
+                    <div class="divide-y divide-gray-100 text-sm">
                         @foreach ($atrasados as $alumno)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 font-mono text-xs text-gray-600 whitespace-nowrap">{{ $alumno->matricula }}</td>
-                            <td class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">{{ $alumno->nombre_completo }}</td>
-                            <td class="px-6 py-4 text-gray-500 whitespace-nowrap">{{ $alumno->programa?->nombre ?? '—' }}</td>
-                            <td class="px-6 py-4 text-center whitespace-nowrap">{{ $alumno->cantidadAtrasados }}</td>
-                            <td class="px-6 py-4 text-right font-bold text-red-600 whitespace-nowrap">${{ number_format($alumno->montoAtrasado, 2) }}</td>
-                        </tr>
+                        <div class="grid grid-cols-[1fr_2.2fr_2fr_1.3fr_1.3fr] gap-x-4 px-6 py-4 items-center hover:bg-gray-50">
+                            <div class="font-mono text-xs text-gray-600 truncate">{{ $alumno->matricula }}</div>
+                            <div class="font-medium text-gray-800 truncate">{{ $alumno->nombre_completo }}</div>
+                            <div class="text-gray-500 truncate">{{ $alumno->programa?->nombre ?? '—' }}</div>
+                            <div class="text-center">{{ $alumno->cantidadAtrasados }}</div>
+                            <div class="font-bold text-red-600 truncate">${{ number_format($alumno->montoAtrasado, 2) }}</div>
+                        </div>
                         @endforeach
-                    </tbody>
-                </table>
+                    </div>
+                </div>
                 @endif
             </div>
         </div>
@@ -76,24 +74,22 @@
                 @if ($alCorriente->isEmpty())
                     <div class="px-6 py-10 text-center text-sm text-gray-400">No hay alumnos registrados.</div>
                 @else
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            <th class="px-6 py-3">Matrícula</th>
-                            <th class="px-6 py-3">Nombre</th>
-                            <th class="px-6 py-3">Programa</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
+                <div class="min-w-[640px]">
+                    <div class="grid grid-cols-[1fr_2.2fr_2fr_1.3fr_1.3fr] gap-x-4 px-6 py-3 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <div>Matrícula</div>
+                        <div>Nombre</div>
+                        <div>Programa</div>
+                    </div>
+                    <div class="divide-y divide-gray-100 text-sm">
                         @foreach ($alCorriente as $alumno)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 font-mono text-xs text-gray-600 whitespace-nowrap">{{ $alumno->matricula }}</td>
-                            <td class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">{{ $alumno->nombre_completo }}</td>
-                            <td class="px-6 py-4 text-gray-500 whitespace-nowrap">{{ $alumno->programa?->nombre ?? '—' }}</td>
-                        </tr>
+                        <div class="grid grid-cols-[1fr_2.2fr_2fr_1.3fr_1.3fr] gap-x-4 px-6 py-4 items-center hover:bg-gray-50">
+                            <div class="font-mono text-xs text-gray-600 truncate">{{ $alumno->matricula }}</div>
+                            <div class="font-medium text-gray-800 truncate">{{ $alumno->nombre_completo }}</div>
+                            <div class="text-gray-500 truncate">{{ $alumno->programa?->nombre ?? '—' }}</div>
+                        </div>
                         @endforeach
-                    </tbody>
-                </table>
+                    </div>
+                </div>
                 @endif
             </div>
         </div>

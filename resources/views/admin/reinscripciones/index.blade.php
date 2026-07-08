@@ -171,7 +171,7 @@
                             <th class="px-6 py-3">Grupo actual</th>
                             <th class="px-6 py-3">Cuatrimestre</th>
                             <th class="px-6 py-3">Estado reinscripción</th>
-                            <th class="px-6 py-3 text-right">Acción</th>
+                            <th class="px-6 py-3 text-center">Acción</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100" x-ref="tbody">
@@ -252,7 +252,7 @@
                                 @endif
                             </td>
 
-                            <td class="px-6 py-4 text-right whitespace-nowrap">
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
                                 @if ($estadoReinsc === 'sin_cobro')
                                     @if ($periodoActivo)
                                         <form method="POST"

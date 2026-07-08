@@ -103,7 +103,7 @@ class CargaAcademicaController extends Controller
         $request->validate([
             'profesor_id'  => 'nullable|exists:profesores,id',
             'horario'      => 'nullable|string|max:50',
-            'aula'         => 'nullable|string|max:20',
+            'aula'         => 'nullable|string|max:100',
             'fecha_inicio' => 'nullable|date',
             'fecha_fin'    => 'nullable|date|after_or_equal:fecha_inicio',
         ]);

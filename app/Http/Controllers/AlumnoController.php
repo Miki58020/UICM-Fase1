@@ -7,6 +7,7 @@ use App\Mail\NuevaContrasena;
 use App\Models\Alumno;
 use App\Models\Calificacion;
 use App\Models\CargaAcademica;
+use App\Models\DocumentoAlumno;
 use App\Models\Pago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -82,7 +83,7 @@ class AlumnoController extends Controller
     public function dashboard()
     {
         $alumno = Alumno::where('user_id', Auth::id())
-            ->with(['programa', 'grupo.periodo', 'pagos'])
+            ->with(['programa', 'grupo.periodo', 'pagos', 'documentos'])
             ->firstOrFail();
 
         $carga = $alumno->grupo_id
@@ -93,21 +94,11 @@ class AlumnoController extends Controller
 
         $totalCreditos = $carga->sum(fn($c) => $c->materia->creditos ?? 0);
 
-        // Calificaciones del alumno en las materias del período actual ya aprobadas por control escolar
-        $calificaciones = collect();
-        if ($carga->isNotEmpty()) {
-            $cargaIdsAprobadas = $carga->where('estado_revision', 'aprobado')->pluck('id');
-            $calificaciones = Calificacion::where('alumno_id', $alumno->id)
-                ->whereIn('carga_academica_id', $cargaIdsAprobadas)
-                ->get()
-                ->groupBy('carga_academica_id');
-        }
-
         $pagos = $alumno->todosLosPagos()->sortByDesc('created_at');
 
         // Promedio general desde calificaciones aprobadas por control escolar
         $todasCalif = Calificacion::where('alumno_id', $alumno->id)
-            ->with('cargaAcademica')
+            ->with('cargaAcademica.materia')
             ->get()
             ->filter(fn($c) => $c->cargaAcademica?->estado_revision === 'aprobado');
 
@@ -119,14 +110,66 @@ class AlumnoController extends Controller
 
         $promedioGeneral = $calFinals->isNotEmpty() ? round($calFinals->avg(), 1) : null;
 
+        // Panel: calificaciones recientes (la más reciente capturada por materia)
+        $calificacionesRecientes = $todasCalif->groupBy('carga_academica_id')
+            ->map(fn($grupo) => $grupo->firstWhere('tipo', 'extraordinario') ?? $grupo->firstWhere('tipo', 'final'))
+            ->filter()
+            ->sortByDesc('updated_at')
+            ->take(5)
+            ->values();
+
         // Estado de pagos
         $pagosPendientes  = $pagos->whereIn('estado', ['pendiente', 'en_revision'])->count();
         $pagosVencidos    = $pagos->filter(fn($p) => method_exists($p, 'estaVencido') && $p->estaVencido())->count();
 
+        // Panel: próximo pago pendiente (el de vencimiento más cercano)
+        $proximoPago = $pagos->where('estado', 'pendiente')
+            ->sortBy('fecha_vencimiento')
+            ->first();
+
+        // Panel: documentos por actualizar (vencidos, por vencer o faltantes)
+        $catalogoDocumentos = DocumentoAlumno::catalogoPara($alumno->programa->nivel ?? 'licenciatura');
+        $documentosPorTipo  = $alumno->documentos->keyBy('tipo');
+
+        $itemsDocumentos = collect($catalogoDocumentos)->map(function ($item) use ($documentosPorTipo) {
+            $item['documento'] = $documentosPorTipo->get($item['tipo']);
+            return $item;
+        });
+
+        $documentosFaltantes = $itemsDocumentos->filter(fn($i) => !$i['documento']);
+        $documentosVencidos  = $itemsDocumentos->filter(fn($i) => $i['documento']?->estaVencido());
+        $documentosPorVencer = $itemsDocumentos->filter(fn($i) => $i['documento']?->porVencer());
+        $documentosAtencion  = $documentosVencidos->concat($documentosPorVencer)->concat($documentosFaltantes)->take(5)->values();
+
+        $plazoMigradoDocs = ($alumno->migrado && $documentosFaltantes->isNotEmpty())
+            ? $alumno->created_at->copy()->addMonth()
+            : null;
+
         return view('alumno.dashboard', compact(
-            'alumno', 'carga', 'totalCreditos', 'calificaciones', 'pagos',
-            'promedioGeneral', 'pagosPendientes', 'pagosVencidos'
+            'alumno', 'carga', 'totalCreditos', 'pagos',
+            'promedioGeneral', 'pagosPendientes', 'pagosVencidos',
+            'calificacionesRecientes', 'proximoPago',
+            'documentosAtencion', 'documentosFaltantes', 'plazoMigradoDocs'
         ));
+    }
+
+    public function materias()
+    {
+        $alumno = Alumno::where('user_id', Auth::id())
+            ->with(['programa', 'grupo.periodo'])
+            ->firstOrFail();
+
+        $carga = $alumno->grupo_id
+            ? CargaAcademica::with(['materia', 'profesor'])
+                ->where('grupo_id', $alumno->grupo_id)
+                ->get()
+                ->sortBy(fn ($c) => $c->materia->nombre)
+                ->values()
+            : collect();
+
+        $totalCreditos = $carga->sum(fn ($c) => $c->materia->creditos ?? 0);
+
+        return view('alumno.materias.index', compact('alumno', 'carga', 'totalCreditos'));
     }
 
     public function cambiarPassword(Request $request)

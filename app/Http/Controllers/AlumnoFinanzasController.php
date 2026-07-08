@@ -24,8 +24,14 @@ class AlumnoFinanzasController extends Controller
             && $p->fecha_vencimiento
             && $p->fecha_vencimiento->lte(now()->addDays(7)));
 
+        // KPIs de resumen
+        $totalPagado        = $historial->where('estado', 'aprobado')->sum('monto');
+        $montoPendiente     = $pendientes->sum('monto');
+        $proximoVencimiento = $pendientes->sortBy('fecha_vencimiento')->first()?->fecha_vencimiento;
+
         return view('alumno.finanzas.index', compact(
-            'alumno', 'pendientes', 'historial', 'atrasados', 'alCorriente', 'porVencerPronto'
+            'alumno', 'pendientes', 'historial', 'atrasados', 'alCorriente', 'porVencerPronto',
+            'totalPagado', 'montoPendiente', 'proximoVencimiento'
         ));
     }
 }

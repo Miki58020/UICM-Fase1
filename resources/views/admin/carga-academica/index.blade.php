@@ -519,7 +519,7 @@
                                     <th class="px-6 py-3">Materia</th>
                                     <th class="px-6 py-3">Profesor asignado</th>
                                     <th class="px-6 py-3">Horario</th>
-                                    <th class="px-6 py-3">Aula</th>
+                                    <th class="px-6 py-3">Aula virtual</th>
                                     <th class="px-6 py-3">Ventana (mes)</th>
                                     <th class="px-6 py-3 text-center">Créditos</th>
                                     <th class="px-6 py-3 text-right">Acción</th>
@@ -678,13 +678,12 @@
                     <p class="mt-1 text-xs text-gray-400">Día(s) de la semana y mes en que se imparte.</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Aula</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Aula virtual</label>
                     <input type="text" id="asig-aula" name="aula"
-                           placeholder="Ej. A-101"
-                           maxlength="20"
-                           oninput="this.value=this.value.toUpperCase()"
+                           placeholder="Ej. Sala Zoom - Psicología"
+                           maxlength="100"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
-                    <p class="mt-1 text-xs text-gray-400">Letra del edificio + número (Ej. A-101).</p>
+                    <p class="mt-1 text-xs text-gray-400">Sala o enlace donde se imparte la clase en línea.</p>
                 </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -86,7 +86,6 @@
         .actions { display: flex; gap: 12px; justify-content: center; margin-top: 8px; }
         .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 28px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; text-decoration: none; border: none; }
         .btn-primary { background: #0F4229; color: #fff; }
-        .btn-secondary { background: #fff; color: #0F4229; border: 2px solid #0F4229; }
 
         /* Footer */
         .footer { background: #0F4229; padding: 18px 40px; text-align: center; border-radius: 0 0 12px 12px; }
@@ -276,7 +275,6 @@
         </div>
 
         <div class="actions">
-            <a href="{{ route('alumno.dashboard') }}" class="btn btn-secondary">← Volver al portal</a>
             <button onclick="window.print()" class="btn btn-primary">
                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
