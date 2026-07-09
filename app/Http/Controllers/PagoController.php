@@ -522,10 +522,24 @@ class PagoController extends Controller
 
     // ─── Finanzas: estadísticas ────────────────────────────────────────────────
 
-    public function estadisticas()
+    public function estadisticas(Request $request)
     {
-        $aprobados  = Pago::where('estado', 'aprobado')->get();
-        $pendientes = Pago::where('estado', 'pendiente')->get();
+        $filtrar = function ($query) use ($request) {
+            return $query
+                ->when($request->filled('concepto'), fn ($q) => $q->where('concepto', $request->concepto))
+                ->when($request->filled('fecha_desde'), fn ($q) => $q->whereDate('created_at', '>=', $request->fecha_desde))
+                ->when($request->filled('fecha_hasta'), fn ($q) => $q->whereDate('created_at', '<=', $request->fecha_hasta))
+                ->when($request->filled('programa'), function ($q) use ($request) {
+                    $q->where(function ($w) use ($request) {
+                        $w->whereHas('aspirante', fn ($a) => $a->where('programa_id', $request->programa))
+                          ->orWhereHas('alumno', fn ($al) => $al->where('programa_id', $request->programa));
+                    });
+                });
+        };
+
+        $aprobados  = $filtrar(Pago::where('estado', 'aprobado'))->get();
+        $pendientes = $filtrar(Pago::where('estado', 'pendiente'))->get();
+        $rechazados = $filtrar(Pago::where('estado', 'rechazado'))->get();
 
         $totalRecaudado = $aprobados->sum('monto');
 
@@ -538,11 +552,21 @@ class PagoController extends Controller
             ->sortKeys()
             ->map(fn ($grupo) => $grupo->sum('monto'));
 
-        $montoPendiente = $pendientes->sum('monto');
-        $montoAtrasado  = $pendientes->filter(fn (Pago $p) => $p->estaVencido())->sum('monto');
+        $montoPendiente   = $pendientes->sum('monto');
+        $montoAtrasado    = $pendientes->filter(fn (Pago $p) => $p->estaVencido())->sum('monto');
+        $montoRechazado   = $rechazados->sum('monto');
+
+        $distribucionEstados = [
+            'aprobado'  => $aprobados->count(),
+            'pendiente' => $pendientes->count(),
+            'rechazado' => $rechazados->count(),
+        ];
+
+        $programas = \App\Models\Programa::orderBy('nombre')->get();
 
         return view('finanzas.estadisticas', compact(
-            'totalRecaudado', 'porConcepto', 'porMes', 'montoPendiente', 'montoAtrasado', 'pendientes'
+            'totalRecaudado', 'porConcepto', 'porMes', 'montoPendiente', 'montoAtrasado',
+            'montoRechazado', 'distribucionEstados', 'pendientes', 'programas'
         ));
     }
 
@@ -562,10 +586,11 @@ class PagoController extends Controller
                 return $alumno;
             });
 
-        $atrasados   = $alumnos->where('alCorriente', false)->values();
-        $alCorriente = $alumnos->where('alCorriente', true)->values();
+        $totalAtrasados   = $alumnos->where('alCorriente', false)->count();
+        $totalAlCorriente = $alumnos->where('alCorriente', true)->count();
+        $programas        = \App\Models\Programa::orderBy('nombre')->get();
 
-        return view('finanzas.alumnos', compact('atrasados', 'alCorriente'));
+        return view('finanzas.alumnos', compact('alumnos', 'totalAtrasados', 'totalAlCorriente', 'programas'));
     }
 
     private function pagosFiltrados(Request $request)

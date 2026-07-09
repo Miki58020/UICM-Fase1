@@ -8,78 +8,13 @@
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         {{-- Encabezado de módulo --}}
-        <div class="mb-8 flex flex-wrap items-end justify-between gap-3">
-            <div>
-                <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-                    Finanzas
-                </p>
-                <h1 class="text-2xl font-extrabold text-gray-900">Pagos en revisión</h1>
-                <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('finanzas.estadisticas') }}"
-                   class="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-colors"
-                   style="border-color: #0F4229; color: #0F4229;">
-                    Estadísticas
-                </a>
-                <a href="{{ route('finanzas.alumnos') }}"
-                   class="px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-colors"
-                   style="border-color: #0F4229; color: #0F4229;">
-                    Alumnos al corriente
-                </a>
-            </div>
+        <div class="mb-8">
+            <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
+                Finanzas
+            </p>
+            <h1 class="text-2xl font-extrabold text-gray-900">Pagos en revisión</h1>
+            <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
-
-        {{-- Filtros de servidor --}}
-        <form method="GET" class="bg-white rounded-2xl shadow-md px-6 py-5 mb-6 grid grid-cols-1 sm:grid-cols-5 gap-4">
-            @if(request('estado'))
-                <input type="hidden" name="estado" value="{{ request('estado') }}">
-            @endif
-            <div class="sm:col-span-2">
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Buscar</label>
-                <input type="text" name="q" value="{{ request('q') }}"
-                       placeholder="Folio, matrícula o nombre…"
-                       class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Concepto</label>
-                <select name="concepto" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
-                    <option value="">Todos</option>
-                    @foreach (['inscripcion' => 'Inscripción', 'reinscripcion' => 'Reinscripción', 'colegiatura' => 'Colegiatura', 'cuatrimestre' => 'Cuatrimestre', 'otro' => 'Otro'] as $val => $label)
-                        <option value="{{ $val }}" {{ request('concepto') === $val ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
-                       class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}"
-                       class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-white">
-            </div>
-            <div class="flex items-end gap-2 sm:col-span-5">
-                <button type="submit"
-                        class="px-4 py-2.5 rounded-xl text-sm font-bold text-white"
-                        style="background-color: #0F4229;">
-                    Filtrar
-                </button>
-                @if(request('q') || request('concepto') || request('estado') || request('fecha_desde') || request('fecha_hasta'))
-                <a href="{{ route('finanzas.pagos.index') }}"
-                   class="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
-                    Limpiar
-                </a>
-                @endif
-                <a href="{{ route('finanzas.pagos.exportar', request()->query()) }}"
-                   class="ml-auto px-4 py-2.5 rounded-xl text-sm font-bold text-white"
-                   style="background-color: #D4AF37;">
-                    Exportar CSV
-                </a>
-            </div>
-        </form>
-
 
         {{-- Contadores --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -122,6 +57,81 @@
             </a>
 
         </div>
+
+        {{-- Buscador y filtros --}}
+        <form method="GET" class="bg-white rounded-2xl shadow-md px-6 py-5 mb-6 grid grid-cols-1 sm:grid-cols-5 gap-4">
+            @if(request('estado'))
+                <input type="hidden" name="estado" value="{{ request('estado') }}">
+            @endif
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Buscar</label>
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                    </svg>
+                    <input type="text" name="q" value="{{ request('q') }}"
+                           placeholder="Folio, matrícula o nombre…"
+                           class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Concepto</label>
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+                    </svg>
+                    <select name="concepto"
+                            class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                            onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                        <option value="">Todos</option>
+                        @foreach (['inscripcion' => 'Inscripción', 'reinscripcion' => 'Reinscripción', 'colegiatura' => 'Colegiatura', 'cuatrimestre' => 'Cuatrimestre', 'otro' => 'Otro'] as $val => $label)
+                            <option value="{{ $val }}" {{ request('concepto') === $val ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Desde</label>
+                <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
+                       class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none"
+                       onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}"
+                       class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none"
+                       onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                       onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+            </div>
+            <div class="flex items-end gap-2 sm:col-span-5">
+                <button type="submit"
+                        class="px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"
+                        style="background-color: #0F4229;"
+                        onmouseover="this.style.backgroundColor='#0a2e1c'"
+                        onmouseout="this.style.backgroundColor='#0F4229'">
+                    Filtrar
+                </button>
+                @if(request('q') || request('concepto') || request('estado') || request('fecha_desde') || request('fecha_hasta'))
+                <a href="{{ route('finanzas.pagos.index') }}"
+                   class="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
+                    Limpiar
+                </a>
+                @endif
+                <a href="{{ route('finanzas.pagos.exportar', request()->query()) }}"
+                   class="ml-auto px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+                   style="background-color: #D4AF37;">
+                    Exportar CSV
+                </a>
+            </div>
+        </form>
 
         {{-- Card tabla --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-[350px]">
@@ -238,8 +248,28 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-10 text-center text-sm text-gray-400">
-                                {{ request()->anyFilled(['q', 'concepto', 'estado', 'fecha_desde', 'fecha_hasta']) ? 'No se encontraron pagos con ese criterio.' : 'No hay comprobantes registrados.' }}
+                            <td colspan="8" class="px-6 py-12">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                        @if (request()->anyFilled(['q', 'concepto', 'estado', 'fecha_desde', 'fecha_hasta']))
+                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                        </svg>
+                                        @else
+                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        @endif
+                                    </div>
+                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">
+                                        {{ request()->anyFilled(['q', 'concepto', 'estado', 'fecha_desde', 'fecha_hasta']) ? 'Sin resultados' : 'Sin comprobantes' }}
+                                    </h3>
+                                    <p class="text-sm text-gray-500 max-w-xs">
+                                        {{ request()->anyFilled(['q', 'concepto', 'estado', 'fecha_desde', 'fecha_hasta']) ? 'No se encontraron pagos con ese criterio.' : 'No hay comprobantes registrados.' }}
+                                    </p>
+                                </div>
                             </td>
                         </tr>
                         @endforelse
