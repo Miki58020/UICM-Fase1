@@ -186,7 +186,7 @@
                         <p class="text-xs font-medium text-gray-500 mb-3">Créditos acumulados</p>
                         <div class="mt-auto flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 inline-block" style="background-color: #D4AF37;"></span>
-                            <span class="text-xs font-medium truncate" style="color: #b45309;">{{ $alumno->programa->nombre ?? 'Programa académico' }}</span>
+                            <span class="text-xs font-medium truncate min-w-0" style="color: #b45309;">{{ $alumno->programa->nombre ?? 'Programa académico' }}</span>
                         </div>
                     </div>
                 </div>
@@ -349,7 +349,9 @@
                                 : ['#EFAD5A', '#fffaf0', 'Por vencer']);
                         @endphp
                         <div class="px-6 py-3.5 flex items-center justify-between gap-3">
-                            <p class="text-sm font-medium text-gray-700 truncate">{{ $item['label'] }}</p>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-gray-700 truncate">{{ $item['label'] }}</p>
+                            </div>
                             <span class="inline-flex items-center flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-bold"
                                   style="background-color: {{ $estadoDoc[1] }}; color: {{ $estadoDoc[0] }};">
                                 {{ $estadoDoc[2] }}
