@@ -9,6 +9,7 @@ use App\Http\Controllers\AspiranteController;
 use App\Http\Controllers\AclaracionCalificacionController;
 use App\Http\Controllers\CalificacionController;
 use App\Http\Controllers\DocumentoAlumnoController;
+use App\Http\Controllers\ExpedienteController;
 use App\Http\Controllers\CargaAcademicaController;
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\HomeController;
@@ -106,6 +107,9 @@ Route::middleware(['auth', 'rol:finanzas'])->group(function () {
 Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
     Route::get('/admin/alumnos', [AlumnoController::class, 'listado'])->name('admin.alumnos.index');
     Route::patch('/admin/alumnos/{alumno}', [AlumnoController::class, 'update'])->name('admin.alumnos.update');
+
+    Route::get('/admin/expedientes', [ExpedienteController::class, 'index'])->name('admin.expedientes.index');
+    Route::get('/admin/expedientes/{alumno}', [ExpedienteController::class, 'show'])->name('admin.expedientes.show');
 
     Route::get('/admin/aspirantes', [AspiranteController::class, 'index'])->name('admin.aspirantes.index');
     Route::get('/admin/aspirantes/{aspirante}', [AspiranteController::class, 'show'])->name('admin.aspirantes.show');

@@ -7,17 +7,6 @@
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-5xl">
 
-        {{-- ── Navegación de migas ── --}}
-        <nav class="flex items-center gap-2 text-xs text-gray-400 mb-6">
-            <a href="{{ route('admin.aspirantes.index') }}" class="hover:text-uicm-green transition-colors">Aspirantes</a>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <span class="font-medium text-gray-600">{{ $aspirante->folio }}</span>
-        </nav>
-
-
-
         {{-- ── Encabezado del expediente ── --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>

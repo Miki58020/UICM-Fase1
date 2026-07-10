@@ -14,16 +14,6 @@
             $esReinscripcion = $pago->concepto === 'reinscripcion';
         @endphp
 
-        {{-- Migas de navegación --}}
-        <nav class="flex items-center gap-2 text-xs text-gray-400 mb-6">
-            <a href="{{ route('finanzas.pagos.index') }}" class="hover:text-uicm-green transition-colors">Pagos en revisión</a>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <span class="font-medium text-gray-600">{{ $personaRef }}</span>
-        </nav>
-
-
         {{-- Encabezado del expediente --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
