@@ -48,6 +48,11 @@ $titulos = [
     'maestria'     => 'Programas de Maestría',
     'doctorado'    => 'Doctorado',
 ];
+$conceptosPago = [
+    'inscripcion'  => ['label' => 'Inscripción',  'color' => '#0F4229'],
+    'colegiatura'  => ['label' => 'Colegiatura',  'color' => '#D4AF37'],
+    'cuatrimestre' => ['label' => 'Cuatrimestre', 'color' => '#EFAD5A'],
+];
 @endphp
 
 @foreach(['licenciatura', 'maestria', 'doctorado'] as $nivel)
@@ -61,6 +66,49 @@ $titulos = [
             <h2 class="text-3xl font-extrabold text-gray-900 mb-2">{{ $titulos[$nivel] }}</h2>
             <p class="text-gray-500">{{ $subtitulos[$nivel] }}</p>
         </div>
+
+        @if(isset($tarifas[$nivel]) && $tarifas[$nivel]->count())
+        @php $tarifasNivel = $tarifas[$nivel]->keyBy('tipo'); @endphp
+        <div class="mb-10">
+            <p class="text-sm font-semibold text-gray-500 mb-3">Costos de este nivel</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                @foreach($conceptosPago as $tipo => $info)
+                @if($tarifasNivel->has($tipo))
+                @php $tarifa = $tarifasNivel[$tipo]; @endphp
+                <div class="rounded-xl border border-gray-200 bg-white px-5 py-4">
+                    <p class="text-xs font-bold uppercase tracking-wide mb-1.5" style="color: {{ $info['color'] }};">
+                        {{ $info['label'] }}
+                    </p>
+                    @if($tarifa->descuentoVigente())
+                        <div class="flex items-baseline gap-2 mb-0.5">
+                            <span class="text-xs text-gray-400 line-through">${{ number_format($tarifa->monto, 0) }}</span>
+                            <span class="text-xs font-bold px-1.5 py-0.5 rounded-lg" style="background-color:#fef4e8; color:#b45309;">
+                                {{ number_format($tarifa->descuento, 0) }}% dto.
+                            </span>
+                        </div>
+                        <p class="text-xl font-extrabold" style="color:#15803d;">
+                            ${{ number_format($tarifa->precio_final, 0) }} <span class="text-xs font-medium text-gray-400">MXN</span>
+                        </p>
+                    @else
+                        <p class="text-xl font-extrabold text-gray-900">
+                            ${{ number_format($tarifa->monto, 0) }} <span class="text-xs font-medium text-gray-400">MXN</span>
+                        </p>
+                        @if($tipo === 'colegiatura' && $tarifa->descuento > 0 && $tarifa->dias_descuento_pronto_pago)
+                            <p class="text-xs text-gray-400 mt-1">
+                                {{ number_format($tarifa->descuento, 0) }}% dto. pagando del día 1 al {{ $tarifa->dias_descuento_pronto_pago }} de cada mes
+                            </p>
+                        @elseif($tarifa->descuento > 0 && $tarifa->descuento_fecha_inicio && $tarifa->descuento_fecha_fin)
+                            <p class="text-xs text-gray-400 mt-1">
+                                {{ number_format($tarifa->descuento, 0) }}% dto. del {{ $tarifa->descuento_fecha_inicio->format('d/m') }} al {{ $tarifa->descuento_fecha_fin->format('d/m/Y') }}
+                            </p>
+                        @endif
+                    @endif
+                </div>
+                @endif
+                @endforeach
+            </div>
+        </div>
+        @endif
 
         @if($nivel === 'doctorado')
             {{-- Doctorado: layout diferente (más amplio) --}}

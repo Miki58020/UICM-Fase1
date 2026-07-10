@@ -7,6 +7,7 @@ use App\Models\ConfiguracionSitio;
 use App\Models\ContactoInteres;
 use App\Models\OfertaPrograma;
 use App\Models\Periodo;
+use App\Models\TarifaInscripcion;
 use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
@@ -36,6 +37,9 @@ class HomeController extends Controller
     public function ofertaEducativa()
     {
         $programas = OfertaPrograma::where('activo', true)->orderBy('orden')->get()->groupBy('nivel');
+        $tarifas   = TarifaInscripcion::whereIn('tipo', ['inscripcion', 'colegiatura', 'cuatrimestre'])
+            ->get()
+            ->groupBy('nivel');
         $contacto  = [
             'correo'   => ConfiguracionSitio::get('correo',   'contacto@uicm.edu.mx'),
             'telefono' => ConfiguracionSitio::get('telefono', '(55) 0000 0000'),
@@ -43,6 +47,6 @@ class HomeController extends Controller
         ];
         $interesesContacto = ContactoInteres::where('activo', true)->orderBy('orden')->get();
 
-        return view('home.oferta-educativa', compact('programas', 'contacto', 'interesesContacto'));
+        return view('home.oferta-educativa', compact('programas', 'tarifas', 'contacto', 'interesesContacto'));
     }
 }
