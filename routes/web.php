@@ -12,6 +12,7 @@ use App\Http\Controllers\CalificacionController;
 use App\Http\Controllers\DocumentoAlumnoController;
 use App\Http\Controllers\ExpedienteController;
 use App\Http\Controllers\CargaAcademicaController;
+use App\Http\Controllers\HorarioController;
 use App\Http\Controllers\ContactoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InscripcionController;
@@ -69,6 +70,7 @@ Route::middleware(['auth', 'rol:profesor'])->group(function () {
     Route::post('/profesor/cambiar-password', [CalificacionController::class, 'cambiarPassword'])->name('profesor.cambiar-password');
     Route::get('/profesor/aclaraciones', [AclaracionCalificacionController::class, 'misAclaraciones'])->name('profesor.aclaraciones.index');
     Route::post('/profesor/calificaciones/{carga}/aclaracion/{alumno}', [AclaracionCalificacionController::class, 'solicitar'])->name('profesor.aclaraciones.solicitar');
+    Route::get('/profesor/horario', [HorarioController::class, 'profesor'])->name('profesor.horario.index');
 });
 
 // Portal del alumno
@@ -84,6 +86,7 @@ Route::middleware(['auth', 'rol:alumno'])->group(function () {
     Route::get('/alumno/finanzas', [AlumnoFinanzasController::class, 'index'])->name('alumno.finanzas.index');
     Route::get('/alumno/pagos/{pago}/pagar', [PagoController::class, 'pagarAlumno'])->name('alumno.pagos.pagar');
     Route::get('/alumno/pagos/{pago}/retorno', [PagoController::class, 'retornoAlumno'])->name('alumno.pagos.retorno');
+    Route::get('/alumno/horario', [HorarioController::class, 'alumno'])->name('alumno.horario.index');
 });
 
 // Polling de estado del alumno — solo requiere auth (sin CheckRol para no entrar en bucle de kick)
@@ -201,6 +204,8 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::get('/admin/carga-academica', [CargaAcademicaController::class, 'index'])->name('admin.carga-academica.index');
     Route::post('/admin/carga-academica/{grupo}/generar', [CargaAcademicaController::class, 'generar'])->name('admin.carga-academica.generar');
     Route::patch('/admin/carga-academica/{carga}/actualizar', [CargaAcademicaController::class, 'actualizar'])->name('admin.carga-academica.actualizar');
+    Route::get('/admin/carga-academica/horarios/plantilla', [CargaAcademicaController::class, 'plantillaHorarios'])->name('admin.carga-academica.plantilla-horarios');
+    Route::post('/admin/carga-academica/horarios/importar', [CargaAcademicaController::class, 'importarHorarios'])->name('admin.carga-academica.importar-horarios');
 
     Route::get('/admin/alta-masiva-alumnos', [AltaMasivaAlumnosController::class, 'index'])->name('admin.alta-masiva-alumnos.index');
     Route::get('/admin/alta-masiva-alumnos/plantilla', [AltaMasivaAlumnosController::class, 'plantillaMigracion'])->name('admin.alta-masiva-alumnos.plantilla');
