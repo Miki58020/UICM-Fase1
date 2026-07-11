@@ -36,7 +36,7 @@ $finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
 @endphp
 
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
-<div class="container mx-auto px-4 lg:px-12 max-w-3xl">
+<div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
     {{-- Cabecera --}}
     <div class="mb-8">

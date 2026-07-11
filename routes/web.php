@@ -66,6 +66,7 @@ Route::middleware(['auth', 'rol:profesor'])->group(function () {
     Route::post('/profesor/calificaciones/{carga}/guardar', [CalificacionController::class, 'guardar'])->name('profesor.calificaciones.guardar');
     Route::post('/profesor/calificaciones/{carga}/enviar', [CalificacionController::class, 'enviar'])->name('profesor.calificaciones.enviar');
     Route::post('/profesor/cambiar-password', [CalificacionController::class, 'cambiarPassword'])->name('profesor.cambiar-password');
+    Route::get('/profesor/aclaraciones', [AclaracionCalificacionController::class, 'misAclaraciones'])->name('profesor.aclaraciones.index');
     Route::post('/profesor/calificaciones/{carga}/aclaracion/{alumno}', [AclaracionCalificacionController::class, 'solicitar'])->name('profesor.aclaraciones.solicitar');
 });
 

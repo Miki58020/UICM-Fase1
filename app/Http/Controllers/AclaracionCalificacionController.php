@@ -51,6 +51,19 @@ class AclaracionCalificacionController extends Controller
         return back()->with('success', 'Aclaración enviada a control escolar.');
     }
 
+    // El profesor consulta el estado de las aclaraciones que ha solicitado
+    public function misAclaraciones()
+    {
+        $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
+
+        $aclaraciones = AclaracionCalificacion::where('profesor_id', $profesor->id)
+            ->with(['alumno', 'cargaAcademica.materia', 'cargaAcademica.grupo'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('profesor.aclaraciones.index', compact('aclaraciones'));
+    }
+
     // Control escolar: bandeja de aclaraciones
     public function index()
     {

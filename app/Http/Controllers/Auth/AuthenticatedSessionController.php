@@ -61,9 +61,8 @@ class AuthenticatedSessionController extends Controller
         $rol = Auth::user()->rol;
 
         $destino = match ($rol) {
-            'alumno'  => route('alumno.dashboard'),
-            'profesor' => route('profesor.calificaciones.index'),
-            default   => route('dashboard'),
+            'alumno' => route('alumno.dashboard'),
+            default  => route('dashboard'),
         };
 
         session()->flash('uicm_init', true);

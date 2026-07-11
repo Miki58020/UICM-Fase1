@@ -25,26 +25,15 @@ class CalificacionController extends Controller
             ->orderByDesc('periodo_id')
             ->get();
 
-        $stats = [
-            'materias'   => $cargas->count(),
-            'grupos'     => $cargas->pluck('grupo_id')->unique()->count(),
-            'alumnos'    => $cargas->sum(fn($c) => $c->grupo?->alumnos->where('estado', 'activo')->count() ?? 0),
-            'pendientes' => $cargas->filter(fn($c) => $c->calificaciones->isEmpty())->count(),
+        $conteo = [
+            'total'      => $cargas->count(),
+            'aprobado'   => $cargas->where('estado_revision', 'aprobado')->count(),
+            'pendiente'  => $cargas->where('estado_revision', 'pendiente')->count(),
+            'rechazado'  => $cargas->where('estado_revision', 'rechazado')->count(),
+            'sin_enviar' => $cargas->whereNull('estado_revision')->count(),
         ];
 
-        // Vista previa ilustrativa para este profesor mientras no tenga carga académica real asignada
-        $ilustrativo = $cargas->isEmpty() && $profesor->id === 1;
-
-        if ($ilustrativo) {
-            $stats = [
-                'materias'   => 3,
-                'grupos'     => 2,
-                'alumnos'    => 27,
-                'pendientes' => 2,
-            ];
-        }
-
-        return view('profesor.calificaciones.index', compact('profesor', 'cargas', 'stats', 'ilustrativo'));
+        return view('profesor.calificaciones.index', compact('profesor', 'cargas', 'conteo'));
     }
 
     // Vista del profesor: alumnos de una materia/grupo para capturar calificaciones

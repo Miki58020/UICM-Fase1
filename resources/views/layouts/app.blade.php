@@ -386,11 +386,10 @@
             {{-- ══ INICIO (todos los roles) ══ --}}
             @php
                 $inicioRoute = match($rol) {
-                    'alumno'   => 'alumno.dashboard',
-                    'profesor' => 'profesor.calificaciones.index',
-                    default    => 'dashboard',
+                    'alumno' => 'alumno.dashboard',
+                    default  => 'dashboard',
                 };
-                $inicioActivo = $rol === 'profesor' ? request()->routeIs('profesor.*') : request()->routeIs($inicioRoute);
+                $inicioActivo = request()->routeIs($inicioRoute);
             @endphp
             <a href="{{ route($inicioRoute) }}"
                @click="sidebarOpen = false"
@@ -403,6 +402,52 @@
                 </svg>
                 <span class="nav-link-text">Inicio</span>
             </a>
+
+            {{-- ══ PORTAL DEL PROFESOR ══ --}}
+            @if($rol === 'profesor')
+            <div class="nav-section-label pt-2 pb-1 px-2 mt-1 border-t border-white/10">
+                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Portal del profesor</p>
+            </div>
+
+            <a href="{{ route('profesor.calificaciones.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Calificaciones"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('profesor.calificaciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+                             M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2
+                             m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                </svg>
+                <span class="nav-link-text">Calificaciones</span>
+            </a>
+
+            @php
+                $profesorActual = \App\Models\Profesor::where('user_id', auth()->id())->first();
+                $aclaracionesProfesorPendientes = $profesorActual
+                    ? \App\Models\AclaracionCalificacion::where('profesor_id', $profesorActual->id)->where('estado', 'pendiente')->count()
+                    : 0;
+            @endphp
+            <a href="{{ route('profesor.aclaraciones.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Aclaraciones"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('profesor.aclaraciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14
+                             a2 2 0 012 2v8a2 2 0 01-2 2h-5l-4 4v-4z"/>
+                </svg>
+                <span class="flex-1 nav-link-text">Aclaraciones</span>
+                @if($aclaracionesProfesorPendientes > 0)
+                    <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
+                          style="background-color: #dc2626; color: #fff;">
+                        {{ $aclaracionesProfesorPendientes }}
+                    </span>
+                @endif
+            </a>
+            @endif
 
             {{-- ══ ADMIN ══ --}}
             @if($rol === 'admin')

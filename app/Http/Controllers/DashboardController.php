@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AclaracionCalificacion;
 use App\Models\Alumno;
 use App\Models\Aspirante;
+use App\Models\CargaAcademica;
 use App\Models\Contacto;
 use App\Models\Grupo;
 use App\Models\Materia;
@@ -20,17 +22,47 @@ class DashboardController extends Controller
     {
         $rol = Auth::user()->rol;
 
-        if ($rol === 'alumno')   return redirect()->route('alumno.dashboard');
-        if ($rol === 'profesor') return redirect()->route('profesor.calificaciones.index');
+        if ($rol === 'alumno') return redirect()->route('alumno.dashboard');
 
         $data = match ($rol) {
             'control_escolar' => $this->datosControlEscolar(),
             'finanzas'        => $this->datosFinanzas(),
             'coordinacion'    => $this->datosCoordinacion(),
+            'profesor'        => $this->datosProfesor(),
             default           => $this->datosAdmin(),
         };
 
         return view('dashboard', array_merge(['rol' => $rol], $data));
+    }
+
+    private function datosProfesor(): array
+    {
+        $profesor = Profesor::where('user_id', Auth::id())->first();
+
+        $cargas = $profesor
+            ? CargaAcademica::where('profesor_id', $profesor->id)
+                ->with(['materia', 'grupo.alumnos', 'periodo'])
+                ->orderByDesc('periodo_id')
+                ->get()
+            : collect();
+
+        // "Por atender": el profesor todavía no ha enviado la materia a revisión (nunca o tras un rechazo).
+        // No incluye 'pendiente' (ya está en revisión de control escolar, no requiere acción del profesor).
+        $requiereAccion = fn ($c) => in_array($c->estado_revision, [null, 'rechazado'], true);
+
+        return [
+            'materiasProfesor'       => $cargas->count(),
+            'gruposProfesor'         => $cargas->pluck('grupo_id')->unique()->count(),
+            'alumnosProfesor'        => $cargas->sum(fn($c) => $c->grupo?->alumnos->where('estado', 'activo')->count() ?? 0),
+            'porCalificarProfesor'   => $cargas->filter($requiereAccion)->count(),
+            'gruposPorAtender'       => $cargas->filter($requiereAccion)
+                ->sortBy(fn($c) => $c->fecha_fin ?? now()->addYears(10))
+                ->take(5)
+                ->values(),
+            'aclaracionesPendientes' => $profesor
+                ? AclaracionCalificacion::where('profesor_id', $profesor->id)->where('estado', 'pendiente')->count()
+                : 0,
+        ];
     }
 
     private function datosControlEscolar(): array

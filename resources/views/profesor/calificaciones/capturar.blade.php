@@ -9,13 +9,6 @@
 
         {{-- Encabezado --}}
         <div class="mb-8">
-            <a href="{{ route('profesor.calificaciones.index') }}"
-               class="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-4 w-fit">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Inicio
-            </a>
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">Captura de calificaciones</p>
             <h1 class="text-2xl font-extrabold text-gray-900">{{ $carga->materia->nombre }}</h1>
             <p class="text-sm text-gray-500 mt-0.5">
@@ -125,8 +118,8 @@
                             @php
                                 $finalKey = $alumno->id . '-final';
                                 $exKey    = $alumno->id . '-extraordinario';
-                                $final    = $calificaciones[$finalKey]->first() ?? null;
-                                $ex       = $calificaciones[$exKey]->first() ?? null;
+                                $final    = $calificaciones->get($finalKey)?->first();
+                                $ex       = $calificaciones->get($exKey)?->first();
                                 $puedeExtraordinario = $final && $final->calificacion < 7.0;
                                 $calFinal = $ex ? $ex->calificacion : $final?->calificacion;
                                 $aprobado = $calFinal !== null && $calFinal >= 7.0;
