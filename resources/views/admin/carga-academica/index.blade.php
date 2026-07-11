@@ -4,7 +4,27 @@
 
 @section('content')
 
-<div x-data="{ cargando: false }">
+<div x-data="{
+    cargando: false,
+    asignacionAbierta: false,
+    asigCargaId: null,
+    asigMateriaNombre: '',
+    asigProfesorId: '',
+    asigHorario: '',
+    asigAula: '',
+    asigFechaInicio: '',
+    asigFechaFin: '',
+    abrirAsignacion(carga) {
+        this.asigCargaId = carga.id;
+        this.asigMateriaNombre = carga.materiaNombre;
+        this.asigProfesorId = carga.profesorId ?? '';
+        this.asigHorario = carga.horario ?? '';
+        this.asigAula = carga.aula ?? '';
+        this.asigFechaInicio = carga.fechaInicio ?? '';
+        this.asigFechaFin = carga.fechaFin ?? '';
+        this.asignacionAbierta = true;
+    }
+}">
 
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
@@ -17,65 +37,6 @@
             <h1 class="text-2xl font-extrabold text-gray-900">Generar carga académica</h1>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
-
-        {{-- ══════════════════════════════════════════
-             MENSAJE DE ÉXITO
-        ══════════════════════════════════════════ --}}
-        @if (session('carga_success'))
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
-
-            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
-
-            <div class="px-6 py-10 flex flex-col items-center text-center">
-
-                <div class="w-16 h-16 rounded-full flex items-center justify-center mb-5"
-                     style="background-color: #f0f9f4;">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         style="color: #0F4229;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                              d="M5 13l4 4L19 7"/>
-                    </svg>
-                </div>
-
-                <h2 class="text-xl font-extrabold text-gray-900 mb-1">
-                    ¡Carga académica generada correctamente!
-                </h2>
-                <p class="text-sm text-gray-500 mb-6">
-                    {{ session('carga_success') }}
-                </p>
-
-                @if ($grupo)
-                <div class="grid grid-cols-3 gap-4 w-full max-w-sm mb-8">
-                    <div class="bg-uicm-gray rounded-xl py-3 px-2 text-center">
-                        <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Alumnos</p>
-                        <p class="text-xl font-extrabold" style="color: #0F4229;">{{ $grupo->alumnos->count() }}</p>
-                    </div>
-                    <div class="bg-uicm-gray rounded-xl py-3 px-2 text-center">
-                        <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Materias</p>
-                        <p class="text-xl font-extrabold" style="color: #0F4229;">{{ $carga->count() }}</p>
-                    </div>
-                    <div class="bg-uicm-gray rounded-xl py-3 px-2 text-center">
-                        <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Profesores</p>
-                        <p class="text-xl font-extrabold" style="color: #0F4229;">
-                            {{ $carga->whereNotNull('profesor_id')->pluck('profesor_id')->unique()->count() }}
-                        </p>
-                    </div>
-                </div>
-                @endif
-
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <a href="{{ route('admin.carga-academica.index') }}"
-                       class="px-6 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors duration-150 text-center"
-                       style="border-color: #0F4229; color: #0F4229;"
-                       onmouseover="this.style.backgroundColor='#0F4229'; this.style.color='white'"
-                       onmouseout="this.style.backgroundColor='transparent'; this.style.color='#0F4229'">
-                        Generar otra carga
-                    </a>
-                </div>
-
-            </div>
-        </div>
-        @endif
 
         {{-- ══════════════════════════════════════════
              FORMULARIO DE FILTROS
@@ -221,152 +182,6 @@
                         </div>
 
                     </form>
-                </div>
-            </div>
-
-            {{-- ══════════════════════════════════════════
-                 ALTA MASIVA DE ALUMNOS POR LOTE (CONCEPTO)
-            ══════════════════════════════════════════ --}}
-            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
-
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
-
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         style="color: #D4AF37;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3m-3-7v9"/>
-                    </svg>
-                    <h2 class="text-sm font-semibold text-gray-700">Alta masiva de alumnos por lote</h2>
-                </div>
-
-                <div class="px-6 py-5">
-
-                    {{-- Guía rápida --}}
-                    <div class="bg-uicm-gray rounded-xl p-4 mb-5 text-sm text-gray-600">
-                        <p class="font-semibold text-gray-800 mb-2">¿Cómo funciona?</p>
-                        <ol class="list-decimal list-inside space-y-1">
-                            <li>Elige el <strong>periodo</strong>, <strong>programa</strong> y <strong>grupo destino</strong> donde se incorporarán los alumnos (su cuatrimestre será el del grupo elegido).</li>
-                            <li>Descarga la <strong>plantilla CSV</strong> y llena un renglón por cada alumno (nombre, apellidos, CURP, correo, etc.).</li>
-                            <li>El <strong>correo</strong> que captures es el personal del alumno: ahí se enviarán su matrícula y contraseña. Después usará su correo institucional.</li>
-                            <li>Sube el archivo. El sistema generará matrícula y usuario automáticamente; si el grupo se llena, crea grupos adicionales sin detener la carga. No se requiere pago de inscripción para estos alumnos.</li>
-                        </ol>
-                    </div>
-
-                    @if (session('migracion_resultado'))
-                        @php $resultado = session('migracion_resultado'); @endphp
-                        <div class="rounded-xl border border-green-200 bg-green-50 px-5 py-4 mb-5">
-                            <p class="text-sm font-bold text-green-800 mb-1">
-                                {{ $resultado['creados'] }} alumno(s) importado(s) correctamente.
-                            </p>
-                            @if (!empty($resultado['gruposCreados']))
-                                <p class="text-xs text-green-700">
-                                    Grupos creados automáticamente: {{ implode(', ', $resultado['gruposCreados']) }}.
-                                </p>
-                            @endif
-                            @if (!empty($resultado['errores']))
-                                <div class="mt-2 text-xs text-amber-700">
-                                    <p class="font-semibold mb-1">Filas con errores (no se importaron):</p>
-                                    <ul class="list-disc list-inside space-y-0.5">
-                                        @foreach ($resultado['errores'] as $err)
-                                            <li>{{ $err }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-                        </div>
-                    @endif
-
-                    <form method="POST" action="{{ route('admin.carga-academica.importar-migracion') }}"
-                          enctype="multipart/form-data"
-                          x-data="{
-                              periodo_id: '',
-                              programa_id: '',
-                              grupo_id: '',
-                              grupos: @js($grupos->map(fn($g) => ['id' => $g->id, 'clave' => $g->clave, 'periodo_id' => $g->periodo_id, 'programa_id' => $g->programa_id])),
-                              get gruposFiltrados() {
-                                  return this.grupos.filter(g =>
-                                      (!this.periodo_id  || g.periodo_id  == this.periodo_id) &&
-                                      (!this.programa_id || g.programa_id == this.programa_id)
-                                  );
-                              }
-                          }">
-                        @csrf
-
-                        {{-- Selects de destino --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                    Periodo
-                                </label>
-                                <select x-model="periodo_id"
-                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
-                                    <option value="">Seleccionar…</option>
-                                    @foreach ($periodos as $p)
-                                        <option value="{{ $p->id }}">{{ $p->label }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                    Programa / Carrera
-                                </label>
-                                <select x-model="programa_id"
-                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
-                                    <option value="">Seleccionar…</option>
-                                    @foreach ($programas as $prog)
-                                        <option value="{{ $prog->id }}">{{ $prog->nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
-                                    Grupo destino
-                                </label>
-                                <select name="grupo_id" x-model="grupo_id" required
-                                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
-                                    <option value="">Seleccionar…</option>
-                                    <template x-for="g in gruposFiltrados" :key="g.id">
-                                        <option :value="g.id" x-text="g.clave"></option>
-                                    </template>
-                                </select>
-                            </div>
-                        </div>
-
-                        {{-- Plantilla + carga --}}
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <a href="{{ route('admin.carga-academica.plantilla-migracion') }}"
-                               class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-150 whitespace-nowrap"
-                               style="background-color: #0F4229;"
-                               onmouseover="this.style.backgroundColor='#0a2e1c'"
-                               onmouseout="this.style.backgroundColor='#0F4229'">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-3L12 16.5l4.5-3M12 16.5V3"/>
-                                </svg>
-                                Descargar plantilla CSV
-                            </a>
-
-                            <input type="file" name="csv" accept=".csv,text/csv" required
-                                   class="flex-1 text-sm text-gray-600 border-2 border-dashed border-gray-200 rounded-xl px-4 py-2.5 outline-none file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
-
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-150 whitespace-nowrap"
-                                    style="background-color: #D4AF37;"
-                                    onmouseover="this.style.backgroundColor='#b9952c'"
-                                    onmouseout="this.style.backgroundColor='#D4AF37'">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 7.5L12 3 7.5 7.5M12 3v13.5"/>
-                                </svg>
-                                Subir e importar
-                            </button>
-                        </div>
-                    </form>
-
                 </div>
             </div>
 
@@ -557,11 +372,20 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-3 text-right">
-                                        <button onclick="abrirAsignacion({{ $entrada->id }}, '{{ addslashes($entrada->materia->nombre ?? '') }}', {{ $entrada->profesor_id ?? 'null' }}, '{{ addslashes($entrada->horario ?? '') }}', '{{ addslashes($entrada->aula ?? '') }}', '{{ $entrada->fecha_inicio?->format('Y-m-d') }}', '{{ $entrada->fecha_fin?->format('Y-m-d') }}')"
-                                                class="text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors duration-150"
-                                                style="border-color: #0F4229; color: #0F4229;"
-                                                onmouseover="this.style.backgroundColor='#0F4229'; this.style.color='white'"
-                                                onmouseout="this.style.backgroundColor='transparent'; this.style.color='#0F4229'">
+                                        <button
+                                            @click="abrirAsignacion({
+                                                id: {{ $entrada->id }},
+                                                materiaNombre: @js($entrada->materia->nombre ?? ''),
+                                                profesorId: {{ $entrada->profesor_id ?? 'null' }},
+                                                horario: @js($entrada->horario ?? ''),
+                                                aula: @js($entrada->aula ?? ''),
+                                                fechaInicio: @js($entrada->fecha_inicio?->format('Y-m-d')),
+                                                fechaFin: @js($entrada->fecha_fin?->format('Y-m-d'))
+                                            })"
+                                            class="text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors duration-150"
+                                            style="border-color: #0F4229; color: #0F4229;"
+                                            onmouseover="this.style.backgroundColor='#0F4229'; this.style.color='white'"
+                                            onmouseout="this.style.backgroundColor='transparent'; this.style.color='#0F4229'">
                                             Asignar
                                         </button>
                                     </td>
@@ -638,29 +462,35 @@
     </div>
 </section>
 
-</div>{{-- /x-data --}}
-
 {{-- Modal asignación de profesor/horario/aula --}}
-<div id="modal-asignacion" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+<div x-show="asignacionAbierta"
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+     style="display: none;">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md" @click.outside="asignacionAbierta = false">
         <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
         <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
             <div>
                 <h3 class="font-bold text-gray-800">Asignar profesor y horario</h3>
-                <p id="modal-materia-nombre" class="text-xs text-gray-400 mt-0.5"></p>
+                <p class="text-xs text-gray-400 mt-0.5" x-text="asigMateriaNombre"></p>
             </div>
-            <button onclick="document.getElementById('modal-asignacion').classList.add('hidden')"
+            <button @click="asignacionAbierta = false"
                     class="text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
         </div>
-        <form id="form-asignacion" method="POST" class="px-6 py-5 space-y-4">
+        <form method="POST" class="px-6 py-5 space-y-4" :action="'/admin/carga-academica/' + asigCargaId + '/actualizar'">
             @csrf @method('PATCH')
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Profesor</label>
-                <select id="asig-profesor" name="profesor_id"
+                <select name="profesor_id" x-model="asigProfesorId"
                         class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
                     <option value="">— Sin asignar —</option>
                     @foreach($profesores as $prof)
@@ -671,7 +501,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Horario</label>
-                    <input type="text" id="asig-horario" name="horario"
+                    <input type="text" name="horario" x-model="asigHorario"
                            placeholder="Ej. Sábados - Enero 2026"
                            maxlength="50"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
@@ -679,7 +509,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Aula virtual</label>
-                    <input type="text" id="asig-aula" name="aula"
+                    <input type="text" name="aula" x-model="asigAula"
                            placeholder="Ej. Sala Zoom - Psicología"
                            maxlength="100"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
@@ -689,12 +519,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Inicio de ventana</label>
-                    <input type="date" id="asig-fecha-inicio" name="fecha_inicio"
+                    <input type="date" name="fecha_inicio" x-model="asigFechaInicio"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Fin de ventana</label>
-                    <input type="date" id="asig-fecha-fin" name="fecha_fin"
+                    <input type="date" name="fecha_fin" x-model="asigFechaFin"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
                 </div>
             </div>
@@ -702,7 +532,7 @@
                 Define el mes en que el profesor podrá capturar la calificación de esta materia. Déjalo vacío para no restringir fechas.
             </p>
             <div class="flex justify-end gap-3 pt-2">
-                <button type="button" onclick="document.getElementById('modal-asignacion').classList.add('hidden')"
+                <button type="button" @click="asignacionAbierta = false"
                         class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
                     Cancelar
                 </button>
@@ -718,19 +548,6 @@
     </div>
 </div>
 
-@endsection
+</div>{{-- /x-data --}}
 
-@push('scripts')
-<script>
-function abrirAsignacion(cargaId, materiaNombre, profesorId, horario, aula, fechaInicio, fechaFin) {
-    document.getElementById('form-asignacion').action = '/admin/carga-academica/' + cargaId + '/actualizar';
-    document.getElementById('modal-materia-nombre').textContent = materiaNombre;
-    document.getElementById('asig-profesor').value = profesorId ?? '';
-    document.getElementById('asig-horario').value = horario;
-    document.getElementById('asig-aula').value = aula;
-    document.getElementById('asig-fecha-inicio').value = fechaInicio ?? '';
-    document.getElementById('asig-fecha-fin').value = fechaFin ?? '';
-    document.getElementById('modal-asignacion').classList.remove('hidden');
-}
-</script>
-@endpush
+@endsection

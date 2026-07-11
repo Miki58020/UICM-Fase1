@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ConfiguracionApisController;
 use App\Http\Controllers\Admin\ConfiguracionCorreoController;
 use App\Http\Controllers\Admin\ConfiguracionMercadopagoController;
+use App\Http\Controllers\AltaMasivaAlumnosController;
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AlumnoFinanzasController;
 use App\Http\Controllers\AspiranteController;
@@ -200,8 +201,10 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::get('/admin/carga-academica', [CargaAcademicaController::class, 'index'])->name('admin.carga-academica.index');
     Route::post('/admin/carga-academica/{grupo}/generar', [CargaAcademicaController::class, 'generar'])->name('admin.carga-academica.generar');
     Route::patch('/admin/carga-academica/{carga}/actualizar', [CargaAcademicaController::class, 'actualizar'])->name('admin.carga-academica.actualizar');
-    Route::get('/admin/carga-academica/plantilla-migracion', [CargaAcademicaController::class, 'plantillaMigracion'])->name('admin.carga-academica.plantilla-migracion');
-    Route::post('/admin/carga-academica/migracion', [CargaAcademicaController::class, 'importarMigracion'])->name('admin.carga-academica.importar-migracion');
+
+    Route::get('/admin/alta-masiva-alumnos', [AltaMasivaAlumnosController::class, 'index'])->name('admin.alta-masiva-alumnos.index');
+    Route::get('/admin/alta-masiva-alumnos/plantilla', [AltaMasivaAlumnosController::class, 'plantillaMigracion'])->name('admin.alta-masiva-alumnos.plantilla');
+    Route::post('/admin/alta-masiva-alumnos/importar', [AltaMasivaAlumnosController::class, 'importarMigracion'])->name('admin.alta-masiva-alumnos.importar');
 
     Route::get('/admin/periodos', [PeriodoController::class, 'index'])->name('admin.periodos.index');
     Route::post('/admin/periodos', [PeriodoController::class, 'store'])->name('admin.periodos.store');
