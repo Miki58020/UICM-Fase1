@@ -191,7 +191,10 @@
       "Bash(node \"C:\\\\Users\\\\MIGUEL~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\bundled-skills\\\\2.1.204\\\\8df5b4fa2deba77508ff0167fb26ed64\\\\dataviz\\\\scripts\\\\validate_palette.js\" \"#0F4229,#EFAD5A,#dc2626\" --mode light)",
       "Bash(find app/Models -iname \"*tarifa*\" -o -iname \"*descuento*\" -o -iname \"*programa*\" -o -iname \"*concepto*\")",
       "Bash(find database/migrations -iname \"*tarifa*\" -o -iname \"*descuento*\" -o -iname \"*programa*\" -o -iname \"*concepto*\" -o -iname \"*pago*\")",
-      "Bash(find app/Http/Controllers -iname \"*tarifa*\" -o -iname \"*finanza*\" -o -iname \"*concepto*\" -o -iname \"*programa*\")"
+      "Bash(find app/Http/Controllers -iname \"*tarifa*\" -o -iname \"*finanza*\" -o -iname \"*concepto*\" -o -iname \"*programa*\")",
+      "Bash(awk '/function profesor\\\\\\(/,/^    }/' app/Http/Controllers/AlumnoController.php)",
+      "Bash(awk '/function profesor\\\\\\(/,/^    }/' app/Http/Controllers/GrupoController.php)",
+      "Bash(awk '/function capturar\\\\\\(/,/^    }/' app/Http/Controllers/CalificacionController.php)"
     ]
   }
 }

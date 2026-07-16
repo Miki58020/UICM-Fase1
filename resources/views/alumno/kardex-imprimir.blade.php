@@ -271,7 +271,7 @@
 
         <div class="nota">
             Calificación mínima aprobatoria: <strong>7.0</strong>.
-            Si se presentó extraordinario, este sustituye a la calificación final. Solo se muestran las materias ya aprobadas por control escolar.
+            Si se presentó extraordinario, este sustituye a la calificación final. Solo se muestran las materias ya aprobadas por Coordinación.
         </div>
 
         <div class="actions">

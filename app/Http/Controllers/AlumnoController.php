@@ -9,6 +9,7 @@ use App\Models\Calificacion;
 use App\Models\CargaAcademica;
 use App\Models\DocumentoAlumno;
 use App\Models\Pago;
+use App\Models\Profesor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -48,6 +49,35 @@ class AlumnoController extends Controller
         $grupos    = \App\Models\Grupo::with('programa')->orderBy('clave')->get();
 
         return view('admin.alumnos.index', compact('alumnos', 'programas', 'grupos', 'conteo'));
+    }
+
+    // Vista del profesor: alumnos activos de sus grupos asignados
+    public function profesor()
+    {
+        $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
+
+        $cargas = CargaAcademica::where('profesor_id', $profesor->id)
+            ->with(['materia', 'grupo' => fn ($q) => $q->with(['programa', 'alumnos' => fn ($q2) => $q2->where('estado', 'activo')])])
+            ->get();
+
+        $alumnos = collect();
+        foreach ($cargas as $carga) {
+            foreach ($carga->grupo?->alumnos ?? [] as $alumno) {
+                if (! $alumnos->has($alumno->id)) {
+                    $alumnos->put($alumno->id, (object) [
+                        'alumno'   => $alumno,
+                        'grupo'    => $carga->grupo,
+                        'materias' => collect(),
+                    ]);
+                }
+                $alumnos->get($alumno->id)->materias->push($carga->materia);
+            }
+        }
+
+        $alumnos = $alumnos->values()->sortBy(fn ($a) => $a->alumno->apellido_paterno);
+        $totalGrupos = $cargas->pluck('grupo_id')->unique()->count();
+
+        return view('profesor.alumnos.index', compact('alumnos', 'totalGrupos'));
     }
 
     public function update(Request $request, Alumno $alumno)

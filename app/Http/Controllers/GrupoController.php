@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CargaAcademica;
 use App\Models\Grupo;
 use App\Models\Periodo;
+use App\Models\Profesor;
 use App\Models\Programa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GrupoController extends Controller
 {
@@ -15,6 +18,31 @@ class GrupoController extends Controller
         $periodos = Periodo::orderByDesc('fecha_inicio_registro')->get();
         $programas = Programa::where('activo', true)->orderBy('nombre')->get();
         return view('admin.grupos.index', compact('grupos', 'periodos', 'programas'));
+    }
+
+    // Vista del profesor: grupos donde tiene materias a su cargo
+    public function profesor()
+    {
+        $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
+
+        $cargas = CargaAcademica::where('profesor_id', $profesor->id)
+            ->with(['materia', 'grupo.programa', 'grupo.alumnos', 'periodo'])
+            ->get();
+
+        $grupos = $cargas->groupBy('grupo_id')->map(function ($cargasDelGrupo) {
+            $primera = $cargasDelGrupo->first();
+            return (object) [
+                'grupo'         => $primera->grupo,
+                'periodo'       => $primera->periodo,
+                'materias'      => $cargasDelGrupo->pluck('materia')->filter(),
+                'alumnosActivos' => $primera->grupo?->alumnos->where('estado', 'activo')->count() ?? 0,
+            ];
+        })->sortBy(fn ($g) => $g->grupo?->clave)->values();
+
+        $totalMaterias = $cargas->count();
+        $totalAlumnosActivos = $grupos->sum('alumnosActivos');
+
+        return view('profesor.grupos.index', compact('grupos', 'totalMaterias', 'totalAlumnosActivos'));
     }
 
     public function store(Request $request)

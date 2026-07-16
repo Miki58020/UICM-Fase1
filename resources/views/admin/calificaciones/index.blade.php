@@ -176,7 +176,7 @@
                 $alumnos = $grupo->alumnos;
                 $estadoBadge = match($carga->estado_revision) {
                     'pendiente' => ['#EFAD5A', 'Pendiente de revisión'],
-                    'aprobado'  => ['#0F4229', 'Aprobado por control escolar'],
+                    'aprobado'  => ['#0F4229', 'Aprobado por Coordinación'],
                     'rechazado' => ['#dc2626', 'Rechazado · Esperando reenvío del profesor'],
                     default     => ['#9ca3af', 'Sin enviar — el profesor aún no ha enviado calificaciones'],
                 };

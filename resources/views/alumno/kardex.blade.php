@@ -108,7 +108,7 @@
                 </svg>
                 <span>
                     Calificación mínima aprobatoria: <strong>7.0</strong>.
-                    Solo se muestran materias aprobadas por control escolar.
+                    Solo se muestran materias aprobadas por Coordinación.
                     Para el documento oficial, usa el botón "Generar Kárdex".
                 </span>
             </div>

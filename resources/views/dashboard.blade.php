@@ -545,23 +545,28 @@
         ════════════════════ --}}
         @elseif($rol === 'profesor')
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
             @php
             $pCards = [
                 ['label'=>'Materias', 'value'=>$materiasProfesor, 'color'=>'#0F4229','bg'=>'#f0f9f4','alerta'=>false,'textoOk'=>'Asignadas','textoAl'=>'',
                  'href'=>route('profesor.calificaciones.index'),
                  'icon'=>'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'],
                 ['label'=>'Grupos', 'value'=>$gruposProfesor, 'color'=>'#D4AF37','bg'=>'#fdf8ec','alerta'=>false,'textoOk'=>'A tu cargo','textoAl'=>'',
-                 'href'=>route('profesor.calificaciones.index'),
+                 'href'=>route('profesor.grupos.index'),
                  'icon'=>'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
                 ['label'=>'Alumnos', 'value'=>$alumnosProfesor, 'color'=>'#EFAD5A','bg'=>'#fef4e8','alerta'=>false,'textoOk'=>'Activos','textoAl'=>'',
-                 'href'=>route('profesor.calificaciones.index'),
+                 'href'=>route('profesor.alumnos.index'),
                  'icon'=>'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
                 ['label'=>'Por calificar', 'value'=>$porCalificarProfesor,
                  'color'=>$porCalificarProfesor>0?'#dc2626':'#6B7280','bg'=>$porCalificarProfesor>0?'#fef2f2':'#f3f4f6',
                  'alerta'=>$porCalificarProfesor>0,'textoOk'=>'Al día','textoAl'=>'Requieren atención',
                  'href'=>route('profesor.calificaciones.index'),
                  'icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01'],
+                ['label'=>'Aclaraciones', 'value'=>$aclaracionesPendientes,
+                 'color'=>$aclaracionesPendientes>0?'#dc2626':'#6B7280','bg'=>$aclaracionesPendientes>0?'#fef2f2':'#f3f4f6',
+                 'alerta'=>$aclaracionesPendientes>0,'textoOk'=>'Sin pendientes','textoAl'=>'Pendientes de revisión',
+                 'href'=>route('profesor.aclaraciones.index'),
+                 'icon'=>'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-4 4v-4z'],
             ];
             @endphp
             @foreach($pCards as $card)
@@ -596,85 +601,50 @@
             @endforeach
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-
-            {{-- Grupos por atender --}}
-            <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col h-[350px]">
-                <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#0F4229;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                        </svg>
-                        <h2 class="text-sm font-semibold text-gray-700">Grupos por atender</h2>
-                    </div>
-                    <a href="{{ route('profesor.calificaciones.index') }}" class="text-xs font-semibold hover:underline" style="color:#0F4229;">
-                        Ver todos →
-                    </a>
-                </div>
-                <div class="overflow-auto flex-1">
-                    @if($gruposPorAtender->isEmpty())
-                        <div class="px-6 py-10 text-center text-sm text-gray-400">No tienes grupos pendientes de calificar. ¡Vas al día!</div>
-                    @else
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="px-6 py-3">Materia</th>
-                                <th class="px-6 py-3">Grupo</th>
-                                <th class="px-6 py-3 text-center">Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @foreach($gruposPorAtender as $carga)
-                            @php
-                                $estadoBadge = match($carga->estado_revision) {
-                                    'rechazado' => ['#fee2e2','#dc2626','Rechazado'],
-                                    default     => ['#f3f4f6','#6B7280','Sin enviar'],
-                                };
-                            @endphp
-                            <tr class="hover:bg-gray-50 transition-colors duration-100">
-                                <td class="px-6 py-3.5 font-medium text-gray-800 truncate max-w-[160px]">{{ $carga->materia->nombre ?? '—' }}</td>
-                                <td class="px-6 py-3.5 font-mono text-xs text-gray-500">{{ $carga->grupo->clave ?? '—' }}</td>
-                                <td class="px-6 py-3.5 text-center">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
-                                          style="background-color:{{ $estadoBadge[0] }};color:{{ $estadoBadge[1] }};">
-                                        {{ $estadoBadge[2] }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    @endif
-                </div>
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col h-[350px]">
+            <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2 flex-shrink-0">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#0F4229;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                </svg>
+                <h2 class="text-sm font-semibold text-gray-700">Grupos por atender</h2>
             </div>
-
-            {{-- Aclaraciones --}}
-            <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col h-[350px]">
-                <div class="h-1.5 w-full flex-shrink-0" style="background-color: #D4AF37;"></div>
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2 flex-shrink-0">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#D4AF37;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-4 4v-4z"/>
-                    </svg>
-                    <h2 class="text-sm font-semibold text-gray-700">Aclaraciones</h2>
-                </div>
-                <div class="px-6 py-5 flex flex-col items-center justify-center flex-1">
-                    <p class="text-5xl font-extrabold leading-none" style="color: {{ $aclaracionesPendientes > 0 ? '#EFAD5A' : '#0F4229' }};">
-                        {{ $aclaracionesPendientes }}
-                    </p>
-                    <p class="text-xs text-gray-400 mt-2">
-                        {{ $aclaracionesPendientes === 1 ? 'pendiente de revisión' : 'pendientes de revisión' }}
-                    </p>
-                </div>
-                <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
-                    <a href="{{ route('profesor.aclaraciones.index') }}" class="text-xs font-semibold hover:underline" style="color:#0F4229;">
-                        Ver mis aclaraciones →
-                    </a>
-                </div>
+            <div class="overflow-auto flex-1">
+                @if($gruposPorAtender->isEmpty())
+                    <div class="px-6 py-10 text-center text-sm text-gray-400">No tienes grupos pendientes de calificar. ¡Vas al día!</div>
+                @else
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3">Materia</th>
+                            <th class="px-6 py-3">Grupo</th>
+                            <th class="px-6 py-3 text-center">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @foreach($gruposPorAtender as $carga)
+                        @php
+                            $estadoBadge = match($carga->estado_revision) {
+                                'rechazado' => ['#fee2e2','#dc2626','Rechazado'],
+                                default     => ['#f3f4f6','#6B7280','Sin enviar'],
+                            };
+                        @endphp
+                        <tr class="hover:bg-gray-50 transition-colors duration-100">
+                            <td class="px-6 py-3.5 font-medium text-gray-800 truncate max-w-[160px]">{{ $carga->materia->nombre ?? '—' }}</td>
+                            <td class="px-6 py-3.5 font-mono text-xs text-gray-500">{{ $carga->grupo->clave ?? '—' }}</td>
+                            <td class="px-6 py-3.5 text-center">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                      style="background-color:{{ $estadoBadge[0] }};color:{{ $estadoBadge[1] }};">
+                                    {{ $estadoBadge[2] }}
+                                </span>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @endif
             </div>
-
         </div>
 
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Mis aclaraciones | UICM')
+@section('title', 'Aclaraciones | UICM')
 
 @section('content')
 <section class="bg-uicm-gray min-h-screen py-12 px-4"
@@ -26,7 +26,7 @@
 
         <div class="mb-8">
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">Portal del Profesor</p>
-            <h1 class="text-2xl font-extrabold text-gray-900">Mis aclaraciones</h1>
+            <h1 class="text-2xl font-extrabold text-gray-900">Aclaraciones</h1>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 

@@ -66,11 +66,12 @@ Route::middleware(['auth', 'rol:profesor'])->group(function () {
     Route::get('/profesor/calificaciones', [CalificacionController::class, 'indexProfesor'])->name('profesor.calificaciones.index');
     Route::get('/profesor/calificaciones/{carga}/capturar', [CalificacionController::class, 'capturar'])->name('profesor.calificaciones.capturar');
     Route::post('/profesor/calificaciones/{carga}/guardar', [CalificacionController::class, 'guardar'])->name('profesor.calificaciones.guardar');
-    Route::post('/profesor/calificaciones/{carga}/enviar', [CalificacionController::class, 'enviar'])->name('profesor.calificaciones.enviar');
     Route::post('/profesor/cambiar-password', [CalificacionController::class, 'cambiarPassword'])->name('profesor.cambiar-password');
     Route::get('/profesor/aclaraciones', [AclaracionCalificacionController::class, 'misAclaraciones'])->name('profesor.aclaraciones.index');
     Route::post('/profesor/calificaciones/{carga}/aclaracion/{alumno}', [AclaracionCalificacionController::class, 'solicitar'])->name('profesor.aclaraciones.solicitar');
     Route::get('/profesor/horario', [HorarioController::class, 'profesor'])->name('profesor.horario.index');
+    Route::get('/profesor/grupos', [GrupoController::class, 'profesor'])->name('profesor.grupos.index');
+    Route::get('/profesor/alumnos', [AlumnoController::class, 'profesor'])->name('profesor.alumnos.index');
 });
 
 // Portal del alumno

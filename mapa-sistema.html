@@ -521,13 +521,14 @@
           <li>Elige el programa e indica cuántos grupos crear → el sistema crea los <strong>Grupos</strong> automáticamente con clave estructurada (<code class="bg-gray-100 px-1 rounded">LEI-2026-2-A</code>).</li>
           <li>Hace clic en <strong>"Generar carga"</strong> en <code class="bg-gray-100 px-1 rounded">/admin/carga-academica</code>.</li>
           <li>Sistema busca todas las <strong>Materias activas</strong> del programa con el mismo cuatrimestre del grupo. Crea <code>CargaAcademica</code> por cada materia (<code>firstOrCreate</code>), con <code>estado_revision = null</code> (sin enviar).</li>
-          <li>Coordinación asigna <strong>Profesor, Horario y Aula</strong> a cada carga. El horario es por mes/día (<code class="bg-gray-100 px-1 rounded">Sábados — Enero 2026</code>).</li>
-          <li>Profesor ve sus cargas en <code class="bg-gray-100 px-1 rounded">/profesor/calificaciones</code>, captura <strong>final</strong> y/o <strong>extraordinario</strong> en borrador.</li>
+          <li>Coordinación asigna <strong>Profesor, Horario y Aula</strong> a cada carga, ya sea materia por materia (modal en <code class="bg-gray-100 px-1 rounded">/admin/carga-academica</code>) o de golpe con un <strong>CSV masivo</strong> (columnas <code class="bg-gray-100 px-1 rounded">grupo_clave, materia_clave, profesor_correo, horario, aula, fecha_inicio, fecha_fin</code>, referenciando profesores por correo). El horario cubre <strong>todo el cuatrimestre</strong> (las clases son solo sábados; se descartó la idea de rotar de profesor cada mes por el riesgo de que un profesor pierda acceso a calificaciones que ya capturó).</li>
+          <li>Profesor ve sus cargas en <code class="bg-gray-100 px-1 rounded">/profesor/calificaciones</code>, captura <strong>final</strong> y/o <strong>extraordinario</strong> en borrador. Su horario también se puede consultar aparte, de solo lectura, en <code class="bg-gray-100 px-1 rounded">/profesor/horario</code>.</li>
           <li>Al terminar, presiona <strong>"Enviar a revisión"</strong> → <code>estado_revision = pendiente</code>.</li>
           <li>Coordinación <strong>Aprueba</strong> (calificaciones visibles al alumno en kárdex) o <strong>Rechaza</strong> con motivo → profesor corrige y reenvía.</li>
+          <li>Si una calificación ya <strong>aprobada</strong> resulta incorrecta (periodo ya cerrado), el <strong>profesor</strong> —no el alumno— solicita una <strong>aclaración</strong> proponiendo la calificación correcta; Control Escolar la aprueba o rechaza.</li>
         </ol>
         <div class="mt-3 p-3 bg-blue-50 rounded-xl text-xs text-blue-800">
-          <strong>Migración CSV:</strong> Control Escolar puede importar alumnos masivamente desde un archivo CSV en <code>/admin/alumnos/importar</code>. Los alumnos migrados tienen <code>migrado = true</code> y pueden no tener <code>aspirante_id</code>.
+          <strong>Alta masiva de alumnos migrados:</strong> Control Escolar importa alumnos masivamente desde un archivo CSV en <code>/admin/alta-masiva-alumnos</code> (vista separada de Carga académica). Genera matrícula y grupo automáticamente (crea "grupos hermanos" si el destino se llena). Los alumnos migrados tienen <code>migrado = true</code>, no requieren pago de inscripción y se les empieza a cobrar colegiatura hasta el mes siguiente a la migración (sin pedirles comprobante).
         </div>
       </div>
     </div>
@@ -558,7 +559,13 @@
             </div>
             <div class="rounded-xl p-3 bg-blue-50 border border-blue-200">
               <p class="font-bold text-blue-800">colegiatura</p>
-              <p class="text-gray-600 mt-0.5">Pago mensual recurrente. Ligado a <code>alumno_id</code>. Puede incluir descuentos por pronto pago.</p>
+              <p class="text-gray-600 mt-0.5">Pago mensual, <strong>generado automáticamente</strong> por el comando programado <code>pagos:generar-colegiatura</code> (día 1 de cada mes, idempotente — no duplica si ya existe el cargo del mes). Ligado a <code>alumno_id</code>. Puede incluir descuentos por pronto pago.</p>
+            </div>
+          </div>
+          <div class="px-5 pb-4 -mt-1">
+            <div class="rounded-xl p-3 bg-gray-50 border-l-2 text-xs" style="border-color:#10b981;">
+              <p class="font-bold text-gray-700">Automatización (routes/console.php)</p>
+              <p class="text-gray-500 mt-0.5"><code>pagos:generar-colegiatura</code> mensual + <code>pagos:generar-reinscripcion</code> diario. El alumno ve una tarjeta de "Próximo pago" en su dashboard/finanzas que se resalta si está vencida. No hay bloqueo de acceso por falta de pago (decisión explícita: la pasarela vive dentro del mismo portal, bloquear impediría pagar).</p>
             </div>
           </div>
         </div>
@@ -624,7 +631,8 @@
             <p class="font-extrabold text-sm text-gray-900">Vista finanzas del alumno (/alumno/finanzas)</p>
           </div>
           <div class="px-5 py-4 text-xs text-gray-600 space-y-1.5">
-            <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Historial de todos sus pagos con estado (pendiente / aprobado / rechazado)</span></p>
+            <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Historial de todos sus pagos con estado (pendiente / aprobado / rechazado), incluyendo colegiaturas generadas automáticamente</span></p>
+            <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Tarjeta de "Próximo pago" (también visible en el dashboard) que se resalta si ya venció</span></p>
             <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Botón "Pagar en línea" para pagos pendientes vía MercadoPago</span></p>
             <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Descargar comprobante de pagos aprobados</span></p>
             <p class="flex items-start gap-2"><span class="text-green-600 font-bold">→</span><span>Resumen de estado de cuenta (adeudo / al corriente)</span></p>
@@ -843,9 +851,9 @@
           </div>
           <div x-show="abierto==='materia'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
             <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
-              <div><span class="font-mono bg-gray-200 px-1 rounded">clave</span> único, max 6</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">clave</span> único, max 20</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">nombre</span></div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">creditos</span> 1-20</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">creditos</span> default 6</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">cuatrimestre</span> 1-12</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">programa_id</span> FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">activo</span> bool</div>
@@ -900,9 +908,9 @@
               <div><span class="font-mono bg-gray-200 px-1 rounded">grupo_id</span> FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">materia_id</span> FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">periodo_id</span> FK</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">profesor_id</span> nullable FK</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">horario</span> Sábados — Enero 2026</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">aula</span> A-101</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">profesor_id</span> nullable FK — referenciable por correo en el CSV masivo</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">horario</span> texto libre, max 50 (ej. "Sábados 9-11am")</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">aula</span> texto libre, max 100 (link de Zoom, etc.)</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">estado_revision</span> null|pendiente|aprobado|rechazado</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">motivo_rechazo</span> nullable text</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">revisado_por</span> nullable FK user</div>
@@ -910,8 +918,9 @@
               <div><span class="font-mono bg-gray-200 px-1 rounded">fecha_inicio</span> nullable date</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">fecha_fin</span> nullable date</div>
             </div>
-            <p class="text-xs font-semibold text-sky-700 mt-2 bg-sky-50 rounded px-2 py-1">Unique: (grupo_id, materia_id, periodo_id)</p>
+            <p class="text-xs font-semibold text-sky-700 mt-2 bg-sky-50 rounded px-2 py-1">Unique: (grupo_id, materia_id, periodo_id) — un solo profesor por materia por cuatrimestre, sin rotación mensual (decisión tomada tras evaluar y descartar rotar profesor cada mes, ver nota de "Alta masiva de horarios")</p>
             <p class="text-xs font-semibold text-amber-700 mt-1 bg-amber-50 rounded px-2 py-1"><code>estado_revision = null</code> → borrador · <code>pendiente</code> → en revisión · <code>aprobado</code> → visible al alumno · <code>rechazado</code> → profesor re-edita</p>
+            <p class="text-xs font-semibold text-cyan-700 mt-1 bg-cyan-50 rounded px-2 py-1"><code>fecha_inicio</code>/<code>fecha_fin</code> son la ventana en la que el profesor puede capturar (<code>dentroDeVentana()</code>); si ambas son null, no hay restricción de fecha.</p>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
             <div class="text-xs space-y-0.5 text-gray-600">
               <p>→ belongsTo <strong>Grupo</strong>, <strong>Materia</strong>, <strong>Periodo</strong>, <strong>Profesor</strong></p>
@@ -1009,21 +1018,26 @@
             <span class="text-2xl">💬</span>
             <div>
               <p class="font-extrabold text-gray-900">AclaracionCalificacion</p>
-              <p class="text-xs text-gray-400">aclaraciones · solicitudes de revisión de nota</p>
+              <p class="text-xs text-gray-400">aclaraciones_calificaciones · el PROFESOR pide corregir una nota ya cerrada</p>
             </div>
           </div>
           <div x-show="abierto==='aclaracion'" x-transition class="border-t border-gray-100 px-5 py-4 bg-gray-50">
             <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
               <div><span class="font-mono bg-gray-200 px-1 rounded">alumno_id</span> FK</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">carga_academica_id</span> FK</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">profesor_id</span> FK — quien solicita</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">tipo</span> final|extraordinario</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">calificacion_propuesta</span> decimal 4,1</div>
               <div><span class="font-mono bg-gray-200 px-1 rounded">motivo</span> text</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> pendiente|resuelto</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">respuesta</span> nullable text</div>
-              <div><span class="font-mono bg-gray-200 px-1 rounded">respondido_at</span> nullable timestamp</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">estado</span> pendiente|aprobada|rechazada</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">revisado_por</span> nullable FK user</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">revisado_at</span> nullable timestamp</div>
+              <div><span class="font-mono bg-gray-200 px-1 rounded">motivo_rechazo</span> nullable text</div>
             </div>
+            <p class="text-xs font-semibold text-pink-700 mt-2 bg-pink-50 rounded px-2 py-1">Importante: la inicia el <strong>profesor</strong> (no el alumno), típicamente cuando ya se cerró el periodo y detecta un error en una calificación que él mismo capturó. Control Escolar aprueba (aplica <code>calificacion_propuesta</code>) o rechaza con motivo.</p>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
             <div class="text-xs space-y-0.5 text-gray-600">
-              <p>→ belongsTo <strong>Alumno</strong>, <strong>CargaAcademica</strong></p>
+              <p>→ belongsTo <strong>Alumno</strong>, <strong>CargaAcademica</strong>, <strong>Profesor</strong></p>
             </div>
           </div>
         </div>
@@ -1091,7 +1105,7 @@
             <p class="text-xs text-gray-400">Validación de pagos</p>
           </div>
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Listado de pagos (inscripción, reinscripción, colegiatura) con filtros</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Listado de pagos (inscripción, reinscripción, colegiatura — colegiatura y reinscripción se generan solas por comando programado) con filtros</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Aprobar o rechazar pagos con observaciones y comprobante</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Exportar pagos a CSV (/finanzas/pagos/exportar)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Dashboard estadísticas: ingresos por mes, concepto, estado (/finanzas/estadisticas)</span></li>
@@ -1118,10 +1132,11 @@
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Grupos (se crean automáticamente al agregar carrera al cuatrimestre)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Materias (crear/editar/activar)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Profesores (crear, generar acceso)</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Carga académica (generar + asignar prof/horario por mes/aula)</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Calificaciones: ver calificaciones enviadas por profesores (badges: sin enviar / en revisión / aprobado / rechazado)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Carga académica: generar + asignar profesor/horario/aula por materia (modal uno por uno o CSV masivo)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Alta masiva de alumnos migrados por CSV (vista separada de Carga académica)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Calificaciones: ver calificaciones enviadas por profesores (badges: sin enviar / en revisión / aprobado / rechazado), detección automática de calificaciones sospechosas (3+ alumnos con la misma nota)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Aprobar o rechazar calificaciones con motivo de rechazo</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Aclaraciones de calificación enviadas por alumnos</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Aclaraciones de calificación enviadas por <strong>profesores</strong> (no por alumnos) sobre notas ya cerradas</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Contraseñas de profesores</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: admin.materias.index</span></li>
           </ul>
@@ -1138,13 +1153,16 @@
             <p class="text-xs text-gray-400">Captura de calificaciones</p>
           </div>
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Entra al <strong>dashboard compartido</strong> con el resto de roles (banner, KPIs, widget "Grupos por atender")</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver sus cargas académicas asignadas con badge de estado (sin enviar / en revisión / aprobado / rechazado)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Capturar calificaciones <strong>final</strong> y <strong>extraordinario</strong> en modo borrador</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Enviar a revisión explícitamente (botón "Enviar a revisión", requiere al menos 1 calificación guardada)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Si coordinación rechaza → puede ver el motivo y volver a editar</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span><strong>Solicitar aclaración</strong> sobre una calificación ya cerrada/aprobada que él mismo capturó</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Ver su <strong>horario</strong> en una vista dedicada de solo lectura (/profesor/horario)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Solo ve las cargas donde está asignado</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cambiar su contraseña de portal</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: profesor.calificaciones.index</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: dashboard (compartido)</span></li>
           </ul>
         </div>
 
@@ -1159,10 +1177,12 @@
             <p class="text-xs text-gray-400">Portal estudiantil</p>
           </div>
           <ul class="px-5 py-4 space-y-1.5 text-xs text-gray-600">
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Dashboard personal (/alumno): grupo, materias, próximos pagos</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Dashboard personal (/alumno): 4 KPI cards, próximo pago, materias</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Materias (/alumno/materias): estado académico por materia (créditos, calificada/en revisión/en curso)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Horario (/alumno/horario): vista de solo lectura de profesor/horario/aula por materia, separada de Materias</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Kárdex académico (/alumno/kardex): calificaciones aprobadas, créditos acumulados vs plan, promedio, imprimible</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Finanzas (/alumno/finanzas): historial de pagos, estado de cuenta, pagar reinscripción en línea vía MercadoPago</span></li>
-            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Documentos (/alumno/documentos): subir y consultar documentos personales con vigencia</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Finanzas (/alumno/finanzas): historial de pagos, estado de cuenta, tarjeta de próximo pago, pagar en línea vía MercadoPago (colegiatura/reinscripción)</span></li>
+            <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Documentos (/alumno/documentos): subir y consultar documentos personales con vigencia (plazo especial si el alumno es migrado)</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Cambiar contraseña y foto de perfil</span></li>
             <li class="flex items-start gap-2"><span class="text-green-600 font-bold mt-0.5">→</span><span>Redirect a: alumno.dashboard</span></li>
           </ul>
@@ -1392,7 +1412,7 @@
   </main>
 
   <footer class="text-center py-6 text-xs text-gray-400 mt-4">
-    UICM — Mapa del Sistema · Actualizado el 25 Jun 2026 · Solo para referencia interna
+    UICM — Mapa del Sistema · Actualizado el 11 Jul 2026 · Solo para referencia interna
   </footer>
 
 </body>

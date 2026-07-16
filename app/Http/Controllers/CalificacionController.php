@@ -54,7 +54,7 @@ class CalificacionController extends Controller
 
         $carga->load(['materia', 'grupo.programa', 'periodo']);
 
-        $puedeCapturar = $carga->dentroDeVentana() || $carga->estado_revision === 'rechazado';
+        $puedeCapturar = $carga->puedeCapturar();
 
         return view('profesor.calificaciones.capturar', compact('carga', 'alumnos', 'calificaciones', 'puedeCapturar'));
     }
@@ -65,8 +65,13 @@ class CalificacionController extends Controller
         $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
         abort_if($carga->profesor_id !== $profesor->id, 403);
 
-        if (!$carga->dentroDeVentana() && $carga->estado_revision !== 'rechazado') {
-            return back()->withErrors(['La ventana de captura para esta materia ya cerró.']);
+        if (!$carga->puedeCapturar()) {
+            $motivo = match ($carga->estado_revision) {
+                'pendiente' => 'Estas calificaciones ya están en revisión por Coordinación; no puedes modificarlas hasta que se resuelvan.',
+                'aprobado'  => 'Estas calificaciones ya fueron aprobadas por Coordinación; usa "Solicitar aclaración" para corregirlas.',
+                default     => 'La ventana de captura para esta materia ya cerró.',
+            };
+            return back()->withErrors([$motivo]);
         }
 
         $alumnosDelGrupo = Alumno::where('grupo_id', $carga->grupo_id)
@@ -88,8 +93,13 @@ class CalificacionController extends Controller
                     continue;
                 }
 
-                // Ignorar celdas vacías
+                // Celda vacía: si ya existía una calificación guardada, se borra —el profesor
+                // la está limpiando a propósito— para no dejar un valor viejo "fantasma".
                 if ($valor === null || $valor === '') {
+                    Calificacion::where('carga_academica_id', $carga->id)
+                        ->where('alumno_id', (int) $alumnoId)
+                        ->where('tipo', $tipo)
+                        ->delete();
                     continue;
                 }
 
@@ -145,8 +155,34 @@ class CalificacionController extends Controller
             $this->recalcularCreditos($alumnosDelGrupo);
         }
 
+        // El botón "Enviar a revisión" envía el formulario completo (con las calificaciones
+        // recién tecleadas) marcando esta bandera, para que nunca se pueda mandar a revisión
+        // un valor viejo que no se había guardado todavía.
+        if ($request->boolean('enviar_a_revision')) {
+            $alumnosSinFinal = Alumno::whereIn('id', $alumnosDelGrupo)
+                ->whereDoesntHave('calificaciones', fn($q) => $q->where('carga_academica_id', $carga->id)->where('tipo', 'final'))
+                ->get()
+                ->map(fn($a) => $a->nombre_completo);
+
+            if ($alumnosSinFinal->isNotEmpty()) {
+                return back()->withErrors([
+                    'Falta la calificación final de: ' . $alumnosSinFinal->implode(', ') . '. Debes capturarla para todos los alumnos antes de enviar a revisión.'
+                ]);
+            }
+
+            $carga->update([
+                'estado_revision' => 'pendiente',
+                'motivo_rechazo'  => null,
+                'revisado_por'    => null,
+                'revisado_at'     => null,
+            ]);
+
+            return redirect()->route('profesor.calificaciones.index')
+                ->with('success', 'Calificaciones guardadas y enviadas a Coordinación para revisión.');
+        }
+
         return back()->with('success', $guardadas > 0
-            ? 'Borrador guardado. Cuando termines, usa "Enviar a revisión" para mandarlo a control escolar.'
+            ? 'Borrador guardado. Cuando termines, usa "Enviar a revisión" para mandarlo a Coordinación.'
             : 'No se realizaron cambios.');
     }
 
@@ -155,28 +191,6 @@ class CalificacionController extends Controller
     {
         Alumno::whereIn('id', $alumnoIds)->get()
             ->each(fn (Alumno $alumno) => $alumno->recalcularCreditosAcumulados());
-    }
-
-    // El profesor confirma el envío a control escolar para revisión
-    public function enviar(CargaAcademica $carga)
-    {
-        $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
-        abort_if($carga->profesor_id !== $profesor->id, 403);
-        abort_if($carga->estado_revision === 'aprobado', 403);
-
-        if (!Calificacion::where('carga_academica_id', $carga->id)->exists()) {
-            return back()->withErrors(['Debes guardar al menos una calificación antes de enviar a revisión.']);
-        }
-
-        $carga->update([
-            'estado_revision' => 'pendiente',
-            'motivo_rechazo'  => null,
-            'revisado_por'    => null,
-            'revisado_at'     => null,
-        ]);
-
-        return redirect()->route('profesor.calificaciones.index')
-            ->with('success', 'Calificaciones enviadas a control escolar para revisión.');
     }
 
     // Cambio de contraseña del profesor desde su portal

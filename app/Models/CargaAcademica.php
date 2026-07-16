@@ -64,4 +64,16 @@ class CargaAcademica extends Model
 
         return $hoy->gte($this->fecha_inicio) && $hoy->lte($this->fecha_fin);
     }
+
+    // Una vez enviadas a revisión (pendiente) o aprobadas, el profesor ya no puede
+    // seguir editando: pendiente espera el fallo de Coordinación, y aprobado solo
+    // se corrige a través de una aclaración formal.
+    public function puedeCapturar(): bool
+    {
+        return match ($this->estado_revision) {
+            'aprobado', 'pendiente' => false,
+            'rechazado' => true,
+            default => $this->dentroDeVentana(),
+        };
+    }
 }
