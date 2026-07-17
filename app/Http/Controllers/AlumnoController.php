@@ -84,7 +84,7 @@ class AlumnoController extends Controller
     {
         $request->validate([
             'estado'             => 'required|in:activo,inactivo,baja',
-            'cuatrimestre_actual'=> 'required|integer|min:1|max:12',
+            'cuatrimestre_actual'=> ['required', 'integer', 'min:1', $this->reglaCuatrimestreValido($request, $alumno)],
             'grupo_id'           => 'nullable|exists:grupos,id',
             'password'           => 'nullable|string|min:6',
         ], [
@@ -95,9 +95,13 @@ class AlumnoController extends Controller
             'password.min'                 => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
+        // El grupo manda: si hay uno asignado, el cuatrimestre del alumno siempre
+        // coincide con el del grupo (evita que queden desincronizados).
+        $grupo = $request->filled('grupo_id') ? \App\Models\Grupo::find($request->grupo_id) : null;
+
         $alumno->update([
             'estado'              => $request->estado,
-            'cuatrimestre_actual' => $request->cuatrimestre_actual,
+            'cuatrimestre_actual' => $grupo?->cuatrimestre ?? $request->cuatrimestre_actual,
             'grupo_id'            => $request->grupo_id ?: null,
         ]);
 
@@ -108,6 +112,21 @@ class AlumnoController extends Controller
 
         return redirect()->route('admin.alumnos.index')
             ->with('success', "Alumno {$alumno->nombre_completo} actualizado correctamente.");
+    }
+
+    private function reglaCuatrimestreValido(Request $request, Alumno $alumno)
+    {
+        return function (string $attribute, $value, \Closure $fail) use ($request, $alumno) {
+            // Si hay grupo, el valor enviado se ignora y se toma del grupo (ver update()).
+            if ($request->filled('grupo_id')) {
+                return;
+            }
+
+            $programa = $alumno->programa;
+            if ($programa && (int) $value > $programa->duracion_cuatrimestres) {
+                $fail("El programa del alumno dura {$programa->duracion_cuatrimestres} cuatrimestres.");
+            }
+        };
     }
 
     public function dashboard()

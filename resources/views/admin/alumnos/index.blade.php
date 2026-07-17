@@ -22,9 +22,18 @@ $gruposJson = $grupos->map(fn($g) => [
         editando: null,
         form: { estado: '', cuatrimestre_actual: '', password: '' },
         grupos: window.__gruposAlumnos || [],
+        programasDuracion: @js($programas->pluck('duracion_cuatrimestres', 'id')),
         gruposFiltrados() {
             if (!this.editando) return [];
             return this.grupos.filter(g => g.programa_id == this.editando.programa_id);
+        },
+        maxCuatrimestre() {
+            if (!this.editando) return 12;
+            return this.programasDuracion[this.editando.programa_id] || 12;
+        },
+        onGrupoChange() {
+            const grupo = this.grupos.find(g => g.id == this.form.grupo_id);
+            if (grupo) this.form.cuatrimestre_actual = grupo.cuatrimestre;
         },
         abrirEditar(a) {
             this.editando = a;
@@ -293,26 +302,13 @@ $gruposJson = $grupos->map(fn($g) => [
                     </select>
                 </div>
 
-                {{-- Cuatrimestre --}}
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
-                        Cuatrimestre actual <span class="text-red-400">*</span>
-                    </label>
-                    <input type="number" name="cuatrimestre_actual" x-model="form.cuatrimestre_actual"
-                           min="1" max="12" placeholder="1"
-                           class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
-                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                    <p class="mt-1 text-xs text-gray-400">Del 1 al 12.</p>
-                </div>
-
                 {{-- Grupo --}}
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
                         Grupo
                         <span class="text-gray-400 font-normal normal-case">(del programa del alumno)</span>
                     </label>
-                    <select name="grupo_id" x-model="form.grupo_id"
+                    <select name="grupo_id" x-model="form.grupo_id" @change="onGrupoChange()"
                             class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none"
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -324,6 +320,24 @@ $gruposJson = $grupos->map(fn($g) => [
                     <p x-show="gruposFiltrados().length === 0"
                        class="mt-1 text-xs text-gray-400 italic">
                         No hay grupos registrados para el programa de este alumno.
+                    </p>
+                </div>
+
+                {{-- Cuatrimestre --}}
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+                        Cuatrimestre actual <span class="text-red-400">*</span>
+                    </label>
+                    <input type="number" name="cuatrimestre_actual" x-model="form.cuatrimestre_actual"
+                           :max="maxCuatrimestre()" :readonly="!!form.grupo_id" min="1" placeholder="1"
+                           :class="form.grupo_id ? 'bg-gray-100 text-gray-500' : 'bg-white'"
+                           oninput="if (this.value !== '' && Number(this.value) > Number(this.max)) this.value = this.max; if (this.value !== '' && Number(this.value) < 1) this.value = 1;"
+                           class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
+                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <p class="mt-1 text-xs text-gray-400">
+                        <span x-show="!!form.grupo_id">Definido por el grupo seleccionado.</span>
+                        <span x-show="!form.grupo_id" x-text="'Del 1 al ' + maxCuatrimestre() + '.'"></span>
                     </p>
                 </div>
 
