@@ -18,7 +18,7 @@
         busqueda: '',
         filtroPrograma: '',
         filtroActivo: '',
-        programasDuracion: @json($programas->pluck('duracion_cuatrimestres', 'id')),
+        programasDuracion: @js($programas->pluck('duracion_cuatrimestres', 'id')),
         cuatrimestresDisponibles() {
             const max = this.programasDuracion[this.form.programa_id] || 12;
             return Array.from({ length: max }, (_, i) => i + 1);

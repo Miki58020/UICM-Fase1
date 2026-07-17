@@ -51,7 +51,7 @@ class GrupoController extends Controller
             'clave'        => 'required|string|max:20|unique:grupos,clave',
             'programa_id'  => 'required|exists:programas,id',
             'periodo_id'   => 'required|exists:periodos,id',
-            'cuatrimestre' => 'required|integer|min:1|max:12',
+            'cuatrimestre' => ['required', 'integer', 'min:1', $this->reglaCuatrimestreValido($request)],
             'capacidad'    => 'required|integer|min:1|max:500',
         ]);
 
@@ -67,7 +67,7 @@ class GrupoController extends Controller
             'clave'        => 'required|string|max:20|unique:grupos,clave,' . $grupo->id,
             'programa_id'  => 'required|exists:programas,id',
             'periodo_id'   => 'required|exists:periodos,id',
-            'cuatrimestre' => 'required|integer|min:1|max:12',
+            'cuatrimestre' => ['required', 'integer', 'min:1', $this->reglaCuatrimestreValido($request)],
             'capacidad'    => 'required|integer|min:1|max:500',
         ]);
 
@@ -88,5 +88,15 @@ class GrupoController extends Controller
 
         return redirect()->route('admin.grupos.index')
             ->with('success', 'Grupo eliminado correctamente.');
+    }
+
+    private function reglaCuatrimestreValido(Request $request)
+    {
+        return function (string $attribute, $value, \Closure $fail) use ($request) {
+            $programa = Programa::find($request->programa_id);
+            if ($programa && (int) $value > $programa->duracion_cuatrimestres) {
+                $fail("El programa seleccionado dura {$programa->duracion_cuatrimestres} cuatrimestres.");
+            }
+        };
     }
 }

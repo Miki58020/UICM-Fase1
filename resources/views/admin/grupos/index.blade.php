@@ -278,14 +278,22 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Programa <span class="text-red-500">*</span></label>
-                    <select name="programa_id"
+                    @php $nivelesLabel = ['licenciatura' => 'Licenciaturas', 'maestria' => 'Maestrías', 'doctorado' => 'Doctorado']; @endphp
+                    <select name="programa_id" id="crear-programa"
+                            onchange="actualizarCuatrimestres('crear-programa','crear-cuatrimestre')"
                             class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                             required>
                         <option value="">Seleccionar</option>
-                        @foreach($programas as $p)
-                            <option value="{{ $p->id }}">{{ $p->nombre }}</option>
+                        @foreach($nivelesLabel as $nivel => $label)
+                            @if($programas->where('nivel', $nivel)->isNotEmpty())
+                            <optgroup label="{{ $label }}">
+                                @foreach($programas->where('nivel', $nivel) as $p)
+                                    <option value="{{ $p->id }}">{{ $p->nombre }}</option>
+                                @endforeach
+                            </optgroup>
+                            @endif
                         @endforeach
                     </select>
                 </div>
@@ -308,15 +316,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Cuatrimestre <span class="text-red-500">*</span></label>
-                    <select name="cuatrimestre"
+                    <select name="cuatrimestre" id="crear-cuatrimestre"
                             class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                             required>
-                        <option value="">Seleccionar</option>
-                        @foreach(range(1,12) as $n)
-                            <option value="{{ $n }}">{{ $n }}°</option>
-                        @endforeach
+                        <option value="">Selecciona primero un programa</option>
                     </select>
                 </div>
                 <div>
@@ -377,12 +382,19 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Programa <span class="text-red-500">*</span></label>
                     <select id="edit-programa" name="programa_id"
+                            onchange="actualizarCuatrimestres('edit-programa','edit-cuatrimestre')"
                             class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none"
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                             required>
-                        @foreach($programas as $p)
-                            <option value="{{ $p->id }}">{{ $p->nombre }}</option>
+                        @foreach($nivelesLabel as $nivel => $label)
+                            @if($programas->where('nivel', $nivel)->isNotEmpty())
+                            <optgroup label="{{ $label }}">
+                                @foreach($programas->where('nivel', $nivel) as $p)
+                                    <option value="{{ $p->id }}">{{ $p->nombre }}</option>
+                                @endforeach
+                            </optgroup>
+                            @endif
                         @endforeach
                     </select>
                 </div>
@@ -407,9 +419,6 @@
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"
                             required>
-                        @foreach(range(1,12) as $n)
-                            <option value="{{ $n }}">{{ $n }}°</option>
-                        @endforeach
                     </select>
                 </div>
                 <div>
@@ -468,18 +477,43 @@ function formatClave(el) {
     el.value = result;
 }
 
+const programasDuracion = @js($programas->pluck('duracion_cuatrimestres', 'id'));
+
+function actualizarCuatrimestres(selectProgramaId, selectCuatrimestreId, valorSeleccionado) {
+    const selectPrograma = document.getElementById(selectProgramaId);
+    const selectCuatri   = document.getElementById(selectCuatrimestreId);
+    const max = programasDuracion[selectPrograma.value] || 0;
+    const valorPrevio = valorSeleccionado !== undefined ? String(valorSeleccionado) : selectCuatri.value;
+
+    selectCuatri.innerHTML = '';
+    if (!max) {
+        selectCuatri.innerHTML = '<option value="">Selecciona primero un programa</option>';
+        return;
+    }
+    selectCuatri.innerHTML = '<option value="">Seleccionar</option>';
+    for (let n = 1; n <= max; n++) {
+        const opt = document.createElement('option');
+        opt.value = n;
+        opt.textContent = n + '°';
+        selectCuatri.appendChild(opt);
+    }
+    if (valorPrevio && Number(valorPrevio) <= max) selectCuatri.value = valorPrevio;
+}
+
 function abrirEditar(id, clave, programaId, periodoId, cuatrimestre, capacidad) {
     document.getElementById('form-editar').action = '/admin/grupos/' + id;
     document.getElementById('edit-clave').value = clave;
     document.getElementById('edit-programa').value = programaId;
     document.getElementById('edit-periodo').value = periodoId;
-    document.getElementById('edit-cuatrimestre').value = cuatrimestre;
+    actualizarCuatrimestres('edit-programa', 'edit-cuatrimestre', cuatrimestre);
     document.getElementById('edit-capacidad').value = capacidad;
     document.getElementById('modal-editar').classList.remove('hidden');
 }
 
 @if ($errors->any() && !old('_method'))
 document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('crear-programa').value = '{{ old('programa_id') }}';
+    actualizarCuatrimestres('crear-programa', 'crear-cuatrimestre', '{{ old('cuatrimestre') }}');
     document.getElementById('modal-crear').classList.remove('hidden');
 });
 @elseif ($errors->any() && old('_method') === 'PATCH')
