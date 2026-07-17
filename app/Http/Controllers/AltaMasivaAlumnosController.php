@@ -45,7 +45,7 @@ class AltaMasivaAlumnosController extends Controller
             $handle = fopen('php://output', 'w');
             fwrite($handle, "\xEF\xBB\xBF"); // BOM para acentos en Excel
             foreach ($filas as $fila) {
-                fputcsv($handle, $fila);
+                fputcsv($handle, $fila, escape: '');
             }
             fclose($handle);
         };
@@ -230,7 +230,7 @@ class AltaMasivaAlumnosController extends Controller
         foreach ($materias as $materia) {
             CargaAcademica::firstOrCreate(
                 ['grupo_id' => $grupo->id, 'materia_id' => $materia->id, 'periodo_id' => $grupo->periodo_id],
-                ['profesor_id' => null, 'horario' => null, 'aula' => null, 'estado_revision' => null]
+                ['profesor_id' => null, 'dia_semana' => null, 'hora_inicio' => null, 'hora_fin' => null, 'aula' => null, 'estado_revision' => null]
             );
         }
     }

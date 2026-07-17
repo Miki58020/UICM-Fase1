@@ -38,7 +38,7 @@
                                 <th class="px-6 py-3">Materia</th>
                                 <th class="px-6 py-3">Horario</th>
                                 <th class="px-6 py-3">Aula virtual</th>
-                                <th class="px-6 py-3">Ventana</th>
+                                <th class="px-6 py-3">Fechas de captura</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -55,7 +55,7 @@
                                     <span class="block text-xs text-gray-400">{{ $carga->materia->clave ?? '' }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-gray-600 text-xs">
-                                    {{ $carga->horario ?? '—' }}
+                                    {{ $carga->horario_formateado ?? '—' }}
                                 </td>
                                 <td class="px-6 py-4 text-gray-600 text-xs">
                                     {{ $carga->aula ?? '—' }}

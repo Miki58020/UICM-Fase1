@@ -9,8 +9,18 @@ class CargaAcademica extends Model
     protected $table = 'carga_academica';
 
     protected $fillable = [
-        'grupo_id', 'materia_id', 'profesor_id', 'horario', 'aula', 'periodo_id',
+        'grupo_id', 'materia_id', 'profesor_id', 'dia_semana', 'hora_inicio', 'hora_fin', 'aula', 'periodo_id',
         'fecha_inicio', 'fecha_fin', 'estado_revision', 'motivo_rechazo', 'revisado_por', 'revisado_at',
+    ];
+
+    public const DIAS_SEMANA = [
+        'lunes'      => 'Lunes',
+        'martes'     => 'Martes',
+        'miercoles'  => 'Miércoles',
+        'jueves'     => 'Jueves',
+        'viernes'    => 'Viernes',
+        'sabado'     => 'Sábados',
+        'domingo'    => 'Domingos',
     ];
 
     protected $casts = [
@@ -52,6 +62,21 @@ class CargaAcademica extends Model
     public function revisadoPor()
     {
         return $this->belongsTo(User::class, 'revisado_por');
+    }
+
+    public function getHorarioFormateadoAttribute(): ?string
+    {
+        if (! $this->dia_semana) {
+            return null;
+        }
+
+        $dia = self::DIAS_SEMANA[$this->dia_semana] ?? ucfirst($this->dia_semana);
+
+        if ($this->hora_inicio && $this->hora_fin) {
+            return "{$dia} {$this->hora_inicio} - {$this->hora_fin}";
+        }
+
+        return $dia;
     }
 
     public function dentroDeVentana(): bool

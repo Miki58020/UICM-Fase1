@@ -199,7 +199,7 @@
                             <h3 class="font-semibold text-gray-800 text-sm">{{ $carga->materia->nombre ?? '—' }}</h3>
                             <p class="text-xs text-gray-400 mt-0.5">
                                 Profesor: {{ $carga->profesor->nombre ?? 'Sin asignar' }}
-                                @if ($carga->horario) &nbsp;·&nbsp; {{ $carga->horario }} @endif
+                                @if ($carga->horario_formateado) &nbsp;·&nbsp; {{ $carga->horario_formateado }} @endif
                                 @if ($carga->aula) &nbsp;·&nbsp; Aula {{ $carga->aula }} @endif
                             </p>
                         </div>

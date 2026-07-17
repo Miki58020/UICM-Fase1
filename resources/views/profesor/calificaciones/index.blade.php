@@ -170,7 +170,7 @@
                                         {{ $carga->periodo->nombre ?? '—' }}
                                     </td>
                                     <td class="px-6 py-4 text-gray-600 text-xs">
-                                        {{ $carga->horario ?? '—' }}
+                                        {{ $carga->horario_formateado ?? '—' }}
                                     </td>
                                     <td class="px-6 py-4 text-gray-600 text-xs">
                                         {{ $carga->aula ?? '—' }}

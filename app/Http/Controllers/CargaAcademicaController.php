@@ -57,7 +57,7 @@ class CargaAcademicaController extends Controller
         foreach ($materias as $materia) {
             CargaAcademica::firstOrCreate(
                 ['grupo_id' => $grupo->id, 'materia_id' => $materia->id, 'periodo_id' => $grupo->periodo_id],
-                ['profesor_id' => null, 'horario' => null, 'aula' => null, 'estado_revision' => null]
+                ['profesor_id' => null, 'dia_semana' => null, 'hora_inicio' => null, 'hora_fin' => null, 'aula' => null, 'estado_revision' => null]
             );
         }
     }
@@ -66,7 +66,9 @@ class CargaAcademicaController extends Controller
     {
         $request->validate([
             'profesor_id'  => 'nullable|exists:profesores,id',
-            'horario'      => 'nullable|string|max:50',
+            'dia_semana'   => 'nullable|in:' . implode(',', array_keys(CargaAcademica::DIAS_SEMANA)),
+            'hora_inicio'  => 'nullable|date_format:H:i',
+            'hora_fin'     => 'nullable|date_format:H:i|after:hora_inicio',
             'aula'         => 'nullable|string|max:100',
             'fecha_inicio' => 'nullable|date',
             'fecha_fin'    => 'nullable|date|after_or_equal:fecha_inicio',
@@ -91,7 +93,9 @@ class CargaAcademicaController extends Controller
 
         $carga->update([
             'profesor_id'  => $request->profesor_id ?: null,
-            'horario'      => $request->horario,
+            'dia_semana'   => $request->dia_semana ?: null,
+            'hora_inicio'  => $request->hora_inicio ?: null,
+            'hora_fin'     => $request->hora_fin ?: null,
             'aula'         => $request->aula,
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_fin'    => $request->fecha_fin,
@@ -105,11 +109,11 @@ class CargaAcademicaController extends Controller
     public function plantillaHorarios()
     {
         $columnas = [
-            'grupo_clave', 'materia_clave', 'profesor_correo', 'horario', 'aula', 'fecha_inicio', 'fecha_fin',
+            'grupo_clave', 'materia_clave', 'profesor_correo', 'dia_semana', 'hora_inicio', 'hora_fin', 'aula', 'fecha_inicio', 'fecha_fin',
         ];
 
         $ejemplo = [
-            'LEI-2026-2-A', 'ING-101', 'profesor@uicm.edu.mx', 'Sábados - Enero 2026', 'Sala Zoom 1', '2026-01-10', '2026-02-01',
+            'LEI-2026-2-A', 'ING-101', 'profesor@uicm.edu.mx', 'sabado', '09:00', '11:00', 'Sala Zoom 1', '2026-01-10', '2026-02-01',
         ];
 
         $filas = [$columnas, $ejemplo];
@@ -118,7 +122,7 @@ class CargaAcademicaController extends Controller
             $handle = fopen('php://output', 'w');
             fwrite($handle, "\xEF\xBB\xBF"); // BOM para acentos en Excel
             foreach ($filas as $fila) {
-                fputcsv($handle, $fila);
+                fputcsv($handle, $fila, escape: '');
             }
             fclose($handle);
         };
@@ -199,8 +203,22 @@ class CargaAcademicaController extends Controller
                 $profesorId = $profesor->id;
             }
 
-            if (!empty($d['horario']) && strlen($d['horario']) > 50) {
-                $errores[] = "Línea {$linea}: el horario no puede tener más de 50 caracteres.";
+            $diaSemana = !empty($d['dia_semana']) ? strtolower($d['dia_semana']) : null;
+            if ($diaSemana && !array_key_exists($diaSemana, CargaAcademica::DIAS_SEMANA)) {
+                $errores[] = "Línea {$linea}: \"{$d['dia_semana']}\" no es un día válido (lunes, martes, miercoles, jueves, viernes, sabado, domingo).";
+                continue;
+            }
+
+            $horaInicio = $d['hora_inicio'] ?: null;
+            $horaFin    = $d['hora_fin'] ?: null;
+            if (($horaInicio && !preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $horaInicio))
+                || ($horaFin && !preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $horaFin))) {
+                $errores[] = "Línea {$linea}: hora_inicio o hora_fin no tiene formato HH:MM válido.";
+                continue;
+            }
+
+            if ($horaInicio && $horaFin && $horaFin <= $horaInicio) {
+                $errores[] = "Línea {$linea}: hora_fin debe ser posterior a hora_inicio.";
                 continue;
             }
 
@@ -257,7 +275,9 @@ class CargaAcademicaController extends Controller
             $validas[] = [
                 'carga'        => $carga,
                 'profesor_id'  => $profesorId,
-                'horario'      => $d['horario'] ?: null,
+                'dia_semana'   => $diaSemana,
+                'hora_inicio'  => $horaInicio,
+                'hora_fin'     => $horaFin,
                 'aula'         => $d['aula'] ?: null,
                 'fecha_inicio' => $fechaInicio,
                 'fecha_fin'    => $fechaFin,
@@ -271,7 +291,9 @@ class CargaAcademicaController extends Controller
         foreach ($validas as $v) {
             $v['carga']->update([
                 'profesor_id'  => $v['profesor_id'],
-                'horario'      => $v['horario'],
+                'dia_semana'   => $v['dia_semana'],
+                'hora_inicio'  => $v['hora_inicio'],
+                'hora_fin'     => $v['hora_fin'],
                 'aula'         => $v['aula'],
                 'fecha_inicio' => $v['fecha_inicio'],
                 'fecha_fin'    => $v['fecha_fin'],

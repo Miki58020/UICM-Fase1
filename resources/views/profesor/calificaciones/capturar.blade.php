@@ -26,7 +26,7 @@
                 </span>
                 @if ($carga->fecha_inicio && $carga->fecha_fin)
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" style="background-color:#fdf8ec;color:#b45309;">
-                    Ventana: {{ $carga->fecha_inicio->format('d/m/Y') }} - {{ $carga->fecha_fin->format('d/m/Y') }}
+                    Fechas de captura: {{ $carga->fecha_inicio->format('d/m/Y') }} - {{ $carga->fecha_fin->format('d/m/Y') }}
                 </span>
                 @endif
             </div>
@@ -45,7 +45,7 @@
             </svg>
             <p class="text-xs text-red-700">
                 Coordinación rechazó estas calificaciones{{ $carga->motivo_rechazo ? ': '.$carga->motivo_rechazo : '.' }}
-                Puedes volver a capturarlas aunque la ventana de fechas ya haya cerrado.
+                Puedes volver a capturarlas aunque las fechas de captura ya hayan cerrado.
             </p>
         </div>
         @elseif ($carga->estado_revision === 'pendiente')
@@ -74,7 +74,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <p class="text-xs text-amber-700">
-                La ventana de captura para esta materia ya cerró.
+                Las fechas de captura para esta materia ya cerraron.
             </p>
         </div>
         @endif

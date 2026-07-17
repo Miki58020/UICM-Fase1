@@ -10,7 +10,9 @@
     asigCargaId: null,
     asigMateriaNombre: '',
     asigProfesorId: '',
-    asigHorario: '',
+    asigDiaSemana: '',
+    asigHoraInicio: '',
+    asigHoraFin: '',
     asigAula: '',
     asigFechaInicio: '',
     asigFechaFin: '',
@@ -18,7 +20,9 @@
         this.asigCargaId = carga.id;
         this.asigMateriaNombre = carga.materiaNombre;
         this.asigProfesorId = carga.profesorId ?? '';
-        this.asigHorario = carga.horario ?? '';
+        this.asigDiaSemana = carga.diaSemana ?? '';
+        this.asigHoraInicio = carga.horaInicio ?? '';
+        this.asigHoraFin = carga.horaFin ?? '';
         this.asigAula = carga.aula ?? '';
         this.asigFechaInicio = carga.fechaInicio ?? '';
         this.asigFechaFin = carga.fechaFin ?? '';
@@ -208,9 +212,9 @@
                         <p class="font-semibold text-gray-800 mb-2">¿Cómo funciona?</p>
                         <ol class="list-decimal list-inside space-y-1">
                             <li>Genera primero la carga académica de cada grupo (arriba en esta misma página) — el CSV solo <strong>actualiza</strong> materias ya generadas, no crea grupos ni materias nuevas.</li>
-                            <li>Descarga la <strong>plantilla CSV</strong> y llena un renglón por cada materia a asignar: <strong>grupo_clave</strong>, <strong>materia_clave</strong>, profesor_correo, horario, aula, fecha_inicio, fecha_fin.</li>
+                            <li>Descarga la <strong>plantilla CSV</strong> y llena un renglón por cada materia a asignar: <strong>grupo_clave</strong>, <strong>materia_clave</strong>, profesor_correo, dia_semana, hora_inicio, hora_fin, aula, fecha_inicio, fecha_fin.</li>
                             <li>Un mismo archivo puede incluir materias de <strong>varios grupos a la vez</strong> — no hace falta subir un CSV por grupo.</li>
-                            <li>Deja <strong>profesor_correo</strong> vacío para desasignar al profesor de esa materia. Las fechas son opcionales; si las usas, no pueden traslaparse con otra materia del mismo grupo.</li>
+                            <li>Deja <strong>profesor_correo</strong> vacío para desasignar al profesor de esa materia. <strong>dia_semana</strong> debe ser lunes, martes, miercoles, jueves, viernes, sabado o domingo (en minúsculas, sin acentos); <strong>hora_inicio</strong>/<strong>hora_fin</strong> en formato HH:MM. Las fechas son opcionales; si las usas, no pueden traslaparse con otra materia del mismo grupo.</li>
                         </ol>
                     </div>
 
@@ -401,7 +405,7 @@
                                     <th class="px-6 py-3">Profesor asignado</th>
                                     <th class="px-6 py-3">Horario</th>
                                     <th class="px-6 py-3">Aula virtual</th>
-                                    <th class="px-6 py-3">Ventana (mes)</th>
+                                    <th class="px-6 py-3">Fechas de captura</th>
                                     <th class="px-6 py-3 text-center">Créditos</th>
                                     <th class="px-6 py-3 text-right">Acción</th>
                                 </tr>
@@ -422,7 +426,7 @@
                                             <span class="text-orange-500 font-medium text-xs">Sin asignar</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-3 text-gray-500 text-xs">{{ $entrada->horario ?? '—' }}</td>
+                                    <td class="px-6 py-3 text-gray-500 text-xs">{{ $entrada->horario_formateado ?? '—' }}</td>
                                     <td class="px-6 py-3 text-gray-500 text-xs">{{ $entrada->aula ?? '—' }}</td>
                                     <td class="px-6 py-3 text-gray-500 text-xs whitespace-nowrap">
                                         @if ($entrada->fecha_inicio && $entrada->fecha_fin)
@@ -443,7 +447,9 @@
                                                 id: {{ $entrada->id }},
                                                 materiaNombre: @js($entrada->materia->nombre ?? ''),
                                                 profesorId: {{ $entrada->profesor_id ?? 'null' }},
-                                                horario: @js($entrada->horario ?? ''),
+                                                diaSemana: @js($entrada->dia_semana ?? ''),
+                                                horaInicio: @js($entrada->hora_inicio ?? ''),
+                                                horaFin: @js($entrada->hora_fin ?? ''),
                                                 aula: @js($entrada->aula ?? ''),
                                                 fechaInicio: @js($entrada->fecha_inicio?->format('Y-m-d')),
                                                 fechaFin: @js($entrada->fecha_fin?->format('Y-m-d'))
@@ -582,39 +588,55 @@
                     @endforeach
                 </select>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Horario</label>
-                    <input type="text" name="horario" x-model="asigHorario"
-                           placeholder="Ej. Sábados - Enero 2026"
-                           maxlength="50"
-                           class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
-                    <p class="mt-1 text-xs text-gray-400">Día(s) de la semana y mes en que se imparte.</p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Aula virtual</label>
-                    <input type="text" name="aula" x-model="asigAula"
-                           placeholder="Ej. Sala Zoom - Psicología"
-                           maxlength="100"
-                           class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
-                    <p class="mt-1 text-xs text-gray-400">Sala o enlace donde se imparte la clase en línea.</p>
-                </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Día de la semana</label>
+                <select name="dia_semana" x-model="asigDiaSemana"
+                        class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                    <option value="">— Sin definir —</option>
+                    @foreach(\App\Models\CargaAcademica::DIAS_SEMANA as $valor => $etiqueta)
+                        <option value="{{ $valor }}">{{ $etiqueta }}</option>
+                    @endforeach
+                </select>
+                <p class="mt-1 text-xs text-gray-400">Día en que se imparte la clase, durante todo el cuatrimestre.</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Inicio de ventana</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Hora de inicio</label>
+                    <input type="time" name="hora_inicio" x-model="asigHoraInicio"
+                           class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Hora de fin</label>
+                    <input type="time" name="hora_fin" x-model="asigHoraFin"
+                           class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Aula virtual</label>
+                <input type="text" name="aula" x-model="asigAula"
+                       placeholder="Ej. Sala Zoom - Psicología"
+                       maxlength="100"
+                       class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+                <p class="mt-1 text-xs text-gray-400">Sala o enlace donde se imparte la clase en línea.</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Fechas de captura de calificaciones</label>
+                <p class="text-xs text-gray-400 mb-2">
+                    Fechas en las que el profesor puede capturar y enviar calificaciones de esta materia. Déjalo vacío para no restringir fechas.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Captura habilitada desde</label>
                     <input type="date" name="fecha_inicio" x-model="asigFechaInicio"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fin de ventana</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Captura habilitada hasta</label>
                     <input type="date" name="fecha_fin" x-model="asigFechaFin"
                            class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
                 </div>
             </div>
-            <p class="text-xs text-gray-400 -mt-2">
-                Define el mes en que el profesor podrá capturar la calificación de esta materia. Déjalo vacío para no restringir fechas.
-            </p>
             <div class="flex justify-end gap-3 pt-2">
                 <button type="button" @click="asignacionAbierta = false"
                         class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">

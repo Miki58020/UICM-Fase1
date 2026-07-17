@@ -494,7 +494,7 @@ class PagoController extends Controller
         $callback = function () use ($pagos) {
             $handle = fopen('php://output', 'w');
             fwrite($handle, "\xEF\xBB\xBF");
-            fputcsv($handle, ['Referencia', 'Nombre', 'Matricula', 'Programa', 'Concepto', 'Periodo', 'Monto', 'Descuento (%)', 'Fecha de pago', 'Estado']);
+            fputcsv($handle, ['Referencia', 'Nombre', 'Matricula', 'Programa', 'Concepto', 'Periodo', 'Monto', 'Descuento (%)', 'Fecha de pago', 'Estado'], escape: '');
 
             foreach ($pagos as $pago) {
                 fputcsv($handle, [
@@ -508,7 +508,7 @@ class PagoController extends Controller
                     $pago->descuento,
                     $pago->fecha_pago?->format('Y-m-d') ?? '',
                     $pago->estado,
-                ]);
+                ], escape: '');
             }
 
             fclose($handle);
