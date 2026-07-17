@@ -194,7 +194,9 @@
       "Bash(find app/Http/Controllers -iname \"*tarifa*\" -o -iname \"*finanza*\" -o -iname \"*concepto*\" -o -iname \"*programa*\")",
       "Bash(awk '/function profesor\\\\\\(/,/^    }/' app/Http/Controllers/AlumnoController.php)",
       "Bash(awk '/function profesor\\\\\\(/,/^    }/' app/Http/Controllers/GrupoController.php)",
-      "Bash(awk '/function capturar\\\\\\(/,/^    }/' app/Http/Controllers/CalificacionController.php)"
+      "Bash(awk '/function capturar\\\\\\(/,/^    }/' app/Http/Controllers/CalificacionController.php)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\MIGUEL~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Miguel--ngel-Desktop-UICM-Fase1\\\\c16fbc26-b9a2-4883-b797-b3f3338f5557\\\\scratchpad\")",
+      "Bash(cp \"database/database.sqlite\" \"C:\\\\Users\\\\MIGUEL~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Miguel--ngel-Desktop-UICM-Fase1\\\\c16fbc26-b9a2-4883-b797-b3f3338f5557\\\\scratchpad\\\\database.sqlite.backup-$\\(date +%Y%m%d-%H%M%S\\)\")"
     ]
   }
 }
