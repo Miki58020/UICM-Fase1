@@ -18,6 +18,15 @@
         busqueda: '',
         filtroPrograma: '',
         filtroActivo: '',
+        programasDuracion: @json($programas->pluck('duracion_cuatrimestres', 'id')),
+        cuatrimestresDisponibles() {
+            const max = this.programasDuracion[this.form.programa_id] || 12;
+            return Array.from({ length: max }, (_, i) => i + 1);
+        },
+        onProgramaChange() {
+            const max = this.programasDuracion[this.form.programa_id] || 12;
+            if (this.form.cuatrimestre && Number(this.form.cuatrimestre) > max) this.form.cuatrimestre = '';
+        },
         abrir() { this.editando = null; this.form = { clave: '', nombre: '', programa_id: '', cuatrimestre: '', creditos: '' }; this.showModal = true; },
         abrirEditar(m) { this.editando = m; this.form = { clave: m.clave, nombre: m.nombre, programa_id: m.programa_id, cuatrimestre: m.cuatrimestre, creditos: m.creditos }; this.showModal = true; },
         filtrar() {
@@ -322,6 +331,7 @@
                         </label>
                         <input type="number" name="creditos" x-model="form.creditos"
                                min="1" max="20" placeholder="8"
+                               oninput="if (this.value !== '' && Number(this.value) > 20) this.value = 20; if (this.value !== '' && Number(this.value) < 1) this.value = 1;"
                                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -347,13 +357,20 @@
                     <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
                         Programa académico <span class="text-red-400">*</span>
                     </label>
-                    <select name="programa_id" x-model="form.programa_id"
+                    @php $nivelesLabel = ['licenciatura' => 'Licenciaturas', 'maestria' => 'Maestrías', 'doctorado' => 'Doctorado']; @endphp
+                    <select name="programa_id" x-model="form.programa_id" @change="onProgramaChange()"
                             class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none"
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                         <option value="">Selecciona un programa</option>
-                        @foreach ($programas as $prog)
-                            <option value="{{ $prog->id }}">{{ $prog->nombre }}</option>
+                        @foreach ($nivelesLabel as $nivel => $label)
+                            @if ($programas->where('nivel', $nivel)->isNotEmpty())
+                            <optgroup label="{{ $label }}">
+                                @foreach ($programas->where('nivel', $nivel) as $prog)
+                                    <option value="{{ $prog->id }}">{{ $prog->nombre }}</option>
+                                @endforeach
+                            </optgroup>
+                            @endif
                         @endforeach
                     </select>
                 </div>
@@ -368,9 +385,9 @@
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                         <option value="">Selecciona el cuatrimestre</option>
-                        @foreach (range(1, 12) as $n)
-                            <option value="{{ $n }}">{{ $n }}°</option>
-                        @endforeach
+                        <template x-for="n in cuatrimestresDisponibles()" :key="n">
+                            <option :value="n" x-text="n + '°'"></option>
+                        </template>
                     </select>
                 </div>
 

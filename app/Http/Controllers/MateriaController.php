@@ -26,7 +26,7 @@ class MateriaController extends Controller
             'clave'        => 'required|string|max:20|unique:materias,clave',
             'nombre'       => 'required|string|max:100',
             'programa_id'  => 'required|exists:programas,id',
-            'cuatrimestre' => 'required|integer|min:1|max:12',
+            'cuatrimestre' => ['required', 'integer', 'min:1', $this->reglaCuatrimestreValido($request)],
             'creditos'     => 'required|integer|min:1|max:20',
         ]);
 
@@ -49,7 +49,7 @@ class MateriaController extends Controller
             'clave'        => 'required|string|max:20|unique:materias,clave,' . $materia->id,
             'nombre'       => 'required|string|max:100',
             'programa_id'  => 'required|exists:programas,id',
-            'cuatrimestre' => 'required|integer|min:1|max:12',
+            'cuatrimestre' => ['required', 'integer', 'min:1', $this->reglaCuatrimestreValido($request)],
             'creditos'     => 'required|integer|min:1|max:20',
         ]);
 
@@ -71,5 +71,15 @@ class MateriaController extends Controller
 
         return redirect()->back()
             ->with('success', 'Estado de la materia actualizado.');
+    }
+
+    private function reglaCuatrimestreValido(Request $request)
+    {
+        return function (string $attribute, $value, \Closure $fail) use ($request) {
+            $programa = Programa::find($request->programa_id);
+            if ($programa && (int) $value > $programa->duracion_cuatrimestres) {
+                $fail("El programa seleccionado dura {$programa->duracion_cuatrimestres} cuatrimestres.");
+            }
+        };
     }
 }
