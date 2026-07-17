@@ -134,7 +134,7 @@
                                 <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
                                     Grupo
                                 </label>
-                                <select name="grupo_id"
+                                <select name="grupo_id" required
                                         class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700
                                                outline-none transition-all duration-150 bg-white"
                                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 3px rgba(15,66,41,0.12)'"
@@ -520,6 +520,24 @@
                 </div>
                 @endif
 
+            @else
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                    <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                    <div class="px-6 py-8 flex flex-col items-center text-center">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4"
+                             style="background-color: #fdf6e8;">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                 style="color: #D4AF37;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-extrabold text-gray-900 mb-1">Selecciona un grupo</h3>
+                        <p class="text-sm text-gray-500 max-w-xs">
+                            Elige un grupo en los filtros de arriba y da clic en "Cargar información" para ver o generar su carga académica.
+                        </p>
+                    </div>
+                </div>
             @endif
 
         </div>{{-- /space-y-6 --}}

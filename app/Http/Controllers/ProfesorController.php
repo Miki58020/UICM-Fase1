@@ -74,8 +74,14 @@ class ProfesorController extends Controller
 
         Mail::to($profesor->correo)->send(new BienvenidaProfesor($profesor, $password));
 
-        return redirect()->route('admin.profesores.index')
+        $redirect = redirect()->route('admin.profesores.index')
             ->with('success', "Profesor registrado. Se enviaron las credenciales de acceso a {$profesor->correo}.");
+
+        if ($aviso = $this->avisoTelefonoDuplicado($request->telefono, $profesor->id)) {
+            $redirect->with('notif_warning_admin', $aviso);
+        }
+
+        return $redirect;
     }
 
     public function update(Request $request, Profesor $profesor)
@@ -109,8 +115,14 @@ class ProfesorController extends Controller
             }
         }
 
-        return redirect()->route('admin.profesores.index')
+        $redirect = redirect()->route('admin.profesores.index')
             ->with('success', 'Profesor actualizado correctamente.' . ($request->filled('password') ? ' Se notificó la nueva contraseña por correo.' : ''));
+
+        if ($aviso = $this->avisoTelefonoDuplicado($request->telefono, $profesor->id)) {
+            $redirect->with('notif_warning_admin', $aviso);
+        }
+
+        return $redirect;
     }
 
     public function toggle(Profesor $profesor)
@@ -119,5 +131,21 @@ class ProfesorController extends Controller
 
         return redirect()->back()
             ->with('success', 'Estado del profesor actualizado.');
+    }
+
+    // Aviso no bloqueante: un telefono repetido es valido en la vida real (oficina compartida, etc.)
+    private function avisoTelefonoDuplicado(?string $telefono, int $exceptId): ?string
+    {
+        if (!$telefono) {
+            return null;
+        }
+
+        $duplicado = Profesor::where('telefono', $telefono)
+            ->where('id', '!=', $exceptId)
+            ->first();
+
+        return $duplicado
+            ? "El teléfono {$telefono} ya está registrado para {$duplicado->nombre}. Se guardó de todas formas."
+            : null;
     }
 }
