@@ -321,9 +321,9 @@
                     </svg>
                 </button>
                 <div class="hidden md:flex items-center gap-6">
+                    <a href="{{ route('home') }}" class="text-sm font-medium text-uicm-green hover:text-green-800 transition-colors">Inicio</a>
                     <a href="{{ route('aspirantes.seguimiento') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Consultar estatus</a>
                     <a href="{{ request()->routeIs('oferta-educativa') ? '#contacto' : route('home').'#contacto' }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Contáctanos</a>
-                    <a href="{{ route('home') }}" class="text-sm font-medium text-uicm-green hover:text-green-800 transition-colors">Inicio</a>
                     <a href="{{ route('aspirantes.registro') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Inscripción</a>
                     <a href="{{ route('oferta-educativa') }}" class="text-sm font-medium text-gray-600 hover:text-uicm-green transition-colors">Oferta educativa</a>
                     <a href="{{ route('login') }}"
@@ -345,9 +345,9 @@
         @unless(request()->routeIs('login'))
         <div id="nav-menu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 pb-4">
             <div class="flex flex-col gap-3 pt-3">
+                <a href="{{ route('home') }}" class="text-base font-medium text-uicm-green">Inicio</a>
                 <a href="{{ route('aspirantes.seguimiento') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Consultar estatus</a>
                 <a href="{{ request()->routeIs('oferta-educativa') ? '#contacto' : route('home').'#contacto' }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Contáctanos</a>
-                <a href="{{ route('home') }}" class="text-base font-medium text-uicm-green">Inicio</a>
                 <a href="{{ route('aspirantes.registro') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Inscripción</a>
                 <a href="{{ route('oferta-educativa') }}" class="text-base font-medium text-gray-600 hover:text-uicm-green">Oferta educativa</a>
                 <a href="{{ route('login') }}" class="text-base font-semibold text-white px-4 py-2 rounded-lg text-center"
