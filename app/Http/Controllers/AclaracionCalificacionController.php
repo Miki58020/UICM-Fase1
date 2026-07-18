@@ -28,6 +28,17 @@ class AclaracionCalificacionController extends Controller
             'motivo.required' => 'Indica el motivo de la aclaración.',
         ]);
 
+        if ($request->tipo === 'final') {
+            $tieneExtraordinario = Calificacion::where('alumno_id', $alumno->id)
+                ->where('carga_academica_id', $carga->id)
+                ->where('tipo', 'extraordinario')
+                ->exists();
+
+            if ($tieneExtraordinario) {
+                return back()->withErrors(['Este alumno ya presentó examen extraordinario: la calificación que cuenta es la del extraordinario, no la final. Solicita la aclaración sobre el extraordinario.']);
+            }
+        }
+
         $existePendiente = AclaracionCalificacion::where('alumno_id', $alumno->id)
             ->where('carga_academica_id', $carga->id)
             ->where('tipo', $request->tipo)

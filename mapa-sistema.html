@@ -953,6 +953,7 @@
             </div>
             <p class="text-xs font-semibold text-rose-700 mt-2 bg-rose-50 rounded px-2 py-1">Unique: (alumno_id, carga_academica_id, tipo)</p>
             <p class="text-xs font-semibold text-amber-700 mt-1 bg-amber-50 rounded px-2 py-1">Definitivo = extraordinario si existe, si no = final. Solo se acumula si carga está <strong>aprobada</strong>.</p>
+            <p class="text-xs font-semibold text-sky-700 mt-1 bg-sky-50 rounded px-2 py-1">Este definitivo (columna <strong>"Cal. Final"</strong>) se muestra en las tablas de profesor y coordinación, además del kárdex del alumno donde ya existía.</p>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
             <div class="text-xs space-y-0.5 text-gray-600">
               <p>→ belongsTo <strong>Alumno</strong>, <strong>CargaAcademica</strong></p>
@@ -1040,6 +1041,7 @@
               <div><span class="font-mono bg-gray-200 px-1 rounded">motivo_rechazo</span> nullable text</div>
             </div>
             <p class="text-xs font-semibold text-pink-700 mt-2 bg-pink-50 rounded px-2 py-1">Importante: la inicia el <strong>profesor</strong> (no el alumno), típicamente cuando ya se cerró el periodo y detecta un error en una calificación que él mismo capturó. Control Escolar aprueba (aplica <code>calificacion_propuesta</code>) o rechaza con motivo.</p>
+            <p class="text-xs font-semibold text-rose-700 mt-1 bg-rose-50 rounded px-2 py-1"><code>tipo</code> no lo elige el profesor: la UI lo fija solo (<code>extraordinario</code> si ya existe uno para ese alumno/carga, si no <code>final</code>) y el servidor rechaza cualquier solicitud de <code>final</code> cuando ya hay un extraordinario guardado — la calificación vigente siempre es la del extraordinario (ver <code>Calificacion::finalPara()</code>), así que "aclarar" el final en ese caso no tendría ningún efecto visible y confundiría a Coordinación.</p>
             <p class="text-xs text-gray-500 font-semibold mt-3 mb-1">Relaciones:</p>
             <div class="text-xs space-y-0.5 text-gray-600">
               <p>→ belongsTo <strong>Alumno</strong>, <strong>CargaAcademica</strong>, <strong>Profesor</strong></p>
@@ -1417,7 +1419,7 @@
   </main>
 
   <footer class="text-center py-6 text-xs text-gray-400 mt-4">
-    UICM — Mapa del Sistema · Actualizado el 17 Jul 2026 · Solo para referencia interna
+    UICM — Mapa del Sistema · Actualizado el 18 Jul 2026 · Solo para referencia interna
   </footer>
 
 </body>

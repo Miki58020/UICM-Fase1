@@ -4,7 +4,23 @@
 
 @section('content')
 <section class="bg-uicm-gray min-h-screen py-12 px-4"
-         x-data="{ confirmarEnvio: false }">
+         x-data="{
+            confirmarEnvio: false,
+            aclaracionAbierta: false,
+            aclAlumnoId: null,
+            aclAlumnoNombre: '',
+            aclTipo: 'final',
+            aclCalificacion: '',
+            aclMotivo: '',
+            abrirAclaracion(alumno) {
+                this.aclAlumnoId = alumno.id;
+                this.aclAlumnoNombre = alumno.nombre;
+                this.aclTipo = alumno.tipoDefault;
+                this.aclCalificacion = '';
+                this.aclMotivo = '';
+                this.aclaracionAbierta = true;
+            }
+         }">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         {{-- Encabezado --}}
@@ -137,6 +153,7 @@
                                 <th class="px-6 py-3">Matrícula</th>
                                 <th class="px-6 py-3 text-center">Final</th>
                                 <th class="px-6 py-3 text-center">Extraordinario</th>
+                                <th class="px-6 py-3 text-center">Cal. Final</th>
                                 <th class="px-6 py-3 text-center">Estado</th>
                                 @if ($carga->estado_revision === 'aprobado')
                                     <th class="px-6 py-3 text-center">Aclaración</th>
@@ -144,7 +161,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @foreach ($alumnos as $alumno)
+                        @foreach ($alumnos as $alumno)
                             @php
                                 $finalKey = $alumno->id . '-final';
                                 $exKey    = $alumno->id . '-extraordinario';
@@ -154,7 +171,7 @@
                                 $calFinal = $ex ? $ex->calificacion : $final?->calificacion;
                                 $aprobado = $calFinal !== null && $calFinal >= 7.0;
                             @endphp
-                            <tr class="hover:bg-gray-50 transition-colors duration-100" x-data="{ aclarando: false }">
+                            <tr class="hover:bg-gray-50 transition-colors duration-100">
                                 <td class="px-6 py-4 font-semibold text-gray-800 whitespace-nowrap">
                                     {{ $alumno->nombre_completo }}
                                 </td>
@@ -194,6 +211,17 @@
                                     @endif
                                 </td>
 
+                                {{-- Cal. Final --}}
+                                <td class="px-6 py-4 text-center font-bold">
+                                    @if ($calFinal !== null)
+                                        <span class="{{ $aprobado ? 'text-green-700' : 'text-red-600' }}">
+                                            {{ number_format($calFinal, 1) }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-300">—</span>
+                                    @endif
+                                </td>
+
                                 {{-- Estado --}}
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     @if ($calFinal !== null)
@@ -223,7 +251,12 @@
                                 @if ($carga->estado_revision === 'aprobado')
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     @if ($final)
-                                        <button type="button" @click="aclarando = !aclarando"
+                                        <button type="button"
+                                                @click="abrirAclaracion({
+                                                    id: {{ $alumno->id }},
+                                                    nombre: @js($alumno->nombre_completo),
+                                                    tipoDefault: @js($ex ? 'extraordinario' : 'final')
+                                                })"
                                                 class="text-xs font-bold px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700">
                                             Solicitar aclaración
                                         </button>
@@ -233,39 +266,6 @@
                                 </td>
                                 @endif
                             </tr>
-                            @if ($carga->estado_revision === 'aprobado')
-                            <tr x-show="aclarando" x-cloak>
-                                <td colspan="6" class="px-6 py-4 bg-amber-50">
-                                    <form method="POST"
-                                          action="{{ route('profesor.aclaraciones.solicitar', [$carga->id, $alumno->id]) }}"
-                                          class="flex flex-wrap items-end gap-3">
-                                        @csrf
-                                        <div>
-                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo</label>
-                                            <select name="tipo" class="border border-gray-200 rounded-lg px-2 py-1.5 text-xs">
-                                                <option value="final">Final</option>
-                                                <option value="extraordinario" {{ $ex ? 'selected' : '' }}>Extraordinario</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Calificación correcta</label>
-                                            <input type="number" name="calificacion_propuesta" step="0.1" min="0" max="10" required
-                                                   class="w-20 border border-gray-200 rounded-lg px-2 py-1.5 text-xs">
-                                        </div>
-                                        <div class="flex-1 min-w-[200px]">
-                                            <label class="block text-xs font-semibold text-gray-600 mb-1">Motivo</label>
-                                            <input type="text" name="motivo" required maxlength="500"
-                                                   class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs">
-                                        </div>
-                                        <button type="submit"
-                                                class="px-4 py-2 rounded-lg text-xs font-bold text-white"
-                                                style="background-color: #0F4229;">
-                                            Enviar a Coordinación
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endif
                             @endforeach
                         </tbody>
                     </table>
@@ -373,6 +373,82 @@
                 </button>
             </div>
         </div>
+    </div>
+    </div>
+
+    {{-- Modal solicitar aclaración --}}
+    <div x-show="aclaracionAbierta"
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @keydown.escape.window="aclaracionAbierta = false"
+     class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm"
+     style="display: none;">
+
+    <div x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="bg-white rounded-2xl shadow-xl w-full max-w-md"
+         @click.outside="aclaracionAbierta = false">
+
+        <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
+
+        <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-gray-800">Solicitar aclaración</h3>
+                <p class="text-xs text-gray-400 mt-0.5" x-text="aclAlumnoNombre"></p>
+            </div>
+            <button @click="aclaracionAbierta = false"
+                    class="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <form method="POST" class="px-6 py-5 space-y-4"
+              :action="'{{ route('profesor.aclaraciones.solicitar', [$carga->id, '__ALUMNO__']) }}'.replace('__ALUMNO__', aclAlumnoId)">
+            @csrf
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                <input type="hidden" name="tipo" x-model="aclTipo">
+                <div class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-600"
+                     x-text="aclTipo === 'extraordinario' ? 'Extraordinario' : 'Final'"></div>
+                <p class="mt-1 text-xs text-gray-400" x-show="aclTipo === 'extraordinario'">
+                    La calificación vigente de este alumno es la del extraordinario; la aclaración corregirá ese valor.
+                </p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Calificación correcta</label>
+                <input type="number" name="calificacion_propuesta" x-model="aclCalificacion"
+                       step="0.1" min="0" max="10" required
+                       class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Motivo</label>
+                <input type="text" name="motivo" x-model="aclMotivo" required maxlength="500"
+                       class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-green-200">
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button" @click="aclaracionAbierta = false"
+                        class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                        style="background-color: #0F4229;"
+                        onmouseover="this.style.backgroundColor='#0a2f1c'"
+                        onmouseout="this.style.backgroundColor='#0F4229'">
+                    Enviar a Coordinación
+                </button>
+            </div>
+        </form>
     </div>
     </div>
 

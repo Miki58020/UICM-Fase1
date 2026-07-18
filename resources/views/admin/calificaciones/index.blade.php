@@ -277,6 +277,7 @@
                                 <th class="px-6 py-3">Matrícula</th>
                                 <th class="px-6 py-3 text-center">Final</th>
                                 <th class="px-6 py-3 text-center">Extraordinario</th>
+                                <th class="px-6 py-3 text-center">Cal. Final</th>
                                 <th class="px-6 py-3 text-center">Estado</th>
                             </tr>
                         </thead>
@@ -314,6 +315,15 @@
                                         <span class="text-gray-300">—</span>
                                     @endif
                                 </td>
+                                <td class="px-6 py-4 text-center font-bold">
+                                    @if ($calFinal !== null)
+                                        <span class="{{ $aprobado ? 'text-green-700' : 'text-red-600' }}">
+                                            {{ number_format($calFinal, 1) }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-300">—</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
                                     @if ($calFinal !== null)
                                         @if ($aprobado)
@@ -340,7 +350,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
+                                <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
                                     No hay alumnos en este grupo.
                                 </td>
                             </tr>
