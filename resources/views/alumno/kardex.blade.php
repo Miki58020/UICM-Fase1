@@ -209,9 +209,6 @@
                                         @if($m['calFinal'] !== null)
                                             <span class="{{ $m['aprobado'] ? 'text-green-700' : 'text-red-600' }}">
                                                 {{ number_format($m['calFinal'], 1) }}
-                                                @if($m['ex'])
-                                                    <span class="block text-xs font-normal text-gray-400">(extra)</span>
-                                                @endif
                                             </span>
                                         @else
                                             <span class="text-gray-300">—</span>
