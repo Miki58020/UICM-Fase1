@@ -55,7 +55,7 @@
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Grupo asignado</dt>
                             <dd class="font-bold text-gray-900">
-                                {{ $alumno->grupo->nombre ?? 'Sin asignar' }}
+                                {{ $alumno->grupo->clave ?? 'Sin asignar' }}
                             </dd>
                         </div>
 
@@ -123,25 +123,6 @@
 
                 {{-- Botones --}}
                 <div class="flex flex-col gap-3">
-
-                    {{-- Reenviar acceso --}}
-                    <form method="POST" action="{{ route('admin.inscripciones.reenviar', $alumno) }}"
-                          onsubmit="return confirm('¿Generar nueva contraseña y reenviar el correo a {{ addslashes($alumno->user->email) }}?')">
-                        @csrf
-                        <button type="submit"
-                                class="w-full inline-flex items-center justify-center gap-2
-                                       py-3 rounded-xl text-sm font-bold text-white transition-colors duration-200"
-                                style="background-color: #EFAD5A;"
-                                onmouseover="this.style.backgroundColor='#d4923a'"
-                                onmouseout="this.style.backgroundColor='#EFAD5A'">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7
-                                         a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
-                            Reenviar acceso al alumno
-                        </button>
-                    </form>
 
                     {{-- Volver a la lista --}}
                     <a href="{{ route('admin.inscripciones.index') }}"
