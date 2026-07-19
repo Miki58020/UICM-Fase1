@@ -28,7 +28,7 @@ class PasswordResetLinkController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user) {
-            return back()->with('status', $genericMessage);
+            return back()->with('success', $genericMessage);
         }
 
         // Bloquear si ya hay una solicitud en las últimas 3 horas
@@ -37,19 +37,23 @@ class PasswordResetLinkController extends Controller
             ->exists();
 
         if ($reciente) {
-            return back()->with('status_error', $limiteMessage);
+            return back()->with('error', $limiteMessage);
         }
-
-        $esAlumno = $user->rol === 'alumno';
 
         SolicitudContrasena::create([
             'user_id' => $user->id,
             'estado'  => 'pendiente',
         ]);
 
-        $recipients = $esAlumno
-            ? User::where('rol', 'control_escolar')->get()
-            : User::where('rol', 'admin')->get();
+        // Misma separación de 3 vías que atiende las solicitudes: alumno -> Control
+        // Escolar, profesor -> Coordinación, cualquier otro rol -> Admin general.
+        $rolDestino = match ($user->rol) {
+            'alumno'   => 'control_escolar',
+            'profesor' => 'coordinacion',
+            default    => 'admin',
+        };
+
+        $recipients = User::where('rol', $rolDestino)->get();
 
         try {
             foreach ($recipients as $recipient) {
@@ -59,6 +63,6 @@ class PasswordResetLinkController extends Controller
             // El mail falló pero la solicitud ya está guardada, mostrar éxito igual
         }
 
-        return back()->with('status', $genericMessage);
+        return back()->with('success', $genericMessage);
     }
 }

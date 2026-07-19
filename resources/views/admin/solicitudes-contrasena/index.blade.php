@@ -68,38 +68,26 @@
                                     {{ strtoupper(substr($solicitud->user->name ?? 'U', 0, 1)) }}
                                 </div>
                                 <div>
-                                    <p class="font-semibold text-gray-800 text-sm">{{ $solicitud->user->nombre_completo }}</p>
-                                    <p class="text-xs text-gray-400">{{ $solicitud->user->email }}</p>
-                                    <div class="flex items-center gap-2 mt-1.5">
+                                    <div class="flex items-center gap-2">
+                                        <p class="font-semibold text-gray-800 text-sm">{{ $solicitud->user->nombre_completo }}</p>
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
                                               style="background-color: #fef9ec; color: #92670b;">
                                             {{ $rolLabel }}
                                         </span>
-                                        <span class="text-xs text-gray-400">
-                                            Solicitado el {{ $solicitud->created_at->format('d/m/Y \a \l\a\s H:i') }}
-                                        </span>
                                     </div>
+                                    <p class="text-xs text-gray-400">{{ $solicitud->user->email }}</p>
+                                    <p class="text-xs text-gray-400 mt-1.5">
+                                        Solicitado el {{ $solicitud->created_at->format('d/m/Y \a \l\a\s H:i') }}
+                                    </p>
                                 </div>
                             </div>
 
                             {{-- Formulario para atender --}}
                             <form method="POST"
                                   action="{{ route($routeAtender, $solicitud) }}"
-                                  class="flex items-center gap-2 w-full sm:w-auto">
+                                  class="flex items-center gap-2 w-full sm:w-auto"
+                                  onsubmit="return confirm('¿Generar una contraseña nueva y enviarla a {{ addslashes($solicitud->user->email) }}?')">
                                 @csrf
-
-                                <div class="flex-1 min-w-0">
-                                    <input type="text"
-                                           name="password"
-                                           placeholder="Nueva contraseña"
-                                           autocomplete="off"
-                                           class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none w-full"
-                                           onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                                           onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                                    @error('password')
-                                        <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
 
                                 <button type="submit"
                                         class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors duration-150"

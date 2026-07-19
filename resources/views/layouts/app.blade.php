@@ -509,7 +509,7 @@
 
             @php
                 $pendientesAdmins = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
-                    ->whereHas('user', fn($u) => $u->where('rol', '!=', 'alumno'))
+                    ->whereHas('user', fn($u) => $u->whereNotIn('rol', ['alumno', 'profesor']))
                     ->count();
             @endphp
             <a href="{{ route('admin.solicitudes-contrasena.index', ['tipo' => 'administrativos']) }}"

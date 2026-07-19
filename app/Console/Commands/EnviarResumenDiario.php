@@ -37,12 +37,14 @@ class EnviarResumenDiario extends Command
             ->whereHas('alumno', fn($q) => $q->whereNull('user_id'))
             ->count();
 
-        $solicitudesContrasena = SolicitudContrasena::where('estado', 'pendiente')->count();
+        $solicitudesContrasena = SolicitudContrasena::where('estado', 'pendiente')
+            ->whereHas('user', fn($q) => $q->where('rol', 'alumno'))
+            ->count();
 
         $datos = [
-            'Aspirantes pendientes de revisión'     => $aspirantesPendientes,
-            'Listos para inscribir (pago aprobado)' => $listosParaInscribir,
-            'Solicitudes de contraseña pendientes'  => $solicitudesContrasena,
+            'Aspirantes pendientes de revisión'          => $aspirantesPendientes,
+            'Listos para inscribir (pago aprobado)'      => $listosParaInscribir,
+            'Solicitudes de contraseña de alumnos'        => $solicitudesContrasena,
         ];
 
         $this->enviarARol('control_escolar', $datos);
@@ -69,8 +71,13 @@ class EnviarResumenDiario extends Command
             ->whereNull('grupo_id')
             ->count();
 
+        $solicitudesContrasena = SolicitudContrasena::where('estado', 'pendiente')
+            ->whereHas('user', fn($q) => $q->where('rol', 'profesor'))
+            ->count();
+
         $datos = [
-            'Alumnos activos sin grupo asignado' => $alumnosSinGrupo,
+            'Alumnos activos sin grupo asignado'        => $alumnosSinGrupo,
+            'Solicitudes de contraseña de profesores'   => $solicitudesContrasena,
         ];
 
         $this->enviarARol('coordinacion', $datos);
@@ -90,7 +97,9 @@ class EnviarResumenDiario extends Command
             'Alumnos activos sin grupo asignado'     => Alumno::where('estado', 'activo')
                 ->whereNull('grupo_id')
                 ->count(),
-            'Solicitudes de contraseña pendientes'   => SolicitudContrasena::where('estado', 'pendiente')->count(),
+            'Solicitudes de contraseña administrativas' => SolicitudContrasena::where('estado', 'pendiente')
+                ->whereHas('user', fn($q) => $q->whereNotIn('rol', ['alumno', 'profesor']))
+                ->count(),
         ];
 
         $this->enviarARol('admin', $datos);

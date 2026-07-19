@@ -107,13 +107,20 @@ class AlumnoController extends Controller
             'grupo_id'            => $request->grupo_id ?: null,
         ]);
 
+        $avisoPassword = null;
         if ($request->filled('password') && $alumno->user_id) {
             $alumno->user->update(['password' => Hash::make($request->password)]);
-            Mail::to($alumno->user->email)->send(new NuevaContrasena($alumno->user, $request->password));
+            // Correo personal, no el institucional: ese es solo su usuario de login.
+            $correoAviso = $alumno->email ?? $alumno->user->email;
+            try {
+                Mail::to($correoAviso)->send(new NuevaContrasena($alumno->user, $request->password));
+            } catch (\Throwable $e) {
+                $avisoPassword = " La contraseña se cambió, pero no se pudo enviar el correo a {$correoAviso}.";
+            }
         }
 
         return redirect()->route('admin.alumnos.index')
-            ->with('success', "Alumno {$alumno->nombre_completo} actualizado correctamente.");
+            ->with('success', "Alumno {$alumno->nombre_completo} actualizado correctamente." . $avisoPassword);
     }
 
     // Genera una contraseña nueva y la reenvía al alumno (ej. si el correo original
@@ -127,9 +134,16 @@ class AlumnoController extends Controller
         $password = \Illuminate\Support\Str::random(8);
         $alumno->user->update(['password' => Hash::make($password)]);
 
-        Mail::to($alumno->user->email)->send(new \App\Mail\ReenvioCredenciales($alumno, $password));
+        // Correo personal, no el institucional: si perdió el acceso al portal,
+        // el institucional no es un buzón real que pueda consultar.
+        $correoAviso = $alumno->email ?? $alumno->user->email;
+        try {
+            Mail::to($correoAviso)->send(new \App\Mail\ReenvioCredenciales($alumno, $password));
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', "La contraseña se generó, pero no se pudo enviar el correo a {$correoAviso}.");
+        }
 
-        return redirect()->back()->with('success', "Credenciales reenviadas a {$alumno->user->email}.");
+        return redirect()->back()->with('success', "Credenciales reenviadas a {$correoAviso}.");
     }
 
     private function reglaCuatrimestreValido(Request $request, Alumno $alumno)

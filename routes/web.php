@@ -200,7 +200,7 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::post('/admin/aclaraciones/{aclaracion}/rechazar', [AclaracionCalificacionController::class, 'rechazar'])->name('admin.aclaraciones.rechazar');
 
     // Contraseñas de profesores — coordinación
-    Route::get('/admin/contrasenas-profesores', [SolicitudContrasenaController::class, 'index'])->name('admin.contrasenas-profesores.index');
+    Route::get('/admin/contrasenas-profesores', [SolicitudContrasenaController::class, 'profesores'])->name('admin.contrasenas-profesores.index');
     Route::post('/admin/contrasenas-profesores/{solicitud}/atender', [SolicitudContrasenaController::class, 'atender'])->name('admin.contrasenas-profesores.atender');
 
     Route::get('/admin/carga-academica', [CargaAcademicaController::class, 'index'])->name('admin.carga-academica.index');
