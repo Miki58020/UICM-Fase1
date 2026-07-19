@@ -143,7 +143,7 @@
                         <button type="button" @click="subiendo = !subiendo"
                                 class="text-xs font-bold px-4 py-2 rounded-lg"
                                 style="background-color: #0F4229; color: white;">
-                            {{ $doc ? 'Reemplazar' : 'Subir' }}
+                            Seleccionar archivo
                         </button>
                     </div>
                 </div>
@@ -157,7 +157,7 @@
                         <button type="submit"
                                 class="px-4 py-2 rounded-lg text-xs font-bold text-white"
                                 style="background-color: #D4AF37;">
-                            Guardar
+                            Subir
                         </button>
                     </form>
                     <p class="text-xs text-gray-400 mt-2">Formatos permitidos: PDF, JPG, PNG. Máximo 5 MB.</p>
