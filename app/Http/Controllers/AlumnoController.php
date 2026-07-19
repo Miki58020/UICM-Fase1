@@ -24,6 +24,7 @@ class AlumnoController extends Controller
             'activos'   => Alumno::where('estado', 'activo')->count(),
             'inactivos' => Alumno::where('estado', 'inactivo')->count(),
             'baja'      => Alumno::where('estado', 'baja')->count(),
+            'migrados'  => Alumno::where('migrado', true)->count(),
         ];
 
         $alumnos = Alumno::with(['programa', 'grupo', 'user'])
@@ -39,6 +40,7 @@ class AlumnoController extends Controller
             })
             ->when($request->filled('programa'), fn ($query) => $query->where('programa_id', $request->programa))
             ->when($request->filled('estado'), fn ($query) => $query->where('estado', $request->estado))
+            ->when($request->filled('migrado'), fn ($query) => $query->where('migrado', true))
             ->orderBy('apellido_paterno')
             ->orderBy('apellido_materno')
             ->orderBy('nombre')
@@ -112,6 +114,22 @@ class AlumnoController extends Controller
 
         return redirect()->route('admin.alumnos.index')
             ->with('success', "Alumno {$alumno->nombre_completo} actualizado correctamente.");
+    }
+
+    // Genera una contraseña nueva y la reenvía al alumno (ej. si el correo original
+    // nunca le llegó, como puede pasar en la carga masiva por CSV).
+    public function reenviarAcceso(Alumno $alumno)
+    {
+        if (!$alumno->user_id) {
+            return redirect()->back()->with('error', 'Este alumno todavía no tiene acceso al portal.');
+        }
+
+        $password = \Illuminate\Support\Str::random(8);
+        $alumno->user->update(['password' => Hash::make($password)]);
+
+        Mail::to($alumno->user->email)->send(new \App\Mail\ReenvioCredenciales($alumno, $password));
+
+        return redirect()->back()->with('success', "Credenciales reenviadas a {$alumno->user->email}.");
     }
 
     private function reglaCuatrimestreValido(Request $request, Alumno $alumno)

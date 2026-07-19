@@ -11,6 +11,7 @@ use App\Models\Materia;
 use App\Models\Periodo;
 use App\Models\Programa;
 use App\Models\User;
+use App\Support\Texto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -34,8 +35,11 @@ class AltaMasivaAlumnosController extends Controller
             'curp', 'telefono', 'fecha_nacimiento',
         ];
 
+        // En mayúsculas y sin acentos: así es como el sistema termina guardando el
+        // nombre de todas formas (ver Texto::normalizarNombre), para que el ejemplo
+        // no sugiera un formato que luego se transforma.
         $ejemplo = [
-            'Juan', 'Pérez', 'García', 'juan.perez@example.com',
+            'JUAN', 'PEREZ', 'GARCIA', 'juan.perez@example.com',
             'PEGJ900101HDFRRN09', '5512345678', '1990-01-01',
         ];
 
@@ -66,6 +70,11 @@ class AltaMasivaAlumnosController extends Controller
         $grupoDestino = Grupo::with('programa', 'periodo')->findOrFail($request->grupo_id);
 
         $handle = fopen($request->file('csv')->getRealPath(), 'r');
+        // Si el archivo trae BOM UTF-8 (ej. exportado con Excel o con nuestra propia
+        // plantilla), se descarta para que el primer encabezado no quede como "﻿nombre".
+        if (fread($handle, 3) !== "\xEF\xBB\xBF") {
+            rewind($handle);
+        }
         $encabezados = array_map(fn($h) => strtolower(trim($h)), fgetcsv($handle, 0, ',', '"', '\\') ?: []);
 
         $filas = [];
@@ -111,12 +120,23 @@ class AltaMasivaAlumnosController extends Controller
                 continue;
             }
 
+            // Mismo criterio que el registro de aspirantes: nombre/apellidos en
+            // mayúsculas y sin acentos, sin importar cómo vengan en el CSV.
+            $d['nombre']           = Texto::normalizarNombre($d['nombre']);
+            $d['apellido_paterno'] = Texto::normalizarNombre($d['apellido_paterno']);
+            $d['apellido_materno'] = Texto::normalizarNombre($d['apellido_materno']);
+
             $validas[] = $d;
         }
 
         if (empty($validas)) {
             return back()->withErrors(array_merge(['No se importó ningún alumno.'], $errores));
         }
+
+        // El límite por defecto de PHP (30s) no alcanza si varias filas fallan al enviar
+        // correo: cada una puede consumir hasta 15s de reintento. Se amplía según el
+        // tamaño del lote para que el reintento nunca corte la importación a medias.
+        set_time_limit(60 + count($validas) * 35);
 
         $grupoActual = $grupoDestino;
         $grupoActual->loadCount('alumnos');
@@ -164,10 +184,19 @@ class AltaMasivaAlumnosController extends Controller
 
             $alumno->load('programa', 'grupo');
 
-            try {
-                Mail::to($alumno->email)->send(new BienvenidaAlumno($alumno, $password));
-            } catch (\Throwable $e) {
-                $errores[] = "{$alumno->nombre_completo} ({$alumno->matricula}) se creó correctamente, pero no se pudo enviar el correo de bienvenida.";
+            $intentos = 0;
+            while ($intentos < 2) {
+                try {
+                    Mail::to($alumno->email)->send(new BienvenidaAlumno($alumno, $password));
+                    break;
+                } catch (\Throwable $e) {
+                    $intentos++;
+                    if ($intentos < 2) {
+                        sleep(15);
+                    } else {
+                        $errores[] = "{$alumno->nombre_completo} ({$alumno->matricula}) se creó correctamente, pero no se pudo enviar el correo de bienvenida.";
+                    }
+                }
             }
 
             $espacioDisponible--;

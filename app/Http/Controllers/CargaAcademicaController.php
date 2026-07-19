@@ -140,6 +140,11 @@ class CargaAcademicaController extends Controller
         ]);
 
         $handle = fopen($request->file('csv')->getRealPath(), 'r');
+        // Si el archivo trae BOM UTF-8 (ej. exportado con Excel o con nuestra propia
+        // plantilla), se descarta para que el primer encabezado no quede como "﻿grupo_clave".
+        if (fread($handle, 3) !== "\xEF\xBB\xBF") {
+            rewind($handle);
+        }
         $encabezados = array_map(fn($h) => strtolower(trim($h)), fgetcsv($handle, 0, ',', '"', '\\') ?: []);
 
         $filas = [];

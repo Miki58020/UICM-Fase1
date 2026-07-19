@@ -55,7 +55,7 @@ $gruposJson = $grupos->map(fn($g) => [
         </div>
 
         {{-- Contadores (también filtran por estado) --}}
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
             <a href="{{ route('admin.alumnos.index', array_filter(['q' => request('q'), 'programa' => request('programa')])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
                style="border-color: #0F4229; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
@@ -80,11 +80,18 @@ $gruposJson = $grupos->map(fn($g) => [
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Baja</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EF4444;">{{ $conteo['baja'] }}</p>
             </a>
+            <a href="{{ route('admin.alumnos.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'migrado' => request('migrado') ? null : '1'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
+               style="border-color: #8B5CF6; {{ request('migrado') ? 'box-shadow: 0 0 0 2px #8B5CF6;' : '' }}">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Migrados</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #8B5CF6;">{{ $conteo['migrados'] }}</p>
+            </a>
         </div>
 
         {{-- Búsqueda y filtros --}}
         <form method="GET" action="{{ route('admin.alumnos.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
             <input type="hidden" name="estado" value="{{ request('estado') }}">
+            <input type="hidden" name="migrado" value="{{ request('migrado') }}">
 
             <div class="relative flex-1">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
@@ -127,7 +134,7 @@ $gruposJson = $grupos->map(fn($g) => [
                 Buscar
             </button>
 
-            @if(request('q') || request('programa') || request('estado'))
+            @if(request('q') || request('programa') || request('estado') || request('migrado'))
             <a href="{{ route('admin.alumnos.index') }}"
                class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
                 Limpiar
@@ -201,35 +208,56 @@ $gruposJson = $grupos->map(fn($g) => [
                             </td>
 
                             <td class="px-6 py-4 text-center">
-                                <button type="button"
-                                        @click="abrirEditar({
-                                            id: {{ $alumno->id }},
-                                            nombre: '{{ addslashes($alumno->nombre_completo) }}',
-                                            matricula: '{{ $alumno->matricula }}',
-                                            estado: '{{ $alumno->estado }}',
-                                            cuatrimestre_actual: {{ $alumno->cuatrimestre_actual ?? 1 }},
-                                            grupo_id: {{ $alumno->grupo_id ?? 'null' }},
-                                            programa_id: {{ $alumno->programa_id ?? 'null' }},
-                                            tiene_usuario: {{ $alumno->user_id ? 'true' : 'false' }}
-                                        })"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
-                                        style="background-color: #D4AF37;"
-                                        onmouseover="this.style.backgroundColor='#b8962e'"
-                                        onmouseout="this.style.backgroundColor='#D4AF37'">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5
-                                                 m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    Editar
-                                </button>
+                                <div class="inline-flex items-center gap-2">
+                                    <button type="button"
+                                            @click="abrirEditar({
+                                                id: {{ $alumno->id }},
+                                                nombre: '{{ addslashes($alumno->nombre_completo) }}',
+                                                matricula: '{{ $alumno->matricula }}',
+                                                estado: '{{ $alumno->estado }}',
+                                                cuatrimestre_actual: {{ $alumno->cuatrimestre_actual ?? 1 }},
+                                                grupo_id: {{ $alumno->grupo_id ?? 'null' }},
+                                                programa_id: {{ $alumno->programa_id ?? 'null' }},
+                                                tiene_usuario: {{ $alumno->user_id ? 'true' : 'false' }}
+                                            })"
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
+                                            style="background-color: #D4AF37;"
+                                            onmouseover="this.style.backgroundColor='#b8962e'"
+                                            onmouseout="this.style.backgroundColor='#D4AF37'">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5
+                                                     m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                        Editar
+                                    </button>
+
+                                    @if ($alumno->user_id)
+                                    <form method="POST" action="{{ route('admin.alumnos.reenviar-acceso', $alumno) }}"
+                                          onsubmit="return confirm('¿Generar nueva contraseña y reenviar el correo a {{ addslashes($alumno->user->email) }}?')">
+                                        @csrf
+                                        <button type="submit"
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
+                                                style="background-color: #EFAD5A;"
+                                                onmouseover="this.style.backgroundColor='#d4923a'"
+                                                onmouseout="this.style.backgroundColor='#EFAD5A'">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7
+                                                         a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                            </svg>
+                                            Reenviar acceso
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
                             </td>
 
                         </tr>
                         @empty
                         <tr>
                             <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
-                                {{ request('q') || request('programa') || request('estado') ? 'No se encontraron alumnos con ese criterio.' : 'No hay alumnos registrados.' }}
+                                {{ request('q') || request('programa') || request('estado') || request('migrado') ? 'No se encontraron alumnos con ese criterio.' : 'No hay alumnos registrados.' }}
                             </td>
                         </tr>
                         @endforelse

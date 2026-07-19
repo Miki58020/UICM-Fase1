@@ -113,6 +113,7 @@ Route::middleware(['auth', 'rol:finanzas'])->group(function () {
 Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
     Route::get('/admin/alumnos', [AlumnoController::class, 'listado'])->name('admin.alumnos.index');
     Route::patch('/admin/alumnos/{alumno}', [AlumnoController::class, 'update'])->name('admin.alumnos.update');
+    Route::post('/admin/alumnos/{alumno}/reenviar-acceso', [AlumnoController::class, 'reenviarAcceso'])->name('admin.alumnos.reenviar-acceso');
 
     Route::get('/admin/expedientes', [ExpedienteController::class, 'index'])->name('admin.expedientes.index');
     Route::get('/admin/expedientes/{alumno}', [ExpedienteController::class, 'show'])->name('admin.expedientes.show');

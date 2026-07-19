@@ -45,12 +45,15 @@
                         </ol>
                     </div>
 
+                    @php $nivelesLabel = ['licenciatura' => 'Licenciaturas', 'maestria' => 'Maestrías', 'doctorado' => 'Doctorado']; @endphp
+
                     <form method="POST" action="{{ route('admin.alta-masiva-alumnos.importar') }}"
                           enctype="multipart/form-data"
+                          @submit="enviando = true"
                           x-data="{
                               periodo_id: '',
                               programa_id: '',
-                              grupo_id: '',
+                              enviando: false,
                               grupos: @js($grupos->map(fn($g) => ['id' => $g->id, 'clave' => $g->clave, 'periodo_id' => $g->periodo_id, 'programa_id' => $g->programa_id])),
                               get gruposFiltrados() {
                                   return this.grupos.filter(g =>
@@ -70,7 +73,7 @@
                                 </label>
                                 <select x-model="periodo_id"
                                         class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
-                                    <option value="">Seleccionar…</option>
+                                    <option value="">Todos</option>
                                     @foreach ($periodos as $p)
                                         <option value="{{ $p->id }}">{{ $p->label }}</option>
                                     @endforeach
@@ -83,9 +86,15 @@
                                 </label>
                                 <select x-model="programa_id"
                                         class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
-                                    <option value="">Seleccionar…</option>
-                                    @foreach ($programas as $prog)
-                                        <option value="{{ $prog->id }}">{{ $prog->nombre }}</option>
+                                    <option value="">Todos</option>
+                                    @foreach ($nivelesLabel as $nivel => $label)
+                                        @if ($programas->where('nivel', $nivel)->isNotEmpty())
+                                        <optgroup label="{{ $label }}">
+                                            @foreach ($programas->where('nivel', $nivel) as $prog)
+                                                <option value="{{ $prog->id }}">{{ $prog->nombre }}</option>
+                                            @endforeach
+                                        </optgroup>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -94,9 +103,9 @@
                                 <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
                                     Grupo destino
                                 </label>
-                                <select name="grupo_id" x-model="grupo_id" required
+                                <select name="grupo_id" required
                                         class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 outline-none bg-white">
-                                    <option value="">Seleccionar…</option>
+                                    <option value="">— Selecciona un grupo —</option>
                                     <template x-for="g in gruposFiltrados" :key="g.id">
                                         <option :value="g.id" x-text="g.clave"></option>
                                     </template>
@@ -122,15 +131,23 @@
                                    class="flex-1 text-sm text-gray-600 border-2 border-dashed border-gray-200 rounded-xl px-4 py-2.5 outline-none file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
 
                             <button type="submit"
+                                    :disabled="enviando"
                                     class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-150 whitespace-nowrap"
                                     style="background-color: #D4AF37;"
-                                    onmouseover="this.style.backgroundColor='#b9952c'"
-                                    onmouseout="this.style.backgroundColor='#D4AF37'">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    onmouseover="if(!this.disabled) this.style.backgroundColor='#b9952c'"
+                                    onmouseout="if(!this.disabled) this.style.backgroundColor='#D4AF37'">
+                                <svg x-show="enviando" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"
+                                     style="display:none;">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                          d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"></path>
+                                </svg>
+                                <svg x-show="!enviando" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 7.5L12 3 7.5 7.5M12 3v13.5"/>
                                 </svg>
-                                Subir e importar
+                                <span x-text="enviando ? 'Importando… puede tardar si hay que reintentar el envío de correos' : 'Subir e importar'"></span>
                             </button>
                         </div>
                     </form>

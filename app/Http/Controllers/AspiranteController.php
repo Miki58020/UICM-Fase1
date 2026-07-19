@@ -12,7 +12,7 @@ use App\Models\Programa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use Normalizer;
+use App\Support\Texto;
 
 class AspiranteController extends Controller
 {
@@ -243,9 +243,9 @@ class AspiranteController extends Controller
         }
 
         $curp   = strtoupper($request->curp);
-        $nombre = $this->normalizarTexto($request->nombre);
-        $apPat  = $this->normalizarTexto($request->apellido_paterno);
-        $apMat  = $this->normalizarTexto($request->apellido_materno);
+        $nombre = Texto::normalizarNombre($request->nombre);
+        $apPat  = Texto::normalizarNombre($request->apellido_paterno);
+        $apMat  = Texto::normalizarNombre($request->apellido_materno);
         $folio  = $this->generarFolio($request->generacion);
 
         $carpetaCertificado = match($programa->nivel) {
@@ -301,12 +301,4 @@ class AspiranteController extends Controller
         return $prefix . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
-    private function normalizarTexto(?string $texto): ?string
-    {
-        if ($texto === null) return null;
-        // Descomponer caracteres acentuados y eliminar marcas diacríticas
-        $texto = normalizer_normalize($texto, Normalizer::FORM_D);
-        $texto = preg_replace('/\p{Mn}/u', '', $texto);
-        return strtoupper($texto);
-    }
 }
