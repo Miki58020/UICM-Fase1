@@ -1207,7 +1207,11 @@
             $allErrs = $errors->all();
             $shown   = min(count($allErrs), 3);
             for ($i = 0; $i < $shown; $i++) $toasts[] = ['err', $allErrs[$i]];
-            if (count($allErrs) > 3) $toasts[] = ['err', 'Y ' . (count($allErrs) - 3) . ' error(es) más...'];
+            if (count($allErrs) > 3) {
+                $resto = array_slice($allErrs, 3);
+                $listaResto = implode("\n", array_map(fn ($e) => "• {$e}", $resto));
+                $toasts[] = ['err', 'Y ' . count($resto) . " error(es) más:\n" . $listaResto];
+            }
         }
     @endphp
 
@@ -1232,7 +1236,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="{{ $tIcon }}"/>
             </svg>
             <p class="text-sm font-semibold flex-1 leading-snug {{ $tText }}"
-               style="flex:1;">
+               style="flex:1; white-space: pre-line;">
                 {{ $msg }}
             </p>
             <button type="button" class="toast-close text-gray-400 hover:text-gray-600 transition-colors"
