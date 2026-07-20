@@ -51,11 +51,20 @@
     <div class="body">
         @php
             $persona = $pago->aspirante ?? $pago->alumno;
-            $esReinscripcion = $pago->concepto === 'reinscripcion';
+            // La distinción alumno/aspirante depende de a quién pertenece el pago, no del concepto:
+            // colegiatura y reinscripción son ambos pagos de alumno, igual que inscripción es de aspirante.
+            $esAlumno = (bool) $pago->alumno_id;
+            $labelsConcepto = [
+                'inscripcion'  => 'inscripción',
+                'colegiatura'  => 'colegiatura',
+                'cuatrimestre' => 'reinscripción',
+                'otro'         => 'pago',
+            ];
+            $conceptoLabel = $labelsConcepto[$pago->concepto] ?? 'pago';
         @endphp
         <p class="greeting">Estimado/a {{ $persona?->nombre }} {{ $persona?->apellido_paterno }},</p>
 
-        <p>Hemos revisado tu comprobante de {{ $esReinscripcion ? 'reinscripción' : 'inscripción' }} y lamentamos informarte que:</p>
+        <p>Hemos revisado tu comprobante de {{ $conceptoLabel }} y lamentamos informarte que:</p>
 
         <div class="badge-wrap">
             <span class="badge">✕ &nbsp; COMPROBANTE NO VALIDADO</span>
@@ -68,7 +77,7 @@
         </div>
         @endif
 
-        @if (!$esReinscripcion && $pago->aspirante)
+        @if (!$esAlumno && $pago->aspirante)
         <p>Para continuar con tu proceso de inscripción, por favor sube un nuevo comprobante de pago:</p>
 
         <div class="btn-wrap">

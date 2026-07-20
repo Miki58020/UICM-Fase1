@@ -56,7 +56,7 @@ class Alumno extends Model
     public function todosLosPagos()
     {
         return Pago::where('alumno_id', $this->id)
-            ->orWhere('aspirante_id', $this->aspirante_id)
+            ->when($this->aspirante_id, fn ($q) => $q->orWhere('aspirante_id', $this->aspirante_id))
             ->get();
     }
 

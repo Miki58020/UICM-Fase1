@@ -54,7 +54,7 @@ class EnviarResumenDiario extends Command
 
     private function enviarFinanzas(): void
     {
-        $pagosPendientes = Pago::where('estado', 'pendiente')->count();
+        $pagosPendientes = Pago::conIntentoDePago()->where('estado', 'pendiente')->count();
 
         $datos = [
             'Pagos pendientes de validación' => $pagosPendientes,
@@ -89,7 +89,7 @@ class EnviarResumenDiario extends Command
     {
         $datos = [
             'Aspirantes pendientes de revisión'      => Aspirante::where('estado', 'pendiente')->count(),
-            'Pagos pendientes de validación'          => Pago::where('estado', 'pendiente')->count(),
+            'Pagos pendientes de validación'          => Pago::conIntentoDePago()->where('estado', 'pendiente')->count(),
             'Listos para inscribir (pago aprobado)'  => Aspirante::where('estado', 'aprobado')
                 ->whereHas('pagos', fn($q) => $q->where('estado', 'aprobado'))
                 ->whereHas('alumno', fn($q) => $q->whereNull('user_id'))

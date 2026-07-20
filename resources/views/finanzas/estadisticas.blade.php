@@ -47,7 +47,7 @@
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                         <option value="">Todos</option>
-                        @foreach (['inscripcion' => 'Inscripción', 'reinscripcion' => 'Reinscripción', 'colegiatura' => 'Colegiatura', 'cuatrimestre' => 'Cuatrimestre', 'otro' => 'Otro'] as $val => $label)
+                        @foreach (['inscripcion' => 'Inscripción', 'colegiatura' => 'Colegiatura', 'cuatrimestre' => 'Reinscripción', 'otro' => 'Otro'] as $val => $label)
                             <option value="{{ $val }}" {{ request('concepto') === $val ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
                     </select>
@@ -165,11 +165,16 @@
                     @else
                         @php
                             $coloresConcepto = [
-                                'inscripcion'   => '#9CA3AF',
-                                'reinscripcion' => '#3B82F6',
-                                'colegiatura'   => '#10B981',
-                                'cuatrimestre'  => '#8B5CF6',
-                                'otro'          => '#9CA3AF',
+                                'inscripcion'  => '#9CA3AF',
+                                'colegiatura'  => '#10B981',
+                                'cuatrimestre' => '#3B82F6',
+                                'otro'         => '#9CA3AF',
+                            ];
+                            $labelsConcepto = [
+                                'inscripcion'  => 'Inscripción',
+                                'colegiatura'  => 'Colegiatura',
+                                'cuatrimestre' => 'Reinscripción',
+                                'otro'         => 'Otro',
                             ];
                             $maxConcepto = $porConcepto->max('monto') ?: 1;
                         @endphp
@@ -177,20 +182,21 @@
                             @foreach ($porConcepto as $concepto => $datos)
                                 @php
                                     $color = $coloresConcepto[$concepto] ?? '#9CA3AF';
+                                    $label = $labelsConcepto[$concepto] ?? ucfirst($concepto);
                                     $anchoPct = max(4, round(($datos['monto'] / $maxConcepto) * 100));
                                 @endphp
                                 <div>
                                     <div class="flex items-center justify-between mb-1">
-                                        <span class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 capitalize">
+                                        <span class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-700">
                                             <span class="w-2 h-2 rounded-full inline-block" style="background-color: {{ $color }};"></span>
-                                            {{ $concepto }}
+                                            {{ $label }}
                                             <span class="text-xs text-gray-400 font-normal">({{ $datos['cantidad'] }})</span>
                                         </span>
                                         <span class="text-sm font-bold" style="color: #0F4229;">${{ number_format($datos['monto'], 2) }}</span>
                                     </div>
                                     <div class="w-full h-2.5 rounded-full bg-gray-100 overflow-hidden">
                                         <div class="h-full rounded-full" style="width: {{ $anchoPct }}%; background-color: {{ $color }};"
-                                             title="{{ ucfirst($concepto) }}: ${{ number_format($datos['monto'], 2) }} MXN"></div>
+                                             title="{{ $label }}: ${{ number_format($datos['monto'], 2) }} MXN"></div>
                                     </div>
                                 </div>
                             @endforeach

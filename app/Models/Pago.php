@@ -38,6 +38,19 @@ class Pago extends Model
     }
 
     /**
+     * Cobros que ya tuvieron algún intento de pago real (pasaron por Mercado Pago o ya
+     * fueron resueltos), a diferencia de un cargo apenas generado que el alumno todavía
+     * no ha tocado. Usado para no inflar las colas de revisión de Finanzas con cargos vacíos.
+     */
+    public function scopeConIntentoDePago($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNotNull('mp_payment_id')
+              ->orWhere('estado', '!=', 'pendiente');
+        });
+    }
+
+    /**
      * Genera el cobro de reinscripción de un alumno para un periodo, evitando duplicar
      * si ya tiene uno activo. Usado tanto por el comando automático como por el botón
      * manual de control escolar.
@@ -45,7 +58,7 @@ class Pago extends Model
     public static function generarReinscripcion(Alumno $alumno, Periodo $periodo): ?self
     {
         $existente = static::where('alumno_id', $alumno->id)
-            ->where('concepto', 'reinscripcion')
+            ->where('concepto', 'cuatrimestre')
             ->where('periodo', $periodo->nombre)
             ->whereIn('estado', ['pendiente', 'aprobado'])
             ->first();
@@ -70,7 +83,7 @@ class Pago extends Model
 
         return static::create([
             'alumno_id'         => $alumno->id,
-            'concepto'          => 'reinscripcion',
+            'concepto'          => 'cuatrimestre',
             'periodo'           => $periodo->nombre,
             'monto'             => $monto,
             'descuento'         => $tarifa && $tarifa->descuentoVigente() ? $tarifa->descuento : 0,

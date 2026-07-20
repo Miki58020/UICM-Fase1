@@ -296,7 +296,7 @@ class PagoController extends Controller
 
             $pago = Pago::where('mp_payment_id', $payment->id)->first();
 
-            // Pago de un alumno autenticado (colegiatura/cuatrimestre/reinscripcion)
+            // Pago de un alumno autenticado (colegiatura/cuatrimestre)
             if (!$pago && str_starts_with((string) $payment->external_reference, 'PAGO-')) {
                 $pagoId = (int) str_replace('PAGO-', '', $payment->external_reference);
                 $pago   = Pago::find($pagoId);
@@ -358,6 +358,7 @@ class PagoController extends Controller
         $alumno = Alumno::where('user_id', Auth::id())->with('programa')->firstOrFail();
         abort_if($pago->alumno_id !== $alumno->id, 403);
         abort_if($pago->estado !== 'pendiente', 403, 'Este pago ya fue procesado.');
+        abort_if($pago->mp_payment_id, 403, 'Ya enviaste un pago para este cargo y está en revisión por Finanzas.');
 
         // Colegiatura y reinscripción tienen descuento vigente por fechas: el monto se
         // recalcula siempre con la fecha de hoy antes de generar el cobro en Mercado Pago.
@@ -373,7 +374,7 @@ class PagoController extends Controller
                     'monto_original' => $tarifa->monto,
                 ]);
             }
-        } elseif ($pago->concepto === 'reinscripcion') {
+        } elseif ($pago->concepto === 'cuatrimestre') {
             $tarifa = TarifaInscripcion::where('nivel', $alumno->programa->nivel)
                 ->where('tipo', 'cuatrimestre')
                 ->first();
@@ -396,7 +397,7 @@ class PagoController extends Controller
             try {
                 $this->configurarMP();
 
-                $preference = (new PreferenceClient())->create([
+                $preferenceData = [
                     'items' => [[
                         'title'       => $this->tituloConcepto($pago),
                         'quantity'    => 1,
@@ -411,7 +412,16 @@ class PagoController extends Controller
                         'pending' => route('alumno.pagos.retorno', $pago),
                         'failure' => route('alumno.finanzas.index'),
                     ],
-                ]);
+                ];
+
+                // Sin esto, un pago que no se aprueba al instante (queda "en contingencia" en MP)
+                // nunca dispara auto_return y se queda sin mp_payment_id hasta que Finanzas lo apruebe a mano.
+                $notificationUrl = ConfiguracionMercadopago::activa()?->notification_url;
+                if ($notificationUrl) {
+                    $preferenceData['notification_url'] = $notificationUrl;
+                }
+
+                $preference = (new PreferenceClient())->create($preferenceData);
 
                 $preferenceId = $preference->id;
                 $checkoutUrl  = app()->environment('production')
@@ -461,9 +471,8 @@ class PagoController extends Controller
     private function tituloConcepto(Pago $pago): string
     {
         $labels = [
-            'colegiatura'   => 'Colegiatura',
-            'cuatrimestre'  => 'Cuatrimestre',
-            'reinscripcion' => 'Reinscripción',
+            'colegiatura'  => 'Colegiatura',
+            'cuatrimestre' => 'Reinscripción',
         ];
 
         $titulo = 'UICM — ' . ($labels[$pago->concepto] ?? ucfirst($pago->concepto));
@@ -476,8 +485,8 @@ class PagoController extends Controller
     public function index(Request $request)
     {
         $conteo = [
-            'total'     => Pago::count(),
-            'pendiente' => Pago::where('estado', 'pendiente')->count(),
+            'total'     => Pago::conIntentoDePago()->count(),
+            'pendiente' => Pago::conIntentoDePago()->where('estado', 'pendiente')->count(),
             'aprobado'  => Pago::where('estado', 'aprobado')->count(),
             'rechazado' => Pago::where('estado', 'rechazado')->count(),
         ];
@@ -595,7 +604,8 @@ class PagoController extends Controller
 
     private function pagosFiltrados(Request $request)
     {
-        return Pago::with(['aspirante.programa', 'alumno.programa'])
+        return Pago::conIntentoDePago()
+            ->with(['aspirante.programa', 'alumno.programa'])
             ->when($request->filled('concepto'), fn ($q) => $q->where('concepto', $request->concepto))
             ->when($request->filled('estado'), fn ($q) => $q->where('estado', $request->estado))
             ->when($request->filled('fecha_desde'), fn ($q) => $q->whereDate('created_at', '>=', $request->fecha_desde))

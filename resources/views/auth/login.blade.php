@@ -6,7 +6,7 @@
 
 {{-- Alpine.js scope: controla la visibilidad del modal --}}
 <section
-    x-data="{ showModal: {{ $errors->has('email') ? 'true' : 'false' }} }"
+    x-data="{ showModal: {{ old('_recuperacion') ? 'true' : 'false' }} }"
     class="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4">
 
     {{-- ============================================================
@@ -161,6 +161,7 @@
             {{-- Body --}}
             <form method="POST" action="{{ route('password.email') }}" class="px-6 py-5">
                 @csrf
+                <input type="hidden" name="_recuperacion" value="1">
 
                 <p class="text-sm text-gray-600 mb-4">
                     Ingresa tu correo institucional y el área administrativa te apoyará

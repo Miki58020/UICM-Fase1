@@ -67,7 +67,7 @@ class NotificacionDepartamentoController extends Controller
                     ->count(),
             ],
             'finanzas' => [
-                'Comprobantes de pago por revisar' => Pago::where('estado', 'pendiente')->count(),
+                'Comprobantes de pago por revisar' => Pago::conIntentoDePago()->where('estado', 'pendiente')->count(),
                 'Pagos aprobados (acumulado)'      => Pago::where('estado', 'aprobado')->count(),
             ],
             'coordinacion' => [
@@ -78,7 +78,7 @@ class NotificacionDepartamentoController extends Controller
             ],
             'admin' => [
                 'Aspirantes pendientes de revisión'    => Aspirante::where('estado', 'pendiente')->count(),
-                'Comprobantes de pago por validar'     => Pago::where('estado', 'pendiente')->count(),
+                'Comprobantes de pago por validar'     => Pago::conIntentoDePago()->where('estado', 'pendiente')->count(),
                 'Mensajes de contacto sin atender'     => Contacto::where('atendido', false)->count(),
                 'Solicitudes de contraseña pendientes' => SolicitudContrasena::where('estado', 'pendiente')->count(),
             ],

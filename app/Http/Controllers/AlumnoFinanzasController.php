@@ -17,10 +17,14 @@ class AlumnoFinanzasController extends Controller
         $pendientes = $pagos->where('estado', 'pendiente');
         $historial  = $pagos->whereIn('estado', ['aprobado', 'rechazado']);
 
-        $atrasados   = $pendientes->filter(fn (Pago $p) => $p->estaVencido());
+        // Un pago ya enviado a Mercado Pago (con mp_payment_id) está en revisión, no "sin tocar":
+        // no debe contar como atrasado ni invitarse a pagar de nuevo mientras se resuelve.
+        $pendientesSinEnviar = $pendientes->filter(fn (Pago $p) => !$p->mp_payment_id);
+
+        $atrasados   = $pendientesSinEnviar->filter(fn (Pago $p) => $p->estaVencido());
         $alCorriente = $atrasados->isEmpty();
 
-        $porVencerPronto = $pendientes->filter(fn (Pago $p) => !$p->estaVencido()
+        $porVencerPronto = $pendientesSinEnviar->filter(fn (Pago $p) => !$p->estaVencido()
             && $p->fecha_vencimiento
             && $p->fecha_vencimiento->lte(now()->addDays(7)));
 

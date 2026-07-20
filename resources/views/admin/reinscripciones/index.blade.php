@@ -57,30 +57,6 @@
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
-        <x-banner-desarrollo>
-            El cobro de reinscripción se genera correctamente y Finanzas puede aprobarlo/rechazarlo desde
-            <strong>Pagos en revisión</strong>. Falta integrar el lado del alumno: subir comprobante o pagar
-            en línea desde su panel. Por ahora, aprueba manualmente para continuar el flujo.
-        </x-banner-desarrollo>
-
-        {{-- Alerta sin periodo activo --}}
-        @if (!$periodoActivo)
-            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-yellow-50" style="border-color: #EFAD5A;">
-                <p class="text-sm font-semibold text-yellow-800">
-                    No hay un período académico activo. Activa un período en el módulo de Periodos para poder gestionar reinscripciones.
-                </p>
-            </div>
-        @else
-            <div class="mb-6 rounded-xl px-5 py-3 bg-white border border-gray-200 flex items-center gap-3 shadow-sm">
-                <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #0F4229;"></span>
-                <span class="text-sm font-medium text-gray-700">
-                    Período activo: <strong>{{ $periodoActivo->label }}</strong>
-                    ({{ $periodoActivo->fecha_inicio_registro->format('d/m/Y') }} — {{ $periodoActivo->fecha_fin_registro->format('d/m/Y') }})
-                </span>
-            </div>
-        @endif
-
-
         {{-- Contadores --}}
         @php
             $sinCobro          = 0;
@@ -146,6 +122,23 @@
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
             </div>
         </div>
+
+        {{-- Alerta sin periodo activo --}}
+        @if (!$periodoActivo)
+            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-yellow-50" style="border-color: #EFAD5A;">
+                <p class="text-sm font-semibold text-yellow-800">
+                    No hay un período académico activo. Activa un período en el módulo de Periodos para poder gestionar reinscripciones.
+                </p>
+            </div>
+        @else
+            <div class="mb-6 rounded-xl px-5 py-3 bg-white border border-gray-200 flex items-center gap-3 shadow-sm">
+                <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #0F4229;"></span>
+                <span class="text-sm font-medium text-gray-700">
+                    Período activo: <strong>{{ $periodoActivo->label }}</strong>
+                    ({{ $periodoActivo->fecha_inicio_registro->format('d/m/Y') }} — {{ $periodoActivo->fecha_fin_registro->format('d/m/Y') }})
+                </span>
+            </div>
+        @endif
 
         {{-- Tabla --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden">

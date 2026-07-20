@@ -881,7 +881,7 @@
             </a>
 
             @php
-                $pagosPendientes = \App\Models\Pago::where('estado', 'pendiente')->count();
+                $pagosPendientes = \App\Models\Pago::conIntentoDePago()->where('estado', 'pendiente')->count();
             @endphp
             <a href="{{ route('finanzas.pagos.index') }}"
                @click="sidebarOpen = false"

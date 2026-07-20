@@ -84,11 +84,11 @@ class DashboardController extends Controller
     private function datosFinanzas(): array
     {
         return [
-            'pagosPendientes' => Pago::where('estado', 'pendiente')->count(),
+            'pagosPendientes' => Pago::conIntentoDePago()->where('estado', 'pendiente')->count(),
             'pagosAprobados'  => Pago::where('estado', 'aprobado')->count(),
             'pagosRechazados' => Pago::where('estado', 'rechazado')->count(),
             'montoTotal'      => (int) Pago::where('estado', 'aprobado')->sum('monto'),
-            'ultimosPagos'    => Pago::with('aspirante')->latest()->take(6)->get(),
+            'ultimosPagos'    => Pago::conIntentoDePago()->with('aspirante')->latest()->take(6)->get(),
         ];
     }
 
@@ -124,7 +124,7 @@ class DashboardController extends Controller
             ->count();
 
         // Finanzas
-        $finPagos = Pago::where('estado', 'pendiente')->count();
+        $finPagos = Pago::conIntentoDePago()->where('estado', 'pendiente')->count();
 
         // Coordinación
         $coordSinCarga    = Grupo::whereDoesntHave('cargaAcademica')->count();

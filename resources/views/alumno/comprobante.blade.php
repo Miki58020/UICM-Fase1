@@ -111,9 +111,17 @@
         <p class="section-title">Datos del pago</p>
         <div class="detail-box">
             <table>
+                @php
+                    $labelsConcepto = [
+                        'inscripcion'  => 'Inscripción',
+                        'colegiatura'  => 'Colegiatura',
+                        'cuatrimestre' => 'Reinscripción',
+                        'otro'         => 'Otro',
+                    ];
+                @endphp
                 <tr>
                     <td>Concepto</td>
-                    <td style="text-transform: capitalize;">{{ $pago->concepto }}</td>
+                    <td>{{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}</td>
                 </tr>
                 <tr>
                     <td>Periodo</td>

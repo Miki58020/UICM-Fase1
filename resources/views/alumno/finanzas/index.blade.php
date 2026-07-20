@@ -9,6 +9,7 @@
              filtroEstado: '',
              filtrar() {
                  this.$nextTick(() => {
+                     if (!this.$refs.historialLista) return;
                      const q = this.busqueda.toLowerCase();
                      const filas = this.$refs.historialLista.querySelectorAll('[data-concepto]');
                      let visibles = 0;
@@ -25,6 +26,15 @@
          }"
          x-init="filtrar()">
     <div class="container mx-auto px-4 lg:px-12 max-w-5xl">
+
+        @php
+            $labelsConcepto = [
+                'inscripcion'  => 'Inscripción',
+                'colegiatura'  => 'Colegiatura',
+                'cuatrimestre' => 'Reinscripción',
+                'otro'         => 'Otro',
+            ];
+        @endphp
 
         <div class="mb-8">
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">Portal del Alumno</p>
@@ -128,7 +138,7 @@
                     </svg>
                 </div>
                 <div class="flex-1">
-                    <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">{{ ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">{{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}</p>
                     <p class="text-sm font-bold text-gray-800">Vence el {{ $pago->fecha_vencimiento->format('d/m/Y') }}</p>
                 </div>
                 <a href="{{ route('alumno.pagos.pagar', $pago) }}"
@@ -174,8 +184,8 @@
                     <div class="divide-y divide-gray-100 text-sm">
                         @foreach ($pendientes as $pago)
                         <div class="grid grid-cols-[2fr_0.8fr_1.3fr_1fr_1fr_1.3fr] gap-x-4 px-6 py-4 items-center hover:bg-gray-50">
-                            <div class="font-medium text-gray-800 capitalize truncate">
-                                {{ $pago->concepto }}{{ $pago->mes ? ' '.$pago->mes : '' }}
+                            <div class="font-medium text-gray-800 truncate">
+                                {{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}
                             </div>
                             <div class="text-gray-500 truncate">{{ $pago->periodo }}</div>
                             <div class="font-bold truncate" style="color: #0F4229;">
@@ -188,7 +198,12 @@
                                 {{ $pago->fecha_vencimiento?->format('d/m/Y') ?? '—' }}
                             </div>
                             <div class="text-center">
-                                @if ($pago->estaVencido())
+                                @if ($pago->mp_payment_id)
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #3b82f6;">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                        En revisión
+                                    </span>
+                                @elseif ($pago->estaVencido())
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #dc2626;">
                                         <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                         Atrasado
@@ -201,10 +216,16 @@
                                 @endif
                             </div>
                             <div class="text-center">
-                                <a href="{{ route('alumno.pagos.pagar', $pago) }}"
-                                   class="inline-block text-xs font-bold px-4 py-2 rounded-lg text-white" style="background-color: #0F4229;">
-                                    Pagar
-                                </a>
+                                @if ($pago->mp_payment_id)
+                                    <span class="inline-block text-xs font-semibold px-4 py-2 rounded-lg text-gray-400 bg-gray-100">
+                                        Enviado
+                                    </span>
+                                @else
+                                    <a href="{{ route('alumno.pagos.pagar', $pago) }}"
+                                       class="inline-block text-xs font-bold px-4 py-2 rounded-lg text-white" style="background-color: #0F4229;">
+                                        Pagar
+                                    </a>
+                                @endif
                             </div>
                         </div>
                         @endforeach
@@ -291,11 +312,11 @@
                     <div class="divide-y divide-gray-100 text-sm">
                         @foreach ($historial as $pago)
                         <div class="grid grid-cols-[2fr_0.8fr_1.3fr_1fr_1fr_1.3fr] gap-x-4 px-6 py-4 items-center hover:bg-gray-50"
-                             data-concepto="{{ strtolower($pago->concepto.' '.$pago->mes) }}"
+                             data-concepto="{{ strtolower(($labelsConcepto[$pago->concepto] ?? $pago->concepto).' '.$pago->mes) }}"
                              data-periodo="{{ strtolower($pago->periodo) }}"
                              data-estado="{{ $pago->estado }}">
-                            <div class="font-medium text-gray-800 capitalize truncate">
-                                {{ $pago->concepto }}{{ $pago->mes ? ' '.$pago->mes : '' }}
+                            <div class="font-medium text-gray-800 truncate">
+                                {{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}
                             </div>
                             <div class="text-gray-500 truncate">{{ $pago->periodo }}</div>
                             <div class="font-bold truncate" style="color: #0F4229;">

@@ -17,8 +17,8 @@ $tabs = [
         'color' => '#D4AF37',
     ],
     'cuatrimestre' => [
-        'label' => 'Cuatrimestre',
-        'desc'  => 'Pago al inicio de cada cuatrimestre.',
+        'label' => 'Reinscripción',
+        'desc'  => 'Pago para reinscribirse al siguiente cuatrimestre.',
         'color' => '#EFAD5A',
     ],
 ];

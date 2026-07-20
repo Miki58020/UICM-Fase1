@@ -335,12 +335,20 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
+                        @php
+                            $labelsConcepto = [
+                                'inscripcion'  => 'Inscripción',
+                                'colegiatura'  => 'Colegiatura',
+                                'cuatrimestre' => 'Reinscripción',
+                                'otro'         => 'Otro',
+                            ];
+                        @endphp
                         @foreach($ultimosPagos as $pago)
                         <tr class="hover:bg-gray-50 transition-colors duration-100">
                             <td class="px-6 py-3.5 font-medium text-gray-800">
-                                {{ $pago->aspirante ? $pago->aspirante->nombre.' '.$pago->aspirante->apellido_paterno : '—' }}
+                                {{ $pago->aspirante?->nombre_completo ?? $pago->alumno?->nombre_completo ?? '—' }}
                             </td>
-                            <td class="px-6 py-3.5 text-gray-500 capitalize">{{ $pago->concepto }}</td>
+                            <td class="px-6 py-3.5 text-gray-500">{{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}</td>
                             <td class="px-6 py-3.5 font-bold text-gray-800">${{ number_format($pago->monto, 0) }} MXN</td>
                             <td class="px-6 py-3.5 text-xs text-gray-400">
                                 {{ $pago->fecha_pago ? $pago->fecha_pago->format('d/m/Y') : '—' }}

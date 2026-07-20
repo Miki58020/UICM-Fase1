@@ -91,7 +91,7 @@
                             onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                         <option value="">Todos</option>
-                        @foreach (['inscripcion' => 'Inscripción', 'reinscripcion' => 'Reinscripción', 'colegiatura' => 'Colegiatura', 'cuatrimestre' => 'Cuatrimestre', 'otro' => 'Otro'] as $val => $label)
+                        @foreach (['inscripcion' => 'Inscripción', 'colegiatura' => 'Colegiatura', 'cuatrimestre' => 'Reinscripción', 'otro' => 'Otro'] as $val => $label)
                             <option value="{{ $val }}" {{ request('concepto') === $val ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
                     </select>
@@ -162,7 +162,7 @@
                     <tbody class="divide-y divide-gray-100">
                         @forelse ($pagos as $pago)
                         @php
-                            $refTexto     = $pago->aspirante?->folio ?? ($pago->alumno ? 'MAT-'.$pago->alumno->matricula : '—');
+                            $refTexto     = $pago->aspirante?->folio ?? ($pago->alumno ? $pago->alumno->matricula : '—');
                             $nombreTexto  = $pago->aspirante?->nombre_completo ?? $pago->alumno?->nombre_completo ?? '—';
                             $programaNombre = $pago->aspirante?->programa?->nombre ?? $pago->alumno?->programa?->nombre ?? '—';
                         @endphp
@@ -183,15 +183,20 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
                                     $badgesConcepto = [
-                                        'inscripcion'   => 'bg-gray-100 text-gray-600',
-                                        'reinscripcion' => 'bg-blue-100 text-blue-700',
-                                        'colegiatura'   => 'bg-emerald-100 text-emerald-700',
-                                        'cuatrimestre'  => 'bg-purple-100 text-purple-700',
-                                        'otro'          => 'bg-gray-100 text-gray-600',
+                                        'inscripcion'  => 'bg-gray-100 text-gray-600',
+                                        'colegiatura'  => 'bg-emerald-100 text-emerald-700',
+                                        'cuatrimestre' => 'bg-blue-100 text-blue-700',
+                                        'otro'         => 'bg-gray-100 text-gray-600',
+                                    ];
+                                    $labelsConcepto = [
+                                        'inscripcion'  => 'Inscripción',
+                                        'colegiatura'  => 'Colegiatura',
+                                        'cuatrimestre' => 'Reinscripción',
+                                        'otro'         => 'Otro',
                                     ];
                                 @endphp
                                 <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold {{ $badgesConcepto[$pago->concepto] ?? 'bg-gray-100 text-gray-600' }}">
-                                    {{ ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}
+                                    {{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}
                                 </span>
                             </td>
 

@@ -55,12 +55,21 @@
     <div class="body">
         @php
             $persona = $pago->aspirante ?? $pago->alumno;
-            $ref = $pago->aspirante?->folio ?? ($pago->alumno ? 'MAT-'.$pago->alumno->matricula : '—');
-            $esReinscripcion = $pago->concepto === 'reinscripcion';
+            $ref = $pago->aspirante?->folio ?? ($pago->alumno ? $pago->alumno->matricula : '—');
+            // La distinción alumno/aspirante depende de a quién pertenece el pago, no del concepto:
+            // colegiatura y reinscripción son ambos pagos de alumno, igual que inscripción es de aspirante.
+            $esAlumno = (bool) $pago->alumno_id;
+            $labelsConcepto = [
+                'inscripcion'  => 'inscripción',
+                'colegiatura'  => 'colegiatura',
+                'cuatrimestre' => 'reinscripción',
+                'otro'         => 'pago',
+            ];
+            $conceptoLabel = $labelsConcepto[$pago->concepto] ?? 'pago';
         @endphp
         <p class="greeting">Estimado/a {{ $persona?->nombre }} {{ $persona?->apellido_paterno }},</p>
 
-        <p>Tu comprobante de {{ $esReinscripcion ? 'reinscripción' : 'inscripción' }} ha sido revisado y:</p>
+        <p>Tu comprobante de {{ $conceptoLabel }} ha sido revisado y:</p>
 
         <div class="badge-wrap">
             <span class="badge">✓ &nbsp; PAGO VALIDADO</span>
@@ -69,12 +78,12 @@
         <div class="detail-wrap">
             <table class="detail-table">
                 <tr>
-                    <td>{{ $esReinscripcion ? 'Matrícula' : 'Folio de solicitud' }}</td>
+                    <td>{{ $esAlumno ? 'Matrícula' : 'Folio de solicitud' }}</td>
                     <td>{{ $ref }}</td>
                 </tr>
                 <tr>
                     <td>Concepto</td>
-                    <td>Pago de {{ $esReinscripcion ? 'reinscripción' : 'inscripción' }}</td>
+                    <td>Pago de {{ $conceptoLabel }}</td>
                 </tr>
                 <tr>
                     <td>Fecha de pago</td>
@@ -88,10 +97,12 @@
         </div>
 
         <div class="info-box">
-            @if ($esReinscripcion)
+            @if (!$esAlumno)
+                El área de <strong>Control Escolar</strong> finalizará tu proceso de inscripción. En los próximos días hábiles recibirás tus credenciales de acceso al portal estudiantil.
+            @elseif ($pago->concepto === 'cuatrimestre')
                 El área de <strong>Control Escolar</strong> finalizará tu proceso de reinscripción y te asignará grupo para el nuevo período.
             @else
-                El área de <strong>Control Escolar</strong> finalizará tu proceso de inscripción. En los próximos días hábiles recibirás tus credenciales de acceso al portal estudiantil.
+                Gracias por tu pago, ya quedó reflejado en tu estado de cuenta dentro del portal.
             @endif
         </div>
 

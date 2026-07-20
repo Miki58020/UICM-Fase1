@@ -18,7 +18,7 @@ class ReinscripcionController extends Controller
             ->with(['programa', 'grupo.periodo'])
             ->when($periodoActivo, fn($q) => $q->with([
                 'reinscripciones' => fn($q) => $q
-                    ->where('concepto', 'reinscripcion')
+                    ->where('concepto', 'cuatrimestre')
                     ->where('periodo', $periodoActivo->nombre),
             ]))
             ->orderBy('apellido_paterno')
@@ -56,7 +56,7 @@ class ReinscripcionController extends Controller
         ]);
 
         Pago::where('alumno_id', $alumno->id)
-            ->where('concepto', 'reinscripcion')
+            ->where('concepto', 'cuatrimestre')
             ->where('periodo', $periodoActivo->nombre)
             ->where('estado', 'aprobado')
             ->firstOrFail();

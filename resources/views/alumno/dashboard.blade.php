@@ -365,7 +365,7 @@
 
                 {{-- Próximo pago --}}
                 @php
-                    $pagoAtrasado = $proximoPago && method_exists($proximoPago, 'estaVencido') && $proximoPago->estaVencido();
+                    $pagoAtrasado = $proximoPago && !$proximoPago->mp_payment_id && method_exists($proximoPago, 'estaVencido') && $proximoPago->estaVencido();
                     $pagoColorPanel = !$proximoPago ? '#0F4229' : ($pagoAtrasado ? '#dc2626' : '#EFAD5A');
                     $pagoBgPanel = !$proximoPago ? '#f0f9f4' : ($pagoAtrasado ? '#fef2f2' : '#fffaf0');
                 @endphp
@@ -381,6 +381,14 @@
                     </a>
                     <div class="flex-1 flex flex-col">
                         @if ($proximoPago)
+                        @php
+                            $labelsConceptoPago = [
+                                'inscripcion'  => 'Inscripción',
+                                'colegiatura'  => 'Colegiatura',
+                                'cuatrimestre' => 'Reinscripción',
+                                'otro'         => 'Otro',
+                            ];
+                        @endphp
                         <div class="px-6 py-5 flex flex-col gap-4 flex-1 justify-center">
                             <div class="flex items-start justify-between">
                                 <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background-color: {{ $pagoBgPanel }};">
@@ -394,7 +402,7 @@
                                 <p class="text-3xl font-extrabold leading-none" style="color: {{ $pagoColorPanel }};">
                                     ${{ number_format($proximoPago->monto, 2) }} <span class="text-sm font-medium text-gray-400">MXN</span>
                                 </p>
-                                <p class="text-sm font-semibold text-gray-700 mt-2 capitalize">{{ $proximoPago->concepto }}</p>
+                                <p class="text-sm font-semibold text-gray-700 mt-2">{{ $labelsConceptoPago[$proximoPago->concepto] ?? ucfirst($proximoPago->concepto) }}</p>
                                 <p class="text-xs text-gray-400">{{ $proximoPago->periodo }}{{ $proximoPago->mes ? ' · '.$proximoPago->mes : '' }}</p>
                             </div>
                             <div class="flex items-center gap-1.5">
@@ -403,16 +411,22 @@
                                     {{ $pagoAtrasado ? 'Vencido el' : 'Vence el' }} {{ $proximoPago->fecha_vencimiento?->format('d/m/Y') ?? '—' }}
                                 </span>
                             </div>
-                            <a href="{{ route('alumno.pagos.pagar', $proximoPago) }}"
-                               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"
-                               style="background-color: #0F4229;"
-                               onmouseover="this.style.backgroundColor='#0a2e1c'"
-                               onmouseout="this.style.backgroundColor='#0F4229'">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                Pagar ahora
-                            </a>
+                            @if ($proximoPago->mp_payment_id)
+                                <span class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-gray-400 bg-gray-100">
+                                    En revisión
+                                </span>
+                            @else
+                                <a href="{{ route('alumno.pagos.pagar', $proximoPago) }}"
+                                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"
+                                   style="background-color: #0F4229;"
+                                   onmouseover="this.style.backgroundColor='#0a2e1c'"
+                                   onmouseout="this.style.backgroundColor='#0F4229'">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Pagar ahora
+                                </a>
+                            @endif
                         </div>
                         @else
                         <div class="px-6 py-10 text-center text-sm text-gray-400 flex-1 flex items-center justify-center">

@@ -9,9 +9,18 @@
 
         @php
             $personaNombre   = $pago->aspirante?->nombre_completo ?? $pago->alumno?->nombre_completo ?? '—';
-            $personaRef      = $pago->aspirante?->folio ?? ($pago->alumno ? 'MAT-'.$pago->alumno->matricula : "Pago #{$pago->id}");
+            $personaRef      = $pago->aspirante?->folio ?? ($pago->alumno ? $pago->alumno->matricula : "Pago #{$pago->id}");
             $personaPrograma = $pago->aspirante?->programa?->nombre ?? $pago->alumno?->programa?->nombre ?? '—';
-            $esReinscripcion = $pago->concepto === 'reinscripcion';
+            // La distinción alumno/aspirante depende de a quién pertenece el pago, no del concepto:
+            // colegiatura y reinscripción son ambos pagos de alumno, igual que inscripción es de aspirante.
+            $esAlumno       = (bool) $pago->alumno_id;
+            $labelsConcepto = [
+                'inscripcion'  => 'Inscripción',
+                'colegiatura'  => 'Colegiatura',
+                'cuatrimestre' => 'Reinscripción',
+                'otro'         => 'Otro',
+            ];
+            $conceptoLabel = $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto);
         @endphp
 
         {{-- Encabezado del expediente --}}
@@ -21,7 +30,7 @@
             <div class="px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-                        {{ $esReinscripcion ? 'Reinscripción' : 'Inscripción' }} — Comprobante de pago
+                        {{ $conceptoLabel }} — Comprobante de pago
                     </p>
                     <h1 class="text-2xl font-extrabold text-gray-900">
                         {{ $personaNombre }}
@@ -55,7 +64,7 @@
         </div>
 
         {{-- Línea de tiempo del proceso --}}
-        @if (!$esReinscripcion && $pago->aspirante)
+        @if (!$esAlumno && $pago->aspirante)
         @php
             $asp = $pago->aspirante;
 
@@ -192,7 +201,7 @@
                               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                     <h2 class="text-sm font-semibold text-gray-700">
-                        {{ $esReinscripcion ? 'Datos del alumno' : 'Datos del aspirante' }}
+                        {{ $esAlumno ? 'Datos del alumno' : 'Datos del aspirante' }}
                     </h2>
                 </div>
 
@@ -206,7 +215,7 @@
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">
-                                {{ $esReinscripcion ? 'Matrícula' : 'Folio' }}
+                                {{ $esAlumno ? 'Matrícula' : 'Folio' }}
                             </dt>
                             <dd class="text-sm font-mono font-bold tracking-widest" style="color: #0F4229;">
                                 {{ $personaRef }}
@@ -234,7 +243,7 @@
 
                         <div>
                             <dt class="text-xs text-gray-400 uppercase tracking-wide font-medium mb-0.5">Concepto</dt>
-                            <dd class="text-sm font-semibold text-gray-800 capitalize">{{ $pago->concepto }}</dd>
+                            <dd class="text-sm font-semibold text-gray-800">{{ $conceptoLabel }}</dd>
                         </div>
 
                         <div>

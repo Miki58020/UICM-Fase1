@@ -6,9 +6,19 @@
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 max-w-2xl">
 
+        @php
+            $labelsConcepto = [
+                'inscripcion'  => 'Inscripción',
+                'colegiatura'  => 'Colegiatura',
+                'cuatrimestre' => 'Reinscripción',
+                'otro'         => 'Otro',
+            ];
+            $conceptoLabel = $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto);
+        @endphp
+
         <div class="text-center mb-8">
             <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color: #D4AF37;">Portal del Alumno</p>
-            <h1 class="text-3xl font-extrabold text-gray-900 mb-3">Pagar {{ ucfirst($pago->concepto) }}</h1>
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-3">Pagar {{ $conceptoLabel }}</h1>
             <div class="mx-auto w-16 h-1 rounded-full" style="background-color: #D4AF37;"></div>
         </div>
 
@@ -36,8 +46,8 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
                         <div class="bg-uicm-gray rounded-xl p-4">
                             <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">Concepto</p>
-                            <p class="font-semibold text-sm text-gray-800 capitalize">
-                                {{ $pago->concepto }}{{ $pago->mes ? ' '.$pago->mes : '' }}
+                            <p class="font-semibold text-sm text-gray-800">
+                                {{ $conceptoLabel }}{{ $pago->mes ? ' '.$pago->mes : '' }}
                             </p>
                         </div>
                         <div class="bg-uicm-gray rounded-xl p-4">
