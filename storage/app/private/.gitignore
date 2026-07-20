@@ -1,2 +1,2 @@
-*
-!.gitignore
+# Antes ignoraba todo el contenido subido (perfiles, documentos de aspirantes/alumnos);
+# ahora se trackea a propósito, incluye documentos personales sensibles.

@@ -1236,9 +1236,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="{{ $tIcon }}"/>
             </svg>
             <p class="text-sm font-semibold flex-1 leading-snug {{ $tText }}"
-               style="flex:1; white-space: pre-line;">
-                {{ $msg }}
-            </p>
+               style="flex:1; white-space: pre-line;">{{ trim($msg) }}</p>
             <button type="button" class="toast-close text-gray-400 hover:text-gray-600 transition-colors"
                     style="flex-shrink:0; padding:2px; margin-left:4px;"
                     aria-label="Cerrar">
