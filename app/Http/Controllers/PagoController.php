@@ -480,6 +480,20 @@ class PagoController extends Controller
         return $pago->mes ? $titulo . ' ' . $pago->mes : $titulo;
     }
 
+    private function labelConcepto(Pago $pago): string
+    {
+        $labels = [
+            'inscripcion'  => 'Inscripción',
+            'colegiatura'  => 'Colegiatura',
+            'cuatrimestre' => 'Reinscripción',
+            'otro'         => 'Otro',
+        ];
+
+        $label = $labels[$pago->concepto] ?? ucfirst($pago->concepto);
+
+        return $pago->mes ? $label . ' ' . $pago->mes : $label;
+    }
+
     // ─── Finanzas: listado y detalle ──────────────────────────────────────────
 
     public function index(Request $request)
@@ -511,7 +525,7 @@ class PagoController extends Controller
                     $pago->aspirante?->nombre_completo ?? $pago->alumno?->nombre_completo ?? '',
                     $pago->alumno?->matricula ?? '',
                     $pago->aspirante?->programa?->nombre ?? $pago->alumno?->programa?->nombre ?? '',
-                    $pago->concepto . ($pago->mes ? ' ' . $pago->mes : ''),
+                    $this->labelConcepto($pago),
                     $pago->periodo,
                     $pago->monto,
                     $pago->descuento,
