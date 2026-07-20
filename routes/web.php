@@ -179,6 +179,8 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::patch('/admin/programas/{programa}/toggle', [ProgramaController::class, 'toggle'])->name('admin.programas.toggle');
 
     Route::get('/admin/materias', [MateriaController::class, 'index'])->name('admin.materias.index');
+    Route::get('/admin/materias/plantilla', [MateriaController::class, 'plantillaMaterias'])->name('admin.materias.plantilla');
+    Route::post('/admin/materias/importar', [MateriaController::class, 'importarMaterias'])->name('admin.materias.importar');
     Route::post('/admin/materias', [MateriaController::class, 'store'])->name('admin.materias.store');
     Route::patch('/admin/materias/{materia}', [MateriaController::class, 'update'])->name('admin.materias.update');
     Route::patch('/admin/materias/{materia}/toggle', [MateriaController::class, 'toggle'])->name('admin.materias.toggle');

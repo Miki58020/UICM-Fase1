@@ -6,8 +6,8 @@
 
 <section
     x-data="{
-        showModal: {{ $errors->any() ? 'true' : 'false' }},
-        editando: {{ $errors->any() && old('_method') === 'PATCH' ? 'true' : 'null' }},
+        showModal: {{ old('_materia_form') ? 'true' : 'false' }},
+        editando: {{ old('_materia_form') && old('_method') === 'PATCH' ? 'true' : 'null' }},
         form: {
             clave:       '{{ addslashes(old('clave', '')) }}',
             nombre:      '{{ addslashes(old('nombre', '')) }}',
@@ -73,7 +73,69 @@
             </button>
         </div>
 
+        {{-- Carga masiva de materias (CSV) --}}
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-8">
 
+            <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                     style="color: #D4AF37;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3m-3-7v9"/>
+                </svg>
+                <h2 class="text-sm font-semibold text-gray-700">Carga masiva de materias (CSV)</h2>
+            </div>
+
+            <div class="px-6 py-5">
+
+                {{-- Guía rápida --}}
+                <div class="bg-uicm-gray rounded-xl p-4 mb-5 text-sm text-gray-600">
+                    <p class="font-semibold text-gray-800 mb-2">¿Cómo funciona?</p>
+                    <ol class="list-decimal list-inside space-y-1">
+                        <li>Descarga la <strong>plantilla CSV</strong> y llena un renglón por cada materia: <strong>clave</strong>, <strong>nombre</strong>, <strong>programa_clave</strong>, <strong>cuatrimestre</strong>, <strong>creditos</strong>.</li>
+                        <li>Un mismo archivo puede incluir materias de <strong>varios programas a la vez</strong>.</li>
+                        <li>Si la <strong>clave</strong> ya existe, se <strong>actualiza</strong> esa materia (nombre, programa, cuatrimestre, créditos); si no existe, se <strong>crea</strong> nueva — puedes volver a subir el mismo archivo corregido sin duplicar nada.</li>
+                        <li><strong>programa_clave</strong> es la clave interna del programa (ej. "administracion", "lengua_inglesa"), no el nombre completo. <strong>cuatrimestre</strong> no puede ser mayor a la duración del programa.</li>
+                    </ol>
+                </div>
+
+                <form method="POST" action="{{ route('admin.materias.importar') }}"
+                      enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <a href="{{ route('admin.materias.plantilla') }}"
+                           class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-150 whitespace-nowrap"
+                           style="background-color: #0F4229;"
+                           onmouseover="this.style.backgroundColor='#0a2e1c'"
+                           onmouseout="this.style.backgroundColor='#0F4229'">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-3L12 16.5l4.5-3M12 16.5V3"/>
+                            </svg>
+                            Descargar plantilla CSV
+                        </a>
+
+                        <input type="file" name="csv" accept=".csv,text/csv" required
+                               class="flex-1 text-sm text-gray-600 border-2 border-dashed border-gray-200 rounded-xl px-4 py-2.5 outline-none file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
+
+                        <button type="submit"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-150 whitespace-nowrap"
+                                style="background-color: #D4AF37;"
+                                onmouseover="this.style.backgroundColor='#b9952c'"
+                                onmouseout="this.style.backgroundColor='#D4AF37'">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 7.5L12 3 7.5 7.5M12 3v13.5"/>
+                            </svg>
+                            Subir e importar
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
 
         {{-- Contadores --}}
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
@@ -309,6 +371,7 @@
                   class="px-6 py-5 space-y-4">
                 @csrf
                 <input type="hidden" name="_method" x-bind:value="editando ? 'PATCH' : 'POST'">
+                <input type="hidden" name="_materia_form" value="1">
 
                 {{-- Clave + Créditos --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
