@@ -12,7 +12,7 @@ $tabs = [
     ],
     'correo' => [
         'label' => 'Correo electrónico',
-        'color' => '#D4AF37',
+        'color' => '#0F4229',
     ],
 ];
 
@@ -172,7 +172,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
 
             {{-- CARD: CONEXIÓN --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <h2 class="text-sm font-semibold text-gray-700">Servidor de envío</h2>
@@ -228,7 +228,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
 
             {{-- CARD: REMITENTE --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <h2 class="text-sm font-semibold text-gray-700">Remitente de los correos</h2>
@@ -269,7 +269,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
 
             {{-- CARD: DOMINIO INSTITUCIONAL --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <h2 class="text-sm font-semibold text-gray-700">Dominio institucional</h2>
@@ -488,7 +488,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
 <div id="modal-correo-conexion" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 py-8 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden my-auto"
          x-data="{ mailer: '{{ old('mailer', $configCorreo?->mailer ?? 'smtp') }}' }">
-        <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+        <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <div>
@@ -613,7 +613,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
 {{-- ═══ MODAL: CORREO REMITENTE ═══ --}}
 <div id="modal-correo-remitente" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
-        <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+        <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <div>
@@ -679,7 +679,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
 {{-- ═══ MODAL: CORREO DOMINIO ═══ --}}
 <div id="modal-correo-dominio" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
-        <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+        <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <div>
