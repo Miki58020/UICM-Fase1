@@ -21,11 +21,11 @@
             {{-- Card de alta masiva --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         style="color: #D4AF37;">
+                         style="color: #0F4229;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3m-3-7v9"/>
                     </svg>
@@ -54,6 +54,7 @@
                               periodo_id: '',
                               programa_id: '',
                               enviando: false,
+                              archivoCsv: '',
                               grupos: @js($grupos->map(fn($g) => ['id' => $g->id, 'clave' => $g->clave, 'periodo_id' => $g->periodo_id, 'programa_id' => $g->programa_id])),
                               get gruposFiltrados() {
                                   return this.grupos.filter(g =>
@@ -128,7 +129,9 @@
                             </a>
 
                             <input type="file" name="csv" accept=".csv,text/csv" required
-                                   class="flex-1 text-sm text-gray-600 border-2 border-dashed border-gray-200 rounded-xl px-4 py-2.5 outline-none file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
+                                   @change="archivoCsv = $event.target.files[0]?.name || ''"
+                                   :class="archivoCsv ? 'border-green-400 bg-green-50 text-green-700' : 'border-gray-200 text-gray-600'"
+                                   class="flex-1 text-sm border-2 border-dashed rounded-xl px-4 py-2.5 outline-none transition-colors duration-150 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
 
                             <button type="submit"
                                     :disabled="enviando"
