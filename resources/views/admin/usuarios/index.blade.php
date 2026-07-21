@@ -161,7 +161,7 @@ $rolesLabels = [
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Listado de usuarios</h2>
-                <span class="text-xs text-gray-400" x-ref="contadorVisible">{{ $usuarios->count() }} registros</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorVisible">{{ $usuarios->count() }} registros</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -174,7 +174,7 @@ $rolesLabels = [
                             <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100" x-ref="tbody">
+                    <tbody class="divide-y divide-gray-300" x-ref="tbody">
                         @forelse($usuarios as $u)
                         <tr class="hover:bg-gray-50 transition-colors duration-100
                                    {{ $u->id === auth()->id() ? 'bg-green-50/40' : '' }}"
@@ -184,9 +184,18 @@ $rolesLabels = [
 
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                                         style="background-color: {{ $rolesLabels[$u->rol]['color'] ?? '#9ca3af' }};">
-                                        {{ strtoupper(substr($u->name, 0, 1)) }}
+                                    <div class="w-8 h-8 rounded-full flex-shrink-0 overflow-hidden border-2"
+                                         style="border-color: #0F4229;">
+                                        @if($u->foto)
+                                            <img src="{{ route('admin.archivo', ['path' => $u->foto]) }}"
+                                                 alt="Foto de perfil"
+                                                 class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-white text-xs font-bold"
+                                                 style="background-color: {{ $rolesLabels[$u->rol]['color'] ?? '#9ca3af' }};">
+                                                {{ strtoupper(substr($u->name, 0, 1)) }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <span class="font-semibold text-gray-800">
                                         {{ $u->nombre_completo }}

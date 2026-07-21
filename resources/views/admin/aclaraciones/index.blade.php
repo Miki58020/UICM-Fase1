@@ -70,9 +70,9 @@
             <button type="button" @click="filtroEstado = 'rechazada'; filtrar()"
                     :class="filtroEstado === 'rechazada' ? 'ring-2' : 'hover:shadow-md'"
                     class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #9ca3af;">
+                    style="border-color: #dc2626;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazadas</p>
-                <p class="text-2xl font-extrabold mt-1 text-gray-400">{{ $conteoPorEstado['rechazada'] }}</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #dc2626;">{{ $conteoPorEstado['rechazada'] }}</p>
             </button>
             <button type="button" @click="filtroEstado = ''; filtrar()"
                     :class="filtroEstado === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
@@ -142,9 +142,9 @@
                  data-tipo="{{ $aclaracion->tipo }}"
                  data-estado="{{ $aclaracion->estado }}"
                  x-data="{ rechazando: false }">
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
-                <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-start justify-between gap-3">
+                <div class="px-6 py-4 border-b border-gray-200 flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <h3 class="font-semibold text-gray-800 text-sm">
                             {{ $aclaracion->alumno->nombre_completo }}
@@ -185,22 +185,28 @@
                 </div>
 
                 @if ($aclaracion->estado === 'pendiente')
-                <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-2" x-show="!rechazando">
+                <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-end gap-2" x-show="!rechazando">
                     <form method="POST" action="{{ route('admin.aclaraciones.aprobar', $aclaracion) }}">
                         @csrf
                         <button type="submit"
                                 class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
                                 style="background-color: #0F4229;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
                             Aprobar
                         </button>
                     </form>
                     <button type="button" @click="rechazando = true"
                             class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
                             style="background-color: #dc2626;">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
                         Rechazar
                     </button>
                 </div>
-                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50" x-show="rechazando" x-cloak>
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50" x-show="rechazando" x-cloak>
                     <form method="POST" action="{{ route('admin.aclaraciones.rechazar', $aclaracion) }}" class="flex flex-col gap-2">
                         @csrf
                         <label class="text-xs font-semibold text-gray-600">Motivo del rechazo</label>

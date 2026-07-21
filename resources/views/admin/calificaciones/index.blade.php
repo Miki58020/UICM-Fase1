@@ -238,12 +238,18 @@
                         <button type="submit"
                                 class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
                                 style="background-color: #0F4229;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
                             Aprobar
                         </button>
                     </form>
                     <button type="button" @click="rechazando = true"
                             class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
                             style="background-color: #dc2626;">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
                         Rechazar
                     </button>
                 </div>
