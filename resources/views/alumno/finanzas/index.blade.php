@@ -34,6 +34,14 @@
                 'cuatrimestre' => 'Reinscripción',
                 'otro'         => 'Otro',
             ];
+            // Pasteles derivados de los colores principales (ver tailwind.config.js),
+            // mismo mapeo que finanzas/pagos (admin) y finanzas/tarifas.
+            $badgesConcepto = [
+                'inscripcion'  => 'bg-uicm-green-soft text-uicm-green',
+                'colegiatura'  => 'bg-uicm-gold-soft text-uicm-gold-soft-text',
+                'cuatrimestre' => 'bg-uicm-orange-soft text-uicm-orange-soft-text',
+                'otro'         => 'bg-gray-100 text-gray-600',
+            ];
         @endphp
 
         <div class="mb-8">
@@ -184,8 +192,10 @@
                     <div class="divide-y divide-gray-100 text-sm">
                         @foreach ($pendientes as $pago)
                         <div class="grid grid-cols-[2fr_0.8fr_1.3fr_1fr_1fr_1.3fr] gap-x-4 px-6 py-4 items-center hover:bg-gray-50">
-                            <div class="font-medium text-gray-800 truncate">
-                                {{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}
+                            <div class="truncate">
+                                <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold {{ $badgesConcepto[$pago->concepto] ?? 'bg-gray-100 text-gray-600' }}">
+                                    {{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}
+                                </span>
                             </div>
                             <div class="text-gray-500 truncate">{{ $pago->periodo }}</div>
                             <div class="font-bold truncate" style="color: #0F4229;">
@@ -199,7 +209,7 @@
                             </div>
                             <div class="text-center">
                                 @if ($pago->mp_payment_id)
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #3b82f6;">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style="background-color: #EFAD5A;">
                                         <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                         En revisión
                                     </span>
@@ -315,8 +325,10 @@
                              data-concepto="{{ strtolower(($labelsConcepto[$pago->concepto] ?? $pago->concepto).' '.$pago->mes) }}"
                              data-periodo="{{ strtolower($pago->periodo) }}"
                              data-estado="{{ $pago->estado }}">
-                            <div class="font-medium text-gray-800 truncate">
-                                {{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}
+                            <div class="truncate">
+                                <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold {{ $badgesConcepto[$pago->concepto] ?? 'bg-gray-100 text-gray-600' }}">
+                                    {{ $labelsConcepto[$pago->concepto] ?? ucfirst($pago->concepto) }}{{ $pago->mes ? ' '.$pago->mes : '' }}
+                                </span>
                             </div>
                             <div class="text-gray-500 truncate">{{ $pago->periodo }}</div>
                             <div class="font-bold truncate" style="color: #0F4229;">

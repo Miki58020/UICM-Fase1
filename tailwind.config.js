@@ -22,6 +22,16 @@ export default {
                 'uicm-gold': '#D4AF37',
                 'uicm-orange': '#EFAD5A',
                 'uicm-blue': '#1F5FBF',
+
+                // Pasteles derivados de los 4 colores principales, para badges/etiquetas
+                // suaves (fondo claro con carácter + texto legible, no apagado).
+                'uicm-green-soft': '#d7ede1',
+                'uicm-gold-soft': '#f7e7ab',
+                'uicm-gold-soft-text': '#8a6d0a',
+                'uicm-orange-soft': '#fbdba8',
+                'uicm-orange-soft-text': '#b0530a',
+                'uicm-blue-soft': '#cfe0f7',
+                'uicm-blue-soft-text': '#164a99',
             },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],

@@ -12,7 +12,7 @@
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 

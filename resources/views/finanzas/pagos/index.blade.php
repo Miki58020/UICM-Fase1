@@ -182,10 +182,11 @@
 
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
+                                    // Pasteles derivados de los colores principales (ver tailwind.config.js)
                                     $badgesConcepto = [
-                                        'inscripcion'  => 'bg-gray-100 text-gray-600',
-                                        'colegiatura'  => 'bg-emerald-100 text-emerald-700',
-                                        'cuatrimestre' => 'bg-blue-100 text-blue-700',
+                                        'inscripcion'  => 'bg-uicm-green-soft text-uicm-green',
+                                        'colegiatura'  => 'bg-uicm-gold-soft text-uicm-gold-soft-text',
+                                        'cuatrimestre' => 'bg-uicm-orange-soft text-uicm-orange-soft-text',
                                         'otro'         => 'bg-gray-100 text-gray-600',
                                     ];
                                     $labelsConcepto = [

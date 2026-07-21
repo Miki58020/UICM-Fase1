@@ -828,8 +828,8 @@
                     @php
                         $rolDef = [
                             'admin'           => ['Administrador',   '#0F4229'],
-                            'control_escolar' => ['Control Escolar', '#D4AF37'],
-                            'finanzas'        => ['Finanzas',        '#EFAD5A'],
+                            'control_escolar' => ['Control Escolar', '#EFAD5A'],
+                            'finanzas'        => ['Finanzas',        '#D4AF37'],
                             'coordinacion'    => ['Coordinación',    '#1F5FBF'],
                         ];
                         $totalU = max($usuariosPorRol->sum(), 1);
@@ -870,8 +870,8 @@
                     @php
                         $rb = match($u->rol) {
                             'admin'           => ['#f0f9f4','#0F4229','Admin'],
-                            'control_escolar' => ['#fdf8ec','#b45309','Control Esc.'],
-                            'finanzas'        => ['#fef4e8','#b45309','Finanzas'],
+                            'control_escolar' => ['#fef4e8','#b45309','Control Esc.'],
+                            'finanzas'        => ['#fdf8ec','#b45309','Finanzas'],
                             'coordinacion'    => ['#eaf0fb','#1F5FBF','Coordinación'],
                             'profesor'        => ['#f3f4f6','#4B5563','Profesor'],
                             default           => ['#f3f4f6','#4B5563', ucfirst($u->rol)],

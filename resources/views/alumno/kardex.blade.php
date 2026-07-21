@@ -61,24 +61,24 @@
                     {{ $promedioGeneral !== null ? number_format($promedioGeneral, 1) : '—' }}
                 </p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #16a34a;">
+            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Aprobadas</p>
-                <p class="text-2xl font-extrabold mt-1 text-green-700">{{ $aprobadas }}</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $aprobadas }}</p>
             </div>
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #dc2626;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Reprobadas</p>
                 <p class="text-2xl font-extrabold mt-1 text-red-600">{{ $reprobadas }}</p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #D4AF37;">
+            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #EFAD5A;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Pendientes</p>
-                <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">{{ $pendientes }}</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $pendientes }}</p>
             </div>
         </div>
 
         {{-- Barra de créditos --}}
         @if($totalCreditosPrograma > 0)
         @php $pct = min(100, round(($alumno->creditos_acumulados / $totalCreditosPrograma) * 100)); @endphp
-        <div class="bg-white rounded-2xl shadow-sm px-6 py-5 mb-8">
+        <div class="bg-white rounded-2xl shadow-md px-6 py-5 mb-8">
             <div class="flex items-center justify-between mb-2">
                 <p class="text-sm font-semibold text-gray-700">Avance de créditos</p>
                 <p class="text-sm font-bold" style="color: #0F4229;">
@@ -97,7 +97,7 @@
 
         {{-- Calificaciones por cuatrimestre --}}
         @if($porCuatrimestre->isEmpty())
-            <div class="bg-white rounded-2xl shadow-sm px-6 py-12 text-center text-sm text-gray-400">
+            <div class="bg-white rounded-2xl shadow-md px-6 py-12 text-center text-sm text-gray-400">
                 Aún no hay calificaciones registradas.
             </div>
         @else
@@ -147,12 +147,12 @@
 
             <div class="space-y-5" x-ref="lista">
 
-                <div x-ref="sinResultados" style="display: none;" class="bg-white rounded-2xl shadow-sm px-6 py-12 text-center text-sm text-gray-400">
+                <div x-ref="sinResultados" style="display: none;" class="bg-white rounded-2xl shadow-md px-6 py-12 text-center text-sm text-gray-400">
                     Ninguna materia coincide con la búsqueda o los filtros.
                 </div>
 
                 @foreach($porCuatrimestre as $numCuatri => $items)
-                <div class="bg-white rounded-2xl shadow-sm overflow-hidden" data-cuatrimestre="{{ $numCuatri }}">
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden" data-cuatrimestre="{{ $numCuatri }}">
                     <div class="h-1 w-full" style="background-color: #0F4229;"></div>
                     <div class="px-6 py-3 border-b border-gray-100 flex items-center justify-between">
                         <h2 class="text-sm font-extrabold" style="color: #0F4229;">

@@ -164,10 +164,11 @@
                         </div>
                     @else
                         @php
+                            // Mismos colores por concepto que finanzas/tarifas (Conceptos de Pago)
                             $coloresConcepto = [
-                                'inscripcion'  => '#9CA3AF',
-                                'colegiatura'  => '#10B981',
-                                'cuatrimestre' => '#3B82F6',
+                                'inscripcion'  => '#0F4229',
+                                'colegiatura'  => '#D4AF37',
+                                'cuatrimestre' => '#EFAD5A',
                                 'otro'         => '#9CA3AF',
                             ];
                             $labelsConcepto = [
