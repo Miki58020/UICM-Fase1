@@ -24,7 +24,9 @@
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Solicitudes pendientes</h2>
-                <span class="text-xs text-gray-400">{{ $solicitudes->count() }} pendiente{{ $solicitudes->count() !== 1 ? 's' : '' }}</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">
+                    {{ $solicitudes->count() }} pendiente{{ $solicitudes->count() !== 1 ? 's' : '' }}
+                </span>
             </div>
 
             @if($solicitudes->isEmpty())
@@ -53,6 +55,13 @@
                             'profesor'        => 'Profesor',
                         ];
                         $rolLabel = $rolLabels[$solicitud->user->rol] ?? $solicitud->user->rol;
+                        $rolBadgeColors = [
+                            'admin'           => ['#d7ede1', '#0F4229'],
+                            'control_escolar' => ['#fbdba8', '#b0530a'],
+                            'finanzas'        => ['#f7e7ab', '#8a6d0a'],
+                            'coordinacion'    => ['#cfe0f7', '#164a99'],
+                        ];
+                        [$rolBadgeBg, $rolBadgeText] = $rolBadgeColors[$solicitud->user->rol] ?? ['#fef9ec', '#92670b'];
                         $routeAtender = $tipo === 'profesores'
                             ? 'admin.contrasenas-profesores.atender'
                             : 'admin.solicitudes-contrasena.atender';
@@ -71,7 +80,7 @@
                                     <div class="flex items-center gap-2">
                                         <p class="font-semibold text-gray-800 text-sm">{{ $solicitud->user->nombre_completo }}</p>
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
-                                              style="background-color: #fef9ec; color: #92670b;">
+                                              style="background-color: {{ $rolBadgeBg }}; color: {{ $rolBadgeText }};">
                                             {{ $rolLabel }}
                                         </span>
                                     </div>

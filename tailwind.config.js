@@ -32,6 +32,9 @@ export default {
                 'uicm-orange-soft-text': '#b0530a',
                 'uicm-blue-soft': '#cfe0f7',
                 'uicm-blue-soft-text': '#164a99',
+
+                // Verde pálido para contadores/badges tipo "3/8 activas" en tablas.
+                'uicm-green-pale': '#f0f9f4',
             },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
