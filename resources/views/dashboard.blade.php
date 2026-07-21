@@ -676,14 +676,14 @@
                  'href'=>route('admin.aspirantes.index'),
                  'icon'=>'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
                 ['label'=>'Mensajes sin atender',  'value'=>$mensajesPendientes,
-                 'color'=>$mensajesPendientes>0?'#EFAD5A':'#6B7280',
-                 'bg'=>$mensajesPendientes>0?'#fef4e8':'#f3f4f6',
+                 'color'=>'#EFAD5A',
+                 'bg'=>'#fbdba8',
                  'alerta'=>$mensajesPendientes>0,'textoOk'=>'Todos atendidos','textoAl'=>'Pendientes de respuesta',
                  'href'=>route('admin.contactos.index'),
                  'icon'=>'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
                 ['label'=>'Solicitudes contraseña','value'=>$solicitudesPendientes,
-                 'color'=>$solicitudesPendientes>0?'#dc2626':'#6B7280',
-                 'bg'=>$solicitudesPendientes>0?'#fef2f2':'#f3f4f6',
+                 'color'=>'#1F5FBF',
+                 'bg'=>'#cfe0f7',
                  'alerta'=>$solicitudesPendientes>0,'textoOk'=>'Sin solicitudes','textoAl'=>'Pendientes de atender',
                  'href'=>route('admin.solicitudes-contrasena.index'),
                  'icon'=>'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z'],
@@ -861,18 +861,15 @@
                         </svg>
                         <h2 class="text-sm font-semibold text-gray-700">Usuarios recientes</h2>
                     </div>
-                    <a href="{{ route('admin.usuarios.index') }}" class="text-xs font-semibold hover:underline" style="color:#0F4229;">
-                        Ver todos →
-                    </a>
                 </div>
                 <div class="divide-y divide-gray-100 overflow-auto flex-1">
                     @forelse($ultimosUsuarios as $u)
                     @php
                         $rb = match($u->rol) {
-                            'admin'           => ['#f0f9f4','#0F4229','Admin'],
-                            'control_escolar' => ['#fef4e8','#b45309','Control Esc.'],
-                            'finanzas'        => ['#fdf8ec','#b45309','Finanzas'],
-                            'coordinacion'    => ['#eaf0fb','#1F5FBF','Coordinación'],
+                            'admin'           => ['#d7ede1','#0F4229','Admin'],
+                            'control_escolar' => ['#fbdba8','#b0530a','Control Esc.'],
+                            'finanzas'        => ['#f7e7ab','#8a6d0a','Finanzas'],
+                            'coordinacion'    => ['#cfe0f7','#164a99','Coordinación'],
                             'profesor'        => ['#f3f4f6','#4B5563','Profesor'],
                             default           => ['#f3f4f6','#4B5563', ucfirst($u->rol)],
                         };

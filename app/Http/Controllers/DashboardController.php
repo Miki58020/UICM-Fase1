@@ -154,8 +154,8 @@ class DashboardController extends Controller
                         ['label' => 'Contraseñas alumnos',    'count' => $ceContrasenas],
                     ],
                     'href'   => route('admin.aspirantes.index'),
-                    'color'  => '#D4AF37',
-                    'bgIcon' => '#fdf8ec',
+                    'color'  => '#EFAD5A',
+                    'bgIcon' => '#fbdba8',
                 ],
                 [
                     'rolKey' => 'finanzas',
@@ -165,8 +165,8 @@ class DashboardController extends Controller
                         ['label' => 'Comprobantes por revisar', 'count' => $finPagos],
                     ],
                     'href'   => route('finanzas.pagos.index'),
-                    'color'  => '#0F4229',
-                    'bgIcon' => '#f0f9f4',
+                    'color'  => '#D4AF37',
+                    'bgIcon' => '#f7e7ab',
                 ],
                 [
                     'rolKey' => 'coordinacion',
@@ -177,8 +177,8 @@ class DashboardController extends Controller
                         ['label' => 'Contraseñas profesores',     'count' => $coordContrasenas],
                     ],
                     'href'   => route('admin.carga-academica.index'),
-                    'color'  => '#EFAD5A',
-                    'bgIcon' => '#fef4e8',
+                    'color'  => '#1F5FBF',
+                    'bgIcon' => '#cfe0f7',
                 ],
                 [
                     'rolKey' => 'admin',
@@ -190,7 +190,7 @@ class DashboardController extends Controller
                     ],
                     'href'   => route('admin.contactos.index'),
                     'color'  => '#0F4229',
-                    'bgIcon' => '#f0f9f4',
+                    'bgIcon' => '#d7ede1',
                 ],
             ],
             'usuariosPorRol'  => User::selectRaw('rol, count(*) as total')
