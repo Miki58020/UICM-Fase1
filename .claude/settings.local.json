@@ -199,7 +199,11 @@
       "Bash(cp \"database/database.sqlite\" \"C:\\\\Users\\\\MIGUEL~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Miguel--ngel-Desktop-UICM-Fase1\\\\c16fbc26-b9a2-4883-b797-b3f3338f5557\\\\scratchpad\\\\database.sqlite.backup-$\\(date +%Y%m%d-%H%M%S\\)\")",
       "Bash(xxd \"C:\\\\Users\\\\Miguel Ángel\\\\Downloads\\\\plantilla_migracion_alumnos \\(1\\).csv\")",
       "Bash(echo \"exit=$?\")",
-      "Bash(sed -E \"s/Route::[a-z]+\\\\\\('//\")"
+      "Bash(sed -E \"s/Route::[a-z]+\\\\\\('//\")",
+      "Bash(python3 -)",
+      "Bash(GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash d81b531)",
+      "Bash(mkdir -p /tmp/scratch_git)",
+      "Bash(git show *)"
     ]
   }
 }

@@ -124,13 +124,13 @@
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Lista de mensajes</h2>
-                <span class="text-xs text-gray-400">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">
                     <span x-text="contadorVisible"></span> mensaje<span x-show="contadorVisible !== 1">s</span>
                 </span>
             </div>
 
             {{-- Lista de mensajes --}}
-            <div class="divide-y divide-gray-100" x-ref="lista">
+            <div class="divide-y divide-gray-400" x-ref="lista">
 
                 @forelse($contactos as $contacto)
                 <div data-nombre="{{ strtolower($contacto->nombre) }}"
@@ -146,22 +146,21 @@
                         {{-- Avatar + datos --}}
                         <div class="flex items-start gap-3 flex-1 min-w-0">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                                 style="{{ $contacto->atendido ? 'background-color: #9ca3af;' : 'background-color: #0F4229;' }}">
+                                 style="{{ $contacto->atendido ? 'background-color: #0F4229;' : 'background-color: #EFAD5A;' }}">
                                 {{ strtoupper(substr($contacto->nombre, 0, 1)) }}
                             </div>
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <p class="font-semibold text-gray-800 text-sm">{{ $contacto->nombre }}</p>
                                     @if($contacto->atendido)
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-uicm-green-soft text-uicm-green">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                             </svg>
                                             Atendido
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
-                                              style="background-color: #fef3c7; color: #92400e;">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-uicm-orange-soft text-uicm-orange-soft-text">
                                             Pendiente
                                         </span>
                                     @endif
