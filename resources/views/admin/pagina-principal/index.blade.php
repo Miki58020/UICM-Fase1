@@ -73,8 +73,8 @@
             @php
             $nivelCfg = [
                 'licenciatura' => ['label' => 'Licenciaturas', 'badge' => 'Licenciatura', 'color' => '#0F4229'],
-                'maestria'     => ['label' => 'Maestrías',     'badge' => 'Maestría',     'color' => '#0891b2'],
-                'doctorado'    => ['label' => 'Doctorado',     'badge' => 'Doctorado',    'color' => '#7c3aed'],
+                'maestria'     => ['label' => 'Maestrías',     'badge' => 'Maestría',     'color' => '#D4AF37'],
+                'doctorado'    => ['label' => 'Doctorado',     'badge' => 'Doctorado',    'color' => '#9ca3af'],
             ];
             $agrupados = $programas->groupBy('nivel');
             @endphp

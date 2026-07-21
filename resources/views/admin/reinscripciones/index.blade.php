@@ -232,7 +232,7 @@
                                     </span>
                                 @elseif ($estadoReinsc === 'pendiente_completar')
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
-                                          style="background-color: #3b82f6;">
+                                          style="background-color: #D4AF37;">
                                         <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
                                         Pago aprobado
                                     </span>

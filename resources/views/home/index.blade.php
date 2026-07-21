@@ -260,8 +260,8 @@
             <div class="rounded-xl p-6 md:p-8 border-l-4 border-uicm-orange bg-orange-50 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Convocatoria abierta
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-uicm-green-soft text-uicm-green">
+                            <span class="w-1.5 h-1.5 rounded-full bg-uicm-green"></span> Convocatoria abierta
                         </span>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-1">{{ $periodoActivo->label }}</h3>

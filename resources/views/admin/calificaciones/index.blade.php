@@ -207,7 +207,7 @@
 
                     <div class="flex items-center gap-2 flex-wrap">
                         @if ($carga->sospechosa)
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-uicm-orange-soft text-uicm-orange-soft-text">
                                 ⚠ Calificaciones idénticas
                             </span>
                         @endif

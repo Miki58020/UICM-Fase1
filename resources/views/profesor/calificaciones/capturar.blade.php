@@ -257,7 +257,7 @@
                                                     nombre: @js($alumno->nombre_completo),
                                                     tipoDefault: @js($ex ? 'extraordinario' : 'final')
                                                 })"
-                                                class="text-xs font-bold px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700">
+                                                class="text-xs font-bold px-3 py-1.5 rounded-lg bg-uicm-orange-soft text-uicm-orange-soft-text">
                                             Solicitar aclaración
                                         </button>
                                     @else
