@@ -20,11 +20,11 @@
             {{-- Card filtros --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         style="color: #D4AF37;">
+                         style="color: #0F4229;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414
                                  a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293
@@ -141,9 +141,7 @@
                             @if ($grupo->programa) — {{ $grupo->programa->nombre }} @endif
                         </h2>
                     </div>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white"
-                          style="background-color: #0F4229;">
-                        <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">
                         {{ $cargasConCalif->count() }} materia{{ $cargasConCalif->count() !== 1 ? 's' : '' }}
                     </span>
                 </div>
@@ -164,7 +162,7 @@
                         </div>
                         <div class="bg-uicm-gray rounded-xl p-3 text-center">
                             <p class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">Materias</p>
-                            <p class="text-sm font-bold" style="color: #D4AF37;">{{ $cargasConCalif->count() }}</p>
+                            <p class="text-sm font-bold" style="color: #0F4229;">{{ $cargasConCalif->count() }}</p>
                         </div>
                     </div>
                 </div>
@@ -183,12 +181,15 @@
             @endphp
             <div class="bg-white rounded-2xl shadow-md overflow-hidden" x-data="{ rechazando: false }">
 
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
+                @php
+                    $conCalif = $carga->calificaciones->where('tipo', 'final')->pluck('alumno_id')->unique()->count();
+                @endphp
                 <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-2">
                         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                             style="color: #D4AF37;">
+                             style="color: #0F4229;">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13
                                      C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13
@@ -205,23 +206,46 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2 flex-wrap">
-                        @if ($carga->sospechosa)
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-uicm-orange-soft text-uicm-orange-soft-text">
-                                ⚠ Calificaciones idénticas
+                    <div class="flex flex-col items-end gap-1.5">
+                        <div class="flex items-center gap-2 flex-wrap justify-end">
+                            @if ($carga->sospechosa)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-uicm-orange-soft text-uicm-orange-soft-text">
+                                    ⚠ Calificaciones idénticas
+                                </span>
+                            @endif
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                  style="background-color: {{ $estadoBadge[0] }};">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
+                                {{ $estadoBadge[1] }}
                             </span>
-                        @endif
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
-                              style="background-color: {{ $estadoBadge[0] }};">
-                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>
-                            {{ $estadoBadge[1] }}
-                        </span>
-                        @php
-                            $conCalif = $carga->calificaciones->where('tipo', 'final')->pluck('alumno_id')->unique()->count();
-                        @endphp
-                        <span class="text-xs text-gray-400 whitespace-nowrap">
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green whitespace-nowrap">
                             {{ $conCalif }}/{{ $alumnos->count() }} con calificación
                         </span>
+
+                        @if ($carga->estado_revision === 'pendiente' && $conCalif > 0)
+                        <div class="flex items-center gap-2" x-show="!rechazando">
+                            <form method="POST" action="{{ route('admin.calificaciones.aprobar', $carga) }}">
+                                @csrf
+                                <button type="submit"
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
+                                        style="background-color: #0F4229;">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    Aprobar
+                                </button>
+                            </form>
+                            <button type="button" @click="rechazando = true"
+                                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
+                                    style="background-color: #dc2626;">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                Rechazar
+                            </button>
+                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -232,27 +256,6 @@
                 @endif
 
                 @if ($carga->estado_revision === 'pendiente' && $conCalif > 0)
-                <div class="px-6 py-3 border-b border-gray-100 flex items-center justify-end gap-2" x-show="!rechazando">
-                    <form method="POST" action="{{ route('admin.calificaciones.aprobar', $carga) }}">
-                        @csrf
-                        <button type="submit"
-                                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
-                                style="background-color: #0F4229;">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Aprobar
-                        </button>
-                    </form>
-                    <button type="button" @click="rechazando = true"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white"
-                            style="background-color: #dc2626;">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                        Rechazar
-                    </button>
-                </div>
                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50" x-show="rechazando" x-cloak>
                     <form method="POST" action="{{ route('admin.calificaciones.rechazar', $carga) }}" class="flex flex-col gap-2">
                         @csrf
@@ -272,7 +275,7 @@
 
                 @if ($carga->estado_revision === null)
                 <div class="px-6 py-8 text-center text-sm text-gray-400">
-                    El profesor aún no ha enviado las calificaciones a revisión.
+                    Aún no hay calificaciones que revisar.
                 </div>
                 @else
                 <div class="overflow-x-auto">
