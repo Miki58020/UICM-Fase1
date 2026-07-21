@@ -199,7 +199,7 @@
                                 <div class="flex flex-col gap-1.5">
                                     @if ($profesor->activo)
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold w-fit"
-                                              style="background-color: #dcfce7; color: #15803d;">
+                                              style="background-color: #dcfce7; color: #0F4229;">
                                             Activo
                                         </span>
                                     @else

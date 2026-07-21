@@ -20,7 +20,7 @@
              }
          }"
          x-init="filtrar()">
-    <div class="container mx-auto px-4 lg:px-12 max-w-5xl">
+    <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         <div class="mb-8">
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">Portal del Alumno</p>

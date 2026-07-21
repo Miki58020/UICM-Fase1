@@ -28,7 +28,7 @@
              }
          }"
          x-init="filtrar()">
-    <div class="container mx-auto px-4 lg:px-12 max-w-5xl">
+    <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         {{-- Encabezado --}}
         <div class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">

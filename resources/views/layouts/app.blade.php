@@ -1220,7 +1220,7 @@
          style="position:fixed; top:1.25rem; right:1.25rem; z-index:9999; display:flex; flex-direction:column; gap:0.625rem; width:20rem; pointer-events:none;">
         @foreach($toasts as [$type, $msg])
         @php
-            $tColor = match($type) { 'ok' => '#0F4229', 'warn' => '#b45309', default => '#ef4444' };
+            $tColor = match($type) { 'ok' => '#0F4229', 'warn' => '#EFAD5A', default => '#ef4444' };
             $tIcon  = match($type) {
                 'ok'   => 'M5 13l4 4L19 7',
                 'warn' => 'M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z',

@@ -101,7 +101,7 @@ $finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
                                             {{ number_format($tarifa->descuento, 0) }}% dto.
                                         </span>
                                     </div>
-                                    <p class="text-base sm:text-xl font-extrabold whitespace-nowrap" style="color:#15803d;">
+                                    <p class="text-base sm:text-xl font-extrabold whitespace-nowrap" style="color:#0F4229;">
                                         ${{ number_format($tarifa->precio_final, 0) }} MXN
                                     </p>
                                 @else

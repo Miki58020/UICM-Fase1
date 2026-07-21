@@ -25,7 +25,7 @@
              }
          }"
          x-init="filtrar()">
-    <div class="container mx-auto px-4 lg:px-12 max-w-5xl">
+    <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         @php
             $labelsConcepto = [

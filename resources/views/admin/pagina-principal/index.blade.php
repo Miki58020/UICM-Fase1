@@ -395,9 +395,9 @@
         </div>
         @else
         <p class="text-sm font-bold text-gray-900 mb-3">Carrusel de fotos</p>
-        <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-yellow-50" style="border-color: #D4AF37;">
-            <p class="text-sm font-semibold text-yellow-800">Límite de almacenamiento alcanzado ({{ $maxTotal }}/{{ $maxTotal }})</p>
-            <p class="text-xs text-yellow-700 mt-0.5">Para agregar una nueva imagen, primero elimina alguna de las actuales.</p>
+        <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-orange-50" style="border-color: #EFAD5A;">
+            <p class="text-sm font-semibold text-orange-800">Límite de almacenamiento alcanzado ({{ $maxTotal }}/{{ $maxTotal }})</p>
+            <p class="text-xs text-orange-700 mt-0.5">Para agregar una nueva imagen, primero elimina alguna de las actuales.</p>
         </div>
         @endif
 

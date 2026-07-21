@@ -85,10 +85,10 @@
                     realiza el pago con el ticket que te generó Mercado Pago.
                 </p>
 
-                <div class="rounded-xl p-4 bg-yellow-50 border-l-4 text-left mb-8"
-                     style="border-color: #D4AF37;">
+                <div class="rounded-xl p-4 bg-orange-50 border-l-4 text-left mb-8"
+                     style="border-color: #EFAD5A;">
                     <div class="flex gap-3 items-start">
-                        <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="#D4AF37" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="#EFAD5A" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>

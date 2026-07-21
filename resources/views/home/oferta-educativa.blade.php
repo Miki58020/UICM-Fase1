@@ -86,7 +86,7 @@ $conceptosPago = [
                                 {{ number_format($tarifa->descuento, 0) }}% dto.
                             </span>
                         </div>
-                        <p class="text-xl font-extrabold" style="color:#15803d;">
+                        <p class="text-xl font-extrabold" style="color:#0F4229;">
                             ${{ number_format($tarifa->precio_final, 0) }} <span class="text-xs font-medium text-gray-400">MXN</span>
                         </p>
                     @else

@@ -21,6 +21,7 @@ export default {
                 'uicm-green': '#0F4229',
                 'uicm-gold': '#D4AF37',
                 'uicm-orange': '#EFAD5A',
+                'uicm-blue': '#1F5FBF',
             },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],

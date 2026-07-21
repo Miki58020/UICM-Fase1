@@ -184,9 +184,9 @@
                     <p class="text-xs font-medium text-gray-500 mb-3">{{ $card['label'] }}</p>
                     <div class="mt-auto flex items-center gap-1.5">
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 inline-block"
-                              style="background-color: {{ $card['alerta'] ? '#dc2626' : '#22c55e' }};"></span>
+                              style="background-color: {{ $card['alerta'] ? '#dc2626' : '#0F4229' }};"></span>
                         <span class="text-xs font-medium"
-                              style="color: {{ $card['alerta'] ? '#dc2626' : '#15803d' }};">
+                              style="color: {{ $card['alerta'] ? '#dc2626' : '#0F4229' }};">
                             {{ $card['alerta'] ? $card['textoAl'] : $card['textoOk'] }}
                         </span>
                     </div>
@@ -234,7 +234,7 @@
                             <td class="px-6 py-3.5 text-center">
                                 @php
                                     $bc = match($asp->estado) {
-                                        'aprobado'  => ['#dcfce7','#15803d'],
+                                        'aprobado'  => ['#dcfce7','#0F4229'],
                                         'rechazado' => ['#fee2e2','#dc2626'],
                                         default     => ['#fef4e8','#b45309'],
                                     };
@@ -356,7 +356,7 @@
                             <td class="px-6 py-3.5 text-center">
                                 @php
                                     $pc = match($pago->estado) {
-                                        'aprobado'  => ['#dcfce7','#15803d','Pagado'],
+                                        'aprobado'  => ['#dcfce7','#0F4229','Pagado'],
                                         'rechazado' => ['#f3f4f6','#6B7280','Rechazado'],
                                         default     => ['#fef4e8','#b45309','En revisión'],
                                     };
@@ -449,9 +449,9 @@
                     <p class="text-xs font-medium text-gray-500 mb-3">{{ $card['label'] }}</p>
                     <div class="mt-auto flex items-center gap-1.5">
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 inline-block"
-                              style="background-color: {{ $card['alerta'] ? '#dc2626' : '#22c55e' }};"></span>
+                              style="background-color: {{ $card['alerta'] ? '#dc2626' : '#0F4229' }};"></span>
                         <span class="text-xs font-medium"
-                              style="color: {{ $card['alerta'] ? '#dc2626' : '#15803d' }};">
+                              style="color: {{ $card['alerta'] ? '#dc2626' : '#0F4229' }};">
                             {{ $card['alerta'] ? $card['textoAl'] : $card['textoOk'] }}
                         </span>
                     </div>
@@ -598,9 +598,9 @@
                     <p class="text-xs font-medium text-gray-500 mb-3">{{ $card['label'] }}</p>
                     <div class="mt-auto flex items-center gap-1.5">
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 inline-block"
-                              style="background-color: {{ $card['alerta'] ? '#dc2626' : '#22c55e' }};"></span>
+                              style="background-color: {{ $card['alerta'] ? '#dc2626' : '#0F4229' }};"></span>
                         <span class="text-xs font-medium"
-                              style="color: {{ $card['alerta'] ? '#dc2626' : '#15803d' }};">
+                              style="color: {{ $card['alerta'] ? '#dc2626' : '#0F4229' }};">
                             {{ $card['alerta'] ? $card['textoAl'] : $card['textoOk'] }}
                         </span>
                     </div>
@@ -710,9 +710,9 @@
                     <p class="text-xs font-medium text-gray-500 mb-3">{{ $card['label'] }}</p>
                     <div class="mt-auto flex items-center gap-1.5">
                         <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 inline-block"
-                              style="background-color: {{ $card['alerta'] ? '#dc2626' : '#22c55e' }};"></span>
+                              style="background-color: {{ $card['alerta'] ? '#dc2626' : '#0F4229' }};"></span>
                         <span class="text-xs font-medium"
-                              style="color: {{ $card['alerta'] ? '#dc2626' : '#15803d' }};">
+                              style="color: {{ $card['alerta'] ? '#dc2626' : '#0F4229' }};">
                             {{ $card['alerta'] ? $card['textoAl'] : $card['textoOk'] }}
                         </span>
                     </div>
@@ -746,7 +746,7 @@
                         <a href="{{ $depto['href'] }}" class="flex items-center justify-between hover:opacity-80 transition-opacity">
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 inline-block"
-                                      style="background-color: {{ $hayPendientes ? '#dc2626' : '#22c55e' }};"></span>
+                                      style="background-color: {{ $hayPendientes ? '#dc2626' : '#0F4229' }};"></span>
                                 <span class="text-xs font-bold text-gray-700">{{ $depto['label'] }}</span>
                             </div>
                             <span class="text-xl font-extrabold {{ $hayPendientes ? 'text-red-600' : 'text-gray-300' }}">
@@ -830,7 +830,7 @@
                             'admin'           => ['Administrador',   '#0F4229'],
                             'control_escolar' => ['Control Escolar', '#D4AF37'],
                             'finanzas'        => ['Finanzas',        '#EFAD5A'],
-                            'coordinacion'    => ['Coordinación',    '#0F4229'],
+                            'coordinacion'    => ['Coordinación',    '#1F5FBF'],
                         ];
                         $totalU = max($usuariosPorRol->sum(), 1);
                     @endphp
@@ -872,7 +872,7 @@
                             'admin'           => ['#f0f9f4','#0F4229','Admin'],
                             'control_escolar' => ['#fdf8ec','#b45309','Control Esc.'],
                             'finanzas'        => ['#fef4e8','#b45309','Finanzas'],
-                            'coordinacion'    => ['#f0f9f4','#0F4229','Coordinación'],
+                            'coordinacion'    => ['#eaf0fb','#1F5FBF','Coordinación'],
                             'profesor'        => ['#f3f4f6','#4B5563','Profesor'],
                             default           => ['#f3f4f6','#4B5563', ucfirst($u->rol)],
                         };

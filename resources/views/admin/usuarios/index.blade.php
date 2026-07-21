@@ -4,10 +4,10 @@
 
 @php
 $rolesLabels = [
-    'admin'           => ['label' => 'Administrador',         'color' => '#6366f1'],
-    'control_escolar' => ['label' => 'Control Escolar',       'color' => '#0F4229'],
-    'finanzas'        => ['label' => 'Finanzas',              'color' => '#D4AF37'],
-    'coordinacion'    => ['label' => 'Coordinación Académica','color' => '#0891b2'],
+    'admin'           => ['label' => 'Administrador',         'color' => '#0F4229'],
+    'control_escolar' => ['label' => 'Control Escolar',       'color' => '#D4AF37'],
+    'finanzas'        => ['label' => 'Finanzas',              'color' => '#EFAD5A'],
+    'coordinacion'    => ['label' => 'Coordinación Académica','color' => '#1F5FBF'],
     'alumno'          => ['label' => 'Alumno',                'color' => '#9ca3af'],
 ];
 @endphp

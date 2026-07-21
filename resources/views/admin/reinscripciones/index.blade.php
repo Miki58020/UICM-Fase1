@@ -100,8 +100,8 @@
 
         {{-- Pendientes de completar banner --}}
         @if ($pendienteCompletar > 0)
-            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-amber-50" style="border-color: #D4AF37;">
-                <p class="text-sm font-semibold text-amber-800">
+            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-orange-50" style="border-color: #EFAD5A;">
+                <p class="text-sm font-semibold text-orange-800">
                     {{ $pendienteCompletar }} alumno{{ $pendienteCompletar !== 1 ? 's' : '' }} con pago aprobado pendiente{{ $pendienteCompletar !== 1 ? 's' : '' }} de asignación de grupo.
                 </p>
             </div>
@@ -125,8 +125,8 @@
 
         {{-- Alerta sin periodo activo --}}
         @if (!$periodoActivo)
-            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-yellow-50" style="border-color: #EFAD5A;">
-                <p class="text-sm font-semibold text-yellow-800">
+            <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-orange-50" style="border-color: #EFAD5A;">
+                <p class="text-sm font-semibold text-orange-800">
                     No hay un período académico activo. Activa un período en el módulo de Periodos para poder gestionar reinscripciones.
                 </p>
             </div>

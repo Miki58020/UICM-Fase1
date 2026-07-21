@@ -10,7 +10,7 @@
          BANNER de bienvenida
     ══════════════════════════════════════════ --}}
     <div class="w-full py-8 px-4" style="background-color: #0F4229;">
-        <div class="container mx-auto px-4 lg:px-12 max-w-6xl">
+        <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
                 <div class="flex items-center gap-5">
@@ -96,7 +96,7 @@
 
 
     {{-- Contenido principal --}}
-    <div class="container mx-auto px-4 lg:px-12 max-w-6xl py-8">
+    <div class="container mx-auto px-4 lg:px-12 max-w-7xl py-8">
         <div class="space-y-6">
 
             {{-- ══════════════════════════════════════════
@@ -124,8 +124,8 @@
                         <p class="text-4xl font-extrabold leading-none mb-1" style="color: #0F4229;">{{ $carga->count() }}</p>
                         <p class="text-xs font-medium text-gray-500 mb-3">Materias inscritas</p>
                         <div class="mt-auto flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 inline-block" style="background-color: #22c55e;"></span>
-                            <span class="text-xs font-medium" style="color: #15803d;">{{ $alumno->cuatrimestre_actual }}° cuatrimestre · {{ $alumno->grupo->clave ?? '—' }}</span>
+                            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0 inline-block" style="background-color: #0F4229;"></span>
+                            <span class="text-xs font-medium" style="color: #0F4229;">{{ $alumno->cuatrimestre_actual }}° cuatrimestre · {{ $alumno->grupo->clave ?? '—' }}</span>
                         </div>
                     </div>
                 </a>
@@ -135,8 +135,8 @@
                     $promColor = $promedioGeneral === null ? '#6B7280' : ($promedioGeneral >= 7.0 ? '#0F4229' : '#dc2626');
                     $promBg    = $promedioGeneral === null ? '#f3f4f6' : ($promedioGeneral >= 7.0 ? '#f0f9f4' : '#fef2f2');
                     $promOk    = $promedioGeneral === null ? 'Sin calificaciones aún' : ($promedioGeneral >= 7.0 ? 'Aprobatorio' : 'Por debajo de 7.0');
-                    $promDot   = $promedioGeneral === null ? '#9CA3AF' : ($promedioGeneral >= 7.0 ? '#22c55e' : '#dc2626');
-                    $promTxt   = $promedioGeneral === null ? '#9CA3AF' : ($promedioGeneral >= 7.0 ? '#15803d' : '#dc2626');
+                    $promDot   = $promedioGeneral === null ? '#9CA3AF' : ($promedioGeneral >= 7.0 ? '#0F4229' : '#dc2626');
+                    $promTxt   = $promedioGeneral === null ? '#9CA3AF' : ($promedioGeneral >= 7.0 ? '#0F4229' : '#dc2626');
                 @endphp
                 <a href="{{ route('alumno.kardex') }}"
                    class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col">
@@ -197,8 +197,8 @@
                     $pagoColor = $pagoAlCorriente ? '#0F4229' : '#dc2626';
                     $pagoBg    = $pagoAlCorriente ? '#f0f9f4' : '#fef2f2';
                     $pagoTexto = $pagoAlCorriente ? 'Al corriente' : ($pagosPendientes === 1 ? '1 pago pendiente' : "$pagosPendientes pagos pendientes");
-                    $pagoDot   = $pagoAlCorriente ? '#22c55e' : '#dc2626';
-                    $pagoTxt   = $pagoAlCorriente ? '#15803d' : '#dc2626';
+                    $pagoDot   = $pagoAlCorriente ? '#0F4229' : '#dc2626';
+                    $pagoTxt   = $pagoAlCorriente ? '#0F4229' : '#dc2626';
                 @endphp
                 <a href="{{ route('alumno.finanzas.index') }}"
                    class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col">

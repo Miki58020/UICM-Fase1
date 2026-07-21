@@ -221,7 +221,7 @@
                                     Periodo de inscripción <span class="text-red-500">*</span>
                                 </label>
                                 @if($periodos->isEmpty())
-                                <div class="w-full rounded-lg border border-yellow-300 bg-yellow-50 px-4 py-2.5 text-sm text-yellow-700">
+                                <div class="w-full rounded-lg border border-orange-300 bg-orange-50 px-4 py-2.5 text-sm text-orange-700">
                                     Las inscripciones no están abiertas en este momento.
                                 </div>
                                 <input type="hidden" name="generacion" value="">
@@ -252,7 +252,7 @@
                                     Programa de interés <span class="text-red-500">*</span>
                                 </label>
                                 @if($programasActivos->isEmpty())
-                                <div class="w-full rounded-lg border border-yellow-300 bg-yellow-50 px-4 py-2.5 text-sm text-yellow-700">
+                                <div class="w-full rounded-lg border border-orange-300 bg-orange-50 px-4 py-2.5 text-sm text-orange-700">
                                     No hay programas disponibles para el periodo actual.
                                 </div>
                                 <input type="hidden" name="programa_academico" value="">
