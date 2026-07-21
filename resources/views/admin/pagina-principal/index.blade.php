@@ -56,7 +56,7 @@
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Programas registrados</h2>
-                <span class="text-xs text-gray-400">{{ $programas->count() }} programa{{ $programas->count() !== 1 ? 's' : '' }}</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $programas->count() }} programa{{ $programas->count() !== 1 ? 's' : '' }}</span>
             </div>
 
             @if($programas->isEmpty())
@@ -74,7 +74,7 @@
             $nivelCfg = [
                 'licenciatura' => ['label' => 'Licenciaturas', 'badge' => 'Licenciatura', 'color' => '#0F4229'],
                 'maestria'     => ['label' => 'Maestrías',     'badge' => 'Maestría',     'color' => '#D4AF37'],
-                'doctorado'    => ['label' => 'Doctorado',     'badge' => 'Doctorado',    'color' => '#9ca3af'],
+                'doctorado'    => ['label' => 'Doctorado',     'badge' => 'Doctorado',    'color' => '#EFAD5A'],
             ];
             $agrupados = $programas->groupBy('nivel');
             @endphp
@@ -148,7 +148,17 @@
                                         <button type="submit"
                                                 class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150
                                                        {{ $prog->activo ? 'bg-gray-400 hover:bg-gray-500' : '' }}"
-                                                @if(!$prog->activo) style="background-color: #EFAD5A;" onmouseover="this.style.backgroundColor='#e09a3a'" onmouseout="this.style.backgroundColor='#EFAD5A'" @endif>
+                                                @if(!$prog->activo) style="background-color: #0F4229;" onmouseover="this.style.backgroundColor='#0a2e1c'" onmouseout="this.style.backgroundColor='#0F4229'" @endif>
+                                            @if($prog->activo)
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                                </svg>
+                                            @else
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                            @endif
                                             {{ $prog->activo ? 'Desactivar' : 'Activar' }}
                                         </button>
                                     </form>
@@ -158,7 +168,7 @@
                                           onsubmit="return confirm('¿Eliminar el programa «{{ addslashes($prog->nombre) }}»? Esta acción no se puede deshacer.')">
                                         @csrf @method('DELETE')
                                         <button type="submit"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-200 text-red-500 hover:bg-red-50 transition-colors duration-150">
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors duration-150">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -281,10 +291,14 @@
                         </button>
                         <button type="submit"
                                 :disabled="!archivo"
-                                class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                                 style="background-color:#0F4229;"
                                 onmouseover="if(!this.disabled) this.style.backgroundColor='#0a2e1c'"
                                 onmouseout="this.style.backgroundColor='#0F4229'">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                            </svg>
                             Guardar imagen de fondo
                         </button>
                     </div>
@@ -383,10 +397,14 @@
                         </button>
                         <button type="submit"
                                 :disabled="!archivo"
-                                class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                                 style="background-color:#0F4229;"
                                 onmouseover="if(!this.disabled) this.style.backgroundColor='#0a2e1c'"
                                 onmouseout="this.style.backgroundColor='#0F4229'">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 7.5L12 3 7.5 7.5M12 3v13.5"/>
+                            </svg>
                             Subir imagen
                         </button>
                     </div>
@@ -453,7 +471,17 @@
                                 <button type="submit"
                                         class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150
                                                {{ $img->activo ? 'bg-gray-400 hover:bg-gray-500' : '' }}"
-                                        @if(!$img->activo) style="background-color: #EFAD5A;" onmouseover="this.style.backgroundColor='#e09a3a'" onmouseout="this.style.backgroundColor='#EFAD5A'" @endif>
+                                        @if(!$img->activo) style="background-color: #0F4229;" onmouseover="this.style.backgroundColor='#0a2e1c'" onmouseout="this.style.backgroundColor='#0F4229'" @endif>
+                                    @if($img->activo)
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    @endif
                                     {{ $img->activo ? 'Ocultar' : 'Mostrar' }}
                                 </button>
                                 @endif
@@ -462,7 +490,11 @@
                                   onsubmit="return confirm('¿Eliminar esta imagen del carrusel?')">
                                 @csrf @method('DELETE')
                                 <button type="submit"
-                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-red-200 text-red-500 hover:bg-red-50 transition-colors duration-150">
+                                        class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors duration-150">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
                                     Eliminar
                                 </button>
                             </form>
@@ -492,7 +524,6 @@
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Información de contacto</h2>
-                <span class="text-xs text-gray-400">Datos visibles en el sitio público</span>
             </div>
             <div class="px-6 py-6">
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -569,10 +600,14 @@
                             </div>
                             <div class="pt-2 flex justify-end">
                                 <button type="submit"
-                                        class="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-200"
+                                        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-200"
                                         style="background-color:#0F4229;"
                                         onmouseover="this.style.backgroundColor='#0a2e1c'"
                                         onmouseout="this.style.backgroundColor='#0F4229'">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                                    </svg>
                                     Guardar cambios
                                 </button>
                             </div>
@@ -653,7 +688,17 @@
                                         <button type="submit"
                                                 class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150
                                                        {{ $item->activo ? 'bg-gray-400 hover:bg-gray-500' : '' }}"
-                                                @if(!$item->activo) style="background-color: #EFAD5A;" onmouseover="this.style.backgroundColor='#e09a3a'" onmouseout="this.style.backgroundColor='#EFAD5A'" @endif>
+                                                @if(!$item->activo) style="background-color: #0F4229;" onmouseover="this.style.backgroundColor='#0a2e1c'" onmouseout="this.style.backgroundColor='#0F4229'" @endif>
+                                            @if($item->activo)
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                                </svg>
+                                            @else
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                            @endif
                                             {{ $item->activo ? 'Desactivar' : 'Activar' }}
                                         </button>
                                     </form>
@@ -661,7 +706,7 @@
                                           onsubmit="return confirm('¿Eliminar el interés «{{ addslashes($item->etiqueta) }}»?')">
                                         @csrf @method('DELETE')
                                         <button type="submit"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-200 text-red-500 hover:bg-red-50 transition-colors duration-150">
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors duration-150">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -713,10 +758,14 @@
                                 Cancelar
                             </button>
                             <button type="submit"
-                                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
                                     style="background-color: #0F4229;"
                                     onmouseover="this.style.backgroundColor='#0a2e1c'"
                                     onmouseout="this.style.backgroundColor='#0F4229'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                                </svg>
                                 Guardar
                             </button>
                         </div>
@@ -741,10 +790,14 @@
                                 Cancelar
                             </button>
                             <button type="submit"
-                                    class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
                                     style="background-color: #D4AF37;"
                                     onmouseover="this.style.backgroundColor='#b8962e'"
                                     onmouseout="this.style.backgroundColor='#D4AF37'">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                                </svg>
                                 Guardar cambios
                             </button>
                         </div>
@@ -816,10 +869,14 @@
                     Cancelar
                 </button>
                 <button type="submit"
-                        class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
                         style="background-color: #0F4229;"
                         onmouseover="this.style.backgroundColor='#0a2e1c'"
                         onmouseout="this.style.backgroundColor='#0F4229'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                    </svg>
                     Guardar programa
                 </button>
             </div>
@@ -881,10 +938,14 @@
                     Cancelar
                 </button>
                 <button type="submit"
-                        class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
                         style="background-color: #D4AF37;"
                         onmouseover="this.style.backgroundColor='#b8962e'"
                         onmouseout="this.style.backgroundColor='#D4AF37'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                    </svg>
                     Guardar cambios
                 </button>
             </div>

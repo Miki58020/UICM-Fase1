@@ -284,9 +284,9 @@
                                             <button type="submit"
                                                     class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold
                                                            text-white transition-colors duration-150"
-                                                    style="background-color: #EFAD5A;"
-                                                    onmouseover="this.style.backgroundColor='#d4923a'"
-                                                    onmouseout="this.style.backgroundColor='#EFAD5A'">
+                                                    style="background-color: #0F4229;"
+                                                    onmouseover="this.style.backgroundColor='#0a2e1c'"
+                                                    onmouseout="this.style.backgroundColor='#0F4229'">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                           d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -505,11 +505,15 @@
 
                 <button
                     type="submit"
-                    class="px-5 py-2 rounded-xl text-sm font-bold text-white shadow-sm
+                    class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold text-white shadow-sm
                            transition-colors duration-150"
                     style="background-color: #0F4229;"
                     onmouseover="this.style.backgroundColor='#0a2e1c'"
                     onmouseout="this.style.backgroundColor='#0F4229'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                    </svg>
                     Guardar
                 </button>
 

@@ -8,7 +8,7 @@
 $nivelCfg = [
     'licenciatura' => ['label' => 'Licenciaturas', 'color' => '#0F4229'],
     'maestria'     => ['label' => 'Maestrías',     'color' => '#D4AF37'],
-    'doctorado'    => ['label' => 'Doctorado',     'color' => '#9ca3af'],
+    'doctorado'    => ['label' => 'Doctorado',     'color' => '#EFAD5A'],
 ];
 $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
 @endphp
@@ -182,7 +182,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                                           onsubmit="return confirm('¿Eliminar \"{{ addslashes($periodo->label) }}\"? Esta acción no se puede deshacer.')">
                                         @csrf @method('DELETE')
                                         <button type="submit"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-200 text-red-500 hover:bg-red-50 transition-colors duration-150">
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors duration-150">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                             </svg>
@@ -440,9 +440,9 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                                         @csrf @method('PATCH')
                                         <button type="submit"
                                                 class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
-                                                style="background-color: #EFAD5A;"
-                                                onmouseover="this.style.backgroundColor='#e09a3a'"
-                                                onmouseout="this.style.backgroundColor='#EFAD5A'">
+                                                style="background-color: #0F4229;"
+                                                onmouseover="this.style.backgroundColor='#0a2e1c'"
+                                                onmouseout="this.style.backgroundColor='#0F4229'">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
@@ -651,7 +651,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                                 <td class="px-6 py-4 text-center">
                                     <form method="POST" action="{{ route('admin.periodos.programas.destroy', [$p->id, $prog->id]) }}" onsubmit="return confirm('¿Quitar {{ addslashes($prog->nombre) }} de este cuatrimestre?')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-200 text-red-500 hover:bg-red-50 transition-colors duration-150">
+                                        <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors duration-150">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                             Quitar
                                         </button>
@@ -785,7 +785,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
             <p class="text-xs text-gray-400">Las fechas de inscripción se configuran después desde el tab <strong>Inscripciones</strong>.</p>
             <div class="flex justify-end gap-3 pt-1">
                 <button type="button" onclick="document.getElementById('modal-crear').classList.add('hidden')" class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">Cancelar</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors" style="background-color: #0F4229;" onmouseover="this.style.backgroundColor='#0a2e1c'" onmouseout="this.style.backgroundColor='#0F4229'">Guardar</button>
+                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors" style="background-color: #0F4229;" onmouseover="this.style.backgroundColor='#0a2e1c'" onmouseout="this.style.backgroundColor='#0F4229'"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>Guardar</button>
             </div>
         </form>
     </div>
@@ -882,7 +882,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
             <input type="hidden" id="ei-fin-clases" name="fecha_fin_clases">
             <div class="flex justify-end gap-3 pt-2">
                 <button type="button" onclick="document.getElementById('modal-editar-inscripcion').classList.add('hidden')" class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">Cancelar</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors" style="background-color: #D4AF37;" onmouseover="this.style.backgroundColor='#b8962e'" onmouseout="this.style.backgroundColor='#D4AF37'">Guardar</button>
+                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors" style="background-color: #D4AF37;" onmouseover="this.style.backgroundColor='#b8962e'" onmouseout="this.style.backgroundColor='#D4AF37'"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>Guardar</button>
             </div>
         </form>
     </div>

@@ -228,7 +228,7 @@ $rolesLabels = [
                                     {{-- Eliminar --}}
                                     <button type="button"
                                             @click="abrirEliminar({{ $u->id }}, '{{ addslashes($u->name) }}')"
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-200 text-red-500 hover:bg-red-50 transition-colors duration-150">
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors duration-150">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -406,10 +406,14 @@ $rolesLabels = [
                         Cancelar
                     </button>
                     <button type="submit"
-                            class="px-5 py-2 text-sm font-bold text-white rounded-lg transition-colors duration-200 shadow-sm"
+                            class="inline-flex items-center gap-2 px-5 py-2 text-sm font-bold text-white rounded-lg transition-colors duration-200 shadow-sm"
                             style="background-color: #0F4229;"
                             onmouseover="this.style.backgroundColor='#0a2e1c'"
                             onmouseout="this.style.backgroundColor='#0F4229'">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                        </svg>
                         <span x-text="editando ? 'Guardar cambios' : 'Crear usuario'"></span>
                     </button>
                 </div>

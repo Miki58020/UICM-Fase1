@@ -22,7 +22,7 @@
                     $nivelCfg = [
                         'licenciatura' => ['badge' => 'Licenciatura', 'color' => '#0F4229'],
                         'maestria'     => ['badge' => 'Maestría',     'color' => '#D4AF37'],
-                        'doctorado'    => ['badge' => 'Doctorado',    'color' => '#9ca3af'],
+                        'doctorado'    => ['badge' => 'Doctorado',    'color' => '#EFAD5A'],
                     ];
                     $cfg = $nivelCfg[$programa->nivel] ?? ['badge' => ucfirst($programa->nivel), 'color' => '#9ca3af'];
                 @endphp

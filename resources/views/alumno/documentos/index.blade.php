@@ -155,8 +155,12 @@
                         <input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required
                                class="flex-1 text-sm text-gray-600 border-2 border-dashed border-gray-200 rounded-xl px-4 py-2.5 outline-none file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
                         <button type="submit"
-                                class="px-4 py-2 rounded-lg text-xs font-bold text-white"
+                                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white"
                                 style="background-color: #D4AF37;">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 7.5L12 3 7.5 7.5M12 3v13.5"/>
+                            </svg>
                             Subir
                         </button>
                     </form>
