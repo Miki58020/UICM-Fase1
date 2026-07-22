@@ -8,6 +8,7 @@ use App\Models\Alumno;
 use App\Models\Aspirante;
 use App\Models\ConfiguracionCorreo;
 use App\Models\Grupo;
+use App\Models\Programa;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -32,7 +33,9 @@ class InscripcionController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.inscripciones.index', compact('listos', 'inscritos', 'generados'));
+        $programas = Programa::orderBy('nombre')->get();
+
+        return view('admin.inscripciones.index', compact('listos', 'inscritos', 'generados', 'programas'));
     }
 
     public function inscribir(Request $request, Alumno $alumno)

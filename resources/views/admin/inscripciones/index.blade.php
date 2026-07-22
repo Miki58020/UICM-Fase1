@@ -7,6 +7,7 @@
 <section
     x-data="{
         busqueda: '',
+        filtroPrograma: '',
         vista: 'pendientes',
         filtrar() {
             this.$nextTick(() => {
@@ -15,8 +16,9 @@
                 filas.forEach(f => {
                     const texto = this.busqueda.toLowerCase();
                     const pasaBusqueda = !texto || f.dataset.nombre.toLowerCase().includes(texto) || f.dataset.folio.toLowerCase().includes(texto) || f.dataset.programa.toLowerCase().includes(texto);
+                    const pasaPrograma = !this.filtroPrograma || f.dataset.programaId === this.filtroPrograma;
                     const pasaVista = f.dataset.tipo === this.vista;
-                    const mostrar = pasaBusqueda && pasaVista;
+                    const mostrar = pasaBusqueda && pasaPrograma && pasaVista;
                     f.style.display = mostrar ? '' : 'none';
                     if (mostrar) visibles++;
                 });
@@ -80,6 +82,23 @@
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
             </div>
+
+            <div class="relative sm:w-60">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                <select x-model="filtroPrograma" @change="filtrar()"
+                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <option value="">Todos los programas</option>
+                    @foreach($programas as $p)
+                        <option value="{{ $p->id }}">{{ $p->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
 
         {{-- Card tabla --}}
@@ -92,7 +111,7 @@
                     x-text="vista === 'pendientes' ? 'Aspirantes pendientes de acceso' : 'Alumnos con acceso generado'">
                     Aspirantes pendientes de acceso
                 </h2>
-                <span class="text-xs text-gray-400" x-ref="contadorVisible">{{ $listos->count() }} registros</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorVisible">{{ $listos->count() }} registros</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -115,7 +134,8 @@
                             data-tipo="pendientes"
                             data-folio="{{ strtolower($asp->folio) }}"
                             data-nombre="{{ strtolower($asp->nombre_completo) }}"
-                            data-programa="{{ strtolower($asp->programa->nombre ?? '') }}">
+                            data-programa="{{ strtolower($asp->programa->nombre ?? '') }}"
+                            data-programa-id="{{ $asp->programa_id }}">
 
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-600 whitespace-nowrap">
                                 {{ $asp->folio }}
@@ -168,7 +188,8 @@
                             data-tipo="generados"
                             data-folio="{{ strtolower($alumno->aspirante->folio ?? '') }}"
                             data-nombre="{{ strtolower($alumno->nombre_completo) }}"
-                            data-programa="{{ strtolower($alumno->programa->nombre ?? '') }}">
+                            data-programa="{{ strtolower($alumno->programa->nombre ?? '') }}"
+                            data-programa-id="{{ $alumno->programa_id }}">
 
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-600 whitespace-nowrap">
                                 {{ $alumno->aspirante->folio ?? '—' }}
@@ -186,8 +207,12 @@
                                 {{ $alumno->matricula }}
                             </td>
 
-                            <td class="px-6 py-4 text-xs text-gray-600 whitespace-nowrap">
-                                {{ $alumno->grupo->clave ?? '—' }}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($alumno->grupo)
+                                <span class="font-mono text-xs font-bold" style="color: #0F4229;">{{ $alumno->grupo->clave }}</span>
+                                @else
+                                <span class="text-gray-400 text-sm">—</span>
+                                @endif
                             </td>
 
                             {{-- Acción --}}
@@ -216,14 +241,14 @@
 
                         @if ($listos->isEmpty() && $generados->isEmpty())
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
+                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
                                 No hay registros disponibles.
                             </td>
                         </tr>
                         @endif
 
                         <tr x-ref="sinResultados" style="display:none;">
-                            <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
+                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
                                 No se encontraron registros con ese criterio.
                             </td>
                         </tr>

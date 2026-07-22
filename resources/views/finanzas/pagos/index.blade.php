@@ -20,15 +20,6 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
 
             @php $baseParams = request()->except(['estado', 'page']); @endphp
-            <a href="{{ route('finanzas.pagos.index', $baseParams) }}"
-               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
-               style="border-color: #6B7280; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
-                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
-                <p class="text-2xl font-extrabold mt-1 text-gray-500">
-                    {{ $conteo['total'] }}
-                </p>
-            </a>
-
             <a href="{{ route('finanzas.pagos.index', $baseParams + ['estado' => 'pendiente']) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
                style="border-color: #EFAD5A; {{ request('estado') === 'pendiente' ? 'box-shadow: 0 0 0 2px #EFAD5A;' : '' }}">
@@ -53,6 +44,15 @@
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazados</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
                     {{ $conteo['rechazado'] }}
+                </p>
+            </a>
+
+            <a href="{{ route('finanzas.pagos.index', $baseParams) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #6B7280; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-500">
+                    {{ $conteo['total'] }}
                 </p>
             </a>
 

@@ -21,15 +21,6 @@
         {{-- ── Contadores rápidos ── --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
 
-            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'programa' => request('programa')])) }}"
-               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
-               style="border-color: #6B7280; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
-                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
-                <p class="text-2xl font-extrabold mt-1 text-gray-500">
-                    {{ $conteo['total'] }}
-                </p>
-            </a>
-
             <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'pendiente'])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
                style="border-color: #EFAD5A; {{ request('estado') === 'pendiente' ? 'box-shadow: 0 0 0 2px #EFAD5A;' : '' }}">
@@ -54,6 +45,15 @@
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazados</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EF4444;">
                     {{ $conteo['rechazado'] }}
+                </p>
+            </a>
+
+            <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'programa' => request('programa')])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
+               style="border-color: #6B7280; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-500">
+                    {{ $conteo['total'] }}
                 </p>
             </a>
 
@@ -94,21 +94,20 @@
         </form>
 
         {{-- ── Card tabla ── --}}
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-[350px]">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
             {{-- Barra superior verde --}}
-            <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
+            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
             {{-- Cabecera card --}}
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">
                     Lista de aspirantes
                 </h2>
-                <span class="text-xs text-gray-400">{{ $aspirantes->total() }} registros</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $aspirantes->total() }} registros</span>
             </div>
 
-            {{-- Tabla con scroll --}}
-            <div class="overflow-auto flex-1">
+            <div class="overflow-x-auto">
                 <table class="w-full text-sm">
 
                     <thead>
