@@ -33,7 +33,7 @@
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
         <div>
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-                Control Escolar
+                Coordinación Académica
             </p>
             <h1 class="text-2xl font-extrabold text-gray-900">Grupos</h1>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
@@ -145,7 +145,7 @@
         <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <h2 class="text-sm font-semibold text-gray-700">Listado de grupos</h2>
-            <span class="text-xs text-gray-400" x-text="visibles + ' registro' + (visibles !== 1 ? 's' : '')">{{ $grupos->count() }} registro{{ $grupos->count() !== 1 ? 's' : '' }}</span>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-text="visibles + ' registro' + (visibles !== 1 ? 's' : '')">{{ $grupos->count() }} registro{{ $grupos->count() !== 1 ? 's' : '' }}</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -155,6 +155,7 @@
                         <th class="px-6 py-3">Clave</th>
                         <th class="px-6 py-3">Programa</th>
                         <th class="px-6 py-3">Periodo</th>
+                        <th class="px-6 py-3 text-center">Estado</th>
                         <th class="px-6 py-3 text-center">Cuatrimestre</th>
                         <th class="px-6 py-3 text-center">Alumnos / Cap.</th>
                         <th class="px-6 py-3 text-center">Acciones</th>
@@ -175,9 +176,17 @@
                         <td class="px-6 py-4 font-semibold text-gray-800">{{ $grupo->programa->nombre }}</td>
                         <td class="px-6 py-4">
                             <span class="text-gray-600 text-xs">{{ $grupo->periodo->label ?? '—' }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
                             @if($grupo->periodo?->estado === 'activo')
-                                <span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold text-white"
-                                      style="background-color: #0F4229;">activo</span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
+                                      style="background-color: #0F4229;">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>Activo
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block"></span>Inactivo
+                                </span>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-center">
@@ -188,7 +197,7 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             @php $pct = $grupo->capacidad > 0 ? round(($grupo->alumnos_count / $grupo->capacidad) * 100) : 0; @endphp
-                            <span class="{{ $pct >= 90 ? 'text-red-600' : ($pct >= 70 ? 'text-yellow-600' : 'text-gray-700') }} font-semibold">
+                            <span class="{{ $pct >= 90 ? 'text-red-600' : ($pct >= 70 ? 'text-uicm-orange' : 'text-gray-700') }} font-semibold">
                                 {{ $grupo->alumnos_count }}
                             </span>
                             <span class="text-gray-400"> / {{ $grupo->capacidad }}</span>
@@ -228,14 +237,14 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
+                        <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
                             No hay grupos registrados. Crea el primero.
                         </td>
                     </tr>
                     @endforelse
                     @if($grupos->isNotEmpty())
                     <tr x-show="visibles === 0" x-cloak>
-                        <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
+                        <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
                             Ningún grupo coincide con la búsqueda o los filtros.
                         </td>
                     </tr>
@@ -358,7 +367,7 @@
 {{-- Modal editar --}}
 <div id="modal-editar" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
-        <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #D4AF37;"></div>
+        <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
         <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
             <h3 class="font-bold text-gray-800">Editar grupo</h3>
             <button onclick="document.getElementById('modal-editar').classList.add('hidden')"
@@ -441,10 +450,14 @@
                     Cancelar
                 </button>
                 <button type="submit"
-                        class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
                         style="background-color: #D4AF37;"
                         onmouseover="this.style.backgroundColor='#b8962e'"
                         onmouseout="this.style.backgroundColor='#D4AF37'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                    </svg>
                     Actualizar
                 </button>
             </div>

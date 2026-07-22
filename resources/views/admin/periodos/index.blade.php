@@ -853,7 +853,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
             <input type="hidden" id="ec-fin-reg" name="fecha_fin_registro">
             <div class="flex justify-end gap-3 pt-2">
                 <button type="button" onclick="document.getElementById('modal-editar-cuatrimestre').classList.add('hidden')" class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">Cancelar</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors" style="background-color: #D4AF37;" onmouseover="this.style.backgroundColor='#b8962e'" onmouseout="this.style.backgroundColor='#D4AF37'">Actualizar</button>
+                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors" style="background-color: #D4AF37;" onmouseover="this.style.backgroundColor='#b8962e'" onmouseout="this.style.backgroundColor='#D4AF37'"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>Actualizar</button>
             </div>
         </form>
     </div>
