@@ -142,6 +142,7 @@ $gruposJson = $grupos->map(fn($g) => [
                             <th class="px-6 py-3">Alumno</th>
                             <th class="px-6 py-3">Matrícula</th>
                             <th class="px-6 py-3">Programa</th>
+                            <th class="px-6 py-3">Grupo</th>
                             <th class="px-6 py-3 text-center">Cuatrimestre</th>
                             <th class="px-6 py-3">Estado</th>
                             <th class="px-6 py-3 text-center">Acciones</th>
@@ -172,6 +173,14 @@ $gruposJson = $grupos->map(fn($g) => [
                                 {{ $alumno->programa->nombre ?? '—' }}
                             </td>
 
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($alumno->grupo)
+                                <span class="font-mono text-xs font-bold" style="color: #0F4229;">{{ $alumno->grupo->clave }}</span>
+                                @else
+                                <span class="text-gray-400 text-sm">Sin grupo</span>
+                                @endif
+                            </td>
+
                             <td class="px-6 py-4 text-center">
                                 @if($alumno->cuatrimestre_actual)
                                 <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white"
@@ -199,7 +208,7 @@ $gruposJson = $grupos->map(fn($g) => [
                                 </span>
                             </td>
 
-                            <td class="px-6 py-4 text-center">
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
                                 <div class="inline-flex items-center gap-2">
                                     <button type="button"
                                             @click="abrirEditar({
@@ -248,7 +257,7 @@ $gruposJson = $grupos->map(fn($g) => [
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
+                            <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
                                 {{ request('q') || request('programa') || request('estado') || request('migrado') ? 'No se encontraron alumnos con ese criterio.' : 'No hay alumnos registrados.' }}
                             </td>
                         </tr>

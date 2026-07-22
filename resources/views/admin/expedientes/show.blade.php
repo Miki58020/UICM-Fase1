@@ -205,9 +205,9 @@
                 </ul>
 
                 <div class="px-6 py-3 border-t border-gray-100 bg-gray-50">
-                    <p class="text-xs text-gray-400">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">
                         {{ $subidos }} de {{ $items->count() }} documentos subidos
-                    </p>
+                    </span>
                 </div>
             </div>
 
@@ -216,12 +216,7 @@
         {{-- ── Volver a la lista ── --}}
         <div>
             <a href="{{ route('admin.expedientes.index') }}"
-               class="inline-flex items-center justify-center gap-2
-                      px-6 py-3 rounded-xl text-sm font-bold border-2
-                      transition-colors duration-200"
-               style="border-color: #0F4229; color: #0F4229;"
-               onmouseover="this.style.backgroundColor='#f0f9f4'"
-               onmouseout="this.style.backgroundColor='transparent'">
+               class="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-uicm-green transition-colors duration-150">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -259,7 +254,7 @@
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
                 <a id="modal-link-externo" href="#" target="_blank"
-                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors duration-150"
+                   class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold border transition-colors duration-150"
                    style="border-color: #0F4229; color: #0F4229;"
                    onmouseover="this.style.backgroundColor='#f0f9f4'"
                    onmouseout="this.style.backgroundColor='transparent'">

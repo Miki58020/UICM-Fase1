@@ -468,23 +468,18 @@
                     </p>
                 @endif
 
-                {{-- Volver --}}
-                <div>
-                    <a href="{{ route('finanzas.pagos.index') }}"
-                       class="inline-flex items-center justify-center gap-2
-                              px-6 py-3 rounded-xl text-sm font-bold border-2
-                              transition-colors duration-200"
-                       style="border-color: #0F4229; color: #0F4229;"
-                       onmouseover="this.style.backgroundColor='#f0f9f4'"
-                       onmouseout="this.style.backgroundColor='transparent'">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                        Volver a la lista
-                    </a>
-                </div>
-
             </div>
+        </div>
+
+        {{-- Volver a la lista --}}
+        <div class="mt-4">
+            <a href="{{ route('finanzas.pagos.index') }}"
+               class="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-uicm-green transition-colors duration-150">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Volver a la lista
+            </a>
         </div>
 
     </div>

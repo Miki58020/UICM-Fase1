@@ -50,9 +50,9 @@
 
             <a href="{{ route('admin.aspirantes.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'rechazado'])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
-               style="border-color: #9ca3af; {{ request('estado') === 'rechazado' ? 'box-shadow: 0 0 0 2px #9ca3af;' : '' }}">
+               style="border-color: #EF4444; {{ request('estado') === 'rechazado' ? 'box-shadow: 0 0 0 2px #EF4444;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazados</p>
-                <p class="text-2xl font-extrabold mt-1 text-gray-500">
+                <p class="text-2xl font-extrabold mt-1" style="color: #EF4444;">
                     {{ $conteo['rechazado'] }}
                 </p>
             </a>

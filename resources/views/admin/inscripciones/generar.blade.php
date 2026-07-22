@@ -127,7 +127,7 @@
                     {{-- Volver a la lista --}}
                     <a href="{{ route('admin.inscripciones.index') }}"
                        class="w-full inline-flex items-center justify-center gap-2
-                              py-3 rounded-xl text-sm font-bold border-2
+                              py-3.5 rounded-xl text-sm font-bold border-2
                               transition-colors duration-200"
                        style="border-color: #0F4229; color: #0F4229;"
                        onmouseover="this.style.backgroundColor='#f0f9f4'"
