@@ -36,12 +36,12 @@ $finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
 @endphp
 
 <section class="bg-uicm-gray min-h-screen py-12 px-4">
-<div class="container mx-auto px-4 lg:px-12 max-w-7xl">
+<div class="container mx-auto px-4 lg:px-12 max-w-5xl">
 
     {{-- Cabecera --}}
     <div class="mb-8">
         <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-            Administración
+            Finanzas
         </p>
         <h1 class="text-2xl font-extrabold text-gray-900">Conceptos de Pago</h1>
         <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
@@ -164,7 +164,7 @@ $finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
 </section>
 
 {{-- Modal de edición --}}
-<div id="modal-editar" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+<div id="modal-editar" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
         <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
@@ -175,6 +175,7 @@ $finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
             <form id="form-editar" method="POST">
                 @csrf
                 @method('PATCH')
+                <input type="hidden" name="tarifa_id" id="modal-tarifa-id">
 
                 {{-- Monto --}}
                 <div class="mb-4">
@@ -323,7 +324,7 @@ $finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
 
 @push('scripts')
 <script>
-const FIN_CLASES = {{ $finClases ? "'".$finClases."'" : 'null' }};
+const FIN_CLASES = {!! $finClases ? "'".$finClases."'" : 'null' !!};
 let modalTipoKey = null;
 
 function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, descFin, diaLimite, diasDescuento, diasAnticipacion, diasParaPagar) {
@@ -331,6 +332,7 @@ function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, desc
     document.getElementById('modal-info').textContent = nivel + ' — ' + tipo;
     document.getElementById('modal-monto').value = monto;
     document.getElementById('modal-descuento').value = descuento;
+    document.getElementById('modal-tarifa-id').value = id;
     document.getElementById('form-editar').action = '/finanzas/tarifas/' + id;
 
     const fechasWrap = document.getElementById('modal-descuento-fechas');
@@ -363,8 +365,10 @@ function abrirModal(id, nivel, tipo, tipoKey, monto, descuento, descInicio, desc
 
     if (tipoKey === 'colegiatura') {
         diasWrap.classList.remove('hidden');
+        inputDiaLimite.required = true;
     } else {
         diasWrap.classList.add('hidden');
+        inputDiaLimite.required = false;
     }
     inputDiaLimite.value = diaLimite || '';
     inputDiasDescuento.value = diasDescuento || '';
@@ -429,9 +433,27 @@ function actualizarPreview() {
         '$' + final.toLocaleString('es-MX') + ' MXN';
 }
 
-document.getElementById('modal-editar').addEventListener('click', function(e) {
-    if (e.target === this) cerrarModal();
-});
+@if ($errors->any() && old('tarifa_id'))
+    @php
+        $tarifaError = \App\Models\TarifaInscripcion::find(old('tarifa_id'));
+    @endphp
+    @if($tarifaError)
+    abrirModal(
+        {{ $tarifaError->id }},
+        '{{ $nivelLabel($tarifaError->nivel) }}',
+        '{{ $tabs[$tarifaError->tipo]['label'] ?? $tarifaError->tipo }}',
+        '{{ $tarifaError->tipo }}',
+        {{ old('monto', $tarifaError->monto) }},
+        {{ old('descuento', $tarifaError->descuento) }},
+        {!! old('descuento_fecha_inicio') ? "'".old('descuento_fecha_inicio')."'" : 'null' !!},
+        {!! old('descuento_fecha_fin') ? "'".old('descuento_fecha_fin')."'" : 'null' !!},
+        {{ old('dia_limite_pago') ?: 'null' }},
+        {{ old('dias_descuento_pronto_pago') ?: 'null' }},
+        {{ old('dias_anticipacion_cobro') ?: 'null' }},
+        {{ old('dias_para_pagar') ?: 'null' }}
+    );
+    @endif
+@endif
 </script>
 @endpush
 

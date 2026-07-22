@@ -567,9 +567,9 @@
      x-transition:leave="transition ease-in duration-150"
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0"
-     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
      style="display: none;">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md" @click.outside="asignacionAbierta = false">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
         <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
             <div>
