@@ -22,6 +22,7 @@
                          if (mostrar) visibles++;
                      });
                      this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
+                     this.$refs.contador.textContent = visibles + ' alumno' + (visibles !== 1 ? 's' : '');
                  });
              }
          }"
@@ -36,12 +37,11 @@
 
         {{-- Tarjetas (también filtran) --}}
         <div class="grid grid-cols-3 gap-4 mb-6">
-            <button type="button" @click="filtroEstado = ''; filtrar()"
-                    :class="filtroEstado === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #6B7280;">
-                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
-                <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $alumnos->count() }}</p>
+            <button type="button" @click="filtroEstado = 'atrasado'; filtrar()"
+                    :class="filtroEstado === 'atrasado' ? 'ring-2 ring-red-500' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 border-red-500 text-left w-full transition-shadow duration-150">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Atrasados</p>
+                <p class="text-2xl font-extrabold mt-1 text-red-600">{{ $totalAtrasados }}</p>
             </button>
             <button type="button" @click="filtroEstado = 'corriente'; filtrar()"
                     :class="filtroEstado === 'corriente' ? 'ring-2' : 'hover:shadow-md'"
@@ -50,11 +50,12 @@
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Al corriente</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $totalAlCorriente }}</p>
             </button>
-            <button type="button" @click="filtroEstado = 'atrasado'; filtrar()"
-                    :class="filtroEstado === 'atrasado' ? 'ring-2 ring-red-500' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 border-red-500 text-left w-full transition-shadow duration-150">
-                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Atrasados</p>
-                <p class="text-2xl font-extrabold mt-1 text-red-600">{{ $totalAtrasados }}</p>
+            <button type="button" @click="filtroEstado = ''; filtrar()"
+                    :class="filtroEstado === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #6B7280;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $alumnos->count() }}</p>
             </button>
         </div>
 
@@ -93,8 +94,9 @@
         {{-- Tabla --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden">
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
-            <div class="px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Alumnos activos</h2>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contador">{{ $alumnos->count() }} alumnos</span>
             </div>
 
             @if ($alumnos->isEmpty())
@@ -151,7 +153,15 @@
                                     </span>
                                 @endif
                             </div>
-                            <div class="text-center text-gray-600">{{ $alumno->cantidadAtrasados ?: '—' }}</div>
+                            <div class="text-center">
+                                @if ($alumno->cantidadAtrasados)
+                                    <span class="inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 text-xs font-bold rounded-full text-white" style="background-color: #dc2626;">
+                                        {{ $alumno->cantidadAtrasados }}
+                                    </span>
+                                @else
+                                    <span class="text-gray-300">—</span>
+                                @endif
+                            </div>
                             <div class="font-bold truncate {{ $alumno->montoAtrasado > 0 ? 'text-red-600' : 'text-gray-300' }}">
                                 {{ $alumno->montoAtrasado > 0 ? '$'.number_format($alumno->montoAtrasado, 2) : '—' }}
                             </div>
