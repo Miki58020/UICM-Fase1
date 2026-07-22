@@ -11,7 +11,7 @@
         {{-- Encabezado --}}
         <div class="mb-8">
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-                {{ $tipo === 'profesores' ? 'Coordinación Académica' : 'Administración' }}
+                {{ $tipo === 'profesores' ? 'Coordinación Académica' : ($tipo === 'alumnos' ? 'Control Escolar' : 'Administración') }}
             </p>
             <h1 class="text-2xl font-extrabold text-gray-900">
                 {{ $tipo === 'profesores' ? 'Contraseñas de profesores' : 'Solicitudes de contraseña' }}
