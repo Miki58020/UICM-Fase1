@@ -6,6 +6,7 @@
 
 <div x-data="{
     cargando: false,
+    archivoHorarios: '',
     asignacionAbierta: false,
     asigCargaId: null,
     asigMateriaNombre: '',
@@ -50,11 +51,11 @@
             {{-- Card de filtros --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         style="color: #D4AF37;">
+                         style="color: #0F4229;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414
                                  a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293
@@ -194,11 +195,11 @@
             ══════════════════════════════════════════ --}}
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
                 <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         style="color: #D4AF37;">
+                         style="color: #0F4229;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3m-3-7v9"/>
                     </svg>
@@ -236,7 +237,9 @@
                             </a>
 
                             <input type="file" name="csv" accept=".csv,text/csv" required
-                                   class="flex-1 text-sm text-gray-600 border-2 border-dashed border-gray-200 rounded-xl px-4 py-2.5 outline-none file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
+                                   @change="archivoHorarios = $event.target.files[0]?.name || ''"
+                                   :class="archivoHorarios ? 'border-green-400 bg-green-50 text-green-700' : 'border-gray-200 text-gray-600'"
+                                   class="flex-1 text-sm border-2 border-dashed rounded-xl px-4 py-2.5 outline-none transition-colors duration-150 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
 
                             <button type="submit"
                                     class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm transition-colors duration-150 whitespace-nowrap"
@@ -381,19 +384,19 @@
                 {{-- Tabla de materias del grupo --}}
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
-                    <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                    <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                 style="color: #D4AF37;">
+                                 style="color: #0F4229;">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
                                          M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                             </svg>
                             <h2 class="text-sm font-semibold text-gray-700">Materias asignadas al grupo</h2>
                         </div>
-                        <span class="text-xs text-gray-400">{{ $carga->count() }} materias</span>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $carga->count() }} materias</span>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -423,7 +426,7 @@
                                         @if($entrada->profesor)
                                             <span class="text-gray-700">{{ $entrada->profesor->nombre }}</span>
                                         @else
-                                            <span class="text-orange-500 font-medium text-xs">Sin asignar</span>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-uicm-orange-soft text-uicm-orange-soft-text">Sin asignar</span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-3 text-gray-500 text-xs">{{ $entrada->horario_formateado ?? '—' }}</td>
@@ -432,7 +435,7 @@
                                         @if ($entrada->fecha_inicio && $entrada->fecha_fin)
                                             {{ $entrada->fecha_inicio->format('d/m/Y') }} - {{ $entrada->fecha_fin->format('d/m/Y') }}
                                         @else
-                                            <span class="text-orange-500 font-medium">Sin definir</span>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-uicm-orange-soft text-uicm-orange-soft-text">Sin definir</span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-3 text-center">
@@ -454,10 +457,14 @@
                                                 fechaInicio: @js($entrada->fecha_inicio?->format('Y-m-d')),
                                                 fechaFin: @js($entrada->fecha_fin?->format('Y-m-d'))
                                             })"
-                                            class="text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors duration-150"
-                                            style="border-color: #0F4229; color: #0F4229;"
-                                            onmouseover="this.style.backgroundColor='#0F4229'; this.style.color='white'"
-                                            onmouseout="this.style.backgroundColor='transparent'; this.style.color='#0F4229'">
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
+                                            style="background-color: #D4AF37;"
+                                            onmouseover="this.style.backgroundColor='#b8962e'"
+                                            onmouseout="this.style.backgroundColor='#D4AF37'">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                                            </svg>
                                             Asignar
                                         </button>
                                     </td>
@@ -528,12 +535,12 @@
 
             @else
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden">
-                    <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                    <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
                     <div class="px-6 py-8 flex flex-col items-center text-center">
                         <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4"
-                             style="background-color: #fdf6e8;">
+                             style="background-color: #f0f9f4;">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                 style="color: #D4AF37;">
+                                 style="color: #0F4229;">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
