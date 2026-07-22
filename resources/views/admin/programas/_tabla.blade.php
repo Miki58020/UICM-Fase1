@@ -2,7 +2,7 @@
     <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <h2 class="text-sm font-semibold text-gray-700">{{ $titulo }}</h2>
-        <span class="text-xs text-gray-400">{{ $lista->count() }} programa{{ $lista->count() !== 1 ? 's' : '' }}</span>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $lista->count() }} programa{{ $lista->count() !== 1 ? 's' : '' }}</span>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-sm">
@@ -28,7 +28,7 @@
                 @endphp
                 <tr class="hover:bg-gray-50 transition-colors duration-100 {{ !$programa->activo ? 'opacity-60' : '' }}">
                     <td class="px-6 py-4 font-semibold text-gray-800">{{ $programa->nombre }}</td>
-                    <td class="px-6 py-4 font-mono text-xs text-gray-500">{{ $programa->clave }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ $programa->clave }}</td>
                     <td class="px-6 py-4">
                         <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold text-white"
                               style="background-color: {{ $cfg['color'] }};">

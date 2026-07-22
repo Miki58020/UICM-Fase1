@@ -130,7 +130,7 @@
         <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <h2 class="text-sm font-semibold text-gray-700">Listado de programas</h2>
-            <span class="text-xs text-gray-400" x-ref="contadorVisible">{{ $total }} registro{{ $total !== 1 ? 's' : '' }}</span>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorVisible">{{ $total }} registro{{ $total !== 1 ? 's' : '' }}</span>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -161,7 +161,7 @@
                         data-activo="{{ $programa->activo ? 'activo' : 'inactivo' }}"
                         class="hover:bg-gray-50 transition-colors duration-100 {{ !$programa->activo ? 'opacity-60' : '' }}">
                         <td class="px-6 py-4 font-semibold text-gray-800">{{ $programa->nombre }}</td>
-                        <td class="px-6 py-4 font-mono text-xs text-gray-500">{{ $programa->clave }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ $programa->clave }}</td>
                         <td class="px-6 py-4">
                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold text-white"
                                   style="background-color: {{ $cfg['color'] }};">
@@ -175,12 +175,9 @@
                                 $total_c   = $programa->total_creditos;
                             @endphp
                             @if($total_c)
-                                <span class="text-xs font-mono {{ $definidos >= $total_c ? 'text-green-700 font-bold' : 'text-gray-500' }}">
+                                <span class="text-sm font-semibold {{ $definidos >= $total_c ? 'text-uicm-green' : 'text-uicm-orange' }}">
                                     {{ $definidos }} / {{ $total_c }}
                                 </span>
-                                @if($definidos < $total_c)
-                                    <span class="block text-[10px] text-amber-600">faltan {{ $total_c - $definidos }} cr.</span>
-                                @endif
                             @else
                                 <span class="text-gray-300 text-xs">—</span>
                             @endif
@@ -334,7 +331,7 @@
 {{-- Modal editar --}}
 <div id="modal-editar" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
-        <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #D4AF37;"></div>
+        <div class="h-1.5 w-full rounded-t-2xl" style="background-color: #0F4229;"></div>
         <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
             <h3 class="font-bold text-gray-800">Editar programa</h3>
             <button onclick="document.getElementById('modal-editar').classList.add('hidden')"
