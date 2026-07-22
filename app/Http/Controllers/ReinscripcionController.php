@@ -6,6 +6,7 @@ use App\Models\Alumno;
 use App\Models\Grupo;
 use App\Models\Pago;
 use App\Models\Periodo;
+use App\Models\Programa;
 use Illuminate\Http\Request;
 
 class ReinscripcionController extends Controller
@@ -29,7 +30,9 @@ class ReinscripcionController extends Controller
             ? Grupo::where('periodo_id', $periodoActivo->id)->orderBy('clave')->get()
             : collect();
 
-        return view('admin.reinscripciones.index', compact('alumnos', 'periodoActivo', 'gruposActivos'));
+        $programas = Programa::orderBy('nombre')->get();
+
+        return view('admin.reinscripciones.index', compact('alumnos', 'periodoActivo', 'gruposActivos', 'programas'));
     }
 
     public function generarPago(Alumno $alumno)

@@ -15,6 +15,8 @@
 <section
     x-data="{
         busqueda: '',
+        filtroEstado: '',
+        filtroPrograma: '',
         modalCompletar: false,
         alumnoId: null,
         alumnoNombre: '',
@@ -36,7 +38,10 @@
                 const q = this.busqueda.toLowerCase();
                 let vis = 0;
                 this.$refs.tbody.querySelectorAll('tr[data-nombre]').forEach(f => {
-                    const ok = !q || f.dataset.nombre.toLowerCase().includes(q) || f.dataset.matricula.toLowerCase().includes(q);
+                    const okBusqueda = !q || f.dataset.nombre.toLowerCase().includes(q) || f.dataset.matricula.toLowerCase().includes(q);
+                    const okEstado   = !this.filtroEstado || f.dataset.estado === this.filtroEstado;
+                    const okPrograma = !this.filtroPrograma || f.dataset.programaId === this.filtroPrograma;
+                    const ok = okBusqueda && okEstado && okPrograma;
                     f.style.display = ok ? '' : 'none';
                     if (ok) vis++;
                 });
@@ -76,25 +81,37 @@
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
 
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left" style="border-color: #6B7280;">
-                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total activos</p>
-                <p class="text-2xl font-extrabold mt-1 text-gray-600">{{ $alumnos->count() }}</p>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left" style="border-color: #EFAD5A;">
+            <button type="button" @click="filtroEstado = filtroEstado === 'sin_cobro' ? '' : 'sin_cobro'; filtrar()"
+                    :class="filtroEstado === 'sin_cobro' ? 'ring-2 ring-offset-1 ring-uicm-orange' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #EFAD5A;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Sin cobro</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $sinCobro }}</p>
-            </div>
+            </button>
 
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left" style="border-color: #3b82f6;">
+            <button type="button" @click="filtroEstado = filtroEstado === 'pendiente' ? '' : 'pendiente'; filtrar()"
+                    :class="filtroEstado === 'pendiente' ? 'ring-2 ring-offset-1 ring-uicm-blue' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #1F5FBF;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">En validación</p>
-                <p class="text-2xl font-extrabold mt-1 text-blue-500">{{ $enValidacion }}</p>
-            </div>
+                <p class="text-2xl font-extrabold mt-1" style="color: #1F5FBF;">{{ $enValidacion }}</p>
+            </button>
 
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left" style="border-color: #0F4229;">
+            <button type="button" @click="filtroEstado = filtroEstado === 'completada' ? '' : 'completada'; filtrar()"
+                    :class="filtroEstado === 'completada' ? 'ring-2 ring-offset-1 ring-uicm-green' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Completadas</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $completadas }}</p>
-            </div>
+            </button>
+
+            <button type="button" @click="filtroEstado = ''; filtrar()"
+                    :class="filtroEstado === '' ? 'ring-2 ring-offset-1 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #6B7280;">
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total activos</p>
+                <p class="text-2xl font-extrabold mt-1 text-gray-600">{{ $alumnos->count() }}</p>
+            </button>
 
         </div>
 
@@ -120,6 +137,23 @@
                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+            </div>
+
+            <div class="relative sm:w-60">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                <select x-model="filtroPrograma" @change="filtrar()"
+                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
+                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
+                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
+                    <option value="">Todos los programas</option>
+                    @foreach($programas as $p)
+                        <option value="{{ $p->id }}">{{ $p->nombre }}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
 
@@ -147,7 +181,7 @@
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Alumnos activos</h2>
-                <span class="text-xs text-gray-400" x-ref="contador">{{ $alumnos->count() }} alumnos</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contador">{{ $alumnos->count() }} alumnos</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -184,7 +218,9 @@
                         @endphp
                         <tr class="hover:bg-gray-50 transition-colors duration-100"
                             data-nombre="{{ strtolower($alumno->nombre_completo) }}"
-                            data-matricula="{{ strtolower($alumno->matricula) }}">
+                            data-matricula="{{ strtolower($alumno->matricula) }}"
+                            data-estado="{{ $estadoReinsc }}"
+                            data-programa-id="{{ $alumno->programa_id }}">
 
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <p class="font-semibold text-gray-800">{{ $alumno->nombre_completo }}</p>
@@ -221,6 +257,7 @@
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-500 bg-gray-100">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block"></span>
                                             Sin cobro generado
                                         </span>
                                     @endif
