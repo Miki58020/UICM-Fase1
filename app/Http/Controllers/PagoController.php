@@ -12,6 +12,7 @@ use App\Models\Periodo;
 use App\Models\TarifaInscripcion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -107,7 +108,7 @@ class PagoController extends Controller
                     'httpCode' => $e->getApiResponse()?->getStatusCode(),
                     'body'     => $e->getApiResponse()?->getContent(),
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Log::error('MP preference error: ' . $e->getMessage());
             }
         }
@@ -207,7 +208,7 @@ class PagoController extends Controller
                 $detail .= ' | cause: ' . json_encode($apiContent['cause']);
             }
             return response()->json(['status' => 'error', 'detail' => $detail], 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('MP procesar error: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'detail' => $e->getMessage()], 500);
         }
@@ -257,7 +258,7 @@ class PagoController extends Controller
                     'body'     => $e->getApiResponse()?->getContent(),
                     'payment_id' => $paymentId,
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Log::error('MP retorno error: ' . $e->getMessage());
             }
         }
@@ -336,7 +337,7 @@ class PagoController extends Controller
                     ]
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('MP Webhook error: ' . $e->getMessage());
         }
 
@@ -436,7 +437,7 @@ class PagoController extends Controller
                     'httpCode' => $e->getApiResponse()?->getStatusCode(),
                     'body'     => $e->getApiResponse()?->getContent(),
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Log::error('MP pagarAlumno error: ' . $e->getMessage());
             }
         }
@@ -459,7 +460,7 @@ class PagoController extends Controller
                         'fecha_pago'    => now()->toDateString(),
                     ]);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 Log::error('MP retornoAlumno error: ' . $e->getMessage());
             }
         }
@@ -507,12 +508,16 @@ class PagoController extends Controller
 
         $pagos = $this->pagosFiltrados($request)->paginate(50)->withQueryString();
 
-        return view('finanzas.pagos.index', compact('pagos', 'conteo'));
+        $estadoActivo = $request->filled('estado') ? $request->estado : 'pendiente';
+
+        return view('finanzas.pagos.index', compact('pagos', 'conteo', 'estadoActivo'));
     }
 
     public function exportar(Request $request)
     {
-        $pagos = $this->pagosFiltrados($request)->get();
+        // El CSV no hereda la tarjeta de estado seleccionada en pantalla, solo
+        // los filtros del formulario (buscar/concepto/fechas).
+        $pagos = $this->pagosFiltrados($request, aplicarEstadoDefault: false)->get();
 
         $callback = function () use ($pagos) {
             $handle = fopen('php://output', 'w');
@@ -616,12 +621,19 @@ class PagoController extends Controller
         return view('finanzas.alumnos', compact('alumnos', 'totalAtrasados', 'totalAlCorriente', 'programas'));
     }
 
-    private function pagosFiltrados(Request $request)
+    private function pagosFiltrados(Request $request, bool $aplicarEstadoDefault = true)
     {
+        // Sin estado explícito en la URL, se asume "pendiente" (bandeja de trabajo).
+        // El botón "Todos" manda estado=todos explícitamente para quitar el filtro.
+        // El CSV (aplicarEstadoDefault: false) ignora esta bandeja por defecto.
+        $estado = $request->filled('estado')
+            ? $request->estado
+            : ($aplicarEstadoDefault ? 'pendiente' : null);
+
         return Pago::conIntentoDePago()
             ->with(['aspirante.programa', 'alumno.programa'])
             ->when($request->filled('concepto'), fn ($q) => $q->where('concepto', $request->concepto))
-            ->when($request->filled('estado'), fn ($q) => $q->where('estado', $request->estado))
+            ->when($estado && $estado !== 'todos', fn ($q) => $q->where('estado', $estado))
             ->when($request->filled('fecha_desde'), fn ($q) => $q->whereDate('created_at', '>=', $request->fecha_desde))
             ->when($request->filled('fecha_hasta'), fn ($q) => $q->whereDate('created_at', '<=', $request->fecha_hasta))
             ->when($request->filled('q'), function ($query) use ($request) {
@@ -646,14 +658,29 @@ class PagoController extends Controller
 
         if ($pago->mp_payment_id) {
             try {
-                $this->configurarMP();
-                $mpPago = (new PaymentClient())->get((int) $pago->mp_payment_id);
-            } catch (\Exception $e) {
+                // Se consulta la API REST directamente (sin el SDK) porque su hidratación
+                // tipada de MercadoPago\Resources\Payment\Card truena en PHP 8.5 cuando
+                // expiration_month llega como string.
+                $config = ConfiguracionMercadopago::activa();
+
+                if ($config) {
+                    $response = Http::withToken($config->access_token)
+                        ->get("https://api.mercadopago.com/v1/payments/{$pago->mp_payment_id}");
+
+                    if ($response->successful()) {
+                        $mpPago = json_decode($response->body());
+                    } else {
+                        Log::error('MP show error: respuesta ' . $response->status() . ' - ' . $response->body());
+                    }
+                }
+            } catch (\Throwable $e) {
                 Log::error('MP show error: ' . $e->getMessage());
             }
         }
 
-        return view('finanzas.pagos.show', compact('pago', 'mpPago'));
+        $volverQuery = request()->getQueryString();
+
+        return view('finanzas.pagos.show', compact('pago', 'mpPago', 'volverQuery'));
     }
 
     // ─── Finanzas: aprobar/rechazar manual ────────────────────────────────────

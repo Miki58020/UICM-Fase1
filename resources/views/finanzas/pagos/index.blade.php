@@ -22,7 +22,7 @@
             @php $baseParams = request()->except(['estado', 'page']); @endphp
             <a href="{{ route('finanzas.pagos.index', $baseParams + ['estado' => 'pendiente']) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
-               style="border-color: #EFAD5A; {{ request('estado') === 'pendiente' ? 'box-shadow: 0 0 0 2px #EFAD5A;' : '' }}">
+               style="border-color: #EFAD5A; {{ $estadoActivo === 'pendiente' ? 'box-shadow: 0 0 0 2px #EFAD5A;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">En revisión</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">
                     {{ $conteo['pendiente'] }}
@@ -31,7 +31,7 @@
 
             <a href="{{ route('finanzas.pagos.index', $baseParams + ['estado' => 'aprobado']) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
-               style="border-color: #0F4229; {{ request('estado') === 'aprobado' ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
+               style="border-color: #0F4229; {{ $estadoActivo === 'aprobado' ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Validados</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">
                     {{ $conteo['aprobado'] }}
@@ -40,16 +40,16 @@
 
             <a href="{{ route('finanzas.pagos.index', $baseParams + ['estado' => 'rechazado']) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
-               style="border-color: #9ca3af; {{ request('estado') === 'rechazado' ? 'box-shadow: 0 0 0 2px #9ca3af;' : '' }}">
+               style="border-color: #9ca3af; {{ $estadoActivo === 'rechazado' ? 'box-shadow: 0 0 0 2px #9ca3af;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Rechazados</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
                     {{ $conteo['rechazado'] }}
                 </p>
             </a>
 
-            <a href="{{ route('finanzas.pagos.index', $baseParams) }}"
+            <a href="{{ route('finanzas.pagos.index', $baseParams + ['estado' => 'todos']) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full block transition-shadow duration-150"
-               style="border-color: #6B7280; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
+               style="border-color: #6B7280; {{ $estadoActivo === 'todos' ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Todos</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
                     {{ $conteo['total'] }}
@@ -119,13 +119,13 @@
                         onmouseout="this.style.backgroundColor='#0F4229'">
                     Filtrar
                 </button>
-                @if(request('q') || request('concepto') || request('estado') || request('fecha_desde') || request('fecha_hasta'))
-                <a href="{{ route('finanzas.pagos.index') }}"
+                @if(request('q') || request('concepto') || request('fecha_desde') || request('fecha_hasta'))
+                <a href="{{ route('finanzas.pagos.index', ['estado' => request('estado')]) }}"
                    class="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
                     Limpiar
                 </a>
                 @endif
-                <a href="{{ route('finanzas.pagos.exportar', request()->query()) }}"
+                <a href="{{ route('finanzas.pagos.exportar', request()->except('estado')) }}"
                    class="ml-auto px-4 py-2.5 rounded-xl text-sm font-bold text-white"
                    style="background-color: #D4AF37;">
                     Exportar CSV
@@ -134,16 +134,16 @@
         </form>
 
         {{-- Card tabla --}}
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-[350px]">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
 
-            <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
+            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Comprobantes recibidos</h2>
-                <span class="text-xs text-gray-400">{{ $pagos->total() }} registros</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $pagos->total() }} registros</span>
             </div>
 
-            <div class="overflow-auto flex-1">
+            <div class="overflow-x-auto">
                 <table class="w-full text-sm">
 
                     <thead>
@@ -234,7 +234,7 @@
 
                             {{-- Acción --}}
                             <td class="px-6 py-4 text-center">
-                                <a href="{{ route('finanzas.pagos.show', $pago->id) }}"
+                                <a href="{{ route('finanzas.pagos.show', $pago->id) }}{{ request()->getQueryString() ? '?'.request()->getQueryString() : '' }}"
                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white
                                           transition-colors duration-150 whitespace-nowrap"
                                    style="background-color: #D4AF37;"
