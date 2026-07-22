@@ -12,6 +12,7 @@
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
+
         {{-- Totales --}}
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
@@ -105,7 +106,7 @@
 
         {{-- Recaudado por mes (gráfica de barras) --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
-            <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Recaudado por mes</h2>
             </div>
@@ -126,7 +127,7 @@
                     <div class="flex items-end gap-3 sm:gap-5" style="height: 180px;">
                         @foreach ($porMes as $mes => $monto)
                             @php $alturaPct = max(4, round(($monto / $maxMes) * 100)); @endphp
-                            <div class="flex-1 flex flex-col items-center justify-end h-full group">
+                            <div class="w-16 flex-shrink-0 flex flex-col items-center justify-end h-full group">
                                 <span class="text-xs font-bold text-gray-700 mb-1.5 whitespace-nowrap">
                                     ${{ number_format($monto, 0) }}
                                 </span>
