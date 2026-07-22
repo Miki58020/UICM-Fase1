@@ -138,7 +138,7 @@
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Planta docente registrada</h2>
-                <span class="text-xs text-gray-400" x-ref="contadorVisible">{{ $profesores->count() }} profesores</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorVisible">{{ $profesores->count() }} profesores</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -198,19 +198,17 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex flex-col gap-1.5">
                                     @if ($profesor->activo)
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold w-fit"
-                                              style="background-color: #dcfce7; color: #0F4229;">
-                                            Activo
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white w-fit"
+                                              style="background-color: #0F4229;">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white opacity-80 inline-block"></span>Activo
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold w-fit"
-                                              style="background-color: #f3f4f6; color: #6b7280;">
-                                            Inactivo
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-200 w-fit">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block"></span>Inactivo
                                         </span>
                                     @endif
                                     @unless ($profesor->user_id)
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold w-fit"
-                                              style="background-color: #fef3c7; color: #b45309;">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-uicm-orange-soft text-uicm-orange-soft-text w-fit">
                                             Sin cuenta
                                         </span>
                                     @endunless
@@ -498,8 +496,8 @@
                 <button
                     type="button"
                     @click="showModal = false"
-                    class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100
-                           hover:bg-gray-200 transition-colors duration-150">
+                    class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200
+                           hover:bg-gray-50 transition-colors">
                     Cancelar
                 </button>
 
