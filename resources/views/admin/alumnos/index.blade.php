@@ -82,9 +82,9 @@ $gruposJson = $grupos->map(fn($g) => [
             </a>
             <a href="{{ route('admin.alumnos.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'migrado' => request('migrado') ? null : '1'])) }}"
                class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
-               style="border-color: #8B5CF6; {{ request('migrado') ? 'box-shadow: 0 0 0 2px #8B5CF6;' : '' }}">
+               style="border-color: #1F5FBF; {{ request('migrado') ? 'box-shadow: 0 0 0 2px #1F5FBF;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Migrados</p>
-                <p class="text-2xl font-extrabold mt-1" style="color: #8B5CF6;">{{ $conteo['migrados'] }}</p>
+                <p class="text-2xl font-extrabold mt-1" style="color: #1F5FBF;">{{ $conteo['migrados'] }}</p>
             </a>
         </div>
 
@@ -125,32 +125,17 @@ $gruposJson = $grupos->map(fn($g) => [
                     @endforeach
                 </select>
             </div>
-
-            <button type="submit"
-                    class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"
-                    style="background-color: #0F4229;"
-                    onmouseover="this.style.backgroundColor='#0a2e1c'"
-                    onmouseout="this.style.backgroundColor='#0F4229'">
-                Buscar
-            </button>
-
-            @if(request('q') || request('programa') || request('estado') || request('migrado'))
-            <a href="{{ route('admin.alumnos.index') }}"
-               class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
-                Limpiar
-            </a>
-            @endif
         </form>
 
         {{-- Tabla --}}
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-[350px]">
-            <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Listado de alumnos</h2>
-                <span class="text-xs text-gray-400">{{ $alumnos->total() }} registros</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $alumnos->total() }} registros</span>
             </div>
 
-            <div class="overflow-auto flex-1">
+            <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -179,7 +164,7 @@ $gruposJson = $grupos->map(fn($g) => [
                                 </div>
                             </td>
 
-                            <td class="px-6 py-4 font-mono text-gray-700 text-xs">
+                            <td class="px-6 py-4 text-gray-700 text-sm">
                                 {{ $alumno->matricula }}
                             </td>
 
@@ -187,8 +172,15 @@ $gruposJson = $grupos->map(fn($g) => [
                                 {{ $alumno->programa->nombre ?? '—' }}
                             </td>
 
-                            <td class="px-6 py-4 text-center text-gray-700">
-                                {{ $alumno->cuatrimestre_actual ?? '—' }}
+                            <td class="px-6 py-4 text-center">
+                                @if($alumno->cuatrimestre_actual)
+                                <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white"
+                                      style="background-color: #D4AF37;">
+                                    {{ $alumno->cuatrimestre_actual }}°
+                                </span>
+                                @else
+                                <span class="text-gray-400">—</span>
+                                @endif
                             </td>
 
                             <td class="px-6 py-4">

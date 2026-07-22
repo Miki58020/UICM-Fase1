@@ -60,7 +60,7 @@
                                         </div>
                                         <div>
                                             <p class="font-semibold text-gray-800 whitespace-nowrap">{{ $a->alumno->nombre_completo }}</p>
-                                            <p class="text-xs text-gray-400 font-mono whitespace-nowrap">{{ $a->alumno->matricula }}</p>
+                                            <p class="text-xs text-gray-400 whitespace-nowrap">{{ $a->alumno->matricula }}</p>
                                         </div>
                                     </div>
                                 </td>

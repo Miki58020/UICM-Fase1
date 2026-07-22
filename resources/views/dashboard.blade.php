@@ -230,7 +230,7 @@
                                 {{ $asp->nombre }} {{ $asp->apellido_paterno }}
                             </td>
                             <td class="px-6 py-3.5 text-gray-500 text-xs">{{ $asp->programa->nombre ?? '—' }}</td>
-                            <td class="px-6 py-3.5 font-mono text-xs text-gray-400">{{ $asp->folio }}</td>
+                            <td class="px-6 py-3.5 text-sm text-gray-500">{{ $asp->folio }}</td>
                             <td class="px-6 py-3.5 text-center">
                                 @php
                                     $bc = match($asp->estado) {
@@ -640,7 +640,7 @@
                         @endphp
                         <tr class="hover:bg-gray-50 transition-colors duration-100">
                             <td class="px-6 py-3.5 font-medium text-gray-800 truncate max-w-[160px]">{{ $carga->materia->nombre ?? '—' }}</td>
-                            <td class="px-6 py-3.5 font-mono text-xs text-gray-500">{{ $carga->grupo->clave ?? '—' }}</td>
+                            <td class="px-6 py-3.5 font-mono text-xs font-bold" style="color: #0F4229;">{{ $carga->grupo->clave ?? '—' }}</td>
                             <td class="px-6 py-3.5 text-center">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
                                       style="background-color:{{ $estadoBadge[0] }};color:{{ $estadoBadge[1] }};">

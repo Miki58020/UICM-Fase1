@@ -135,7 +135,7 @@
                              data-matricula="{{ strtolower($alumno->matricula) }}"
                              data-programa="{{ $alumno->programa_id }}"
                              data-estado="{{ $alumno->alCorriente ? 'corriente' : 'atrasado' }}">
-                            <div class="font-mono text-xs text-gray-600 truncate">{{ $alumno->matricula }}</div>
+                            <div class="text-sm text-gray-600 truncate">{{ $alumno->matricula }}</div>
                             <div class="font-medium text-gray-800 truncate">{{ $alumno->nombre_completo }}</div>
                             <div class="text-gray-500 truncate">{{ $alumno->programa?->nombre ?? '—' }}</div>
                             <div class="text-center">

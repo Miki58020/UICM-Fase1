@@ -188,7 +188,7 @@
 
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <p class="font-semibold text-gray-800">{{ $alumno->nombre_completo }}</p>
-                                <p class="text-xs font-mono text-gray-400 mt-0.5">{{ $alumno->matricula }}</p>
+                                <p class="text-xs text-gray-400 mt-0.5">{{ $alumno->matricula }}</p>
                             </td>
 
                             <td class="px-6 py-4 text-gray-600 text-xs">

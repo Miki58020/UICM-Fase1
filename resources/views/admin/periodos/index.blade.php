@@ -629,7 +629,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                                 data-activo="{{ $prog->pivot->activo ? '1' : '0' }}">
                                 <td class="px-6 py-4">
                                     <p class="font-semibold text-gray-800">{{ $prog->nombre }}</p>
-                                    <p class="text-xs text-gray-400 font-mono mt-0.5">{{ $prog->clave }}</p>
+                                    <p class="text-xs text-gray-400 mt-0.5">{{ $prog->clave }}</p>
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold text-white" style="background-color: {{ $cfg['color'] }};">{{ $cfg['label'] }}</span>

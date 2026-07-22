@@ -51,21 +51,6 @@
                     @endforeach
                 </select>
             </div>
-
-            <button type="submit"
-                    class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors duration-150"
-                    style="background-color: #0F4229;"
-                    onmouseover="this.style.backgroundColor='#0a2e1c'"
-                    onmouseout="this.style.backgroundColor='#0F4229'">
-                Buscar
-            </button>
-
-            @if(request('q') || request('programa'))
-            <a href="{{ route('admin.expedientes.index') }}"
-               class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:bg-gray-100 transition-colors duration-150">
-                Limpiar
-            </a>
-            @endif
         </form>
 
         {{-- Tabla --}}
@@ -104,7 +89,7 @@
                                 </div>
                             </td>
 
-                            <td class="px-6 py-4 font-mono text-gray-700 text-xs">
+                            <td class="px-6 py-4 text-gray-700 text-sm">
                                 {{ $alumno->matricula }}
                             </td>
 

@@ -303,7 +303,7 @@
                                 <td class="px-6 py-4 font-semibold text-gray-800 whitespace-nowrap">
                                     {{ $alumno->nombre_completo }}
                                 </td>
-                                <td class="px-6 py-4 font-mono text-xs text-gray-500 whitespace-nowrap">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $alumno->matricula }}
                                 </td>
                                 <td class="px-6 py-4 text-center font-bold">

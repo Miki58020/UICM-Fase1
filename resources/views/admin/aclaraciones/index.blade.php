@@ -148,7 +148,7 @@
                     <div>
                         <h3 class="font-semibold text-gray-800 text-sm">
                             {{ $aclaracion->alumno->nombre_completo }}
-                            <span class="text-xs text-gray-400 font-mono">({{ $aclaracion->alumno->matricula }})</span>
+                            <span class="text-xs text-gray-400">({{ $aclaracion->alumno->matricula }})</span>
                         </h3>
                         <p class="text-xs text-gray-500 mt-1">
                             {{ $aclaracion->cargaAcademica->materia->nombre ?? '—' }}
