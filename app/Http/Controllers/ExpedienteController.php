@@ -11,7 +11,7 @@ class ExpedienteController extends Controller
 {
     public function index(Request $request)
     {
-        $alumnos = Alumno::with('programa')
+        $alumnos = Alumno::with(['programa', 'grupo'])
             ->when($request->filled('q'), function ($query) use ($request) {
                 $q = $request->q;
                 $query->where(function ($w) use ($q) {

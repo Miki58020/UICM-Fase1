@@ -54,20 +54,21 @@
         </form>
 
         {{-- Tabla --}}
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-[350px]">
-            <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Listado de alumnos</h2>
-                <span class="text-xs text-gray-400">{{ $alumnos->total() }} registros</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $alumnos->total() }} registros</span>
             </div>
 
-            <div class="overflow-auto flex-1">
+            <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                             <th class="px-6 py-3">Alumno</th>
                             <th class="px-6 py-3">Matrícula</th>
                             <th class="px-6 py-3">Programa</th>
+                            <th class="px-6 py-3">Grupo</th>
                             <th class="px-6 py-3 text-center">Cuatrimestre</th>
                             <th class="px-6 py-3">Estado</th>
                             <th class="px-6 py-3 text-center">Acciones</th>
@@ -97,8 +98,23 @@
                                 {{ $alumno->programa->nombre ?? '—' }}
                             </td>
 
-                            <td class="px-6 py-4 text-center text-gray-700">
-                                {{ $alumno->cuatrimestre_actual ?? '—' }}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($alumno->grupo)
+                                <span class="font-mono text-xs font-bold" style="color: #0F4229;">{{ $alumno->grupo->clave }}</span>
+                                @else
+                                <span class="text-gray-400 text-sm">Sin grupo</span>
+                                @endif
+                            </td>
+
+                            <td class="px-6 py-4 text-center">
+                                @if($alumno->cuatrimestre_actual)
+                                <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white"
+                                      style="background-color: #D4AF37;">
+                                    {{ $alumno->cuatrimestre_actual }}°
+                                </span>
+                                @else
+                                <span class="text-gray-400">—</span>
+                                @endif
                             </td>
 
                             <td class="px-6 py-4">
@@ -117,7 +133,7 @@
                                 </span>
                             </td>
 
-                            <td class="px-6 py-4 text-center">
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
                                 <a href="{{ route('admin.expedientes.show', $alumno) }}"
                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-colors duration-150"
                                    style="background-color: #D4AF37;"
@@ -136,7 +152,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
+                            <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
                                 {{ request('q') || request('programa') ? 'No se encontraron alumnos con ese criterio.' : 'No hay alumnos registrados.' }}
                             </td>
                         </tr>
