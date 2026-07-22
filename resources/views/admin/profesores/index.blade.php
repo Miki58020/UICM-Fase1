@@ -171,9 +171,18 @@
                             {{-- Nombre --}}
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
-                                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                                         style="background-color: #0F4229;">
-                                        {{ strtoupper(substr(explode(' ', $profesor->nombre)[1] ?? $profesor->nombre, 0, 1)) }}
+                                    <div class="flex-shrink-0 w-8 h-8 rounded-full overflow-hidden border-2"
+                                         style="border-color: #0F4229;">
+                                        @if($profesor->user?->foto)
+                                            <img src="{{ route('admin.archivo', ['path' => $profesor->user->foto]) }}"
+                                                 alt="Foto de perfil"
+                                                 class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-white text-xs font-bold"
+                                                 style="background-color: #0F4229;">
+                                                {{ strtoupper(substr(explode(' ', $profesor->nombre)[1] ?? $profesor->nombre, 0, 1)) }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <span class="font-semibold text-gray-800">{{ $profesor->nombre }}</span>
                                 </div>

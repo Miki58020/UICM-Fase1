@@ -154,9 +154,18 @@ $gruposJson = $grupos->map(fn($g) => [
 
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                                         style="background-color: #0F4229;">
-                                        {{ strtoupper(substr($alumno->nombre, 0, 1)) }}
+                                    <div class="w-8 h-8 rounded-full flex-shrink-0 overflow-hidden border-2"
+                                         style="border-color: #0F4229;">
+                                        @if($alumno->user?->foto)
+                                            <img src="{{ route('admin.archivo', ['path' => $alumno->user->foto]) }}"
+                                                 alt="Foto de perfil"
+                                                 class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-white text-xs font-bold"
+                                                 style="background-color: #0F4229;">
+                                                {{ strtoupper(substr($alumno->nombre, 0, 1)) }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <div>
                                         <p class="font-semibold text-gray-800">{{ $alumno->nombre_completo }}</p>

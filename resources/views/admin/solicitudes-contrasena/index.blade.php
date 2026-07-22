@@ -72,9 +72,18 @@
 
                             {{-- Avatar + datos del usuario --}}
                             <div class="flex items-start gap-3 flex-1">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                                     style="background-color: #0F4229;">
-                                    {{ strtoupper(substr($solicitud->user->name ?? 'U', 0, 1)) }}
+                                <div class="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden border-2"
+                                     style="border-color: #0F4229;">
+                                    @if($solicitud->user->foto)
+                                        <img src="{{ route('admin.archivo', ['path' => $solicitud->user->foto]) }}"
+                                             alt="Foto de perfil"
+                                             class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center text-white text-sm font-bold"
+                                             style="background-color: #0F4229;">
+                                            {{ strtoupper(substr($solicitud->user->name ?? 'U', 0, 1)) }}
+                                        </div>
+                                    @endif
                                 </div>
                                 <div>
                                     <div class="flex items-center gap-2">

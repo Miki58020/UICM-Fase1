@@ -59,7 +59,7 @@ class AlumnoController extends Controller
         $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
 
         $cargas = CargaAcademica::where('profesor_id', $profesor->id)
-            ->with(['materia', 'grupo' => fn ($q) => $q->with(['programa', 'alumnos' => fn ($q2) => $q2->where('estado', 'activo')])])
+            ->with(['materia', 'grupo' => fn ($q) => $q->with(['programa', 'alumnos' => fn ($q2) => $q2->where('estado', 'activo')->with('user')])])
             ->get();
 
         $alumnos = collect();
