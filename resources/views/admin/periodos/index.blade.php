@@ -83,13 +83,19 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
     <div x-show="tab === 'cuatrimestres'" x-cloak
          x-data="{
              busqueda: '',
+             filtroTipo: '',
              filtrar() {
                  this.$nextTick(() => {
                      const filas = this.$refs.tbodyCuatrimestres.querySelectorAll('tr[data-nombre]');
                      let visibles = 0;
                      filas.forEach(f => {
                          const texto = this.busqueda.toLowerCase();
-                         const pasa = !texto || f.dataset.nombre.includes(texto) || f.dataset.label.includes(texto);
+                         const pasaBusq = !texto || f.dataset.nombre.includes(texto) || f.dataset.label.includes(texto);
+                         const pasaTipo = !this.filtroTipo
+                             || (this.filtroTipo === 'con_clases' && f.dataset.conClases === '1')
+                             || (this.filtroTipo === 'activo' && f.dataset.estado === 'activo')
+                             || (this.filtroTipo === 'cerrado' && f.dataset.estado === 'cerrado');
+                         const pasa = pasaBusq && pasaTipo;
                          f.style.display = pasa ? '' : 'none';
                          if (pasa) visibles++;
                      });
@@ -99,22 +105,34 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
              }
          }">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
+            <button type="button" @click="filtroTipo = ''; filtrar()"
+                    :class="filtroTipo === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #0F4229;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $periodos->count() }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #D4AF37;">
+            </button>
+            <button type="button" @click="filtroTipo = 'con_clases'; filtrar()"
+                    :class="filtroTipo === 'con_clases' ? 'ring-2' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #D4AF37;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Con clases</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">{{ $periodos->whereNotNull('fecha_inicio_clases')->count() }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #EFAD5A;">
+            </button>
+            <button type="button" @click="filtroTipo = 'activo'; filtrar()"
+                    :class="filtroTipo === 'activo' ? 'ring-2' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #EFAD5A;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Activo</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $periodos->where('estado','activo')->count() }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #9ca3af;">
+            </button>
+            <button type="button" @click="filtroTipo = 'cerrado'; filtrar()"
+                    :class="filtroTipo === 'cerrado' ? 'ring-2 ring-gray-300' : 'hover:shadow-md'"
+                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                    style="border-color: #9ca3af;">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Cerrados</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $periodos->where('estado','cerrado')->count() }}</p>
-            </div>
+            </button>
         </div>
 
         <div class="relative mb-6">
@@ -134,7 +152,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Listado de cuatrimestres</h2>
-                <span class="text-xs text-gray-400" x-ref="contadorCuatrimestres">{{ $periodos->count() }} registro{{ $periodos->count() !== 1 ? 's' : '' }}</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorCuatrimestres">{{ $periodos->count() }} registro{{ $periodos->count() !== 1 ? 's' : '' }}</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -153,6 +171,8 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                             data-periodo-id="{{ $periodo->id }}"
                             data-nombre="{{ strtolower($periodo->nombre) }}"
                             data-label="{{ strtolower($periodo->label) }}"
+                            data-con-clases="{{ $periodo->fecha_inicio_clases ? '1' : '0' }}"
+                            data-estado="{{ $periodo->estado }}"
                             data-inicio-reg="{{ $periodo->fecha_inicio_registro?->format('Y-m-d') ?? '' }}"
                             data-fin-reg="{{ $periodo->fecha_fin_registro?->format('Y-m-d') ?? '' }}">
                             <td class="px-6 py-4 font-mono text-xs font-bold whitespace-nowrap" style="color: #0F4229;">
@@ -307,25 +327,13 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                     <option value="manual">Manual</option>
                 </select>
             </div>
-            <div class="relative sm:w-44">
-                <select x-model="filtroEstado" @change="filtrar()"
-                        class="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
-                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                    <option value="">Todos los estados</option>
-                    <option value="activo">Activo</option>
-                    <option value="inactivo">Inactivo</option>
-                    <option value="cerrado">Cerrado</option>
-                    <option value="sin_configurar">Sin configurar</option>
-                </select>
-            </div>
         </div>
 
         <div class="bg-white rounded-2xl shadow-md overflow-hidden">
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Periodos de inscripción</h2>
-                <span class="text-xs text-gray-400" x-ref="contadorInscripciones">{{ $periodos->count() }} registro{{ $periodos->count() !== 1 ? 's' : '' }}</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorInscripciones">{{ $periodos->count() }} registro{{ $periodos->count() !== 1 ? 's' : '' }}</span>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -367,9 +375,9 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                                     @if($periodo->auto)
                                     <button type="submit" title="Modo automático — clic para cambiar a manual"
                                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-white transition-colors duration-150"
-                                            style="background-color: #0F4229;"
-                                            onmouseover="this.style.backgroundColor='#0a2e1c'"
-                                            onmouseout="this.style.backgroundColor='#0F4229'">
+                                            style="background-color: #D4AF37;"
+                                            onmouseover="this.style.backgroundColor='#b8962e'"
+                                            onmouseout="this.style.backgroundColor='#D4AF37'">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
@@ -595,7 +603,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                 <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <h2 class="text-sm font-semibold text-gray-700">{{ $p->label }}</h2>
-                    <span class="text-xs text-gray-400" x-ref="contadorCarreras">{{ $totalCarreras }} carrera{{ $totalCarreras !== 1 ? 's' : '' }}</span>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorCarreras">{{ $totalCarreras }} carrera{{ $totalCarreras !== 1 ? 's' : '' }}</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -721,7 +729,13 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" onclick="document.getElementById('modal-agregar-{{ $p->id }}').classList.add('hidden')" class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">Cancelar</button>
-                        <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors" style="background-color: #0F4229;" onmouseover="this.style.backgroundColor='#0a2e1c'" onmouseout="this.style.backgroundColor='#0F4229'">Agregar</button>
+                        <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors" style="background-color: #0F4229;" onmouseover="this.style.backgroundColor='#0a2e1c'" onmouseout="this.style.backgroundColor='#0F4229'">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                            </svg>
+                            Agregar
+                        </button>
                     </div>
                 </form>
             </div>
