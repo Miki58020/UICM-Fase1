@@ -24,28 +24,10 @@
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         {{-- Encabezado --}}
-        <div class="mb-8 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-            <div>
-                <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">Captura de calificaciones</p>
-                <h1 class="text-2xl font-extrabold text-gray-900">{{ $carga->materia->nombre }}</h1>
-                <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
-            </div>
-            <div class="flex flex-wrap gap-2">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-bold" style="background-color:#f0f9f4;color:#0F4229;">
-                    {{ $carga->grupo->clave }}
-                </span>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-100">
-                    {{ $carga->periodo->nombre ?? '—' }}
-                </span>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-gray-600 bg-gray-100">
-                    {{ $carga->grupo->cuatrimestre }}° cuatrimestre
-                </span>
-                @if ($carga->fecha_inicio && $carga->fecha_fin)
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold" style="background-color:#fdf8ec;color:#b45309;">
-                    Fechas de captura: {{ $carga->fecha_inicio->format('d/m/Y') }} - {{ $carga->fecha_fin->format('d/m/Y') }}
-                </span>
-                @endif
-            </div>
+        <div class="mb-8">
+            <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">Captura de calificaciones</p>
+            <h1 class="text-2xl font-extrabold text-gray-900">{{ $carga->materia->nombre }}</h1>
+            <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
         @if ($alumnos->isEmpty())
@@ -140,6 +122,19 @@
             </p>
         </div>
         @endif
+
+        {{-- Contexto --}}
+        <div class="mb-6 rounded-xl px-5 py-3 bg-white border border-gray-200 flex items-center gap-3 shadow-sm flex-wrap">
+            <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #0F4229;"></span>
+            <span class="text-sm font-medium text-gray-700">
+                Grupo <strong>{{ $carga->grupo->clave }}</strong>
+                · {{ $carga->periodo->nombre ?? '—' }}
+                · {{ $carga->grupo->cuatrimestre }}° cuatrimestre
+                @if ($carga->fecha_inicio && $carga->fecha_fin)
+                    · Captura: {{ $carga->fecha_inicio->format('d/m/Y') }} - {{ $carga->fecha_fin->format('d/m/Y') }}
+                @endif
+            </span>
+        </div>
 
         <form method="POST" action="{{ route('profesor.calificaciones.guardar', $carga->id) }}" id="form-calificaciones">
             @csrf
@@ -317,6 +312,16 @@
 
         </form>
         @endif
+
+        <div class="flex justify-start mt-6">
+            <a href="{{ route('profesor.calificaciones.index') }}"
+               class="group inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-white shadow-sm border border-gray-200 hover:border-gray-300 hover:shadow transition-all duration-150">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #0F4229;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span class="text-xs font-semibold text-gray-500 group-hover:text-gray-700">Volver a Calificaciones</span>
+            </a>
+        </div>
 
     </div>
 

@@ -119,10 +119,6 @@
                     <span class="text-sm font-medium text-gray-700">
                         Mostrando alumnos del grupo <strong>{{ $grupoFiltro->clave }}</strong>
                     </span>
-                    <a href="{{ route('profesor.alumnos.index') }}"
-                       class="ml-auto text-xs font-semibold" style="color: #0F4229;">
-                        Ver todos mis alumnos
-                    </a>
                 </div>
             @endif
 
@@ -208,6 +204,18 @@
                     </table>
                 </div>
             </div>
+
+            @if ($grupoFiltro)
+                <div class="flex justify-start mt-6">
+                    <a href="{{ route('profesor.alumnos.index') }}"
+                       class="group inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-white shadow-sm border border-gray-200 hover:border-gray-300 hover:shadow transition-all duration-150">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #0F4229;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        <span class="text-xs font-semibold text-gray-500 group-hover:text-gray-700">Ver todos mis alumnos</span>
+                    </a>
+                </div>
+            @endif
         @endif
 
     </div>

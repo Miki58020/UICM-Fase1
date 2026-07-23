@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Materias asignadas | UICM')
+@section('title', 'Calificaciones | UICM')
 
 @section('content')
 @php
@@ -35,7 +35,7 @@
 
         <div class="mb-8">
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">Portal del Profesor</p>
-            <h1 class="text-2xl font-extrabold text-gray-900">Materias asignadas</h1>
+            <h1 class="text-2xl font-extrabold text-gray-900">Calificaciones</h1>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
