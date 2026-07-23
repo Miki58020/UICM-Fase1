@@ -64,15 +64,20 @@
                     <p class="text-xs font-medium text-gray-500">Total pagado MXN</p>
                 </div>
             </div>
+            @php
+                $hayPendientes = $pendientes->count() > 0;
+                $pendColor = $hayPendientes ? '#EFAD5A' : '#0F4229';
+                $pendBg    = $hayPendientes ? '#fef4e8' : '#f0f9f4';
+            @endphp
             <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                <div class="h-1.5 w-full flex-shrink-0" style="background-color: #EFAD5A;"></div>
+                <div class="h-1.5 w-full flex-shrink-0" style="background-color: {{ $pendColor }};"></div>
                 <div class="p-5 flex flex-col flex-1">
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 mb-4" style="background-color: #fef4e8;">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #EFAD5A;">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 mb-4" style="background-color: {{ $pendBg }};">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: {{ $pendColor }};">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <p class="text-2xl font-extrabold leading-none mb-1" style="color: #EFAD5A;">${{ number_format($montoPendiente, 0) }}</p>
+                    <p class="text-2xl font-extrabold leading-none mb-1" style="color: {{ $pendColor }};">${{ number_format($montoPendiente, 0) }}</p>
                     <p class="text-xs font-medium text-gray-500">
                         {{ $pendientes->count() }} {{ $pendientes->count() === 1 ? 'pago pendiente' : 'pagos pendientes' }}
                     </p>
@@ -160,13 +165,13 @@
 
         {{-- Pagos pendientes --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
-            <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+            <div class="h-1.5 w-full" style="background-color: {{ $pendColor }};"></div>
             <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #D4AF37;">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: {{ $pendColor }};">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <h2 class="text-sm font-semibold text-gray-700">Pagos pendientes</h2>
-                <span class="ml-auto text-xs text-gray-400">{{ $pendientes->count() }}</span>
+                <span class="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $pendientes->count() }}</span>
             </div>
             <div class="overflow-x-auto">
                 @if ($pendientes->isEmpty())
@@ -286,7 +291,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <h2 class="text-sm font-semibold text-gray-700">Historial de pagos</h2>
-                <span class="ml-auto text-xs text-gray-400">{{ $historial->count() }}</span>
+                <span class="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $historial->count() }}</span>
             </div>
             <div class="overflow-x-auto">
                 @if ($historial->isEmpty())

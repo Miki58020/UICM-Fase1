@@ -215,14 +215,30 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
-                                No hay cuatrimestres registrados. Crea el primero.
+                            <td colspan="5" class="px-6 py-10">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">No hay cuatrimestres registrados. Crea el primero.</p>
+                                </div>
                             </td>
                         </tr>
                         @endforelse
                         <tr x-ref="sinResultadosCuatrimestres" style="display: none;">
-                            <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">
-                                Ningún cuatrimestre coincide con la búsqueda.
+                            <td colspan="5" class="px-6 py-10">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">Ningún cuatrimestre coincide con la búsqueda.</p>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -476,14 +492,30 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
-                                No hay cuatrimestres. Crea uno en el tab "Cuatrimestres".
+                            <td colspan="6" class="px-6 py-10">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">No hay cuatrimestres. Crea uno en el tab "Cuatrimestres".</p>
+                                </div>
                             </td>
                         </tr>
                         @endforelse
                         <tr x-ref="sinResultadosInscripciones" style="display: none;">
-                            <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">
-                                Ningún periodo coincide con la búsqueda o los filtros.
+                            <td colspan="6" class="px-6 py-10">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">Ningún periodo coincide con la búsqueda o los filtros.</p>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -667,10 +699,30 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">No hay carreras configuradas. Usa "Agregar carrera".</td></tr>
+                            <tr><td colspan="5" class="px-6 py-10">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">No hay carreras configuradas. Usa "Agregar carrera".</p>
+                                </div>
+                            </td></tr>
                             @endforelse
                             <tr x-ref="sinResultadosCarreras" style="display: none;">
-                                <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-400">Ninguna carrera coincide con la búsqueda o los filtros.</td>
+                                <td colspan="5" class="px-6 py-10">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                            </svg>
+                                        </div>
+                                        <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                                        <p class="text-sm text-gray-500 max-w-xs mx-auto">Ninguna carrera coincide con la búsqueda o los filtros.</p>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

@@ -129,8 +129,16 @@
 
             <div class="overflow-x-auto">
                 @if ($carga->isEmpty())
-                    <div class="px-6 py-10 text-center text-sm text-gray-400">
-                        No hay materias asignadas. El grupo aún no tiene carga académica registrada.
+                    <div class="px-6 py-10">
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                            <p class="text-sm text-gray-500 max-w-xs mx-auto">No hay materias asignadas. El grupo aún no tiene carga académica registrada.</p>
+                        </div>
                     </div>
                 @else
                 <table class="w-full text-sm">
@@ -147,8 +155,16 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100" x-ref="tbody">
                         <tr x-ref="sinResultados" style="display: none;">
-                            <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400">
-                                Ninguna materia coincide con la búsqueda o los filtros.
+                            <td colspan="7" class="px-6 py-10">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">Ninguna materia coincide con la búsqueda o los filtros.</p>
+                                </div>
                             </td>
                         </tr>
                         @foreach ($carga as $c)
