@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Mail;
 class CalificacionController extends Controller
 {
     // Vista del profesor: sus materias asignadas
-    public function indexProfesor()
+    public function indexProfesor(Request $request)
     {
         $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
 
@@ -24,7 +24,7 @@ class CalificacionController extends Controller
         // luego lo que ya está en revisión, y al final lo ya aprobado (sin acción pendiente).
         $prioridadEstado = ['rechazado' => 0, null => 1, 'pendiente' => 2, 'aprobado' => 3];
 
-        $cargas = CargaAcademica::where('profesor_id', $profesor->id)
+        $todasLasCargas = CargaAcademica::where('profesor_id', $profesor->id)
             ->with(['materia', 'grupo.programa', 'grupo.alumnos', 'periodo', 'calificaciones'])
             ->orderByDesc('periodo_id')
             ->get()
@@ -32,14 +32,37 @@ class CalificacionController extends Controller
             ->values();
 
         $conteo = [
-            'total'      => $cargas->count(),
-            'aprobado'   => $cargas->where('estado_revision', 'aprobado')->count(),
-            'pendiente'  => $cargas->where('estado_revision', 'pendiente')->count(),
-            'rechazado'  => $cargas->where('estado_revision', 'rechazado')->count(),
-            'sin_enviar' => $cargas->whereNull('estado_revision')->count(),
+            'total'      => $todasLasCargas->count(),
+            'aprobado'   => $todasLasCargas->where('estado_revision', 'aprobado')->count(),
+            'pendiente'  => $todasLasCargas->where('estado_revision', 'pendiente')->count(),
+            'rechazado'  => $todasLasCargas->where('estado_revision', 'rechazado')->count(),
+            'sin_enviar' => $todasLasCargas->whereNull('estado_revision')->count(),
         ];
 
-        return view('profesor.calificaciones.index', compact('profesor', 'cargas', 'conteo'));
+        $cargas = $todasLasCargas
+            ->when($request->filled('q'), function ($col) use ($request) {
+                $q = mb_strtolower($request->q);
+                return $col->filter(fn ($c) => str_contains(mb_strtolower(($c->grupo->clave ?? '').' '.($c->materia->nombre ?? '').' '.($c->materia->clave ?? '')), $q));
+            })
+            ->when($request->filled('periodo'), fn ($col) => $col->where('periodo_id', (int) $request->periodo))
+            ->when($request->filled('estado'), function ($col) use ($request) {
+                return $request->estado === 'sin_enviar'
+                    ? $col->whereNull('estado_revision')
+                    : $col->where('estado_revision', $request->estado);
+            })
+            ->values();
+
+        $pagina = (int) $request->query('page', 1);
+        $porPagina = 50;
+        $cargas = new \Illuminate\Pagination\LengthAwarePaginator(
+            $cargas->forPage($pagina, $porPagina)->values(),
+            $cargas->count(),
+            $porPagina,
+            $pagina,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('profesor.calificaciones.index', compact('profesor', 'cargas', 'conteo', 'todasLasCargas'));
     }
 
     // Vista del profesor: alumnos de una materia/grupo para capturar calificaciones

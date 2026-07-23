@@ -8,10 +8,31 @@ use Illuminate\Validation\Rule;
 
 class ProgramaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $programas = Programa::with('materias')->orderBy('nivel')->orderBy('nombre')->get();
-        return view('admin.programas.index', compact('programas'));
+        $conteo = [
+            'total'     => Programa::count(),
+            'activos'   => Programa::where('activo', true)->count(),
+            'inactivos' => Programa::where('activo', false)->count(),
+            'niveles'   => Programa::distinct('nivel')->count('nivel'),
+        ];
+
+        $programas = Programa::with('materias')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = $request->q;
+                $query->where(function ($w) use ($q) {
+                    $w->where('nombre', 'like', "%{$q}%")
+                        ->orWhere('clave', 'like', "%{$q}%");
+                });
+            })
+            ->when($request->filled('nivel'), fn ($query) => $query->where('nivel', $request->nivel))
+            ->when($request->filled('activo'), fn ($query) => $query->where('activo', $request->activo === 'activo'))
+            ->orderBy('nivel')
+            ->orderBy('nombre')
+            ->paginate(50)
+            ->withQueryString();
+
+        return view('admin.programas.index', compact('programas', 'conteo'));
     }
 
     public function store(Request $request)

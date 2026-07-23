@@ -29,30 +29,6 @@ $rolesLabels = [
             password:         '',
             rol:              '{{ old('rol', '') }}'
         },
-        busqueda: '',
-        filtroRol: '',
-        coincide(fila) {
-            const texto = this.busqueda.toLowerCase();
-            const nombre = fila.dataset.nombre.toLowerCase();
-            const email  = fila.dataset.email.toLowerCase();
-            const rol    = fila.dataset.rol;
-            const pasaBusqueda = !texto || nombre.includes(texto) || email.includes(texto);
-            const pasaFiltro   = !this.filtroRol || rol === this.filtroRol;
-            return pasaBusqueda && pasaFiltro;
-        },
-        filtrar() {
-            this.$nextTick(() => {
-                const filas = this.$refs.tbody.querySelectorAll('tr[data-nombre]');
-                let visibles = 0;
-                filas.forEach(f => {
-                    const mostrar = this.coincide(f);
-                    f.style.display = mostrar ? '' : 'none';
-                    if (mostrar) visibles++;
-                });
-                this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
-                this.$refs.contadorVisible.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
-            });
-        },
         abrir() {
             this.editando = null;
             this.form = { name: '', apellido_paterno: '', apellido_materno: '', email: '', password: '', rol: '' };
@@ -97,28 +73,26 @@ $rolesLabels = [
 
         {{-- Contadores por rol (también filtran; sincronizados con el dropdown de abajo) --}}
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
-            <button type="button" @click="filtroRol = ''; filtrar()"
-                    :class="filtroRol === '' ? 'ring-2 ring-gray-400' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #6B7280;">
+            <a href="{{ route('admin.usuarios.index', array_filter(['q' => request('q')])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
+               style="border-color: #6B7280; {{ !request('rol') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total</p>
-                <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $usuarios->count() }}</p>
-            </button>
+                <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $conteo->sum() }}</p>
+            </a>
             @foreach(['admin' => 'Administradores', 'control_escolar' => 'Control Escolar', 'finanzas' => 'Finanzas', 'coordinacion' => 'Coordinación'] as $rol => $label)
-            <button type="button" @click="filtroRol = '{{ $rol }}'; filtrar()"
-                    :class="filtroRol === '{{ $rol }}' ? 'ring-2' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: {{ $rolesLabels[$rol]['color'] }};">
+            <a href="{{ route('admin.usuarios.index', array_filter(['q' => request('q'), 'rol' => $rol])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150 block"
+               style="border-color: {{ $rolesLabels[$rol]['color'] }}; {{ request('rol') === $rol ? 'box-shadow: 0 0 0 2px '.$rolesLabels[$rol]['color'].';' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">{{ $label }}</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: {{ $rolesLabels[$rol]['color'] }};">
                     {{ $conteo[$rol] }}
                 </p>
-            </button>
+            </a>
             @endforeach
         </div>
 
         {{-- Búsqueda y filtro --}}
-        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <form method="GET" action="{{ route('admin.usuarios.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
             {{-- Buscador --}}
             <div class="relative flex-1">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
@@ -127,8 +101,8 @@ $rolesLabels = [
                           d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                 </svg>
                 <input type="text"
-                       x-model="busqueda"
-                       @input="filtrar()"
+                       name="q"
+                       value="{{ request('q') }}"
                        placeholder="Buscar por nombre o correo…"
                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
@@ -142,26 +116,26 @@ $rolesLabels = [
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
                 </svg>
-                <select x-model="filtroRol"
-                        @change="filtrar()"
+                <select name="rol"
+                        onchange="this.form.submit()"
                         class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                         onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                     <option value="">Todos los roles</option>
-                    <option value="admin">Administrador</option>
-                    <option value="control_escolar">Control Escolar</option>
-                    <option value="finanzas">Finanzas</option>
-                    <option value="coordinacion">Coordinación Académica</option>
+                    <option value="admin" @selected(request('rol') === 'admin')>Administrador</option>
+                    <option value="control_escolar" @selected(request('rol') === 'control_escolar')>Control Escolar</option>
+                    <option value="finanzas" @selected(request('rol') === 'finanzas')>Finanzas</option>
+                    <option value="coordinacion" @selected(request('rol') === 'coordinacion')>Coordinación Académica</option>
                 </select>
             </div>
-        </div>
+        </form>
 
         {{-- Tabla --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden">
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Listado de usuarios</h2>
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorVisible">{{ $usuarios->count() }} registros</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $usuarios->total() }} registros</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -174,13 +148,10 @@ $rolesLabels = [
                             <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-300" x-ref="tbody">
+                    <tbody class="divide-y divide-gray-300">
                         @forelse($usuarios as $u)
                         <tr class="hover:bg-gray-50 transition-colors duration-100
-                                   {{ $u->id === auth()->id() ? 'bg-green-50/40' : '' }}"
-                            data-nombre="{{ strtolower($u->nombre_completo) }}"
-                            data-email="{{ strtolower($u->email) }}"
-                            data-rol="{{ $u->rol }}">
+                                   {{ $u->id === auth()->id() ? 'bg-green-50/40' : '' }}">
 
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
@@ -249,21 +220,6 @@ $rolesLabels = [
                             </td>
                         </tr>
                         @empty
-                        @endforelse
-                        <tr x-ref="sinResultados" style="display:none;">
-                            <td colspan="4" class="px-6 py-10">
-                                <div class="flex flex-col items-center text-center">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
-                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
-                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">No se encontraron usuarios con ese criterio.</p>
-                                </div>
-                            </td>
-                        </tr>
-                        @if($usuarios->isEmpty())
                         <tr>
                             <td colspan="4" class="px-6 py-10">
                                 <div class="flex flex-col items-center text-center">
@@ -273,14 +229,20 @@ $rolesLabels = [
                                         </svg>
                                     </div>
                                     <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
-                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">No hay usuarios registrados.</p>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">{{ request('q') || request('rol') ? 'No se encontraron usuarios con ese criterio.' : 'No hay usuarios registrados.' }}</p>
                                 </div>
                             </td>
                         </tr>
-                        @endif
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+
+            @if($usuarios->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+                {{ $usuarios->links() }}
+            </div>
+            @endif
         </div>
 
     </div>

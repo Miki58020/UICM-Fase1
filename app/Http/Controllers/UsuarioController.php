@@ -14,13 +14,27 @@ class UsuarioController extends Controller
 {
     public const ROLES = ['admin', 'control_escolar', 'finanzas', 'coordinacion'];
 
-    public function index()
+    public function index(Request $request)
     {
-        $usuarios = User::whereIn('rol', self::ROLES)->orderBy('rol')->orderBy('name')->get();
-
         $conteo = collect(self::ROLES)->mapWithKeys(
-            fn($rol) => [$rol => $usuarios->where('rol', $rol)->count()]
+            fn($rol) => [$rol => User::where('rol', $rol)->count()]
         );
+
+        $usuarios = User::whereIn('rol', self::ROLES)
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = $request->q;
+                $query->where(function ($w) use ($q) {
+                    $w->where('name', 'like', "%{$q}%")
+                        ->orWhere('apellido_paterno', 'like', "%{$q}%")
+                        ->orWhere('apellido_materno', 'like', "%{$q}%")
+                        ->orWhere('email', 'like', "%{$q}%");
+                });
+            })
+            ->when($request->filled('rol'), fn ($query) => $query->where('rol', $request->rol))
+            ->orderBy('rol')
+            ->orderBy('name')
+            ->paginate(50)
+            ->withQueryString();
 
         return view('admin.usuarios.index', compact('usuarios', 'conteo'));
     }

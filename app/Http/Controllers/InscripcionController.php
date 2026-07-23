@@ -17,25 +17,60 @@ use Illuminate\Support\Str;
 
 class InscripcionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $listos = Aspirante::where('estado', 'aprobado')
-            ->whereHas('pagos', fn($q) => $q->where('estado', 'aprobado'))
-            ->whereHas('alumno', fn($q) => $q->whereNull('user_id'))
-            ->with(['programa', 'alumno'])
-            ->latest()
-            ->get();
+        $conteo = [
+            'listos'    => Aspirante::where('estado', 'aprobado')
+                ->whereHas('pagos', fn($q) => $q->where('estado', 'aprobado'))
+                ->whereHas('alumno', fn($q) => $q->whereNull('user_id'))
+                ->count(),
+            'generados' => Alumno::whereNotNull('user_id')->count(),
+        ];
 
-        $inscritos = Alumno::whereNotNull('user_id')->count();
-
-        $generados = Alumno::whereNotNull('user_id')
-            ->with(['programa', 'aspirante', 'grupo', 'user'])
-            ->latest()
-            ->get();
-
+        $vista = $request->query('vista', 'pendientes') === 'generados' ? 'generados' : 'pendientes';
         $programas = Programa::orderBy('nombre')->get();
 
-        return view('admin.inscripciones.index', compact('listos', 'inscritos', 'generados', 'programas'));
+        if ($vista === 'generados') {
+            $generados = Alumno::whereNotNull('user_id')
+                ->with(['programa', 'aspirante', 'grupo', 'user'])
+                ->when($request->filled('q'), function ($query) use ($request) {
+                    $q = $request->q;
+                    $query->where(function ($w) use ($q) {
+                        $w->where('nombre', 'like', "%{$q}%")
+                            ->orWhere('apellido_paterno', 'like', "%{$q}%")
+                            ->orWhere('apellido_materno', 'like', "%{$q}%")
+                            ->orWhere('matricula', 'like', "%{$q}%")
+                            ->orWhereHas('aspirante', fn($w2) => $w2->where('folio', 'like', "%{$q}%"));
+                    });
+                })
+                ->when($request->filled('programa'), fn ($query) => $query->where('programa_id', $request->programa))
+                ->latest()
+                ->paginate(50)
+                ->withQueryString();
+
+            $listos = collect();
+        } else {
+            $listos = Aspirante::where('estado', 'aprobado')
+                ->whereHas('pagos', fn($q) => $q->where('estado', 'aprobado'))
+                ->whereHas('alumno', fn($q) => $q->whereNull('user_id'))
+                ->with(['programa', 'alumno'])
+                ->when($request->filled('q'), function ($query) use ($request) {
+                    $q = $request->q;
+                    $query->where(function ($w) use ($q) {
+                        $w->where('nombre', 'like', "%{$q}%")
+                            ->orWhere('apellido_paterno', 'like', "%{$q}%")
+                            ->orWhere('apellido_materno', 'like', "%{$q}%")
+                            ->orWhere('folio', 'like', "%{$q}%");
+                    });
+                })
+                ->when($request->filled('programa'), fn ($query) => $query->where('programa_id', $request->programa))
+                ->latest()
+                ->get();
+
+            $generados = collect();
+        }
+
+        return view('admin.inscripciones.index', compact('listos', 'generados', 'programas', 'conteo', 'vista'));
     }
 
     public function inscribir(Request $request, Alumno $alumno)

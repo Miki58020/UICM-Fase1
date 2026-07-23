@@ -4,28 +4,7 @@
 
 @section('content')
 
-<section
-    x-data="{
-        busqueda: '',
-        filtroPeriodo: '',
-        filtroPrograma: '',
-        filtroCuatrimestre: '',
-        grupos: {!! \Illuminate\Support\Js::from($grupos->map(fn($g) => [
-            'clave'        => strtolower($g->clave),
-            'periodo_id'   => $g->periodo_id,
-            'programa_id'  => $g->programa_id,
-            'cuatrimestre' => $g->cuatrimestre,
-        ])) !!},
-        get visibles() {
-            return this.grupos.filter(g =>
-                (!this.busqueda || g.clave.includes(this.busqueda.toLowerCase())) &&
-                (!this.filtroPeriodo || g.periodo_id == this.filtroPeriodo) &&
-                (!this.filtroPrograma || g.programa_id == this.filtroPrograma) &&
-                (!this.filtroCuatrimestre || g.cuatrimestre == this.filtroCuatrimestre)
-            ).length;
-        }
-    }"
-    class="bg-uicm-gray min-h-screen py-12 px-4">
+<section class="bg-uicm-gray min-h-screen py-12 px-4">
 
 <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
@@ -55,34 +34,33 @@
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
             <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total grupos</p>
-            <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $grupos->count() }}</p>
+            <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $conteo['total'] }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #D4AF37;">
             <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">En periodo activo</p>
-            @php $periodoActivo = $periodos->where('estado','activo')->first(); @endphp
             <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">
-                {{ $periodoActivo ? $grupos->where('periodo_id', $periodoActivo->id)->count() : 0 }}
+                {{ $conteo['periodoActivo'] }}
             </p>
         </div>
         <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #EFAD5A;">
             <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total alumnos</p>
-            <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $grupos->sum('alumnos_count') }}</p>
+            <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $conteo['alumnos'] }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #9ca3af;">
             <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Programas</p>
-            <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $grupos->pluck('programa_id')->unique()->count() }}</p>
+            <p class="text-2xl font-extrabold mt-1 text-gray-500">{{ $conteo['programas'] }}</p>
         </div>
     </div>
 
     {{-- Filtros --}}
-    <div class="flex flex-col sm:flex-row gap-3 mb-6">
+    <form method="GET" action="{{ route('admin.grupos.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
         <div class="relative flex-1">
             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
             </svg>
-            <input type="text" x-model="busqueda" placeholder="Buscar por clave..."
+            <input type="text" name="q" value="{{ request('q') }}" placeholder="Buscar por clave..."
                    class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                    onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                    onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -94,13 +72,13 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
             </svg>
-            <select x-model="filtroPeriodo"
+            <select name="periodo" onchange="this.form.submit()"
                     class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                     onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                     onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                 <option value="">Todos los periodos</option>
                 @foreach($periodos as $p)
-                    <option value="{{ $p->id }}">{{ $p->label }}</option>
+                    <option value="{{ $p->id }}" @selected(request('periodo') == $p->id)>{{ $p->label }}</option>
                 @endforeach
             </select>
         </div>
@@ -111,13 +89,13 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
             </svg>
-            <select x-model="filtroPrograma"
+            <select name="programa" onchange="this.form.submit()"
                     class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                     onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                     onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                 <option value="">Todos los programas</option>
                 @foreach($programas as $p)
-                    <option value="{{ $p->id }}">{{ $p->nombre }}</option>
+                    <option value="{{ $p->id }}" @selected(request('programa') == $p->id)>{{ $p->nombre }}</option>
                 @endforeach
             </select>
         </div>
@@ -128,24 +106,24 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
             </svg>
-            <select x-model="filtroCuatrimestre"
+            <select name="cuatrimestre" onchange="this.form.submit()"
                     class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                     onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                     onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                 <option value="">Todos los cuatrimestres</option>
                 @foreach(range(1,12) as $n)
-                    <option value="{{ $n }}">{{ $n }}°</option>
+                    <option value="{{ $n }}" @selected(request('cuatrimestre') == $n)>{{ $n }}°</option>
                 @endforeach
             </select>
         </div>
-    </div>
+    </form>
 
     {{-- Tabla --}}
     <div class="bg-white rounded-2xl shadow-md overflow-hidden">
         <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <h2 class="text-sm font-semibold text-gray-700">Listado de grupos</h2>
-            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-text="visibles + ' registro' + (visibles !== 1 ? 's' : '')">{{ $grupos->count() }} registro{{ $grupos->count() !== 1 ? 's' : '' }}</span>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $grupos->total() }} registro{{ $grupos->total() !== 1 ? 's' : '' }}</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -163,13 +141,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($grupos as $grupo)
-                    <tr class="hover:bg-gray-50 transition-colors duration-100"
-                        x-show="
-                            (!busqueda        || '{{ strtolower($grupo->clave) }}'.includes(busqueda.toLowerCase())) &&
-                            (!filtroPeriodo   || '{{ $grupo->periodo_id }}' == filtroPeriodo) &&
-                            (!filtroPrograma  || '{{ $grupo->programa_id }}' == filtroPrograma) &&
-                            (!filtroCuatrimestre || '{{ $grupo->cuatrimestre }}' == filtroCuatrimestre)
-                        ">
+                    <tr class="hover:bg-gray-50 transition-colors duration-100">
                         <td class="px-6 py-4 font-mono text-xs font-bold whitespace-nowrap" style="color: #0F4229;">
                             {{ $grupo->clave }}
                         </td>
@@ -245,29 +217,20 @@
                                     </svg>
                                 </div>
                                 <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
-                                <p class="text-sm text-gray-500 max-w-xs mx-auto">No hay grupos registrados. Crea el primero.</p>
+                                <p class="text-sm text-gray-500 max-w-xs mx-auto">{{ request('q') || request('periodo') || request('programa') || request('cuatrimestre') ? 'Ningún grupo coincide con la búsqueda o los filtros.' : 'No hay grupos registrados. Crea el primero.' }}</p>
                             </div>
                         </td>
                     </tr>
                     @endforelse
-                    @if($grupos->isNotEmpty())
-                    <tr x-show="visibles === 0" x-cloak>
-                        <td colspan="7" class="px-6 py-10">
-                            <div class="flex flex-col items-center text-center">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
-                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-                                    </svg>
-                                </div>
-                                <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
-                                <p class="text-sm text-gray-500 max-w-xs mx-auto">Ningún grupo coincide con la búsqueda o los filtros.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endif
                 </tbody>
             </table>
         </div>
+
+        @if($grupos->hasPages())
+        <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+            {{ $grupos->links() }}
+        </div>
+        @endif
     </div>
 
 </div>

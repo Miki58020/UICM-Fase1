@@ -14,9 +14,6 @@
 
 <section
     x-data="{
-        busqueda: '',
-        filtroEstado: '',
-        filtroPrograma: '',
         modalCompletar: false,
         alumnoId: null,
         alumnoNombre: '',
@@ -32,22 +29,6 @@
             this.alumnoPrograma = programaId;
             this.grupoSeleccionado = '';
             this.modalCompletar = true;
-        },
-        filtrar() {
-            this.$nextTick(() => {
-                const q = this.busqueda.toLowerCase();
-                let vis = 0;
-                this.$refs.tbody.querySelectorAll('tr[data-nombre]').forEach(f => {
-                    const okBusqueda = !q || f.dataset.nombre.toLowerCase().includes(q) || f.dataset.matricula.toLowerCase().includes(q);
-                    const okEstado   = !this.filtroEstado || f.dataset.estado === this.filtroEstado;
-                    const okPrograma = !this.filtroPrograma || f.dataset.programaId === this.filtroPrograma;
-                    const ok = okBusqueda && okEstado && okPrograma;
-                    f.style.display = ok ? '' : 'none';
-                    if (ok) vis++;
-                });
-                this.$refs.sinResultados.style.display = vis === 0 ? '' : 'none';
-                this.$refs.contador.textContent = vis + ' alumno' + (vis !== 1 ? 's' : '');
-            });
         }
     }"
     class="bg-uicm-gray min-h-screen py-12 px-4">
@@ -63,76 +44,53 @@
         </div>
 
         {{-- Contadores --}}
-        @php
-            $sinCobro          = 0;
-            $enValidacion      = 0;
-            $pendienteCompletar= 0;
-            $completadas       = 0;
-
-            foreach ($alumnos as $a) {
-                $pr = $a->reinscripciones->first();
-                $enPeriodoActivo = $periodoActivo && $a->grupo && $a->grupo->periodo_id === $periodoActivo->id;
-                if (!$pr || $pr->estado === 'rechazado')            $sinCobro++;
-                elseif ($pr->estado === 'pendiente')                 $enValidacion++;
-                elseif ($pr->estado === 'aprobado' && !$enPeriodoActivo) $pendienteCompletar++;
-                elseif ($pr->estado === 'aprobado' && $enPeriodoActivo)  $completadas++;
-            }
-        @endphp
-
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
 
-            <button type="button" @click="filtroEstado = filtroEstado === 'sin_cobro' ? '' : 'sin_cobro'; filtrar()"
-                    :class="filtroEstado === 'sin_cobro' ? 'ring-2 ring-offset-1 ring-uicm-orange' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #EFAD5A;">
+            <a href="{{ route('admin.reinscripciones.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'sin_cobro'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 block" style="border-color: #EFAD5A; {{ request('estado') === 'sin_cobro' ? 'box-shadow: 0 0 0 2px #EFAD5A;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Sin cobro</p>
-                <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $sinCobro }}</p>
-            </button>
+                <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $conteo['sinCobro'] }}</p>
+            </a>
 
-            <button type="button" @click="filtroEstado = filtroEstado === 'pendiente' ? '' : 'pendiente'; filtrar()"
-                    :class="filtroEstado === 'pendiente' ? 'ring-2 ring-offset-1 ring-uicm-blue' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #1F5FBF;">
+            <a href="{{ route('admin.reinscripciones.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'pendiente'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 block" style="border-color: #1F5FBF; {{ request('estado') === 'pendiente' ? 'box-shadow: 0 0 0 2px #1F5FBF;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">En validación</p>
-                <p class="text-2xl font-extrabold mt-1" style="color: #1F5FBF;">{{ $enValidacion }}</p>
-            </button>
+                <p class="text-2xl font-extrabold mt-1" style="color: #1F5FBF;">{{ $conteo['enValidacion'] }}</p>
+            </a>
 
-            <button type="button" @click="filtroEstado = filtroEstado === 'completada' ? '' : 'completada'; filtrar()"
-                    :class="filtroEstado === 'completada' ? 'ring-2 ring-offset-1 ring-uicm-green' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #0F4229;">
+            <a href="{{ route('admin.reinscripciones.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'estado' => 'completada'])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 block" style="border-color: #0F4229; {{ request('estado') === 'completada' ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Completadas</p>
-                <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $completadas }}</p>
-            </button>
+                <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $conteo['completadas'] }}</p>
+            </a>
 
-            <button type="button" @click="filtroEstado = ''; filtrar()"
-                    :class="filtroEstado === '' ? 'ring-2 ring-offset-1 ring-gray-400' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #6B7280;">
+            <a href="{{ route('admin.reinscripciones.index', array_filter(['q' => request('q'), 'programa' => request('programa')])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 block" style="border-color: #6B7280; {{ !request('estado') ? 'box-shadow: 0 0 0 2px #6B7280;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total activos</p>
-                <p class="text-2xl font-extrabold mt-1 text-gray-600">{{ $alumnos->count() }}</p>
-            </button>
+                <p class="text-2xl font-extrabold mt-1 text-gray-600">{{ $conteo['total'] }}</p>
+            </a>
 
         </div>
 
         {{-- Pendientes de completar banner --}}
-        @if ($pendienteCompletar > 0)
+        @if ($conteo['pendienteCompletar'] > 0)
             <div class="mb-6 rounded-xl px-5 py-4 border-l-4 bg-orange-50" style="border-color: #EFAD5A;">
                 <p class="text-sm font-semibold text-orange-800">
-                    {{ $pendienteCompletar }} alumno{{ $pendienteCompletar !== 1 ? 's' : '' }} con pago aprobado pendiente{{ $pendienteCompletar !== 1 ? 's' : '' }} de asignación de grupo.
+                    {{ $conteo['pendienteCompletar'] }} alumno{{ $conteo['pendienteCompletar'] !== 1 ? 's' : '' }} con pago aprobado pendiente{{ $conteo['pendienteCompletar'] !== 1 ? 's' : '' }} de asignación de grupo.
                 </p>
             </div>
         @endif
 
         {{-- Búsqueda --}}
-        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <form method="GET" action="{{ route('admin.reinscripciones.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
+            <input type="hidden" name="estado" value="{{ request('estado') }}">
             <div class="relative flex-1">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                 </svg>
-                <input type="text" x-model="busqueda" @input="filtrar()"
+                <input type="text" name="q" value="{{ request('q') }}"
                        placeholder="Buscar por nombre o matrícula…"
                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
@@ -145,17 +103,17 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                 </svg>
-                <select x-model="filtroPrograma" @change="filtrar()"
+                <select name="programa" onchange="this.form.submit()"
                         class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                         onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                     <option value="">Todos los programas</option>
                     @foreach($programas as $p)
-                        <option value="{{ $p->id }}">{{ $p->nombre }}</option>
+                        <option value="{{ $p->id }}" @selected(request('programa') == $p->id)>{{ $p->nombre }}</option>
                     @endforeach
                 </select>
             </div>
-        </div>
+        </form>
 
         {{-- Alerta sin periodo activo --}}
         @if (!$periodoActivo)
@@ -181,11 +139,11 @@
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Alumnos activos</h2>
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contador">{{ $alumnos->count() }} alumnos</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $alumnos->total() }} alumnos</span>
             </div>
 
             <div class="overflow-x-auto">
-                @if ($alumnos->isEmpty())
+                @if ($conteo['total'] === 0)
                     <div class="px-6 py-10">
                         <div class="flex flex-col items-center text-center">
                             <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
@@ -209,8 +167,8 @@
                             <th class="px-6 py-3 text-center">Acción</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100" x-ref="tbody">
-                        @foreach ($alumnos as $alumno)
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse ($alumnos as $alumno)
                         @php
                             $pagoReinsc   = $alumno->reinscripciones->first();
                             $enPeriodoActivo = $periodoActivo && $alumno->grupo && $alumno->grupo->periodo_id === $periodoActivo->id;
@@ -224,11 +182,7 @@
                             else
                                 $estadoReinsc = 'completada';
                         @endphp
-                        <tr class="hover:bg-gray-50 transition-colors duration-100"
-                            data-nombre="{{ strtolower($alumno->nombre_completo) }}"
-                            data-matricula="{{ strtolower($alumno->matricula) }}"
-                            data-estado="{{ $estadoReinsc }}"
-                            data-programa-id="{{ $alumno->programa_id }}">
+                        <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <p class="font-semibold text-gray-800">{{ $alumno->nombre_completo }}</p>
@@ -331,9 +285,8 @@
                             </td>
 
                         </tr>
-                        @endforeach
-
-                        <tr x-ref="sinResultados" style="display:none;">
+                        @empty
+                        <tr>
                             <td colspan="6" class="px-6 py-10">
                                 <div class="flex flex-col items-center text-center">
                                     <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
@@ -346,8 +299,15 @@
                                 </div>
                             </td>
                         </tr>
+                        @endforelse
                     </tbody>
                 </table>
+
+                @if($alumnos->hasPages())
+                <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+                    {{ $alumnos->links() }}
+                </div>
+                @endif
                 @endif
             </div>
         </div>

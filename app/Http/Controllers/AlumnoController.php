@@ -88,8 +88,28 @@ class AlumnoController extends Controller
         }
 
         $alumnos = $alumnos->values()->sortBy(fn ($a) => $a->alumno->apellido_paterno);
+        $totalAlumnos = $alumnos->count();
 
-        return view('profesor.alumnos.index', compact('alumnos', 'totalGrupos', 'grupoFiltro', 'gruposDisponibles'));
+        if ($request->filled('q')) {
+            $q = mb_strtolower($request->q);
+            $alumnos = $alumnos->filter(function ($a) use ($q) {
+                return str_contains(mb_strtolower($a->alumno->nombre_completo), $q)
+                    || str_contains(mb_strtolower($a->alumno->matricula), $q)
+                    || str_contains(mb_strtolower($a->grupo->clave ?? ''), $q);
+            })->values();
+        }
+
+        $pagina = (int) $request->query('page', 1);
+        $porPagina = 50;
+        $alumnos = new \Illuminate\Pagination\LengthAwarePaginator(
+            $alumnos->forPage($pagina, $porPagina)->values(),
+            $alumnos->count(),
+            $porPagina,
+            $pagina,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('profesor.alumnos.index', compact('alumnos', 'totalGrupos', 'totalAlumnos', 'grupoFiltro', 'gruposDisponibles'));
     }
 
     public function update(Request $request, Alumno $alumno)

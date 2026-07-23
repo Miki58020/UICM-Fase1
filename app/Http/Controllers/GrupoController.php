@@ -12,12 +12,30 @@ use Illuminate\Support\Facades\Auth;
 
 class GrupoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $grupos   = Grupo::with('programa', 'periodo')->withCount('alumnos')->orderBy('clave')->get();
-        $periodos = Periodo::orderByDesc('fecha_inicio_registro')->get();
+        $periodos  = Periodo::orderByDesc('fecha_inicio_registro')->get();
         $programas = Programa::where('activo', true)->orderBy('nombre')->get();
-        return view('admin.grupos.index', compact('grupos', 'periodos', 'programas'));
+        $periodoActivo = $periodos->where('estado', 'activo')->first();
+
+        $conteo = [
+            'total'         => Grupo::count(),
+            'periodoActivo' => $periodoActivo ? Grupo::where('periodo_id', $periodoActivo->id)->count() : 0,
+            'alumnos'       => \App\Models\Alumno::whereNotNull('grupo_id')->count(),
+            'programas'     => Grupo::distinct('programa_id')->count('programa_id'),
+        ];
+
+        $grupos = Grupo::with('programa', 'periodo')
+            ->withCount('alumnos')
+            ->when($request->filled('q'), fn ($query) => $query->where('clave', 'like', '%'.$request->q.'%'))
+            ->when($request->filled('periodo'), fn ($query) => $query->where('periodo_id', $request->periodo))
+            ->when($request->filled('programa'), fn ($query) => $query->where('programa_id', $request->programa))
+            ->when($request->filled('cuatrimestre'), fn ($query) => $query->where('cuatrimestre', $request->cuatrimestre))
+            ->orderBy('clave')
+            ->paginate(50)
+            ->withQueryString();
+
+        return view('admin.grupos.index', compact('grupos', 'periodos', 'programas', 'conteo'));
     }
 
     // Vista del profesor: grupos donde tiene materias a su cargo

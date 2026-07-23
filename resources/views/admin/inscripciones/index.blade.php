@@ -4,31 +4,7 @@
 
 @section('content')
 
-<section
-    x-data="{
-        busqueda: '',
-        filtroPrograma: '',
-        vista: 'pendientes',
-        filtrar() {
-            this.$nextTick(() => {
-                const filas = this.$refs.tbody.querySelectorAll('tr[data-nombre]');
-                let visibles = 0;
-                filas.forEach(f => {
-                    const texto = this.busqueda.toLowerCase();
-                    const pasaBusqueda = !texto || f.dataset.nombre.toLowerCase().includes(texto) || f.dataset.folio.toLowerCase().includes(texto) || f.dataset.programa.toLowerCase().includes(texto);
-                    const pasaPrograma = !this.filtroPrograma || f.dataset.programaId === this.filtroPrograma;
-                    const pasaVista = f.dataset.tipo === this.vista;
-                    const mostrar = pasaBusqueda && pasaPrograma && pasaVista;
-                    f.style.display = mostrar ? '' : 'none';
-                    if (mostrar) visibles++;
-                });
-                this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
-                this.$refs.contadorVisible.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
-            });
-        }
-    }"
-    x-init="filtrar()"
-    class="bg-uicm-gray min-h-screen py-12 px-4">
+<section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         {{-- Encabezado de módulo --}}
@@ -41,43 +17,38 @@
         </div>
 
 
-        {{-- Contadores --}}
+        {{-- Contadores (también son las pestañas) --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
 
-            <button type="button"
-                    @click="vista = 'pendientes'; filtrar()"
-                    :class="vista === 'pendientes' ? 'ring-2 ring-yellow-500' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #EFAD5A;">
+            <a href="{{ route('admin.inscripciones.index', ['vista' => 'pendientes']) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 block" style="border-color: #EFAD5A; {{ $vista === 'pendientes' ? 'box-shadow: 0 0 0 2px #EFAD5A;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Pendientes de acceso</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">
-                    {{ $listos->count() }}
+                    {{ $conteo['listos'] }}
                 </p>
-            </button>
+            </a>
 
-            <button type="button"
-                    @click="vista = 'generados'; filtrar()"
-                    :class="vista === 'generados' ? 'ring-2 ring-green-700' : 'hover:shadow-md'"
-                    class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                    style="border-color: #0F4229;">
+            <a href="{{ route('admin.inscripciones.index', ['vista' => 'generados']) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 block" style="border-color: #0F4229; {{ $vista === 'generados' ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Acceso generado</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">
-                    {{ $generados->count() }}
+                    {{ $conteo['generados'] }}
                 </p>
-            </button>
+            </a>
 
         </div>
 
         {{-- Búsqueda --}}
-        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <form method="GET" action="{{ route('admin.inscripciones.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
+            <input type="hidden" name="vista" value="{{ $vista }}">
             <div class="relative flex-1">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                 </svg>
-                <input type="text" x-model="busqueda" @input="filtrar()"
-                       placeholder="Buscar por folio, nombre o programa…"
+                <input type="text" name="q" value="{{ request('q') }}"
+                       placeholder="Buscar por folio, nombre o matrícula…"
                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -89,17 +60,17 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                 </svg>
-                <select x-model="filtroPrograma" @change="filtrar()"
+                <select name="programa" onchange="this.form.submit()"
                         class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                         onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                     <option value="">Todos los programas</option>
                     @foreach($programas as $p)
-                        <option value="{{ $p->id }}">{{ $p->nombre }}</option>
+                        <option value="{{ $p->id }}" @selected(request('programa') == $p->id)>{{ $p->nombre }}</option>
                     @endforeach
                 </select>
             </div>
-        </div>
+        </form>
 
         {{-- Card tabla --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden">
@@ -107,11 +78,12 @@
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
 
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <h2 class="text-sm font-semibold text-gray-700"
-                    x-text="vista === 'pendientes' ? 'Aspirantes pendientes de acceso' : 'Alumnos con acceso generado'">
-                    Aspirantes pendientes de acceso
+                <h2 class="text-sm font-semibold text-gray-700">
+                    {{ $vista === 'pendientes' ? 'Aspirantes pendientes de acceso' : 'Alumnos con acceso generado' }}
                 </h2>
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorVisible">{{ $listos->count() }} registros</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">
+                    {{ $vista === 'pendientes' ? $listos->count() : $generados->total() }} registros
+                </span>
             </div>
 
             <div class="overflow-x-auto">
@@ -128,14 +100,10 @@
                         </tr>
                     </thead>
 
-                    <tbody class="divide-y divide-gray-100" x-ref="tbody">
-                        @foreach ($listos as $asp)
-                        <tr class="hover:bg-gray-50 transition-colors duration-100"
-                            data-tipo="pendientes"
-                            data-folio="{{ strtolower($asp->folio) }}"
-                            data-nombre="{{ strtolower($asp->nombre_completo) }}"
-                            data-programa="{{ strtolower($asp->programa->nombre ?? '') }}"
-                            data-programa-id="{{ $asp->programa_id }}">
+                    <tbody class="divide-y divide-gray-100">
+                        @if ($vista === 'pendientes')
+                        @forelse ($listos as $asp)
+                        <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-600 whitespace-nowrap">
                                 {{ $asp->folio }}
@@ -181,15 +149,24 @@
                             </td>
 
                         </tr>
-                        @endforeach
-
-                        @foreach ($generados as $alumno)
-                        <tr class="hover:bg-gray-50 transition-colors duration-100"
-                            data-tipo="generados"
-                            data-folio="{{ strtolower($alumno->aspirante->folio ?? '') }}"
-                            data-nombre="{{ strtolower($alumno->nombre_completo) }}"
-                            data-programa="{{ strtolower($alumno->programa->nombre ?? '') }}"
-                            data-programa-id="{{ $alumno->programa_id }}">
+                        @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-10">
+                                <div class="flex flex-col items-center text-center">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">{{ request('q') || request('programa') ? 'No se encontraron registros con ese criterio.' : 'No hay aspirantes pendientes de acceso.' }}</p>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                        @else
+                        @forelse ($generados as $alumno)
+                        <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                             <td class="px-6 py-4 font-mono text-xs font-semibold text-gray-600 whitespace-nowrap">
                                 {{ $alumno->aspirante->folio ?? '—' }}
@@ -237,9 +214,7 @@
                             </td>
 
                         </tr>
-                        @endforeach
-
-                        @if ($listos->isEmpty() && $generados->isEmpty())
+                        @empty
                         <tr>
                             <td colspan="6" class="px-6 py-10">
                                 <div class="flex flex-col items-center text-center">
@@ -249,29 +224,22 @@
                                         </svg>
                                     </div>
                                     <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
-                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">No hay registros disponibles.</p>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">{{ request('q') || request('programa') ? 'No se encontraron registros con ese criterio.' : 'No hay alumnos con acceso generado.' }}</p>
                                 </div>
                             </td>
                         </tr>
+                        @endforelse
                         @endif
-
-                        <tr x-ref="sinResultados" style="display:none;">
-                            <td colspan="6" class="px-6 py-10">
-                                <div class="flex flex-col items-center text-center">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
-                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
-                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">No se encontraron registros con ese criterio.</p>
-                                </div>
-                            </td>
-                        </tr>
                     </tbody>
 
                 </table>
             </div>
+
+            @if ($vista === 'generados' && $generados->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+                {{ $generados->links() }}
+            </div>
+            @endif
 
         </div>{{-- /card --}}
 

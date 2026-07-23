@@ -8,16 +8,32 @@ use Illuminate\Http\Request;
 
 class MateriaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $materias  = Materia::with('programa')
+        $conteo = [
+            'total'    => Materia::count(),
+            'activas'  => Materia::where('activo', true)->count(),
+            'inactivas'=> Materia::where('activo', false)->count(),
+        ];
+
+        $materias = Materia::with('programa')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = $request->q;
+                $query->where(function ($w) use ($q) {
+                    $w->where('clave', 'like', "%{$q}%")
+                        ->orWhere('nombre', 'like', "%{$q}%");
+                });
+            })
+            ->when($request->filled('programa'), fn ($query) => $query->where('programa_id', $request->programa))
+            ->when($request->filled('activo'), fn ($query) => $query->where('activo', $request->activo))
             ->orderBy('programa_id')
             ->orderBy('cuatrimestre')
-            ->get();
+            ->paginate(50)
+            ->withQueryString();
 
         $programas = Programa::where('activo', true)->orderBy('nombre')->get();
 
-        return view('admin.materias.index', compact('materias', 'programas'));
+        return view('admin.materias.index', compact('materias', 'programas', 'conteo'));
     }
 
     public function store(Request $request)

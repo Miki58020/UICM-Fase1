@@ -3,28 +3,7 @@
 @section('title', 'Alumnos | UICM')
 
 @section('content')
-<section class="bg-uicm-gray min-h-screen py-12 px-4"
-         x-data="{
-             busqueda: '',
-             filtrar() {
-                 this.$nextTick(() => {
-                     const q = this.busqueda.toLowerCase();
-                     const filas = this.$refs.tbody.querySelectorAll('tr[data-alumno]');
-                     let visibles = 0;
-                     filas.forEach(f => {
-                         const pasa = !q
-                             || f.dataset.alumno.includes(q)
-                             || f.dataset.matricula.includes(q)
-                             || f.dataset.grupo.includes(q);
-                         f.style.display = pasa ? '' : 'none';
-                         if (pasa) visibles++;
-                     });
-                     this.$refs.contador.textContent = visibles + ' ' + (visibles === 1 ? 'alumno' : 'alumnos');
-                     this.$refs.sinResultados.style.display = (visibles === 0 && {{ $alumnos->count() }} > 0) ? '' : 'none';
-                 });
-             }
-         }"
-         x-init="filtrar()">
+<section class="bg-uicm-gray min-h-screen py-12 px-4">
     <div class="container mx-auto px-4 lg:px-12 max-w-7xl">
 
         <div class="mb-8">
@@ -33,7 +12,7 @@
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
 
-        @if ($alumnos->isEmpty())
+        @if ($totalAlumnos === 0)
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
                 <div class="px-6 py-12 flex flex-col items-center text-center">
                     <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
@@ -51,7 +30,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                 <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #EFAD5A;">
                     <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Alumnos activos</p>
-                    <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $alumnos->count() }}</p>
+                    <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $totalAlumnos }}</p>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
                     <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Grupos</p>
@@ -60,14 +39,15 @@
             </div>
 
             {{-- Buscador --}}
-            <div class="flex flex-col sm:flex-row gap-3 mb-6">
+            <form method="GET" action="{{ route('profesor.alumnos.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
+                <input type="hidden" name="grupo_id" value="{{ request('grupo_id') }}">
                 <div class="relative flex-1">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                          fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                     </svg>
-                    <input type="text" x-model="busqueda" @input="filtrar()"
+                    <input type="text" name="q" value="{{ request('q') }}"
                            placeholder="Buscar por nombre, matrícula o grupo…"
                            class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
@@ -91,7 +71,7 @@
                         </select>
                     </div>
                 @endunless
-            </div>
+            </form>
 
             @if ($grupoFiltro)
                 <div class="mb-6 rounded-xl px-5 py-3 bg-white border border-gray-200 flex items-center gap-3 shadow-sm flex-wrap">
@@ -112,8 +92,8 @@
                               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                     <h2 class="text-sm font-semibold text-gray-700">Alumnos</h2>
-                    <span class="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contador">
-                        {{ $alumnos->count() }} {{ $alumnos->count() === 1 ? 'alumno' : 'alumnos' }}
+                    <span class="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">
+                        {{ $alumnos->total() }} {{ $alumnos->total() === 1 ? 'alumno' : 'alumnos' }}
                     </span>
                 </div>
 
@@ -126,25 +106,9 @@
                                 <th class="px-6 py-3">Materias que le impartes</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100" x-ref="tbody">
-                            <tr x-ref="sinResultados" style="display: none;">
-                                <td colspan="3" class="px-6 py-10">
-                                    <div class="flex flex-col items-center text-center">
-                                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
-                                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-                                            </svg>
-                                        </div>
-                                        <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
-                                        <p class="text-sm text-gray-500 max-w-xs mx-auto">Ningún alumno coincide con la búsqueda.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                            @foreach ($alumnos as $a)
-                            <tr class="hover:bg-gray-50"
-                                data-alumno="{{ strtolower($a->alumno->nombre_completo) }}"
-                                data-matricula="{{ strtolower($a->alumno->matricula) }}"
-                                data-grupo="{{ strtolower($a->grupo->clave ?? '') }}">
+                        <tbody class="divide-y divide-gray-100">
+                            @forelse ($alumnos as $a)
+                            <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-8 h-8 rounded-full flex-shrink-0 overflow-hidden border-2"
@@ -179,10 +143,30 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="3" class="px-6 py-10">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
+                                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                                            </svg>
+                                        </div>
+                                        <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
+                                        <p class="text-sm text-gray-500 max-w-xs mx-auto">Ningún alumno coincide con la búsqueda.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
+
+                @if($alumnos->hasPages())
+                <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+                    {{ $alumnos->links() }}
+                </div>
+                @endif
             </div>
 
             @if ($grupoFiltro)

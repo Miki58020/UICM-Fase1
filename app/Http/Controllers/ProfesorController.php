@@ -13,10 +13,28 @@ use Illuminate\Support\Str;
 
 class ProfesorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $profesores = Profesor::with('user')->orderBy('nombre')->get();
-        return view('admin.profesores.index', compact('profesores'));
+        $conteo = [
+            'total'    => Profesor::count(),
+            'activos'  => Profesor::where('activo', true)->count(),
+            'inactivos'=> Profesor::where('activo', false)->count(),
+        ];
+
+        $profesores = Profesor::with('user')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $q = $request->q;
+                $query->where(function ($w) use ($q) {
+                    $w->where('nombre', 'like', "%{$q}%")
+                        ->orWhere('correo', 'like', "%{$q}%");
+                });
+            })
+            ->when($request->filled('activo'), fn ($query) => $query->where('activo', $request->activo))
+            ->orderBy('nombre')
+            ->paginate(50)
+            ->withQueryString();
+
+        return view('admin.profesores.index', compact('profesores', 'conteo'));
     }
 
     // Genera acceso al portal para un profesor (crea o regenera contraseña)

@@ -15,9 +15,6 @@
             cuatrimestre:'{{ old('cuatrimestre', '') }}',
             creditos:    '{{ old('creditos', '') }}'
         },
-        busqueda: '',
-        filtroPrograma: '',
-        filtroActivo: '',
         archivoCsv: '',
         programasDuracion: @js($programas->pluck('duracion_cuatrimestres', 'id')),
         cuatrimestresDisponibles() {
@@ -29,24 +26,7 @@
             if (this.form.cuatrimestre && Number(this.form.cuatrimestre) > max) this.form.cuatrimestre = '';
         },
         abrir() { this.editando = null; this.form = { clave: '', nombre: '', programa_id: '', cuatrimestre: '', creditos: '' }; this.showModal = true; },
-        abrirEditar(m) { this.editando = m; this.form = { clave: m.clave, nombre: m.nombre, programa_id: m.programa_id, cuatrimestre: m.cuatrimestre, creditos: m.creditos }; this.showModal = true; },
-        filtrar() {
-            this.$nextTick(() => {
-                const filas = this.$refs.tbody.querySelectorAll('tr[data-nombre]');
-                let visibles = 0;
-                filas.forEach(f => {
-                    const texto = this.busqueda.toLowerCase();
-                    const pasaBusqueda  = !texto || f.dataset.nombre.toLowerCase().includes(texto) || f.dataset.clave.toLowerCase().includes(texto);
-                    const pasaPrograma  = !this.filtroPrograma || f.dataset.programaId === this.filtroPrograma;
-                    const pasaActivo    = !this.filtroActivo || f.dataset.activo === this.filtroActivo;
-                    const mostrar = pasaBusqueda && pasaPrograma && pasaActivo;
-                    f.style.display = mostrar ? '' : 'none';
-                    if (mostrar) visibles++;
-                });
-                this.$refs.sinResultados.style.display = visibles === 0 ? '' : 'none';
-                this.$refs.contadorVisible.textContent = visibles + ' registro' + (visibles !== 1 ? 's' : '');
-            });
-        }
+        abrirEditar(m) { this.editando = m; this.form = { clave: m.clave, nombre: m.nombre, programa_id: m.programa_id, cuatrimestre: m.cuatrimestre, creditos: m.creditos }; this.showModal = true; }
     }"
     class="bg-uicm-gray min-h-screen py-12 px-4">
 
@@ -76,33 +56,38 @@
 
         {{-- Contadores --}}
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
+            <a href="{{ route('admin.materias.index', array_filter(['q' => request('q'), 'programa' => request('programa')])) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 block" style="border-color: #0F4229; {{ request('activo') === null ? 'box-shadow: 0 0 0 2px #0F4229;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total registradas</p>
-                <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $materias->count() }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #D4AF37;">
+                <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $conteo['total'] }}</p>
+            </a>
+            <a href="{{ route('admin.materias.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'activo' => '1'], fn($v) => $v !== null && $v !== '')) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 block" style="border-color: #D4AF37; {{ request('activo') === '1' ? 'box-shadow: 0 0 0 2px #D4AF37;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Activas</p>
                 <p class="text-2xl font-extrabold mt-1" style="color: #D4AF37;">
-                    {{ $materias->where('activo', true)->count() }}
+                    {{ $conteo['activas'] }}
                 </p>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 col-span-2 sm:col-span-1" style="border-color: #9ca3af;">
+            </a>
+            <a href="{{ route('admin.materias.index', array_filter(['q' => request('q'), 'programa' => request('programa'), 'activo' => '0'], fn($v) => $v !== null && $v !== '')) }}"
+               class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 col-span-2 sm:col-span-1 block" style="border-color: #9ca3af; {{ request('activo') === '0' ? 'box-shadow: 0 0 0 2px #9ca3af;' : '' }}">
                 <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Inactivas</p>
                 <p class="text-2xl font-extrabold mt-1 text-gray-500">
-                    {{ $materias->where('activo', false)->count() }}
+                    {{ $conteo['inactivas'] }}
                 </p>
-            </div>
+            </a>
         </div>
 
         {{-- Búsqueda y filtros --}}
-        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <form method="GET" action="{{ route('admin.materias.index') }}" class="flex flex-col sm:flex-row gap-3 mb-6">
+            <input type="hidden" name="activo" value="{{ request('activo') }}">
+
             <div class="relative flex-1">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
                 </svg>
-                <input type="text" x-model="busqueda" @input="filtrar()"
+                <input type="text" name="q" value="{{ request('q') }}"
                        placeholder="Buscar por clave o nombre…"
                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none"
                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
@@ -114,32 +99,17 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
                 </svg>
-                <select x-model="filtroPrograma" @change="filtrar()"
+                <select name="programa" onchange="this.form.submit()"
                         class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
                         onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                         onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                     <option value="">Todos los programas</option>
                     @foreach ($programas as $prog)
-                        <option value="{{ $prog->id }}">{{ $prog->nombre }}</option>
+                        <option value="{{ $prog->id }}" @selected(request('programa') == $prog->id)>{{ $prog->nombre }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="relative sm:w-44">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
-                </svg>
-                <select x-model="filtroActivo" @change="filtrar()"
-                        class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-300 rounded-xl bg-white focus:outline-none appearance-none"
-                        onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
-                        onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                    <option value="">Activas e inactivas</option>
-                    <option value="1">Activas</option>
-                    <option value="0">Inactivas</option>
-                </select>
-            </div>
-        </div>
+        </form>
 
         {{-- Carga masiva de materias (CSV) --}}
         <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-8">
@@ -212,7 +182,7 @@
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 class="text-sm font-semibold text-gray-700">Catálogo de materias</h2>
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contadorVisible">{{ $materias->count() }} registros</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green">{{ $materias->total() }} registros</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -228,13 +198,9 @@
                             <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100" x-ref="tbody">
+                    <tbody class="divide-y divide-gray-100">
                         @forelse ($materias as $m)
-                        <tr class="hover:bg-gray-50 transition-colors duration-100"
-                            data-clave="{{ strtolower($m->clave) }}"
-                            data-nombre="{{ strtolower($m->nombre) }}"
-                            data-programa-id="{{ $m->programa_id }}"
-                            data-activo="{{ $m->activo ? '1' : '0' }}">
+                        <tr class="hover:bg-gray-50 transition-colors duration-100">
 
                             <td class="px-6 py-4 font-mono text-xs font-bold whitespace-nowrap" style="color: #0F4229;">
                                 {{ $m->clave }}
@@ -321,27 +287,20 @@
                                         </svg>
                                     </div>
                                     <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
-                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">No hay materias registradas.</p>
+                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">{{ request('q') || request('programa') || request('activo') !== null ? 'No se encontraron materias con ese criterio.' : 'No hay materias registradas.' }}</p>
                                 </div>
                             </td>
                         </tr>
                         @endforelse
-                        <tr x-ref="sinResultados" style="display:none;">
-                            <td colspan="7" class="px-6 py-10">
-                                <div class="flex flex-col items-center text-center">
-                                    <div class="w-12 h-12 rounded-full flex items-center justify-center mb-4" style="background-color: #f3f4f6;">
-                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-base font-extrabold text-gray-900 mb-1">Sin resultados</h3>
-                                    <p class="text-sm text-gray-500 max-w-xs mx-auto">No se encontraron materias con ese criterio.</p>
-                                </div>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
+
+            @if($materias->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 flex-shrink-0">
+                {{ $materias->links() }}
+            </div>
+            @endif
         </div>
 
 
