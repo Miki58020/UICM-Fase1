@@ -230,61 +230,6 @@
             </div>
 
 
-{{-- ══════════════════════════════════════════
-                 TABLA: Materias asignadas (ancho completo)
-            ══════════════════════════════════════════ --}}
-            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
-                <a href="{{ route('alumno.materias.index') }}"
-                   class="px-6 py-4 border-b border-gray-100 flex items-center gap-2 hover:bg-gray-50 transition-colors duration-100">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#0F4229;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13
-                                 C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13
-                                 C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13
-                                 C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                    </svg>
-                    <h2 class="text-sm font-semibold text-gray-700 truncate">Materias</h2>
-                </a>
-                <div class="overflow-x-auto">
-                    @if ($carga->isEmpty())
-                        <div class="px-6 py-10 text-center text-sm text-gray-400">No hay materias asignadas.</div>
-                    @else
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="px-6 py-3">Clave</th>
-                                <th class="px-6 py-3">Materia</th>
-                                <th class="px-6 py-3">Profesor</th>
-                                <th class="px-6 py-3 text-center">Créditos</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @foreach ($carga as $c)
-                            <tr class="hover:bg-gray-50 transition-colors duration-100">
-                                <td class="px-6 py-3.5 font-mono text-xs font-semibold text-gray-500 whitespace-nowrap">
-                                    {{ $c->materia->clave }}
-                                </td>
-                                <td class="px-6 py-3.5 font-medium text-gray-800 whitespace-nowrap">
-                                    {{ $c->materia->nombre }}
-                                </td>
-                                <td class="px-6 py-3.5 text-gray-500 text-xs whitespace-nowrap">
-                                    {{ $c->profesor->nombre ?? 'Sin asignar' }}
-                                </td>
-                                <td class="px-6 py-3.5 text-center">
-                                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white"
-                                          style="background-color: #D4AF37;">
-                                        {{ $c->materia->creditos }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    @endif
-                </div>
-            </div>
-
             {{-- ══════════════════════════════════════════
                  PANELES: calificaciones recientes / documentos / próximo pago
             ══════════════════════════════════════════ --}}

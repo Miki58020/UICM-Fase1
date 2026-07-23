@@ -116,8 +116,8 @@
                     'vencido'    => ['#dc2626', 'Vencido'],
                 ][$estado];
             @endphp
-            <div class="bg-white rounded-2xl shadow-md overflow-hidden" data-estado="{{ $estado }}" x-data="{ subiendo: false }">
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden" data-estado="{{ $estado }}" x-data="{ subiendo: false, archivoSeleccionado: '' }">
+                <div class="h-1.5 w-full" style="background-color: {{ $badge[0] }};"></div>
 
                 <div class="px-6 py-4 flex flex-wrap items-center justify-between gap-3">
                     <div>
@@ -153,7 +153,9 @@
                           enctype="multipart/form-data" class="flex flex-wrap items-center gap-3">
                         @csrf
                         <input type="file" name="archivo" accept=".pdf,.jpg,.jpeg,.png" required
-                               class="flex-1 text-sm text-gray-600 border-2 border-dashed border-gray-200 rounded-xl px-4 py-2.5 outline-none file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
+                               @change="archivoSeleccionado = $event.target.files[0]?.name || ''"
+                               :class="archivoSeleccionado ? 'border-green-400 bg-green-50 text-green-700' : 'border-gray-200 text-gray-600'"
+                               class="flex-1 text-sm border-2 border-dashed rounded-xl px-4 py-2.5 outline-none transition-colors duration-150 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700">
                         <button type="submit"
                                 class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white"
                                 style="background-color: #D4AF37;">
