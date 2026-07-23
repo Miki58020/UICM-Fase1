@@ -204,7 +204,8 @@
       "Bash(GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash d81b531)",
       "Bash(mkdir -p /tmp/scratch_git)",
       "Bash(git show *)",
-      "Bash(awk 'NR==280,NR==385' app/Http/Controllers/PagoController.php)"
+      "Bash(awk 'NR==280,NR==385' app/Http/Controllers/PagoController.php)",
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\"; grep -n \"grid grid-cols\\\\|rounded-xl px-5 py-3 bg-white border\\\\|Buscar por\\\\|<table\" {}')"
     ]
   }
 }

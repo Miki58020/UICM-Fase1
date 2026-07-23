@@ -54,13 +54,24 @@ class AlumnoController extends Controller
     }
 
     // Vista del profesor: alumnos activos de sus grupos asignados
-    public function profesor()
+    public function profesor(Request $request)
     {
         $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
 
         $cargas = CargaAcademica::where('profesor_id', $profesor->id)
             ->with(['materia', 'grupo' => fn ($q) => $q->with(['programa', 'alumnos' => fn ($q2) => $q2->where('estado', 'activo')->with('user')])])
             ->get();
+
+        $totalGrupos = $cargas->pluck('grupo_id')->unique()->count();
+        $gruposDisponibles = $cargas->pluck('grupo')->filter()->unique('id')->sortBy('clave')->values();
+
+        $grupoFiltro = null;
+        if ($request->filled('grupo_id')) {
+            $grupoFiltro = $cargas->firstWhere('grupo_id', (int) $request->query('grupo_id'))?->grupo;
+            if ($grupoFiltro) {
+                $cargas = $cargas->where('grupo_id', $grupoFiltro->id);
+            }
+        }
 
         $alumnos = collect();
         foreach ($cargas as $carga) {
@@ -77,9 +88,8 @@ class AlumnoController extends Controller
         }
 
         $alumnos = $alumnos->values()->sortBy(fn ($a) => $a->alumno->apellido_paterno);
-        $totalGrupos = $cargas->pluck('grupo_id')->unique()->count();
 
-        return view('profesor.alumnos.index', compact('alumnos', 'totalGrupos'));
+        return view('profesor.alumnos.index', compact('alumnos', 'totalGrupos', 'grupoFiltro', 'gruposDisponibles'));
     }
 
     public function update(Request $request, Alumno $alumno)
