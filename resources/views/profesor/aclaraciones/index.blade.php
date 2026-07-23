@@ -95,7 +95,7 @@
                 };
             @endphp
             <div class="bg-white rounded-2xl shadow-md overflow-hidden" data-estado="{{ $aclaracion->estado }}">
-                <div class="h-1.5 w-full" style="background-color: #D4AF37;"></div>
+                <div class="h-1.5 w-full" style="background-color: {{ $paso2['color'] }};"></div>
 
                 <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
 

@@ -47,35 +47,15 @@
                 </div>
             </div>
         @else
-            {{-- Tarjetas KPI --}}
+            {{-- Tarjetas resumen --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                    <div class="h-1.5 w-full flex-shrink-0" style="background-color: #EFAD5A;"></div>
-                    <div class="p-5 flex flex-col flex-1">
-                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 mb-4"
-                             style="background-color: #fdf0e0;">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #EFAD5A;">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                        </div>
-                        <p class="text-4xl font-extrabold leading-none mb-1" style="color: #EFAD5A;">{{ $alumnos->count() }}</p>
-                        <p class="text-xs font-medium text-gray-500">Alumnos activos</p>
-                    </div>
+                <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #EFAD5A;">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Alumnos activos</p>
+                    <p class="text-2xl font-extrabold mt-1" style="color: #EFAD5A;">{{ $alumnos->count() }}</p>
                 </div>
-                <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                    <div class="h-1.5 w-full flex-shrink-0" style="background-color: #0F4229;"></div>
-                    <div class="p-5 flex flex-col flex-1">
-                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 mb-4"
-                             style="background-color: #e6f2ec;">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #0F4229;">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                        </div>
-                        <p class="text-4xl font-extrabold leading-none mb-1" style="color: #0F4229;">{{ $totalGrupos }}</p>
-                        <p class="text-xs font-medium text-gray-500">Grupos</p>
-                    </div>
+                <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Grupos</p>
+                    <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $totalGrupos }}</p>
                 </div>
             </div>
 
