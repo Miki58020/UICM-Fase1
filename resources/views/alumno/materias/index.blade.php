@@ -108,6 +108,16 @@
             </div>
         </div>
 
+        {{-- Contexto del grupo --}}
+        <div class="mb-6 rounded-xl px-5 py-3 bg-white border border-gray-200 flex items-center gap-3 shadow-sm flex-wrap">
+            <span class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: #0F4229;"></span>
+            <span class="text-sm font-medium text-gray-700">
+                Grupo <strong>{{ $alumno->grupo->clave ?? '—' }}</strong>
+                · {{ $alumno->cuatrimestre_actual }}° cuatrimestre
+                · {{ $totalCreditos }} créditos en curso
+            </span>
+        </div>
+
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
 
             <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
@@ -121,10 +131,7 @@
                              C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                 </svg>
                 <h2 class="text-sm font-semibold text-gray-700">Materias asignadas</h2>
-                <span class="ml-auto text-xs text-gray-400 text-right">
-                    <span x-ref="contador">{{ $carga->count() }} {{ $carga->count() === 1 ? 'materia' : 'materias' }}</span>
-                    · {{ $totalCreditos }} créditos · {{ $alumno->cuatrimestre_actual }}° cuatrimestre · {{ $alumno->grupo->clave ?? '—' }}
-                </span>
+                <span class="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-uicm-green-pale text-uicm-green" x-ref="contador">{{ $carga->count() }} {{ $carga->count() === 1 ? 'materia' : 'materias' }}</span>
             </div>
 
             <div class="overflow-x-auto">
