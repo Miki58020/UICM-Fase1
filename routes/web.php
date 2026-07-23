@@ -234,11 +234,39 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::delete('/admin/grupos/{grupo}', [GrupoController::class, 'destroy'])->name('admin.grupos.destroy');
 });
 
-// Servir archivos privados — solo usuarios autenticados del sistema
+// Servir archivos privados — solo usuarios autenticados del sistema.
+// El personal (admin/control_escolar/coordinacion/finanzas/profesor) puede ver
+// cualquier archivo, ya que revisar documentos de alumnos es parte de su trabajo.
+// Un alumno solo puede ver los suyos: su propia foto, sus documentos subidos,
+// o los de su expediente de aspirante.
 Route::get('/admin/archivo/{path}', function (string $path) {
     if (!Storage::disk('local')->exists($path)) {
         abort(404);
     }
+
+    $user = Auth::user();
+
+    if ($user->rol === 'alumno') {
+        $alumno = \App\Models\Alumno::where('user_id', $user->id)->first();
+
+        $esPropio = $alumno && (
+            $user->foto === $path
+            || \App\Models\DocumentoAlumno::where('alumno_id', $alumno->id)->where('archivo_path', $path)->exists()
+            || ($alumno->aspirante_id && \App\Models\Aspirante::where('id', $alumno->aspirante_id)
+                ->where(function ($q) use ($path) {
+                    $q->where('acta_nacimiento_url', $path)
+                        ->orWhere('certificado_url', $path)
+                        ->orWhere('identificacion_url', $path)
+                        ->orWhere('curp_url', $path)
+                        ->orWhere('titulo_url', $path)
+                        ->orWhere('comprobante_domicilio_url', $path)
+                        ->orWhere('foto_url', $path);
+                })->exists())
+        );
+
+        abort_if(!$esPropio, 403);
+    }
+
     return Storage::disk('local')->response($path);
 })->middleware('auth')->where('path', '.*')->name('admin.archivo');
 

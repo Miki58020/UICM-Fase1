@@ -1396,6 +1396,10 @@
             <p class="font-bold text-gray-700">Aislamiento por rol</p>
             <p class="text-gray-500 mt-0.5">Middleware <code>rol:X</code> en todas las rutas. El profesor solo ve sus cargas. El alumno solo ve sus datos. <code>abort_if</code> en controllers como segunda capa.</p>
           </div>
+          <div class="bg-gray-50 rounded-xl p-3 border-l-2 border-purple-400">
+            <p class="font-bold text-gray-700">Acceso a archivos privados</p>
+            <p class="text-gray-500 mt-0.5">Ruta <code>/admin/archivo/{path}</code> valida dueño antes de servir el archivo. Personal (admin/control escolar/coordinación/finanzas/profesor) puede ver cualquier documento — es parte de su trabajo revisar expedientes. Un alumno solo puede ver su propia foto, sus documentos subidos o los de su expediente de aspirante.</p>
+          </div>
         </div>
       </div>
 
@@ -1438,7 +1442,7 @@
   </main>
 
   <footer class="text-center py-6 text-xs text-gray-400 mt-4">
-    UICM — Mapa del Sistema · Actualizado el 20 Jul 2026 · Solo para referencia interna
+    UICM — Mapa del Sistema · Actualizado el 23 Jul 2026 · Solo para referencia interna
   </footer>
 
 </body>
