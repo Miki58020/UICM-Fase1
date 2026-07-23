@@ -71,7 +71,7 @@ class AclaracionCalificacionController extends Controller
         $prioridadEstado = ['pendiente' => 0, 'rechazada' => 1, 'aprobada' => 2];
 
         $aclaraciones = AclaracionCalificacion::where('profesor_id', $profesor->id)
-            ->with(['alumno', 'cargaAcademica.materia', 'cargaAcademica.grupo'])
+            ->with(['alumno', 'cargaAcademica.materia', 'cargaAcademica.grupo', 'cargaAcademica.periodo'])
             ->orderByDesc('created_at')
             ->get()
             ->sortBy(fn ($a) => $prioridadEstado[$a->estado] ?? 1)

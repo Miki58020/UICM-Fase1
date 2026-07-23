@@ -120,7 +120,7 @@
                             onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
                         <option value="">Todos los períodos</option>
                         @foreach($periodosDisponibles as $periodo)
-                        <option value="{{ $periodo->id }}">{{ $periodo->nombre }}</option>
+                        <option value="{{ $periodo->id }}">{{ $periodo->label ?? $periodo->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
