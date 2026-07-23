@@ -65,13 +65,6 @@
                     <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total</p>
                     <p class="text-2xl font-extrabold mt-1 text-gray-600">{{ $conteo['total'] }}</p>
                 </button>
-                <button type="button" @click="filtroEstado = (filtroEstado === 'aprobado' ? '' : 'aprobado'); filtrar()"
-                        :class="filtroEstado === 'aprobado' ? 'ring-2' : 'hover:shadow-md'"
-                        class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
-                        style="border-color: #0F4229;">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Aprobado</p>
-                    <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $conteo['aprobado'] }}</p>
-                </button>
                 <button type="button" @click="filtroEstado = (filtroEstado === 'pendiente' ? '' : 'pendiente'); filtrar()"
                         :class="filtroEstado === 'pendiente' ? 'ring-2' : 'hover:shadow-md'"
                         class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
@@ -85,6 +78,13 @@
                         style="border-color: #9ca3af;">
                     <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Sin enviar</p>
                     <p class="text-2xl font-extrabold mt-1 text-gray-400">{{ $conteo['sin_enviar'] }}</p>
+                </button>
+                <button type="button" @click="filtroEstado = (filtroEstado === 'aprobado' ? '' : 'aprobado'); filtrar()"
+                        :class="filtroEstado === 'aprobado' ? 'ring-2' : 'hover:shadow-md'"
+                        class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 text-left w-full transition-shadow duration-150"
+                        style="border-color: #0F4229;">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Aprobado</p>
+                    <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $conteo['aprobado'] }}</p>
                 </button>
                 <button type="button" @click="filtroEstado = (filtroEstado === 'rechazado' ? '' : 'rechazado'); filtrar()"
                         :class="filtroEstado === 'rechazado' ? 'ring-2 ring-red-400' : 'hover:shadow-md'"

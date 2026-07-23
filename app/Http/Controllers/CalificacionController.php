@@ -20,10 +20,16 @@ class CalificacionController extends Controller
     {
         $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
 
+        // Prioriza lo que necesita atención del profesor: rechazado y sin enviar primero,
+        // luego lo que ya está en revisión, y al final lo ya aprobado (sin acción pendiente).
+        $prioridadEstado = ['rechazado' => 0, null => 1, 'pendiente' => 2, 'aprobado' => 3];
+
         $cargas = CargaAcademica::where('profesor_id', $profesor->id)
             ->with(['materia', 'grupo.programa', 'grupo.alumnos', 'periodo', 'calificaciones'])
             ->orderByDesc('periodo_id')
-            ->get();
+            ->get()
+            ->sortBy(fn ($c) => $prioridadEstado[$c->estado_revision] ?? 1)
+            ->values();
 
         $conteo = [
             'total'      => $cargas->count(),

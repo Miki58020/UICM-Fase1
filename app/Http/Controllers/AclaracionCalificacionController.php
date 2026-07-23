@@ -67,10 +67,15 @@ class AclaracionCalificacionController extends Controller
     {
         $profesor = Profesor::where('user_id', Auth::id())->firstOrFail();
 
+        // Prioriza lo que sigue en revisión, luego lo rechazado (vale la pena revisar), y al final lo ya aprobado.
+        $prioridadEstado = ['pendiente' => 0, 'rechazada' => 1, 'aprobada' => 2];
+
         $aclaraciones = AclaracionCalificacion::where('profesor_id', $profesor->id)
             ->with(['alumno', 'cargaAcademica.materia', 'cargaAcademica.grupo'])
             ->orderByDesc('created_at')
-            ->get();
+            ->get()
+            ->sortBy(fn ($a) => $prioridadEstado[$a->estado] ?? 1)
+            ->values();
 
         return view('profesor.aclaraciones.index', compact('aclaraciones'));
     }
