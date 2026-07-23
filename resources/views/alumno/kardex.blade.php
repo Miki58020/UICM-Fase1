@@ -169,7 +169,7 @@
 
                 @foreach($porCuatrimestre as $numCuatri => $items)
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden" data-cuatrimestre="{{ $numCuatri }}">
-                    <div class="h-1 w-full" style="background-color: #0F4229;"></div>
+                    <div class="h-1.5 w-full" style="background-color: #0F4229;"></div>
                     <div class="px-6 py-3 border-b border-gray-100 flex items-center justify-between">
                         <h2 class="text-sm font-extrabold" style="color: #0F4229;">
                             {{ $numCuatri > 0 ? $numCuatri.'° Cuatrimestre' : 'Sin cuatrimestre asignado' }}
