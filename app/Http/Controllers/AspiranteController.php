@@ -199,12 +199,17 @@ class AspiranteController extends Controller
 
         $esDoctorado = $programaSeleccionado?->nivel === 'doctorado';
 
+        $request->merge(['curp' => strtoupper((string) $request->curp)]);
+
         $request->validate([
             'nombre'            => 'required|string|max:100',
             'apellido_paterno'  => 'required|string|max:100',
             'apellido_materno'  => 'nullable|string|max:100',
             'curp'              => [
                 'required', 'string', 'size:18',
+                // Estructura real del CURP: 4 letras, AAMMDD, sexo (H/M), entidad federativa,
+                // 3 consonantes internas, homoclave y dígito verificador.
+                'regex:/^[A-Z]{1}[AEIOU]{1}[A-Z]{2}\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])[HM](AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QO|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[A-Z0-9]\d$/',
                 \Illuminate\Validation\Rule::unique('aspirantes', 'curp')->where('programa_id', $programaSeleccionado?->id),
             ],
             'fecha_nacimiento'  => 'required|date|before:today',
@@ -225,6 +230,8 @@ class AspiranteController extends Controller
                 $esDoctorado ? 'required' : 'nullable',
                 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120',
             ],
+        ], [
+            'curp.regex' => 'El CURP no tiene un formato válido. Verifica que esté escrito tal como aparece en tu documento oficial.',
         ]);
 
         $programa = $programaSeleccionado ?? abort(404);

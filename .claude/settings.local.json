@@ -205,7 +205,24 @@
       "Bash(mkdir -p /tmp/scratch_git)",
       "Bash(git show *)",
       "Bash(awk 'NR==280,NR==385' app/Http/Controllers/PagoController.php)",
-      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\"; grep -n \"grid grid-cols\\\\|rounded-xl px-5 py-3 bg-white border\\\\|Buscar por\\\\|<table\" {}')"
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\"; grep -n \"grid grid-cols\\\\|rounded-xl px-5 py-3 bg-white border\\\\|Buscar por\\\\|<table\" {}')",
+      "Bash(python -c \"import xml.dom.minidom as m; m.parse\\('diagrama-bloques.svg'\\); print\\('OK: XML valido'\\)\")",
+      "PowerShell($paths = @\\(\"$env:ProgramFiles\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe\",\"${env:ProgramFiles\\(x86\\)}\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe\"\\); foreach \\($p in $paths\\) { if \\(Test-Path $p\\) { Write-Output $p } })",
+      "Bash(mkdir -p diagramas)",
+      "Bash(mv diagrama-bloques.svg diagramas/diagrama-bloques.svg)",
+      "Bash(python \"C:\\\\Users\\\\MIGUEL~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Miguel--ngel-Desktop-UICM-Fase1\\\\4fa14954-1a03-4a7e-8b8e-3cef886969fa\\\\scratchpad\\\\fix_icons.py\")",
+      "Bash(mkdir -p docs/referencia-interna)",
+      "Bash(mv mapa-sistema.html flujo-admision.html docs/referencia-interna/)",
+      "Bash(python -c \"import xml.dom.minidom as m; m.parse\\('docs/manuales/manual-usuario-administrativo.html'\\); print\\('OK: XML valido'\\)\")",
+      "Bash(python -c \"import fitz\")",
+      "Bash(\"/c/Program Files/MiKTeX/miktex/bin/x64/pdftoppm\" -png -f 3 -l 3 -r 150 \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/manual-test.pdf\" \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/pdf-page\")",
+      "Bash(\"/c/Program Files/MiKTeX/miktex/bin/x64/pdftoppm\" -png -f 5 -l 5 -r 150 \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/manual-test.pdf\" \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/pdf-page5\")",
+      "Bash(\"/c/Program Files/MiKTeX/miktex/bin/x64/pdftoppm\" -png -f 1 -l 3 -r 110 \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/alumno-check.pdf\" \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/alcheck\")",
+      "Bash(\"/c/Program Files/MiKTeX/miktex/bin/x64/pdfinfo\" \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/alumno-check.pdf\")",
+      "Bash(\"/c/Program Files/MiKTeX/miktex/bin/x64/pdfinfo\" \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/profesor-check.pdf\")",
+      "Bash(\"/c/Program Files/MiKTeX/miktex/bin/x64/pdftoppm\" -png -f 1 -l 1 -r 100 \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/profesor-check.pdf\" \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/profcheck\")",
+      "Bash(\"/c/Program Files/MiKTeX/miktex/bin/x64/pdfinfo\" \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/aspirante-check.pdf\")",
+      "Bash(\"/c/Program Files/MiKTeX/miktex/bin/x64/pdftoppm\" -png -f 1 -l 1 -r 100 \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/aspirante-check.pdf\" \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/aspcheck\")"
     ]
   }
 }

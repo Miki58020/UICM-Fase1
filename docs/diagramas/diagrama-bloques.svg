@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1090" viewBox="0 0 1600 1090" font-family="Arial, Helvetica, sans-serif">
+
+  <defs>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0F4229"/>
+    </marker>
+    <marker id="arrowGold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a6d0a"/>
+    </marker>
+    <marker id="arrowGreenBig" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="26" markerHeight="26" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0F4229"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="1090" fill="#ffffff"/>
+
+  <!-- ================= TITLE ================= -->
+  <text x="50" y="45" font-size="26" font-weight="800" fill="#0F4229">UICM — Diagrama de Bloques del Sistema</text>
+  <text x="50" y="68" font-size="13" fill="#6b7280">Arquitectura técnica (capas) + módulos funcionales — Sistema Integral de Gestión para la UICM</text>
+
+  <!-- ================= SECTION 1: ACTORES ================= -->
+  <text x="50" y="112" font-size="12.5" font-weight="800" fill="#1F5FBF" letter-spacing="0.5">ACTORES Y ROLES DEL SISTEMA</text>
+
+  <!-- Actor boxes: x=50,354,658,962,1266  w=280 y=130 h=90 -->
+  <g font-size="9.5" fill="#6b7280">
+    <!-- c1 Aspirante -->
+    <rect x="50" y="130" width="280" height="90" rx="10" fill="#ffffff" stroke="#1F5FBF" stroke-width="2"/>
+    <text x="190" y="150" text-anchor="middle" fill="#1F5FBF" font-weight="700">PÚBLICO</text>
+    <text x="190" y="170" text-anchor="middle" font-size="15" font-weight="800" fill="#111827">ASPIRANTE</text>
+    <text x="190" y="190" text-anchor="middle" fill="#6b7280">Sin cuenta en el sistema</text>
+
+    <!-- c2 Alumno -->
+    <rect x="354" y="130" width="280" height="90" rx="10" fill="#ffffff" stroke="#1F5FBF" stroke-width="2"/>
+    <text x="494" y="150" text-anchor="middle" fill="#1F5FBF" font-weight="700">rol: alumno</text>
+    <text x="494" y="170" text-anchor="middle" font-size="15" font-weight="800" fill="#111827">ALUMNO</text>
+    <text x="494" y="190" text-anchor="middle" fill="#6b7280">Inscrito y con acceso al portal</text>
+
+    <!-- c3 Profesor -->
+    <rect x="658" y="130" width="280" height="90" rx="10" fill="#ffffff" stroke="#1F5FBF" stroke-width="2"/>
+    <text x="798" y="150" text-anchor="middle" fill="#1F5FBF" font-weight="700">rol: profesor</text>
+    <text x="798" y="170" text-anchor="middle" font-size="15" font-weight="800" fill="#111827">PROFESOR</text>
+    <text x="798" y="190" text-anchor="middle" fill="#6b7280">Titular de grupos/materias</text>
+
+    <!-- c4 Personal Administrativo -->
+    <rect x="962" y="130" width="280" height="90" rx="10" fill="#ffffff" stroke="#1F5FBF" stroke-width="2"/>
+    <text x="1102" y="150" text-anchor="middle" fill="#1F5FBF" font-weight="700">rol: admin / coordinación / control_escolar</text>
+    <text x="1102" y="170" text-anchor="middle" font-size="14" font-weight="800" fill="#111827">PERSONAL ADMINISTRATIVO</text>
+    <text x="1102" y="190" text-anchor="middle" fill="#6b7280">Control Escolar · Coordinación · Admin</text>
+
+    <!-- c5 Finanzas -->
+    <rect x="1266" y="130" width="280" height="90" rx="10" fill="#ffffff" stroke="#1F5FBF" stroke-width="2"/>
+    <text x="1406" y="150" text-anchor="middle" fill="#1F5FBF" font-weight="700">rol: finanzas</text>
+    <text x="1406" y="170" text-anchor="middle" font-size="15" font-weight="800" fill="#111827">FINANZAS</text>
+    <text x="1406" y="190" text-anchor="middle" fill="#6b7280">Validación de pagos e ingresos</text>
+  </g>
+
+  <!-- Arrows row1 -> row2 -->
+  <g stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreen)">
+    <line x1="190" y1="221" x2="190" y2="267"/>
+    <line x1="494" y1="221" x2="494" y2="267"/>
+    <line x1="798" y1="221" x2="798" y2="267"/>
+    <line x1="1102" y1="221" x2="1102" y2="267"/>
+    <line x1="1406" y1="221" x2="1406" y2="267"/>
+  </g>
+
+  <!-- ================= SECTION 2: FRONTEND ================= -->
+  <!-- Frontend boxes: x=50,354,658,962,1266 w=280 y=270 h=100 -->
+  <g>
+    <!-- c1 Sitio Público -->
+    <rect x="50" y="270" width="280" height="100" rx="10" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
+    <text x="190" y="288" text-anchor="middle" font-size="9.5" fill="#b0530a" font-weight="700">FRONTEND</text>
+    <text x="190" y="307" text-anchor="middle" font-size="13.5" font-weight="800" fill="#111827">Sitio Público</text>
+    <text x="190" y="325" text-anchor="middle" font-size="10.5" fill="#6b7280">Landing · Registro</text>
+    <text x="190" y="340" text-anchor="middle" font-size="10.5" fill="#6b7280">Oferta educativa</text>
+
+    <!-- c2 Portal Alumno -->
+    <rect x="354" y="270" width="280" height="100" rx="10" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
+    <text x="494" y="288" text-anchor="middle" font-size="9.5" fill="#b0530a" font-weight="700">FRONTEND</text>
+    <text x="494" y="307" text-anchor="middle" font-size="13.5" font-weight="800" fill="#111827">Portal Alumno</text>
+    <text x="494" y="325" text-anchor="middle" font-size="10.5" fill="#6b7280">Dashboard · Materias · Kárdex</text>
+    <text x="494" y="340" text-anchor="middle" font-size="10.5" fill="#6b7280">Finanzas · Documentos</text>
+
+    <!-- c3 Portal Profesor -->
+    <rect x="658" y="270" width="280" height="100" rx="10" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
+    <text x="798" y="288" text-anchor="middle" font-size="9.5" fill="#b0530a" font-weight="700">FRONTEND</text>
+    <text x="798" y="307" text-anchor="middle" font-size="13.5" font-weight="800" fill="#111827">Portal Profesor</text>
+    <text x="798" y="325" text-anchor="middle" font-size="10.5" fill="#6b7280">Calificaciones · Aclaraciones</text>
+    <text x="798" y="340" text-anchor="middle" font-size="10.5" fill="#6b7280">Horario · Grupos</text>
+
+    <!-- c4 Panel Administrativo -->
+    <rect x="962" y="270" width="280" height="100" rx="10" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
+    <text x="1102" y="288" text-anchor="middle" font-size="9.5" fill="#b0530a" font-weight="700">FRONTEND</text>
+    <text x="1102" y="307" text-anchor="middle" font-size="13.5" font-weight="800" fill="#111827">Panel Administrativo</text>
+    <text x="1102" y="325" text-anchor="middle" font-size="10.5" fill="#6b7280">Aspirantes · Alumnos · Catálogos</text>
+    <text x="1102" y="340" text-anchor="middle" font-size="10.5" fill="#6b7280">Usuarios · Configuración</text>
+
+    <!-- c5 Panel Finanzas -->
+    <rect x="1266" y="270" width="280" height="100" rx="10" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
+    <text x="1406" y="288" text-anchor="middle" font-size="9.5" fill="#b0530a" font-weight="700">FRONTEND</text>
+    <text x="1406" y="307" text-anchor="middle" font-size="13.5" font-weight="800" fill="#111827">Panel Finanzas</text>
+    <text x="1406" y="325" text-anchor="middle" font-size="10.5" fill="#6b7280">Validación de pagos</text>
+    <text x="1406" y="340" text-anchor="middle" font-size="10.5" fill="#6b7280">Estadísticas</text>
+  </g>
+  <text x="50" y="390" font-size="10.5" fill="#9ca3af">Blade Templates · Tailwind CSS · Alpine.js</text>
+
+  <!-- Big arrow: Frontend -> Backend -->
+  <line x1="800" y1="378" x2="800" y2="448" stroke="#0F4229" stroke-width="12" marker-end="url(#arrowGreenBig)"/>
+  <text x="820" y="418" font-size="11.5" fill="#374151" font-weight="600">Peticiones HTTP</text>
+  <text x="820" y="433" font-size="10" fill="#6b7280">routes/web.php + middleware rol:*</text>
+
+  <!-- ================= SECTION 3: BACKEND ================= -->
+  <text x="50" y="460" font-size="12.5" font-weight="800" fill="#0F4229" letter-spacing="0.5">CAPA DE APLICACIÓN — LARAVEL (Controllers · Middleware · Form Requests)</text>
+  <rect x="50" y="470" width="1090" height="255" rx="14" fill="#f0f9f4" stroke="#0F4229" stroke-width="2"/>
+
+  <!-- 6 module chips: cols x=70,426,782 w=336  rows y=505(h90),605(h90) -->
+  <g>
+    <rect x="70" y="505" width="336" height="90" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+    <text x="238" y="530" text-anchor="middle" font-size="13" font-weight="800" fill="#0F4229">Admisión</text>
+    <text x="238" y="550" text-anchor="middle" font-size="10" fill="#6b7280">Aspirantes · Inscripción</text>
+    <text x="238" y="564" text-anchor="middle" font-size="10" fill="#6b7280">Contacto</text>
+
+    <rect x="426" y="505" width="336" height="90" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+    <text x="594" y="527" text-anchor="middle" font-size="13" font-weight="800" fill="#0F4229">Académico</text>
+    <text x="594" y="545" text-anchor="middle" font-size="10" fill="#6b7280">Materias · Grupos · Calificaciones</text>
+    <text x="594" y="559" text-anchor="middle" font-size="10" fill="#6b7280">Carga académica · Horario</text>
+    <text x="594" y="573" text-anchor="middle" font-size="10" fill="#6b7280">Aclaraciones · Reinscripción</text>
+
+    <rect x="782" y="505" width="336" height="90" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+    <text x="950" y="530" text-anchor="middle" font-size="13" font-weight="800" fill="#0F4229">Finanzas</text>
+    <text x="950" y="550" text-anchor="middle" font-size="10" fill="#6b7280">Pagos · Tarifas</text>
+    <text x="950" y="564" text-anchor="middle" font-size="10" fill="#6b7280">Estado de cuenta</text>
+
+    <rect x="70" y="605" width="336" height="90" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+    <text x="238" y="630" text-anchor="middle" font-size="13" font-weight="800" fill="#0F4229">Usuarios &amp; Accesos</text>
+    <text x="238" y="650" text-anchor="middle" font-size="10" fill="#6b7280">Auth · Perfil</text>
+    <text x="238" y="664" text-anchor="middle" font-size="10" fill="#6b7280">Solicitud de contraseña</text>
+
+    <rect x="426" y="605" width="336" height="90" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+    <text x="594" y="630" text-anchor="middle" font-size="13" font-weight="800" fill="#0F4229">Documentos &amp; Expediente</text>
+    <text x="594" y="650" text-anchor="middle" font-size="10" fill="#6b7280">DocumentoAlumno</text>
+    <text x="594" y="664" text-anchor="middle" font-size="10" fill="#6b7280">Expediente</text>
+
+    <rect x="782" y="605" width="336" height="90" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+    <text x="950" y="627" text-anchor="middle" font-size="13" font-weight="800" fill="#0F4229">Configuración &amp; Avisos</text>
+    <text x="950" y="645" text-anchor="middle" font-size="10" fill="#6b7280">APIs MercadoPago/Correo</text>
+    <text x="950" y="659" text-anchor="middle" font-size="10" fill="#6b7280">Página principal · Notificaciones</text>
+  </g>
+
+  <!-- ================= SERVICIOS EXTERNOS ================= -->
+  <text x="1170" y="460" font-size="12.5" font-weight="800" fill="#8a6d0a" letter-spacing="0.5">SERVICIOS EXTERNOS</text>
+
+  <rect x="1170" y="497" width="380" height="105" rx="12" fill="#fdf3d0" stroke="#D4AF37" stroke-width="2"/>
+  <text x="1360" y="530" text-anchor="middle" font-size="14" font-weight="800" fill="#111827">MercadoPago</text>
+  <text x="1360" y="550" text-anchor="middle" font-size="10.5" fill="#6b7280">Bricks — cobro de inscripción</text>
+  <text x="1360" y="565" text-anchor="middle" font-size="10.5" fill="#6b7280">en línea (sandbox / producción)</text>
+
+  <rect x="1170" y="618" width="380" height="105" rx="12" fill="#fdf3d0" stroke="#D4AF37" stroke-width="2"/>
+  <text x="1360" y="651" text-anchor="middle" font-size="14" font-weight="800" fill="#111827">SMTP / Correo</text>
+  <text x="1360" y="671" text-anchor="middle" font-size="10.5" fill="#6b7280">Notificaciones automáticas</text>
+  <text x="1360" y="686" text-anchor="middle" font-size="10.5" fill="#6b7280">(folios, accesos, avisos)</text>
+
+  <!-- Bidirectional arrows Backend <-> Servicios externos -->
+  <g stroke="#8a6d0a" stroke-width="2.5" marker-end="url(#arrowGold)" marker-start="url(#arrowGold)">
+    <line x1="1143" y1="549" x2="1167" y2="549"/>
+    <line x1="1143" y1="670" x2="1167" y2="670"/>
+  </g>
+
+  <!-- Big arrow: Backend -> Data -->
+  <line x1="800" y1="730" x2="800" y2="800" stroke="#0F4229" stroke-width="12" marker-end="url(#arrowGreenBig)"/>
+  <text x="820" y="768" font-size="11.5" fill="#374151" font-weight="600">Eloquent ORM</text>
+
+  <!-- ================= SECTION 4: DATA ================= -->
+  <text x="50" y="805" font-size="12.5" font-weight="800" fill="#1F5FBF" letter-spacing="0.5">CAPA DE DATOS — SQLite (database/database.sqlite)</text>
+  <rect x="50" y="815" width="1500" height="145" rx="14" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
+
+  <!-- 16 entity pills: cols x=70,253,436,619,802,985,1168,1351 w=173  rows y=850,895 h=34 -->
+  <g font-size="10.5" fill="#164a99" font-weight="700">
+    <g fill="#cfe0f7" stroke="#1F5FBF">
+      <rect x="70"   y="850" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="253"  y="850" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="436"  y="850" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="619"  y="850" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="802"  y="850" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="985"  y="850" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="1168" y="850" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="1351" y="850" width="173" height="34" rx="17" stroke-width="1.2"/>
+
+      <rect x="70"   y="895" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="253"  y="895" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="436"  y="895" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="619"  y="895" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="802"  y="895" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="985"  y="895" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="1168" y="895" width="173" height="34" rx="17" stroke-width="1.2"/>
+      <rect x="1351" y="895" width="173" height="34" rx="17" stroke-width="1.2"/>
+    </g>
+
+    <text x="156.5"  y="871" text-anchor="middle">Alumno</text>
+    <text x="339.5"  y="871" text-anchor="middle">Aspirante</text>
+    <text x="522.5"  y="871" text-anchor="middle">Profesor</text>
+    <text x="705.5"  y="871" text-anchor="middle">Programa</text>
+    <text x="888.5"  y="871" text-anchor="middle">Periodo</text>
+    <text x="1071.5" y="871" text-anchor="middle">Materia</text>
+    <text x="1254.5" y="871" text-anchor="middle">Grupo</text>
+    <text x="1437.5" y="871" text-anchor="middle" font-size="9.5">Carga Académica</text>
+
+    <text x="156.5"  y="916" text-anchor="middle" font-size="9.5">Calificación</text>
+    <text x="339.5"  y="916" text-anchor="middle" font-size="9.5">Aclaración</text>
+    <text x="522.5"  y="916" text-anchor="middle">Pago</text>
+    <text x="705.5"  y="916" text-anchor="middle">Tarifa</text>
+    <text x="888.5"  y="916" text-anchor="middle">Documento</text>
+    <text x="1071.5" y="916" text-anchor="middle">Contacto</text>
+    <text x="1254.5" y="916" text-anchor="middle">Usuario</text>
+    <text x="1437.5" y="916" text-anchor="middle" font-size="9.5">Configuración</text>
+  </g>
+
+  <!-- ================= LEGEND ================= -->
+  <g font-size="11" fill="#374151">
+    <rect x="50" y="990" width="16" height="16" rx="3" fill="#ffffff" stroke="#1F5FBF" stroke-width="2"/>
+    <text x="72" y="1002">Actores / Roles</text>
+
+    <rect x="220" y="990" width="16" height="16" rx="3" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
+    <text x="242" y="1002">Presentación (Frontend)</text>
+
+    <rect x="440" y="990" width="16" height="16" rx="3" fill="#f0f9f4" stroke="#0F4229" stroke-width="2"/>
+    <text x="462" y="1002">Aplicación (Laravel)</text>
+
+    <rect x="640" y="990" width="16" height="16" rx="3" fill="#fdf3d0" stroke="#D4AF37" stroke-width="2"/>
+    <text x="662" y="1002">Servicios externos</text>
+
+    <rect x="830" y="990" width="16" height="16" rx="3" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
+    <text x="852" y="1002">Datos (SQLite)</text>
+  </g>
+
+  <text x="50" y="1050" font-size="10" fill="#9ca3af">Sistema Integral de Gestión para la UICM · Stack: Laravel + SQLite + Tailwind CSS + Alpine.js · Integraciones: MercadoPago Bricks, SMTP</text>
+
+</svg>
