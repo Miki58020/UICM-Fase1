@@ -1,0 +1,942 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2344" height="1737.5" viewBox="0 0 2344 1737.5" font-family="Arial, Helvetica, sans-serif">
+<defs>
+  <marker id="fkArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#374151"/></marker>
+  <marker id="fkArrowSoft" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b0530a"/></marker>
+</defs>
+<rect x="0" y="0" width="2344" height="1737.5" fill="#ffffff"/>
+<text x="40" y="42" font-size="26" font-weight="800" fill="#0F4229">UICM — Diagrama de la Base de Datos</text>
+<text x="40" y="66" font-size="13" fill="#6b7280">Esquema físico completo · SQLite (database/database.sqlite) · 23 tablas de negocio, columnas, tipos y llaves foráneas</text>
+<text x="190" y="130" text-anchor="middle" font-size="12.5" font-weight="800" fill="#374151" letter-spacing="0.3">Núcleo / Usuarios</text>
+<line x1="40" y1="140" x2="340" y2="140" stroke="#d1d5db" stroke-width="1"/>
+<text x="586" y="130" text-anchor="middle" font-size="12.5" font-weight="800" fill="#374151" letter-spacing="0.3">Admisión</text>
+<line x1="436" y1="140" x2="736" y2="140" stroke="#d1d5db" stroke-width="1"/>
+<text x="926" y="130" text-anchor="middle" font-size="12.5" font-weight="800" fill="#374151" letter-spacing="0.3">Académico (catálogos)</text>
+<line x1="776" y1="140" x2="1076" y2="140" stroke="#d1d5db" stroke-width="1"/>
+<text x="1370" y="130" text-anchor="middle" font-size="12.5" font-weight="800" fill="#374151" letter-spacing="0.3">Académico (alumno)</text>
+<line x1="1220" y1="140" x2="1520" y2="140" stroke="#d1d5db" stroke-width="1"/>
+<text x="1814" y="130" text-anchor="middle" font-size="12.5" font-weight="800" fill="#374151" letter-spacing="0.3">Finanzas</text>
+<line x1="1664" y1="140" x2="1964" y2="140" stroke="#d1d5db" stroke-width="1"/>
+<text x="2154" y="130" text-anchor="middle" font-size="12.5" font-weight="800" fill="#374151" letter-spacing="0.3">Configuración &amp; Marketing</text>
+<line x1="2004" y1="140" x2="2304" y2="140" stroke="#d1d5db" stroke-width="1"/>
+<path d="M 340 537.75 H 374 V 282 H 340" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 340 739.25 H 390 V 282 H 340" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 736 187 C 756 187, 756 187, 776 187" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1076 762.5 H 1110 V 522.25 H 1076" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1076 762.5 H 1126 V 266.5 H 1076" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1076 979.5 H 1142 V 266.5 H 1076" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1076 979.5 H 1158 V 522.25 H 1076" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1076 1204.25 H 1174 V 266.5 H 1076" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1220 187 C 780 187, 780 187, 340 187" fill="none" stroke="#d1a15c" stroke-width="1.6" opacity="0.75" stroke-dasharray="5,4" marker-end="url(#fkArrowSoft)"/>
+<path d="M 1220 187 C 978 187, 978 187, 736 187" fill="none" stroke="#d1a15c" stroke-width="1.6" opacity="0.75" stroke-dasharray="5,4" marker-end="url(#fkArrowSoft)"/>
+<path d="M 1220 187 C 1148 187, 1148 187, 1076 187" fill="none" stroke="#d1a15c" stroke-width="1.6" opacity="0.75" stroke-dasharray="5,4" marker-end="url(#fkArrowSoft)"/>
+<path d="M 1220 187 C 1148 187, 1148 435, 1076 435" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1220 187 C 1148 187, 1148 915.5, 1076 915.5" fill="none" stroke="#d1a15c" stroke-width="1.6" opacity="0.75" stroke-dasharray="5,4" marker-end="url(#fkArrowSoft)"/>
+<path d="M 1220 590 C 1148 590, 1148 915.5, 1076 915.5" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1220 590 C 1148 590, 1148 1132.5, 1076 1132.5" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1220 590 C 780 590, 780 466, 340 466" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1220 590 C 1148 590, 1148 435, 1076 435" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1220 590 C 780 590, 780 187, 340 187" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1520 1002.75 H 1554 V 344 H 1520" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1520 1002.75 H 1570 V 723.75 H 1520" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1520 1250.75 H 1586 V 344 H 1520" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1520 1250.75 H 1602 V 723.75 H 1520" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1220 1148 C 780 1148, 780 466, 340 466" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1220 1148 C 780 1148, 780 187, 340 187" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1520 1506.5 H 1618 V 344 H 1520" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1664 187 C 1200 187, 1200 187, 736 187" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<path d="M 1664 187 C 1592 187, 1592 187, 1520 187" fill="none" stroke="#9ca3af" stroke-width="1.6" opacity="0.75" marker-end="url(#fkArrow)"/>
+<g>
+<rect x="40" y="170" width="300" height="224" rx="6" fill="#ffffff" stroke="#1F5FBF" stroke-width="1.6"/>
+<rect x="40" y="170" width="300" height="30" rx="6" fill="#1F5FBF"/>
+<rect x="40" y="194" width="300" height="6" fill="#1F5FBF"/>
+<text x="50" y="190" font-size="12.5" font-weight="800" fill="#ffffff">users</text>
+<text x="50" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="74" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="330" y="211" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="50" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">name</text>
+<text x="330" y="226.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="50" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">apellido_paterno<tspan fill="#9ca3af">?</tspan></text>
+<text x="330" y="242" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(100)</text>
+<text x="50" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">apellido_materno<tspan fill="#9ca3af">?</tspan></text>
+<text x="330" y="257.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(100)</text>
+<text x="50" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">email <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="330" y="273" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="50" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">rol</text>
+<text x="330" y="288.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="50" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">foto<tspan fill="#9ca3af">?</tspan></text>
+<text x="330" y="304" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="50" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">email_verified_at<tspan fill="#9ca3af">?</tspan></text>
+<text x="330" y="319.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="50" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">password</text>
+<text x="330" y="335" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="50" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">remember_token<tspan fill="#9ca3af">?</tspan></text>
+<text x="330" y="350.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(100)</text>
+<text x="50" y="366" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="366" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="330" y="366" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="50" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="330" y="381.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="40" y="449" width="300" height="177.5" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="40" y="449" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="40" y="473" width="300" height="6" fill="#0F4229"/>
+<text x="50" y="469" font-size="12.5" font-weight="800" fill="#ffffff">profesores</text>
+<text x="50" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="74" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="330" y="490" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="50" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="74" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">user_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="330" y="505.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="50" y="521" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="521" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nombre</text>
+<text x="330" y="521" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="50" y="536.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="536.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">correo <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="330" y="536.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="50" y="552" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="552" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">telefono<tspan fill="#9ca3af">?</tspan></text>
+<text x="330" y="552" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="50" y="567.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="567.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">especialidad<tspan fill="#9ca3af">?</tspan></text>
+<text x="330" y="567.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="50" y="583" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="583" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">activo</text>
+<text x="330" y="583" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="50" y="598.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="598.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="330" y="598.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="50" y="614" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="614" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="330" y="614" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="40" y="681.5" width="300" height="115.5" rx="6" fill="#ffffff" stroke="#1F5FBF" stroke-width="1.6"/>
+<rect x="40" y="681.5" width="300" height="30" rx="6" fill="#1F5FBF"/>
+<rect x="40" y="705.5" width="300" height="6" fill="#1F5FBF"/>
+<text x="50" y="701.5" font-size="12.5" font-weight="800" fill="#ffffff">solicitudes_contrasena</text>
+<text x="50" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="74" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="330" y="722.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="50" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="74" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">user_id</text>
+<text x="330" y="738" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="50" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">estado</text>
+<text x="330" y="753.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">enum('pendiente','atendida')</text>
+<text x="50" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="330" y="769" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="50" y="784.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="74" y="784.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="330" y="784.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="436" y="170" width="300" height="379" rx="6" fill="#ffffff" stroke="#EFAD5A" stroke-width="1.6"/>
+<rect x="436" y="170" width="300" height="30" rx="6" fill="#EFAD5A"/>
+<rect x="436" y="194" width="300" height="6" fill="#EFAD5A"/>
+<text x="446" y="190" font-size="12.5" font-weight="800" fill="#ffffff">aspirantes</text>
+<text x="446" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="470" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="726" y="211" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="446" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">folio <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="726" y="226.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="446" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nombre</text>
+<text x="726" y="242" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">apellido_paterno</text>
+<text x="726" y="257.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">apellido_materno<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="273" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">email <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="726" y="288.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">telefono<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="304" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="446" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">curp <tspan fill="#7c3aed" font-size="8">UQ</tspan><tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="319.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(18)</text>
+<text x="446" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_nacimiento<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="335" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="446" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="470" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">programa_id</text>
+<text x="726" y="350.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="446" y="366" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="366" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">generacion<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="366" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(10)</text>
+<text x="446" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">acta_nacimiento_url<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="381.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="397" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="397" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">certificado_url<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="397" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="412.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="412.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">identificacion_url<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="412.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="428" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="428" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">comprobante_domicilio_url<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="428" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="443.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="443.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">foto_url<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="443.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">curp_url<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="459" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">titulo_url<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="474.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">estado</text>
+<text x="726" y="490" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">enum('pendiente','aprobado','rechazado')</text>
+<text x="446" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">observaciones<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="505.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="446" y="521" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="521" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="726" y="521" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="446" y="536.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="536.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="726" y="536.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="436" y="604" width="300" height="177.5" rx="6" fill="#ffffff" stroke="#EFAD5A" stroke-width="1.6"/>
+<rect x="436" y="604" width="300" height="30" rx="6" fill="#EFAD5A"/>
+<rect x="436" y="628" width="300" height="6" fill="#EFAD5A"/>
+<text x="446" y="624" font-size="12.5" font-weight="800" fill="#ffffff">contactos</text>
+<text x="446" y="645" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="470" y="645" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="726" y="645" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="446" y="660.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="660.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nombre</text>
+<text x="726" y="660.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="676" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="676" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">correo</text>
+<text x="726" y="676" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="691.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="691.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">telefono</text>
+<text x="726" y="691.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(10)</text>
+<text x="446" y="707" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="707" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">interes</text>
+<text x="726" y="707" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="446" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">mensaje<tspan fill="#9ca3af">?</tspan></text>
+<text x="726" y="722.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="446" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">atendido</text>
+<text x="726" y="738" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="446" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="726" y="753.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="446" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="726" y="769" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="436" y="836.5" width="300" height="131" rx="6" fill="#ffffff" stroke="#EFAD5A" stroke-width="1.6"/>
+<rect x="436" y="836.5" width="300" height="30" rx="6" fill="#EFAD5A"/>
+<rect x="436" y="860.5" width="300" height="6" fill="#EFAD5A"/>
+<text x="446" y="856.5" font-size="12.5" font-weight="800" fill="#ffffff">contacto_intereses</text>
+<text x="446" y="877.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="470" y="877.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="726" y="877.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="446" y="893" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="893" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">etiqueta</text>
+<text x="726" y="893" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(100)</text>
+<text x="446" y="908.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="908.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">orden</text>
+<text x="726" y="908.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">smallint</text>
+<text x="446" y="924" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="924" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">activo</text>
+<text x="726" y="924" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="446" y="939.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="939.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="726" y="939.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="446" y="955" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="470" y="955" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="726" y="955" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="776" y="170" width="300" height="193" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="776" y="170" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="776" y="194" width="300" height="6" fill="#0F4229"/>
+<text x="786" y="190" font-size="12.5" font-weight="800" fill="#ffffff">programas</text>
+<text x="786" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="810" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1066" y="211" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">clave <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="1066" y="226.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(10)</text>
+<text x="786" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nombre</text>
+<text x="1066" y="242" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="786" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nivel</text>
+<text x="1066" y="257.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">enum('licenciatura','maestria','doctorado')</text>
+<text x="786" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">duracion_cuatrimestres</text>
+<text x="1066" y="273" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="786" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">total_creditos<tspan fill="#9ca3af">?</tspan></text>
+<text x="1066" y="288.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">smallint</text>
+<text x="786" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">activo</text>
+<text x="1066" y="304" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="786" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">numero_carrera<tspan fill="#9ca3af">?</tspan></text>
+<text x="1066" y="319.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="786" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1066" y="335" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="786" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1066" y="350.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="776" y="418" width="300" height="208.5" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="776" y="418" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="776" y="442" width="300" height="6" fill="#0F4229"/>
+<text x="786" y="438" font-size="12.5" font-weight="800" fill="#ffffff">periodos</text>
+<text x="786" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="810" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1066" y="459" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nombre <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="1066" y="474.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(10)</text>
+<text x="786" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">label</text>
+<text x="1066" y="490" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(80)</text>
+<text x="786" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_inicio_registro<tspan fill="#9ca3af">?</tspan></text>
+<text x="1066" y="505.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="786" y="521" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="521" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_fin_registro<tspan fill="#9ca3af">?</tspan></text>
+<text x="1066" y="521" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="786" y="536.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="536.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_inicio_clases<tspan fill="#9ca3af">?</tspan></text>
+<text x="1066" y="536.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="786" y="552" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="552" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_fin_clases<tspan fill="#9ca3af">?</tspan></text>
+<text x="1066" y="552" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="786" y="567.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="567.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">estado</text>
+<text x="1066" y="567.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="786" y="583" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="583" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">auto</text>
+<text x="1066" y="583" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="786" y="598.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="598.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1066" y="598.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="786" y="614" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="614" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1066" y="614" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="776" y="681.5" width="300" height="162" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="776" y="681.5" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="776" y="705.5" width="300" height="6" fill="#0F4229"/>
+<text x="786" y="701.5" font-size="12.5" font-weight="800" fill="#ffffff">periodo_programa</text>
+<text x="786" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="810" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1066" y="722.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="810" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">periodo_id</text>
+<text x="1066" y="738" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="810" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">programa_id</text>
+<text x="1066" y="753.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">numero_carrera</text>
+<text x="1066" y="769" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">smallint</text>
+<text x="786" y="784.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="784.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">numero_generacion</text>
+<text x="1066" y="784.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">smallint</text>
+<text x="786" y="800" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="800" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">activo</text>
+<text x="1066" y="800" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="786" y="815.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="815.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1066" y="815.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="786" y="831" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="831" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1066" y="831" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="776" y="898.5" width="300" height="162" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="776" y="898.5" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="776" y="922.5" width="300" height="6" fill="#0F4229"/>
+<text x="786" y="918.5" font-size="12.5" font-weight="800" fill="#ffffff">grupos</text>
+<text x="786" y="939.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="810" y="939.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1066" y="939.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="955" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="955" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">clave <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="1066" y="955" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="786" y="970.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="810" y="970.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">programa_id</text>
+<text x="1066" y="970.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="986" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="810" y="986" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">periodo_id</text>
+<text x="1066" y="986" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="1001.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1001.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">cuatrimestre</text>
+<text x="1066" y="1001.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="786" y="1017" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1017" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">capacidad</text>
+<text x="1066" y="1017" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">smallint</text>
+<text x="786" y="1032.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1032.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1066" y="1032.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="786" y="1048" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1048" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1066" y="1048" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="776" y="1115.5" width="300" height="177.5" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="776" y="1115.5" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="776" y="1139.5" width="300" height="6" fill="#0F4229"/>
+<text x="786" y="1135.5" font-size="12.5" font-weight="800" fill="#ffffff">materias</text>
+<text x="786" y="1156.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="810" y="1156.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1066" y="1156.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="1172" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1172" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">clave <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="1066" y="1172" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="786" y="1187.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1187.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nombre</text>
+<text x="1066" y="1187.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="786" y="1203" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1203" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">creditos</text>
+<text x="1066" y="1203" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="786" y="1218.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1218.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">cuatrimestre</text>
+<text x="1066" y="1218.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="786" y="1234" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="810" y="1234" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">programa_id</text>
+<text x="1066" y="1234" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="786" y="1249.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1249.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">activo</text>
+<text x="1066" y="1249.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="786" y="1265" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1265" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1066" y="1265" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="786" y="1280.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="810" y="1280.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1066" y="1280.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="1220" y="170" width="300" height="348" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="1220" y="170" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="1220" y="194" width="300" height="6" fill="#0F4229"/>
+<text x="1230" y="190" font-size="12.5" font-weight="800" fill="#ffffff">alumnos</text>
+<text x="1230" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="1254" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1510" y="211" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">matricula <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="1510" y="226.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="1230" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#b0530a">fk</text>
+<text x="1254" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">user_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="242" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#b0530a">fk</text>
+<text x="1254" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">aspirante_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="257.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#b0530a">fk</text>
+<text x="1254" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">programa_id</text>
+<text x="1510" y="273" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">periodo_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="288.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#b0530a">fk</text>
+<text x="1254" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">grupo_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="304" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nombre</text>
+<text x="1510" y="319.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1230" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">apellido_paterno</text>
+<text x="1510" y="335" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1230" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">apellido_materno<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="350.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1230" y="366" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="366" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">email <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="1510" y="366" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1230" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">cuatrimestre_actual</text>
+<text x="1510" y="381.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="1230" y="397" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="397" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">creditos_acumulados</text>
+<text x="1510" y="397" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">smallint</text>
+<text x="1230" y="412.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="412.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">estado</text>
+<text x="1510" y="412.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1230" y="428" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="428" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">migrado</text>
+<text x="1510" y="428" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="1230" y="443.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="443.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">curp<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="443.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(18)</text>
+<text x="1230" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">telefono<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="459" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="1230" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_nacimiento<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="474.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="1230" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1510" y="490" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1230" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1510" y="505.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="1220" y="573" width="300" height="301.5" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="1220" y="573" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="1220" y="597" width="300" height="6" fill="#0F4229"/>
+<text x="1230" y="593" font-size="12.5" font-weight="800" fill="#ffffff">carga_academica</text>
+<text x="1230" y="614" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="1254" y="614" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1510" y="614" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="629.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="629.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">grupo_id</text>
+<text x="1510" y="629.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="645" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="645" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">materia_id</text>
+<text x="1510" y="645" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="660.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="660.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">profesor_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="660.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="676" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="676" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">dia_semana<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="676" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="1230" y="691.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="691.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">hora_inicio<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="691.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(5)</text>
+<text x="1230" y="707" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="707" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">hora_fin<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="707" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(5)</text>
+<text x="1230" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">aula<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="722.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(100)</text>
+<text x="1230" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">periodo_id</text>
+<text x="1510" y="738" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_inicio<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="753.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="1230" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_fin<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="769" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="1230" y="784.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="784.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">estado_revision<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="784.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="1230" y="800" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="800" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">motivo_rechazo<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="800" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="1230" y="815.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="815.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">revisado_por<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="815.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="831" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="831" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">revisado_at<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="831" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1230" y="846.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="846.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1510" y="846.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1230" y="862" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="862" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1510" y="862" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="1220" y="929.5" width="300" height="146.5" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="1220" y="929.5" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="1220" y="953.5" width="300" height="6" fill="#0F4229"/>
+<text x="1230" y="949.5" font-size="12.5" font-weight="800" fill="#ffffff">calificaciones</text>
+<text x="1230" y="970.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="1254" y="970.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1510" y="970.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="986" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="986" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">alumno_id</text>
+<text x="1510" y="986" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="1001.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="1001.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">carga_academica_id</text>
+<text x="1510" y="1001.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="1017" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1017" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">tipo</text>
+<text x="1510" y="1017" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">enum('final','extraordinario')</text>
+<text x="1230" y="1032.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1032.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">calificacion</text>
+<text x="1510" y="1032.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">decimal(4,1)</text>
+<text x="1230" y="1048" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1048" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1510" y="1048" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1230" y="1063.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1063.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1510" y="1063.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="1220" y="1131" width="300" height="239.5" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="1220" y="1131" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="1220" y="1155" width="300" height="6" fill="#0F4229"/>
+<text x="1230" y="1151" font-size="12.5" font-weight="800" fill="#ffffff">aclaraciones_calificaciones</text>
+<text x="1230" y="1172" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="1254" y="1172" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1510" y="1172" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="1187.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="1187.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">alumno_id</text>
+<text x="1510" y="1187.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="1203" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="1203" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">carga_academica_id</text>
+<text x="1510" y="1203" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="1218.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1218.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">tipo</text>
+<text x="1510" y="1218.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">enum('final','extraordinario')</text>
+<text x="1230" y="1234" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="1234" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">profesor_id</text>
+<text x="1510" y="1234" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="1249.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1249.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">calificacion_propuesta</text>
+<text x="1510" y="1249.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">decimal(4,1)</text>
+<text x="1230" y="1265" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1265" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">motivo</text>
+<text x="1510" y="1265" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="1230" y="1280.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1280.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">estado</text>
+<text x="1510" y="1280.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">enum('pendiente','aprobada','rechazada')</text>
+<text x="1230" y="1296" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="1296" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">revisado_por<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="1296" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="1311.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1311.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">revisado_at<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="1311.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1230" y="1327" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1327" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">motivo_rechazo<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="1327" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="1230" y="1342.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1342.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1510" y="1342.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1230" y="1358" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1358" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1510" y="1358" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="1220" y="1425.5" width="300" height="162" rx="6" fill="#ffffff" stroke="#0F4229" stroke-width="1.6"/>
+<rect x="1220" y="1425.5" width="300" height="30" rx="6" fill="#0F4229"/>
+<rect x="1220" y="1449.5" width="300" height="6" fill="#0F4229"/>
+<text x="1230" y="1445.5" font-size="12.5" font-weight="800" fill="#ffffff">documentos_alumno</text>
+<text x="1230" y="1466.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="1254" y="1466.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1510" y="1466.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="1482" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1254" y="1482" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">alumno_id</text>
+<text x="1510" y="1482" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1230" y="1497.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1497.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">tipo <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="1510" y="1497.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(40)</text>
+<text x="1230" y="1513" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1513" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">archivo_path</text>
+<text x="1510" y="1513" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1230" y="1528.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1528.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_subida</text>
+<text x="1510" y="1528.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1230" y="1544" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1544" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_vigencia<tspan fill="#9ca3af">?</tspan></text>
+<text x="1510" y="1544" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="1230" y="1559.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1559.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1510" y="1559.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1230" y="1575" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1254" y="1575" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1510" y="1575" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="1664" y="170" width="300" height="317" rx="6" fill="#ffffff" stroke="#D4AF37" stroke-width="1.6"/>
+<rect x="1664" y="170" width="300" height="30" rx="6" fill="#D4AF37"/>
+<rect x="1664" y="194" width="300" height="6" fill="#D4AF37"/>
+<text x="1674" y="190" font-size="12.5" font-weight="800" fill="#ffffff">pagos</text>
+<text x="1674" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="1698" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1954" y="211" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1674" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1698" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">aspirante_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="226.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1674" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#164a99">FK</text>
+<text x="1698" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#164a99">alumno_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="242" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1674" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">concepto</text>
+<text x="1954" y="257.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">enum('inscripcion','reinscripcion','cuatrimestre','colegiatura','otro')</text>
+<text x="1674" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">periodo</text>
+<text x="1954" y="273" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(10)</text>
+<text x="1674" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="288.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">mes<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="288.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(7)</text>
+<text x="1674" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="304" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">monto</text>
+<text x="1954" y="304" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">decimal(10,2)</text>
+<text x="1674" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="319.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">descuento</text>
+<text x="1954" y="319.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">decimal(5,2)</text>
+<text x="1674" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="335" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">monto_original<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="335" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">decimal(10,2)</text>
+<text x="1674" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="350.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">comprobante<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="350.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1674" y="366" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="366" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">mp_preference_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="366" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1674" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">mp_payment_id<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="381.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1674" y="397" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="397" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_vencimiento<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="397" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="1674" y="412.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="412.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">fecha_pago<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="412.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="1674" y="428" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="428" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">estado</text>
+<text x="1954" y="428" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">enum('pendiente','aprobado','rechazado')</text>
+<text x="1674" y="443.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="443.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">observaciones<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="443.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="1674" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1954" y="459" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1674" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1954" y="474.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="1664" y="542" width="300" height="239.5" rx="6" fill="#ffffff" stroke="#D4AF37" stroke-width="1.6"/>
+<rect x="1664" y="542" width="300" height="30" rx="6" fill="#D4AF37"/>
+<rect x="1664" y="566" width="300" height="6" fill="#D4AF37"/>
+<text x="1674" y="562" font-size="12.5" font-weight="800" fill="#ffffff">tarifas_inscripcion</text>
+<text x="1674" y="583" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="1698" y="583" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="1954" y="583" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="1674" y="598.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="598.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nivel <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="1954" y="598.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="1674" y="614" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="614" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">tipo <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="1954" y="614" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string(20)</text>
+<text x="1674" y="629.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="629.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">monto</text>
+<text x="1954" y="629.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">decimal(10,2)</text>
+<text x="1674" y="645" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="645" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">descuento</text>
+<text x="1954" y="645" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">decimal(5,2)</text>
+<text x="1674" y="660.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="660.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">descuento_fecha_inicio<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="660.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="1674" y="676" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="676" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">descuento_fecha_fin<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="676" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">date</text>
+<text x="1674" y="691.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="691.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">dia_limite_pago<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="691.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="1674" y="707" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="707" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">dias_descuento_pronto_pago<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="707" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="1674" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">dias_anticipacion_cobro<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="722.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="1674" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">dias_para_pagar<tspan fill="#9ca3af">?</tspan></text>
+<text x="1954" y="738" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="1674" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="1954" y="753.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="1674" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="1698" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="1954" y="769" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="2004" y="170" width="300" height="115.5" rx="6" fill="#ffffff" stroke="#7c3aed" stroke-width="1.6"/>
+<rect x="2004" y="170" width="300" height="30" rx="6" fill="#7c3aed"/>
+<rect x="2004" y="194" width="300" height="6" fill="#7c3aed"/>
+<text x="2014" y="190" font-size="12.5" font-weight="800" fill="#ffffff">configuracion_sitio</text>
+<text x="2014" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="2038" y="211" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="2294" y="211" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="2014" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="226.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">clave <tspan fill="#7c3aed" font-size="8">UQ</tspan></text>
+<text x="2294" y="226.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="242" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">valor<tspan fill="#9ca3af">?</tspan></text>
+<text x="2294" y="242" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="2014" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="257.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="2294" y="257.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="2014" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="273" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="2294" y="273" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="2004" y="340.5" width="300" height="224" rx="6" fill="#ffffff" stroke="#7c3aed" stroke-width="1.6"/>
+<rect x="2004" y="340.5" width="300" height="30" rx="6" fill="#7c3aed"/>
+<rect x="2004" y="364.5" width="300" height="6" fill="#7c3aed"/>
+<text x="2014" y="360.5" font-size="12.5" font-weight="800" fill="#ffffff">configuracion_correo</text>
+<text x="2014" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="2038" y="381.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="2294" y="381.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="2014" y="397" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="397" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">mailer</text>
+<text x="2294" y="397" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="412.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="412.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">host<tspan fill="#9ca3af">?</tspan></text>
+<text x="2294" y="412.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="428" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="428" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">port<tspan fill="#9ca3af">?</tspan></text>
+<text x="2294" y="428" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">int</text>
+<text x="2014" y="443.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="443.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">username<tspan fill="#9ca3af">?</tspan></text>
+<text x="2294" y="443.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="459" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">password<tspan fill="#9ca3af">?</tspan></text>
+<text x="2294" y="459" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="2014" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="474.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">from_address</text>
+<text x="2294" y="474.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="490" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">from_name</text>
+<text x="2294" y="490" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="505.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">dominio_institucional</text>
+<text x="2294" y="505.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="521" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="521" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">activo</text>
+<text x="2294" y="521" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="2014" y="536.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="536.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="2294" y="536.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="2014" y="552" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="552" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="2294" y="552" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="2004" y="619.5" width="300" height="193" rx="6" fill="#ffffff" stroke="#7c3aed" stroke-width="1.6"/>
+<rect x="2004" y="619.5" width="300" height="30" rx="6" fill="#7c3aed"/>
+<rect x="2004" y="643.5" width="300" height="6" fill="#7c3aed"/>
+<text x="2014" y="639.5" font-size="12.5" font-weight="800" fill="#ffffff">configuracion_mercadopago</text>
+<text x="2014" y="660.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="2038" y="660.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="2294" y="660.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="2014" y="676" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="676" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">public_key</text>
+<text x="2294" y="676" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="691.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="691.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">access_token</text>
+<text x="2294" y="691.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="2014" y="707" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="707" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">back_url_success</text>
+<text x="2294" y="707" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="722.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">back_url_pending</text>
+<text x="2294" y="722.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="738" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">back_url_failure</text>
+<text x="2294" y="738" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="753.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">notification_url<tspan fill="#9ca3af">?</tspan></text>
+<text x="2294" y="753.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="769" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">activo</text>
+<text x="2294" y="769" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="2014" y="784.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="784.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="2294" y="784.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="2014" y="800" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="800" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="2294" y="800" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="2004" y="867.5" width="300" height="131" rx="6" fill="#ffffff" stroke="#7c3aed" stroke-width="1.6"/>
+<rect x="2004" y="867.5" width="300" height="30" rx="6" fill="#7c3aed"/>
+<rect x="2004" y="891.5" width="300" height="6" fill="#7c3aed"/>
+<text x="2014" y="887.5" font-size="12.5" font-weight="800" fill="#ffffff">carrusel_imagenes</text>
+<text x="2014" y="908.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="2038" y="908.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="2294" y="908.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="2014" y="924" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="924" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">imagen_path</text>
+<text x="2294" y="924" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="939.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="939.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">orden</text>
+<text x="2294" y="939.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="2014" y="955" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="955" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">activo</text>
+<text x="2294" y="955" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="2014" y="970.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="970.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="2294" y="970.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="2014" y="986" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="986" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="2294" y="986" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g>
+<rect x="2004" y="1053.5" width="300" height="177.5" rx="6" fill="#ffffff" stroke="#7c3aed" stroke-width="1.6"/>
+<rect x="2004" y="1053.5" width="300" height="30" rx="6" fill="#7c3aed"/>
+<rect x="2004" y="1077.5" width="300" height="6" fill="#7c3aed"/>
+<text x="2014" y="1073.5" font-size="12.5" font-weight="800" fill="#ffffff">oferta_programas</text>
+<text x="2014" y="1094.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#8a6d0a">PK</text>
+<text x="2038" y="1094.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="700" fill="#111827">id</text>
+<text x="2294" y="1094.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">bigint</text>
+<text x="2014" y="1110" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="1110" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nombre</text>
+<text x="2294" y="1110" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">string</text>
+<text x="2014" y="1125.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="1125.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">nivel</text>
+<text x="2294" y="1125.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">enum('licenciatura','maestria','doctorado')</text>
+<text x="2014" y="1141" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="1141" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">descripcion<tspan fill="#9ca3af">?</tspan></text>
+<text x="2294" y="1141" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">text</text>
+<text x="2014" y="1156.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="1156.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">puntos_clave<tspan fill="#9ca3af">?</tspan></text>
+<text x="2294" y="1156.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">json</text>
+<text x="2014" y="1172" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="1172" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">orden</text>
+<text x="2294" y="1172" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">tinyint</text>
+<text x="2014" y="1187.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="1187.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">activo</text>
+<text x="2294" y="1187.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">boolean</text>
+<text x="2014" y="1203" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="1203" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">created_at</text>
+<text x="2294" y="1203" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+<text x="2014" y="1218.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="800" fill="#9ca3af"></text>
+<text x="2038" y="1218.5" font-family="Consolas, Menlo, monospace" font-size="9.5" font-weight="400" fill="#374151">updated_at</text>
+<text x="2294" y="1218.5" text-anchor="end" font-family="Consolas, Menlo, monospace" font-size="8.5" fill="#9ca3af">timestamp</text>
+</g>
+<g font-size="11" fill="#374151">
+<rect x="40" y="1617.5" width="16" height="16" rx="3" fill="#ffffff" stroke="#1F5FBF" stroke-width="2"/>
+<text x="62" y="1630.5">Núcleo / Usuarios</text>
+<rect x="340" y="1617.5" width="16" height="16" rx="3" fill="#ffffff" stroke="#EFAD5A" stroke-width="2"/>
+<text x="362" y="1630.5">Admisión</text>
+<rect x="640" y="1617.5" width="16" height="16" rx="3" fill="#ffffff" stroke="#0F4229" stroke-width="2"/>
+<text x="662" y="1630.5">Académico</text>
+<rect x="940" y="1617.5" width="16" height="16" rx="3" fill="#ffffff" stroke="#D4AF37" stroke-width="2"/>
+<text x="962" y="1630.5">Finanzas</text>
+<rect x="1240" y="1617.5" width="16" height="16" rx="3" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<text x="1262" y="1630.5">Configuración &amp; Marketing</text>
+<text x="40" y="1651.5" font-family="Consolas, Menlo, monospace" font-size="10" font-weight="800" fill="#8a6d0a">PK</text><text x="66" y="1651.5" font-size="10.5">Llave primaria</text>
+<text x="180" y="1651.5" font-family="Consolas, Menlo, monospace" font-size="10" font-weight="800" fill="#164a99">FK</text><text x="206" y="1651.5" font-size="10.5">Llave foránea (constraint real en BD)</text>
+<text x="560" y="1651.5" font-family="Consolas, Menlo, monospace" font-size="10" font-weight="800" fill="#b0530a">fk</text><text x="586" y="1651.5" font-size="10.5">Relación lógica sin constraint en BD (línea punteada) — ver diccionario de datos</text>
+<text x="1180" y="1651.5" font-size="10.5" fill="#7c3aed" font-weight="700">UQ</text><text x="1206" y="1651.5" font-size="10.5">Columna con restricción unique (simple o compuesta)</text></g>
+</svg>

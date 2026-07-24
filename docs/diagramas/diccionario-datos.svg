@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1026" viewBox="0 0 1500 1026" font-family="Arial, Helvetica, sans-serif">
+<rect x="0" y="0" width="1500" height="1026" fill="#ffffff"/>
+<text x="40" y="42" font-size="26" font-weight="800" fill="#0F4229">UICM — Índice del Diccionario de Datos</text>
+<text x="40" y="66" font-size="13" fill="#6b7280">Mapa de las 23 tablas de negocio por módulo — el detalle completo de cada columna está en diccionario-datos.md</text>
+<rect x="30" y="140" width="1440" height="130" rx="14" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
+<text x="52" y="174" font-size="15" font-weight="800" fill="#1F5FBF">Núcleo / Usuarios</text>
+<text x="1448" y="174" text-anchor="end" font-size="11.5" fill="#6b7280">3 tablas</text>
+<rect x="52" y="196" width="220" height="50" rx="10" fill="#ffffff" stroke="#1F5FBF" stroke-width="1.5"/>
+<text x="162" y="218" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">users</text>
+<text x="162" y="234" text-anchor="middle" font-size="9.5" fill="#6b7280">12 columnas</text>
+<rect x="292" y="196" width="220" height="50" rx="10" fill="#ffffff" stroke="#1F5FBF" stroke-width="1.5"/>
+<text x="402" y="218" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">profesores</text>
+<text x="402" y="234" text-anchor="middle" font-size="9.5" fill="#6b7280">9 columnas</text>
+<rect x="532" y="196" width="220" height="50" rx="10" fill="#ffffff" stroke="#1F5FBF" stroke-width="1.5"/>
+<text x="642" y="218" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">solicitudes_contrasena</text>
+<text x="642" y="234" text-anchor="middle" font-size="9.5" fill="#6b7280">5 columnas</text>
+<rect x="30" y="296" width="1440" height="130" rx="14" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
+<text x="52" y="330" font-size="15" font-weight="800" fill="#EFAD5A">Admisión</text>
+<text x="1448" y="330" text-anchor="end" font-size="11.5" fill="#6b7280">3 tablas</text>
+<rect x="52" y="352" width="220" height="50" rx="10" fill="#ffffff" stroke="#EFAD5A" stroke-width="1.5"/>
+<text x="162" y="374" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">aspirantes</text>
+<text x="162" y="390" text-anchor="middle" font-size="9.5" fill="#6b7280">22 columnas</text>
+<rect x="292" y="352" width="220" height="50" rx="10" fill="#ffffff" stroke="#EFAD5A" stroke-width="1.5"/>
+<text x="402" y="374" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">contactos</text>
+<text x="402" y="390" text-anchor="middle" font-size="9.5" fill="#6b7280">9 columnas</text>
+<rect x="532" y="352" width="220" height="50" rx="10" fill="#ffffff" stroke="#EFAD5A" stroke-width="1.5"/>
+<text x="642" y="374" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">contacto_intereses</text>
+<text x="642" y="390" text-anchor="middle" font-size="9.5" fill="#6b7280">6 columnas</text>
+<rect x="30" y="452" width="1440" height="196" rx="14" fill="#f0f9f4" stroke="#0F4229" stroke-width="2"/>
+<text x="52" y="486" font-size="15" font-weight="800" fill="#0F4229">Académico</text>
+<text x="1448" y="486" text-anchor="end" font-size="11.5" fill="#6b7280">10 tablas</text>
+<rect x="52" y="508" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="162" y="530" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">programas</text>
+<text x="162" y="546" text-anchor="middle" font-size="9.5" fill="#6b7280">10 columnas</text>
+<rect x="292" y="508" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="402" y="530" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">periodos</text>
+<text x="402" y="546" text-anchor="middle" font-size="9.5" fill="#6b7280">11 columnas</text>
+<rect x="532" y="508" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="642" y="530" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">periodo_programa</text>
+<text x="642" y="546" text-anchor="middle" font-size="9.5" fill="#6b7280">8 columnas</text>
+<rect x="772" y="508" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="882" y="530" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">grupos</text>
+<text x="882" y="546" text-anchor="middle" font-size="9.5" fill="#6b7280">8 columnas</text>
+<rect x="1012" y="508" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="1122" y="530" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">materias</text>
+<text x="1122" y="546" text-anchor="middle" font-size="9.5" fill="#6b7280">9 columnas</text>
+<rect x="1252" y="508" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="1362" y="530" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">alumnos</text>
+<text x="1362" y="546" text-anchor="middle" font-size="9.5" fill="#6b7280">20 columnas</text>
+<rect x="52" y="574" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="162" y="596" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">carga_academica</text>
+<text x="162" y="612" text-anchor="middle" font-size="9.5" fill="#6b7280">17 columnas</text>
+<rect x="292" y="574" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="402" y="596" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">calificaciones</text>
+<text x="402" y="612" text-anchor="middle" font-size="9.5" fill="#6b7280">7 columnas</text>
+<rect x="532" y="574" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="642" y="596" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">aclaraciones_calificaciones</text>
+<text x="642" y="612" text-anchor="middle" font-size="9.5" fill="#6b7280">13 columnas</text>
+<rect x="772" y="574" width="220" height="50" rx="10" fill="#ffffff" stroke="#0F4229" stroke-width="1.5"/>
+<text x="882" y="596" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">documentos_alumno</text>
+<text x="882" y="612" text-anchor="middle" font-size="9.5" fill="#6b7280">8 columnas</text>
+<rect x="30" y="674" width="1440" height="130" rx="14" fill="#fdf3d0" stroke="#D4AF37" stroke-width="2"/>
+<text x="52" y="708" font-size="15" font-weight="800" fill="#D4AF37">Finanzas</text>
+<text x="1448" y="708" text-anchor="end" font-size="11.5" fill="#6b7280">2 tablas</text>
+<rect x="52" y="730" width="220" height="50" rx="10" fill="#ffffff" stroke="#D4AF37" stroke-width="1.5"/>
+<text x="162" y="752" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">pagos</text>
+<text x="162" y="768" text-anchor="middle" font-size="9.5" fill="#6b7280">18 columnas</text>
+<rect x="292" y="730" width="220" height="50" rx="10" fill="#ffffff" stroke="#D4AF37" stroke-width="1.5"/>
+<text x="402" y="752" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">tarifas_inscripcion</text>
+<text x="402" y="768" text-anchor="middle" font-size="9.5" fill="#6b7280">13 columnas</text>
+<rect x="30" y="830" width="1440" height="130" rx="14" fill="#f1e9fd" stroke="#7c3aed" stroke-width="2"/>
+<text x="52" y="864" font-size="15" font-weight="800" fill="#7c3aed">Configuración &amp; Marketing</text>
+<text x="1448" y="864" text-anchor="end" font-size="11.5" fill="#6b7280">5 tablas</text>
+<rect x="52" y="886" width="220" height="50" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="162" y="908" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">configuracion_sitio</text>
+<text x="162" y="924" text-anchor="middle" font-size="9.5" fill="#6b7280">5 columnas</text>
+<rect x="292" y="886" width="220" height="50" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="402" y="908" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">configuracion_correo</text>
+<text x="402" y="924" text-anchor="middle" font-size="9.5" fill="#6b7280">12 columnas</text>
+<rect x="532" y="886" width="220" height="50" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="642" y="908" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">configuracion_mercadopago</text>
+<text x="642" y="924" text-anchor="middle" font-size="9.5" fill="#6b7280">10 columnas</text>
+<rect x="772" y="886" width="220" height="50" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="882" y="908" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">carrusel_imagenes</text>
+<text x="882" y="924" text-anchor="middle" font-size="9.5" fill="#6b7280">6 columnas</text>
+<rect x="1012" y="886" width="220" height="50" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1122" y="908" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="11.5" font-weight="700" fill="#111827">oferta_programas</text>
+<text x="1122" y="924" text-anchor="middle" font-size="9.5" fill="#6b7280">9 columnas</text>
+<text x="40" y="1008" font-size="10" fill="#9ca3af">23 tablas de negocio · database/database.sqlite · ver diccionario-datos.md para nombre, tipo, nulabilidad, default y descripción de cada columna</text>
+</svg>
