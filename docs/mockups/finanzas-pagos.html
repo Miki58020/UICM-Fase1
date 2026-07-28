@@ -6,9 +6,11 @@
 <title>MOCKUP · Validación de pagos · UICM</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; }
 body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #F5F6FA; }
 a { color: inherit; }
-.canvas { width: 1920px; min-height: 1080px; display: flex; background: #F5F6FA; position: relative; }
+.scale-wrap { width: 100%; overflow: hidden; }
+.canvas { width: 1920px; min-height: 1080px; display: flex; background: #F5F6FA; position: relative; transform-origin: top left; }
 .canvas-row { display: flex; flex: 1; }
 .tag {
   position: fixed; top: 0; left: 0; right: 0; height: 34px;
@@ -63,6 +65,7 @@ a { color: inherit; }
 .topbar .brand { display: flex; align-items: center; gap: 12px; }
 .topbar .brand .logo { width: 38px; height: 38px; border-radius: 10px; background: #0F4229; color: #D4AF37; display: flex; align-items: center; justify-content: center; font-weight: 800; }
 .topbar .brand span { color: #0F4229; font-weight: 800; font-size: 17px; }
+.topbar .right-group { display: flex; align-items: center; gap: 28px; }
 .topbar .links { display: flex; gap: 28px; }
 .topbar .links a { color: #6b7280; font-size: 14px; font-weight: 600; text-decoration: none; }
 .topbar .links a.active { color: #0F4229; }
@@ -193,16 +196,16 @@ footer.foot-note { margin-top: 30px; font-size: 13px; color: #9ca3af; max-width:
 </head>
 <body>
 <div class="tag"><span>MOCKUP — alta fidelidad · Pantalla 35 · Validación de pagos (Finanzas)</span><span><a href="index.html"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg> Índice de mockups</a> <span class="rt">GET /finanzas/pagos</span></span></div>
-<div class="canvas" style="flex-direction:column;">
+<div id="scaleWrap" class="scale-wrap">
+<div class="canvas" id="canvasEl" style="flex-direction:column;">
     <div class="authbar">
       <div class="left">
         <div class="brandmark">U</div>
-        <span class="rolewrap"><b>ADMINISTRADOR</b> · Personal UICM</span>
+        <span class="rolewrap"><b>ADMINISTRADOR</b> — Personal UICM</span>
       </div>
       <div style="position:relative;">
         <button class="userbtn" onclick="document.getElementById('userddown').classList.toggle('open')">
           <div class="avatar">A</div>
-          <span class="uname">Personal UICM</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <div class="ddown" id="userddown">
@@ -215,6 +218,7 @@ footer.foot-note { margin-top: 30px; font-size: 13px; color: #9ca3af; max-width:
     <div class="canvas-row"><div class="sidebar"><div class="brand"><div class="logo">U</div><span>UICM</span></div><div class="role">Panel administrativo</div><nav><a class="" href="admin-dashboard.html"><span class="dot"></span> Inicio</a><div class="grp">Administración</div><a class="" href="admin-apis.html"><span class="dot"></span> APIs</a><a class="" href="admin-solicitudes-contrasena.html"><span class="dot"></span> Contraseñas</a><a class="" href="admin-contactos.html"><span class="dot"></span> Mensajes de contacto</a><a class="" href="admin-pagina-principal.html"><span class="dot"></span> Página principal</a><a class="" href="admin-usuarios.html"><span class="dot"></span> Usuarios del sistema</a><div class="grp">Coordinación Académica</div><a class="" href="admin-aclaraciones.html"><span class="dot"></span> Aclaraciones</a><a class="" href="admin-alta-masiva.html"><span class="dot"></span> Alta masiva de alumnos</a><a class="" href="admin-calificaciones.html"><span class="dot"></span> Calificaciones</a><a class="" href="admin-carga-academica.html"><span class="dot"></span> Carga académica</a><a class="" href="admin-periodos.html"><span class="dot"></span> Cuatrimestres</a><a class="" href="admin-grupos.html"><span class="dot"></span> Grupos</a><a class="" href="admin-materias.html"><span class="dot"></span> Materias</a><a class="" href="admin-profesores.html"><span class="dot"></span> Profesores</a><a class="" href="admin-programas.html"><span class="dot"></span> Programas</a><div class="grp">Control Escolar</div><a class="" href="admin-alumnos.html"><span class="dot"></span> Alumnos</a><a class="" href="admin-aspirantes.html"><span class="dot"></span> Aspirantes</a><a class="" href="admin-expediente.html"><span class="dot"></span> Expedientes</a><a class="" href="admin-inscripciones.html"><span class="dot"></span> Inscripciones</a><a class="" href="admin-reinscripciones.html"><span class="dot"></span> Reinscripciones</a><div class="grp">Finanzas</div><a class="" href="finanzas-alumnos.html"><span class="dot"></span> Alumnos al corriente</a><a class="" href="admin-tarifas.html"><span class="dot"></span> Conceptos de pago</a><a class="" href="finanzas-estadisticas.html"><span class="dot"></span> Estadísticas</a><a class="active" href="finanzas-pagos.html"><span class="dot"></span> Validación de pagos</a></nav></div><div class="content"><div class="header"><div><p class="eyebrow-label">Finanzas</p><h1>Validación de pagos</h1><div class="title-bar"></div></div></div>
     <div class="kpis"><div class="kpi"><div class="bar" style="background:#D4AF37"></div><div class="body"><div class="icon" style="background:#fef4e8;color:#D4AF37"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="value">4</div><div class="label">PAGOS POR REVISAR</div></div></div><div class="kpi"><div class="bar" style="background:#0F4229"></div><div class="body"><div class="icon" style="background:#f0f9f4;color:#0F4229"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F4229" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="value">52</div><div class="label">PAGOS APROBADOS</div></div></div><div class="kpi"><div class="bar" style="background:#6b7280"></div><div class="body"><div class="icon" style="background:#f3f4f6;color:#6b7280"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="value">2</div><div class="label">PAGOS RECHAZADOS</div></div></div><div class="kpi"><div class="bar" style="background:#D4AF37"></div><div class="body"><div class="icon" style="background:#fdf8ec;color:#D4AF37"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="value">$96,200</div><div class="label">RECAUDADO MXN</div></div></div></div>
     <div class="table-card"><div class="bar" style="background:#0F4229"></div><table><thead><tr><th>Referencia</th><th>Nombre</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead><tbody><tr><td class="mono">MP-88213</td><td>Diana Martínez López</td><td>Inscripción</td><td>$2,500.00</td><td>20/07/2026</td><td><span class="pill" style="background:#fef4e8;color:#b45309">Pendiente</span></td><td class="acciones"><a class="achip green" href="#">Aprobar</a><a class="achip red" href="#">Rechazar</a></td></tr><tr><td class="mono">MP-88190</td><td>Carlos Hernández Ruiz</td><td>Colegiatura</td><td>$1,850.00</td><td>18/07/2026</td><td><span class="pill" style="background:#dcfce7;color:#0F4229">Aprobado</span></td><td class="acciones"><a class="achip green" href="#">Aprobar</a><a class="achip red" href="#">Rechazar</a></td></tr><tr><td colspan="7" style="color:#d1d5db;text-align:center;padding:16px;">···</td></tr></tbody></table></div></div></div></div>
+</div>
 <script>
 function switchTab(group, key, btn) {
   document.querySelectorAll('[data-tabgroup="' + group + '"]').forEach(function (el) {
@@ -231,6 +235,18 @@ function switchTab(group, key, btn) {
     var btn = document.querySelector('[data-tabbtn][data-tabkey="' + hash + '"]');
     if (btn) btn.click();
   }
+})();
+
+(function () {
+  function fit() {
+    var s = Math.min(1, (window.innerWidth || document.documentElement.clientWidth) / 1920);
+    var c = document.getElementById('canvasEl');
+    var w = document.getElementById('scaleWrap');
+    c.style.transform = 'scale(' + s + ')';
+    w.style.height = Math.round(1080 * s) + 'px';
+  }
+  window.addEventListener('resize', fit);
+  fit();
 })();
 </script>
 </body>

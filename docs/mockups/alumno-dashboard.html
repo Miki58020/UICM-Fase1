@@ -6,9 +6,11 @@
 <title>MOCKUP · Dashboard alumno · UICM</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; }
 body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #F5F6FA; }
 a { color: inherit; }
-.canvas { width: 1920px; min-height: 1080px; display: flex; background: #F5F6FA; position: relative; }
+.scale-wrap { width: 100%; overflow: hidden; }
+.canvas { width: 1920px; min-height: 1080px; display: flex; background: #F5F6FA; position: relative; transform-origin: top left; }
 .canvas-row { display: flex; flex: 1; }
 .tag {
   position: fixed; top: 0; left: 0; right: 0; height: 34px;
@@ -63,6 +65,7 @@ a { color: inherit; }
 .topbar .brand { display: flex; align-items: center; gap: 12px; }
 .topbar .brand .logo { width: 38px; height: 38px; border-radius: 10px; background: #0F4229; color: #D4AF37; display: flex; align-items: center; justify-content: center; font-weight: 800; }
 .topbar .brand span { color: #0F4229; font-weight: 800; font-size: 17px; }
+.topbar .right-group { display: flex; align-items: center; gap: 28px; }
 .topbar .links { display: flex; gap: 28px; }
 .topbar .links a { color: #6b7280; font-size: 14px; font-weight: 600; text-decoration: none; }
 .topbar .links a.active { color: #0F4229; }
@@ -193,16 +196,16 @@ footer.foot-note { margin-top: 30px; font-size: 13px; color: #9ca3af; max-width:
 </head>
 <body>
 <div class="tag"><span>MOCKUP — alta fidelidad · Pantalla 10 · Dashboard (Alumno)</span><span><a href="index.html"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg> Índice de mockups</a> <span class="rt">GET /alumno</span></span></div>
-<div class="canvas" style="flex-direction:column;">
+<div id="scaleWrap" class="scale-wrap">
+<div class="canvas" id="canvasEl" style="flex-direction:column;">
     <div class="authbar">
       <div class="left">
         <div class="brandmark">U</div>
-        <span class="rolewrap"><b>ALUMNO</b> · Diana Martínez</span>
+        <span class="rolewrap"><b>ALUMNO</b> — Diana Martínez</span>
       </div>
       <div style="position:relative;">
         <button class="userbtn" onclick="document.getElementById('userddown').classList.toggle('open')">
           <div class="avatar">D</div>
-          <span class="uname">Diana Martínez</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <div class="ddown" id="userddown">
@@ -218,6 +221,7 @@ footer.foot-note { margin-top: 30px; font-size: 13px; color: #9ca3af; max-width:
     <div class="kpis"><div class="kpi"><div class="bar" style="background:#EFAD5A"></div><div class="body"><div class="icon" style="background:#fef4e8;color:#EFAD5A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EFAD5A" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div><div class="value">6</div><div class="label">MATERIAS INSCRITAS</div></div></div><div class="kpi"><div class="bar" style="background:#0F4229"></div><div class="body"><div class="icon" style="background:#f0f9f4;color:#0F4229"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F4229" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div><div class="value">8.5</div><div class="label">PROMEDIO GENERAL</div></div></div><div class="kpi"><div class="bar" style="background:#D4AF37"></div><div class="body"><div class="icon" style="background:#fdf8ec;color:#D4AF37"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg></div><div class="value">48</div><div class="label">CRÉDITOS ACUMULADOS</div></div></div><div class="kpi"><div class="bar" style="background:#dc2626"></div><div class="body"><div class="icon" style="background:#fef2f2;color:#dc2626"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><div class="value">1</div><div class="label">PAGO PENDIENTE</div></div></div></div>
     <div class="panels c3"><div class="panel"><div class="bar" style="background:#0F4229"></div><div class="phead"><h2>Calificaciones recientes</h2><a href="alumno-materias.html">Ver todas →</a></div><div class="body-scroll"><div class="prow"><span class="t">Estadística I</span><span class="pill" style="background:#dcfce7;color:#0F4229">8.5</span></div><div class="prow"><span class="t">Introducción a la Psicología</span><span class="pill" style="background:#dcfce7;color:#0F4229">9.0</span></div></div></div><div class="panel"><div class="bar" style="background:#D4AF37"></div><div class="phead"><h2>Documentos</h2></div><div class="body-scroll"><div class="prow"><span class="t">Identificación oficial</span><span class="pill" style="background:#fef4e8;color:#b45309">Por vencer</span></div><div class="prow"><span class="t">Comprobante de domicilio</span><span class="pill" style="background:#dcfce7;color:#0F4229">Vigente</span></div></div></div><div class="panel"><div class="bar" style="background:#EFAD5A"></div><div class="phead"><h2>Próximo pago</h2></div><div class="body-scroll"><div class="prow"><span class="t">Colegiatura — julio</span><span class="pill" style="background:#fef4e8;color:#b45309">15/08/2026</span></div></div></div></div>
     </div></div></div>
+</div>
 <script>
 function switchTab(group, key, btn) {
   document.querySelectorAll('[data-tabgroup="' + group + '"]').forEach(function (el) {
@@ -234,6 +238,18 @@ function switchTab(group, key, btn) {
     var btn = document.querySelector('[data-tabbtn][data-tabkey="' + hash + '"]');
     if (btn) btn.click();
   }
+})();
+
+(function () {
+  function fit() {
+    var s = Math.min(1, (window.innerWidth || document.documentElement.clientWidth) / 1920);
+    var c = document.getElementById('canvasEl');
+    var w = document.getElementById('scaleWrap');
+    c.style.transform = 'scale(' + s + ')';
+    w.style.height = Math.round(1080 * s) + 'px';
+  }
+  window.addEventListener('resize', fit);
+  fit();
 })();
 </script>
 </body>

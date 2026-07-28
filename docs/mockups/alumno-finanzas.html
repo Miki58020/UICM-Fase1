@@ -6,9 +6,11 @@
 <title>MOCKUP · Finanzas · UICM</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; }
 body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #F5F6FA; }
 a { color: inherit; }
-.canvas { width: 1920px; min-height: 1080px; display: flex; background: #F5F6FA; position: relative; }
+.scale-wrap { width: 100%; overflow: hidden; }
+.canvas { width: 1920px; min-height: 1080px; display: flex; background: #F5F6FA; position: relative; transform-origin: top left; }
 .canvas-row { display: flex; flex: 1; }
 .tag {
   position: fixed; top: 0; left: 0; right: 0; height: 34px;
@@ -63,6 +65,7 @@ a { color: inherit; }
 .topbar .brand { display: flex; align-items: center; gap: 12px; }
 .topbar .brand .logo { width: 38px; height: 38px; border-radius: 10px; background: #0F4229; color: #D4AF37; display: flex; align-items: center; justify-content: center; font-weight: 800; }
 .topbar .brand span { color: #0F4229; font-weight: 800; font-size: 17px; }
+.topbar .right-group { display: flex; align-items: center; gap: 28px; }
 .topbar .links { display: flex; gap: 28px; }
 .topbar .links a { color: #6b7280; font-size: 14px; font-weight: 600; text-decoration: none; }
 .topbar .links a.active { color: #0F4229; }
@@ -193,16 +196,16 @@ footer.foot-note { margin-top: 30px; font-size: 13px; color: #9ca3af; max-width:
 </head>
 <body>
 <div class="tag"><span>MOCKUP — alta fidelidad · Pantalla 15 · Finanzas (alumno)</span><span><a href="index.html"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg> Índice de mockups</a> <span class="rt">GET /alumno/finanzas</span></span></div>
-<div class="canvas" style="flex-direction:column;">
+<div id="scaleWrap" class="scale-wrap">
+<div class="canvas" id="canvasEl" style="flex-direction:column;">
     <div class="authbar">
       <div class="left">
         <div class="brandmark">U</div>
-        <span class="rolewrap"><b>ALUMNO</b> · Diana Martínez</span>
+        <span class="rolewrap"><b>ALUMNO</b> — Diana Martínez</span>
       </div>
       <div style="position:relative;">
         <button class="userbtn" onclick="document.getElementById('userddown').classList.toggle('open')">
           <div class="avatar">D</div>
-          <span class="uname">Diana Martínez</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <div class="ddown" id="userddown">
@@ -213,6 +216,7 @@ footer.foot-note { margin-top: 30px; font-size: 13px; color: #9ca3af; max-width:
       </div>
     </div>
     <div class="canvas-row"><div class="sidebar"><div class="brand"><div class="logo">U</div><span>UICM</span></div><nav><a class="" href="alumno-dashboard.html"><span class="dot"></span> Inicio</a><div class="grp">Portal del alumno</div><a class="" href="alumno-documentos.html"><span class="dot"></span> Documentos</a><a class="active" href="alumno-finanzas.html"><span class="dot"></span> Finanzas</a><a class="" href="alumno-kardex.html"><span class="dot"></span> Historial académico</a><a class="" href="alumno-horario.html"><span class="dot"></span> Horario</a><a class="" href="alumno-materias.html"><span class="dot"></span> Materias</a></nav></div><div class="content"><div class="header"><div><p class="eyebrow-label">Portal del Alumno</p><h1>Finanzas</h1><div class="title-bar"></div></div></div><div class="kpis"><div class="kpi"><div class="bar" style="background:#0F4229"></div><div class="body"><div class="icon" style="background:#f0f9f4;color:#0F4229"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F4229" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><div class="value">$1,850</div><div class="label">COLEGIATURA MENSUAL</div></div></div><div class="kpi"><div class="bar" style="background:#dc2626"></div><div class="body"><div class="icon" style="background:#fef2f2;color:#dc2626"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div><div class="value">1</div><div class="label">PAGO PENDIENTE</div></div></div><div class="kpi"><div class="bar" style="background:#D4AF37"></div><div class="body"><div class="icon" style="background:#fdf8ec;color:#D4AF37"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="value">5</div><div class="label">PAGOS REALIZADOS</div></div></div><div class="kpi"><div class="bar" style="background:#EFAD5A"></div><div class="body"><div class="icon" style="background:#fef4e8;color:#EFAD5A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EFAD5A" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="value">$9,250</div><div class="label">TOTAL PAGADO</div></div></div></div><div class="table-card"><div class="bar" style="background:#0F4229"></div><table><thead><tr><th>Concepto</th><th>Monto</th><th>Fecha límite</th><th>Acciones</th></tr></thead><tbody><tr><td class="mono">Colegiatura — julio</td><td>$1,850.00</td><td>15/08/2026</td><td class="acciones"><a class="achip gold" href="#">Pagar</a></td></tr><tr><td class="mono">Colegiatura — junio</td><td>$1,850.00</td><td>15/07/2026</td><td class="acciones"><a class="achip gold" href="#">Pagar</a></td></tr><tr><td colspan="4" style="color:#d1d5db;text-align:center;padding:16px;">···</td></tr></tbody></table></div></div></div></div>
+</div>
 <script>
 function switchTab(group, key, btn) {
   document.querySelectorAll('[data-tabgroup="' + group + '"]').forEach(function (el) {
@@ -229,6 +233,18 @@ function switchTab(group, key, btn) {
     var btn = document.querySelector('[data-tabbtn][data-tabkey="' + hash + '"]');
     if (btn) btn.click();
   }
+})();
+
+(function () {
+  function fit() {
+    var s = Math.min(1, (window.innerWidth || document.documentElement.clientWidth) / 1920);
+    var c = document.getElementById('canvasEl');
+    var w = document.getElementById('scaleWrap');
+    c.style.transform = 'scale(' + s + ')';
+    w.style.height = Math.round(1080 * s) + 'px';
+  }
+  window.addEventListener('resize', fit);
+  fit();
 })();
 </script>
 </body>
