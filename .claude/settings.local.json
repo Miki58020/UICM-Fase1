@@ -235,7 +235,11 @@
       "Bash(mv \"/c/Users/Miguel Ángel/Desktop/UICM-Fase1/docs/mockups/_build\" \"/c/Users/Miguel Ángel/Desktop/mockups-generator-UICM\")",
       "Read(//c/Users/Miguel Ángel/Desktop/**)",
       "Bash(python -c \"import ast; ast.parse\\(open\\('generate_wireframes.py',encoding='utf-8'\\).read\\(\\)\\)\")",
-      "Bash(python generate_wireframes.py)"
+      "Bash(python generate_wireframes.py)",
+      "Bash(python -c \"print\\('ok'\\)\")",
+      "Bash(node *)",
+      "Bash(mkdir -p /c/Users/Angel/Desktop/Wireframes-SVG-editables)",
+      "Bash(mv *.svg matriz-trazabilidad.md /c/Users/Angel/Desktop/Wireframes-SVG-editables/)"
     ]
   }
 }
