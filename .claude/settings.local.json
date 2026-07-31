@@ -239,7 +239,8 @@
       "Bash(python -c \"print\\('ok'\\)\")",
       "Bash(node *)",
       "Bash(mkdir -p /c/Users/Angel/Desktop/Wireframes-SVG-editables)",
-      "Bash(mv *.svg matriz-trazabilidad.md /c/Users/Angel/Desktop/Wireframes-SVG-editables/)"
+      "Bash(mv *.svg matriz-trazabilidad.md /c/Users/Angel/Desktop/Wireframes-SVG-editables/)",
+      "Bash(python -c \"import cairosvg; print\\('cairosvg ok'\\)\")"
     ]
   }
 }
