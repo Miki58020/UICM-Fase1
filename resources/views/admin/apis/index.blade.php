@@ -59,6 +59,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
 
         {{-- ═══════════════ TAB: MERCADOPAGO ═══════════════ --}}
         <div x-show="tab === 'mercadopago'"
+             x-cloak
              x-transition:enter="transition ease-out duration-150"
              x-transition:enter-start="opacity-0 translate-y-1"
              x-transition:enter-end="opacity-100 translate-y-0">
@@ -166,6 +167,7 @@ if ($errors->has('mailer') || $errors->has('host') || $errors->has('port') || $e
 
         {{-- ═══════════════ TAB: CORREO ═══════════════ --}}
         <div x-show="tab === 'correo'"
+             x-cloak
              x-transition:enter="transition ease-out duration-150"
              x-transition:enter-start="opacity-0 translate-y-1"
              x-transition:enter-end="opacity-100 translate-y-0">

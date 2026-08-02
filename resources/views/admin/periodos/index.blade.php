@@ -48,7 +48,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                     style="background-color: #0F4229;"
                     onmouseover="this.style.backgroundColor='#0a2e1c'"
                     onmouseout="this.style.backgroundColor='#0F4229'"
-                    x-show="periodoId !== null">
+                    x-show="periodoId !== null" x-cloak>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
                 </svg>

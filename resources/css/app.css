@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Oculta elementos con x-show hasta que Alpine.js carga, evitando el parpadeo (FOUC) */
+[x-cloak] {
+    display: none !important;
+}
+
 /* Scroll discreto y estilizado para todas las áreas con scroll del sitio (tablas, paneles, modales) */
 .overflow-y-auto,
 .overflow-x-auto,

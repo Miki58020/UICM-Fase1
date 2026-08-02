@@ -264,7 +264,10 @@
       "Bash(npm install *)",
       "Bash(python generar_cronograma.py)",
       "Bash(python *)",
-      "Bash(PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python generar_cronograma.py)"
+      "Bash(PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python generar_cronograma.py)",
+      "Bash(sed 's/^[0-9_]*//')",
+      "Bash(cd *)",
+      "Bash(gh repo *)"
     ]
   }
 }

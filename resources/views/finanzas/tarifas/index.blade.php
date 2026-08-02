@@ -67,6 +67,7 @@ $finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
         {{-- Paneles --}}
         @foreach($tabs as $key => $info)
         <div x-show="tab === '{{ $key }}'"
+             x-cloak
              x-transition:enter="transition ease-out duration-150"
              x-transition:enter-start="opacity-0 translate-y-1"
              x-transition:enter-end="opacity-100 translate-y-0">

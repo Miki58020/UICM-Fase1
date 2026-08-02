@@ -514,7 +514,7 @@
             @endphp
             <a href="{{ route('admin.solicitudes-contrasena.index', ['tipo' => 'administrativos']) }}"
                @click="sidebarOpen = false"
-               data-tooltip="Contraseñas"
+               data-tooltip="Recuperación de contraseñas"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.solicitudes-contrasena.*') && request()->query('tipo') === 'administrativos' ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -522,7 +522,7 @@
                           d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
                              a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                 </svg>
-                <span class="flex-1 nav-link-text">Contraseñas</span>
+                <span class="flex-1 nav-link-text">Recuperación de contraseñas</span>
                 @if($pendientesAdmins > 0)
                     <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
                           style="background-color: #dc2626; color: #fff;">
@@ -640,7 +640,7 @@
             @endphp
             <a href="{{ route('admin.contrasenas-profesores.index') }}"
                @click="sidebarOpen = false"
-               data-tooltip="Contraseñas"
+               data-tooltip="Recuperación de contraseñas"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.contrasenas-profesores.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -648,7 +648,7 @@
                           d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
                              a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                 </svg>
-                <span class="flex-1 nav-link-text">Contraseñas</span>
+                <span class="flex-1 nav-link-text">Recuperación de contraseñas</span>
                 @if($pendientesProfesores > 0)
                     <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
                           style="background-color: #dc2626; color: #fff;">
@@ -770,7 +770,7 @@
             @endphp
             <a href="{{ route('admin.solicitudes-contrasena.index', ['tipo' => 'alumnos']) }}"
                @click="sidebarOpen = false"
-               data-tooltip="Contraseñas"
+               data-tooltip="Recuperación de contraseñas"
                class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
                       {{ request()->routeIs('admin.solicitudes-contrasena.*') && request()->query('tipo', 'alumnos') === 'alumnos' ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -778,7 +778,7 @@
                           d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
                              a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                 </svg>
-                <span class="flex-1 nav-link-text">Contraseñas</span>
+                <span class="flex-1 nav-link-text">Recuperación de contraseñas</span>
                 @if($pendientesAlumnos > 0)
                     <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
                           style="background-color: #dc2626; color: #fff;">

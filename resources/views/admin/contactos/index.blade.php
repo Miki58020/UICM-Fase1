@@ -138,6 +138,7 @@
                      data-estado="{{ $contacto->atendido ? 'atendido' : 'pendiente' }}"
                      data-interes="{{ $contacto->interes }}"
                      x-show="filtroEstado === 'pendiente' ? {{ $contacto->atendido ? 'false' : 'true' }} : true"
+                     x-cloak
                      class="px-6 py-5"
                      x-data="{ open: {{ $contacto->atendido ? 'false' : 'true' }} }">
 
