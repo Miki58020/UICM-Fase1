@@ -240,7 +240,31 @@
       "Bash(node *)",
       "Bash(mkdir -p /c/Users/Angel/Desktop/Wireframes-SVG-editables)",
       "Bash(mv *.svg matriz-trazabilidad.md /c/Users/Angel/Desktop/Wireframes-SVG-editables/)",
-      "Bash(python -c \"import cairosvg; print\\('cairosvg ok'\\)\")"
+      "Bash(python -c \"import cairosvg; print\\('cairosvg ok'\\)\")",
+      "Bash(command -v python)",
+      "Read(//c/Python313/**)",
+      "Bash(\"/c/Users/Miguel Ángel/AppData/Local/Programs/Python/Python314/python\" -m pip show python-docx)",
+      "Bash(\"/c/Users/Miguel Ángel/AppData/Local/Programs/Python/Python314/python\" --version)",
+      "Read(//c/Program Files/LibreOffice/program/**)",
+      "Read(//c/Program Files \\\\\\(x86\\\\\\)/LibreOffice/program/**)",
+      "Bash(\"/c/Users/Miguel Ángel/AppData/Local/Programs/Python/Python314/python\" -m pip install --quiet python-docx)",
+      "Bash(/c/Users/Miguel Ángel/AppData/Local/Programs/Python/Python314/python *)",
+      "Bash(npx --yes playwright screenshot --help)",
+      "Bash(npx --yes playwright install chromium --with-deps)",
+      "Bash(npx --yes playwright pdf --help)",
+      "Bash(npx --yes playwright screenshot --viewport-size=1920,1080 'file:///C:/Users/Miguel Ángel/Desktop/Cronograma \\(editable\\)/cronograma_fase1.html' '/c/Users/Miguel Ángel/Desktop/Cronograma \\(editable\\)/cronograma_fase1.png')",
+      "Bash(npx --yes playwright screenshot --viewport-size=1920,1080 'file:///C:/Users/Miguel Ángel/Desktop/Cronograma \\(editable\\)/cronograma_fase2.html' '/c/Users/Miguel Ángel/Desktop/Cronograma \\(editable\\)/cronograma_fase2.png')",
+      "Bash(npx --yes playwright pdf 'file:///C:/Users/Miguel Ángel/Desktop/Cronograma \\(editable\\)/cronograma_fase1.html' '/c/Users/Miguel Ángel/Desktop/Cronograma \\(editable\\)/cronograma_fase1.pdf')",
+      "Bash(npx --yes playwright pdf 'file:///C:/Users/Miguel Ángel/Desktop/Cronograma \\(editable\\)/cronograma_fase2.html' '/c/Users/Miguel Ángel/Desktop/Cronograma \\(editable\\)/cronograma_fase2.pdf')",
+      "Bash(\"/c/Users/Miguel Ángel/AppData/Local/Programs/Python/Python314/python\" \"/c/Users/Miguel Ángel/Desktop/Cronograma \\(editable\\)/generar_cronograma.py\")",
+      "Bash(npx --yes playwright pdf file:///__TRACKED_VAR__/cronograma_fase1.html __TRACKED_VAR__/cronograma_fase1.pdf)",
+      "Bash(npx --yes playwright pdf file:///__TRACKED_VAR__/cronograma_fase2.html __TRACKED_VAR__/cronograma_fase2.pdf)",
+      "Bash(mkdir -p \"/c/Users/MIGUEL~1/AppData/Local/Temp/claude/C--Users-Miguel--ngel-Desktop-UICM-Fase1/a4c51dd3-e03e-4a9c-b4b4-6d5338d0c061/scratchpad/pdfgen\")",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(python generar_cronograma.py)",
+      "Bash(python *)",
+      "Bash(PYTHONUTF8=1 PYTHONIOENCODING=utf-8 python generar_cronograma.py)"
     ]
   }
 }
