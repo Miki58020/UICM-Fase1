@@ -9,6 +9,14 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("UPDATE alumnos SET estado = 'inactivo' WHERE estado = 'baja_temporal'");
+            DB::statement("UPDATE alumnos SET estado = 'baja' WHERE estado IN ('baja_definitiva', 'egresado')");
+            DB::statement("ALTER TABLE alumnos MODIFY estado ENUM('activo', 'inactivo', 'baja') NOT NULL DEFAULT 'activo'");
+
+            return;
+        }
+
         DB::statement('PRAGMA foreign_keys = OFF');
 
         Schema::create('alumnos_new', function (Blueprint $table) {
@@ -55,6 +63,14 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("UPDATE alumnos SET estado = 'baja_temporal' WHERE estado = 'inactivo'");
+            DB::statement("UPDATE alumnos SET estado = 'baja_definitiva' WHERE estado = 'baja'");
+            DB::statement("ALTER TABLE alumnos MODIFY estado ENUM('activo', 'baja_temporal', 'baja_definitiva', 'egresado') NOT NULL DEFAULT 'activo'");
+
+            return;
+        }
+
         DB::statement('PRAGMA foreign_keys = OFF');
 
         Schema::create('alumnos_old', function (Blueprint $table) {

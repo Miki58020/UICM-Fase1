@@ -7,6 +7,14 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE periodos MODIFY fecha_inicio_registro DATE NULL');
+            DB::statement('ALTER TABLE periodos MODIFY fecha_fin_registro DATE NULL');
+            DB::statement("ALTER TABLE periodos MODIFY estado VARCHAR(255) NOT NULL DEFAULT 'proximo'");
+
+            return;
+        }
+
         DB::unprepared('PRAGMA foreign_keys = OFF');
 
         DB::unprepared('
@@ -43,6 +51,14 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE periodos MODIFY fecha_inicio_registro DATE NOT NULL');
+            DB::statement('ALTER TABLE periodos MODIFY fecha_fin_registro DATE NOT NULL');
+            DB::statement("ALTER TABLE periodos MODIFY estado VARCHAR(255) NOT NULL DEFAULT 'proximo'");
+
+            return;
+        }
+
         DB::unprepared('PRAGMA foreign_keys = OFF');
 
         DB::unprepared('

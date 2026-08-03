@@ -7,6 +7,12 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE periodos MODIFY estado ENUM('proximo', 'activo', 'cerrado', 'inactivo') NOT NULL DEFAULT 'inactivo'");
+
+            return;
+        }
+
         // SQLite no permite modificar CHECK constraints directamente.
         // Se recrea la tabla con el nuevo estado permitido.
         DB::statement('PRAGMA foreign_keys = OFF');
@@ -36,6 +42,12 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE periodos MODIFY estado ENUM('proximo', 'activo', 'cerrado') NOT NULL DEFAULT 'proximo'");
+
+            return;
+        }
+
         DB::statement('PRAGMA foreign_keys = OFF');
 
         DB::statement('
