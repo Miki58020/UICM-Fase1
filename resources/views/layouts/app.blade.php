@@ -66,10 +66,15 @@
         .sidebar-collapsed-md .nav-link-text,
         .sidebar-collapsed-md .sidebar-user-block { display: none; }
         .sidebar-collapsed-md .nav-section-label {
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
+            border-top: none;
+            position: relative;
+        }
+        .sidebar-collapsed-md .nav-section-label::after {
+            content: '';
+            display: block;
+            height: 2px;
+            border-radius: 9999px;
+            background: linear-gradient(to right, transparent, rgba(212,175,55,0.9), transparent);
         }
         .sidebar-collapsed-md .nav-section-label p { display: none; }
         .sidebar-collapsed-md .nav-badge {
