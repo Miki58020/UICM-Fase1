@@ -414,7 +414,7 @@
     // ===== CARRUSEL =====
     const track = document.getElementById('carrusel-track');
     const dots  = document.querySelectorAll('.carrusel-dot');
-    const total = 5;
+    const total = {{ $imagenes->count() }};
     let current = 0;
     let autoplay;
 
