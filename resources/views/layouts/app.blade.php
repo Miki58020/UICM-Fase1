@@ -64,8 +64,14 @@
             height: 1.5rem !important;
         }
         .sidebar-collapsed-md .nav-link-text,
-        .sidebar-collapsed-md .nav-section-label,
         .sidebar-collapsed-md .sidebar-user-block { display: none; }
+        .sidebar-collapsed-md .nav-section-label {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-collapsed-md .nav-section-label p { display: none; }
         .sidebar-collapsed-md .nav-badge {
             display: block !important;
             position: absolute;
