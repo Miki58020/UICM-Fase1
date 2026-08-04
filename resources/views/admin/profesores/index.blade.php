@@ -45,7 +45,7 @@
             <button
                 @click="abrir()"
                 class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white
-                       shadow-sm transition-colors duration-150 whitespace-nowrap"
+                       shadow-sm transition-colors duration-150 whitespace-nowrap self-start sm:self-auto"
                 style="background-color: #0F4229;"
                 onmouseover="this.style.backgroundColor='#0a2e1c'"
                 onmouseout="this.style.backgroundColor='#0F4229'">
