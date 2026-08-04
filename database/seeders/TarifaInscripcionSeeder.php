@@ -17,7 +17,7 @@ class TarifaInscripcionSeeder extends Seeder
 
         foreach ($tarifas as $tarifa) {
             TarifaInscripcion::updateOrCreate(
-                ['nivel' => $tarifa['nivel']],
+                ['nivel' => $tarifa['nivel'], 'tipo' => 'inscripcion'],
                 ['monto' => $tarifa['monto']]
             );
         }
