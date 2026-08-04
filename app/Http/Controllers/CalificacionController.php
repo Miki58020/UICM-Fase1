@@ -237,7 +237,13 @@ class CalificacionController extends Controller
         $user->update(['password' => Hash::make($request->password)]);
 
         // Notificar al profesor por email
-        Mail::to($user->email)->send(new ContrasenaActualizada($user, $request->password));
+        try {
+            Mail::to($user->email)->send(new ContrasenaActualizada($user, $request->password));
+        } catch (\Throwable $e) {
+            // La contraseña ya se cambió; solo el aviso por correo falló. No revertir el cambio por eso.
+            return redirect()->route('profesor.calificaciones.index')
+                ->with('error', "Contraseña actualizada, pero no se pudo enviar el correo a {$user->email}.");
+        }
 
         return redirect()->route('profesor.calificaciones.index')
             ->with('success', 'Contraseña actualizada correctamente. Se envió confirmación a tu correo.');
