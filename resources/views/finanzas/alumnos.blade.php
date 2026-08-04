@@ -36,7 +36,7 @@
         </div>
 
         {{-- Tarjetas (también filtran) --}}
-        <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
             <button type="button" @click="filtroEstado = 'atrasado'; filtrar()"
                     :class="filtroEstado === 'atrasado' ? 'ring-2 ring-red-500' : 'hover:shadow-md'"
                     class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4 border-red-500 text-left w-full transition-shadow duration-150">

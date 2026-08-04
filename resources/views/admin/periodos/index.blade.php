@@ -580,7 +580,7 @@ $periodoInicialId = session('periodos_tab_periodo', $periodos->first()?->id);
                      });
                  }
              }">
-            <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-xl shadow-sm px-5 py-4 border-l-4" style="border-color: #0F4229;">
                     <p class="text-xs text-gray-500 uppercase tracking-wide font-medium">Carreras</p>
                     <p class="text-2xl font-extrabold mt-1" style="color: #0F4229;">{{ $totalCarreras }}</p>
