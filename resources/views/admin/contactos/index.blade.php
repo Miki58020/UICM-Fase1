@@ -180,7 +180,7 @@
 
                         {{-- Botón expandir/colapsar --}}
                         <button @click="open = !open"
-                                class="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors duration-150"
+                                class="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors duration-150 self-start sm:self-auto"
                                 :class="open ? 'bg-gray-100 text-gray-600 border-gray-200' : 'border-transparent text-white'"
                                 :style="!open ? 'background-color: #0F4229;' : ''">
                             <span x-text="open ? 'Colapsar' : 'Ver mensaje'"></span>

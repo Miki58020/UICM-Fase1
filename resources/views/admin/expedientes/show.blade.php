@@ -30,7 +30,7 @@
                         default    => '#9ca3af',
                     };
                 @endphp
-                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white capitalize"
+                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white capitalize self-start sm:self-auto"
                       style="background-color: {{ $colorEstado }};">
                     <span class="w-2 h-2 rounded-full bg-white opacity-80 inline-block"></span>
                     {{ $alumno->estado }}
@@ -240,7 +240,7 @@
 
         {{-- Encabezado del modal --}}
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-4 flex-shrink-0">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 min-w-0">
                 <div class="w-7 h-7 rounded flex items-center justify-center flex-shrink-0"
                      style="background-color: #f0f9f4;">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
