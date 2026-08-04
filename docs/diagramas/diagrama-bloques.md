@@ -54,7 +54,7 @@ Recibe las peticiones HTTP a través de `routes/web.php`, filtradas por middlewa
 
 La capa de aplicación se integra con dos servicios de terceros, con credenciales administrables desde el panel de Configuración & Avisos:
 
-- **MercadoPago (Bricks)** — cobro en línea de inscripciones y colegiaturas. Actualmente en modo *sandbox* (credenciales de prueba); no hay dominio de producción todavía.
+- **MercadoPago (Checkout Pro)** — cobro en línea de inscripciones y colegiaturas. Actualmente en modo *sandbox* (credenciales de prueba); no hay dominio de producción todavía.
 - **SMTP / Correo** — envío de notificaciones automáticas (folios, accesos, avisos), con dominio institucional configurable.
 
 ### 2.5 Capa de datos

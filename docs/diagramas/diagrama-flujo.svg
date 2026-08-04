@@ -124,7 +124,7 @@
 
   <!-- P5 external service -->
   <rect x="490" y="1266" width="520" height="64" rx="8" fill="#fdf3d0" stroke="#D4AF37" stroke-width="2"/>
-  <text x="750" y="1303" text-anchor="middle" font-size="13" font-weight="700" fill="#111827">Llama a MercadoPago (Bricks) o SMTP</text>
+  <text x="750" y="1303" text-anchor="middle" font-size="13" font-weight="700" fill="#111827">Llama a MercadoPago (Checkout Pro) o SMTP</text>
   <line x1="750" y1="1330" x2="750" y2="1360" stroke="#8a6d0a" stroke-width="2.5" marker-end="url(#arrowGoldF)"/>
 
   <!-- D6 diamond -->

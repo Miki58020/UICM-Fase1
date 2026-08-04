@@ -26,7 +26,7 @@ El flujo va de arriba hacia abajo. Los rombos azules son decisiones; las flechas
 ### 2.3 Lógica de negocio y servicios externos
 
 6. El Controller ejecuta la lógica propia del módulo: cálculos, reglas de negocio, permisos más finos que el rol (ej. "un profesor solo captura calificaciones de sus propios grupos").
-7. **Solo dos flujos del sistema llaman a un servicio externo** en este punto: el cobro en línea (MercadoPago Bricks) y el envío de correo (SMTP). Si el servicio falla, el sistema está diseñado para **no detener el flujo** — registra el error o marca el intento como pendiente (ej. un correo que no se pudo enviar no bloquea el alta del alumno; un pago rechazado simplemente no se marca como aprobado).
+7. **Solo dos flujos del sistema llaman a un servicio externo** en este punto: el cobro en línea (MercadoPago Checkout Pro) y el envío de correo (SMTP). Si el servicio falla, el sistema está diseñado para **no detener el flujo** — registra el error o marca el intento como pendiente (ej. un correo que no se pudo enviar no bloquea el alta del alumno; un pago rechazado simplemente no se marca como aprobado).
 
 ### 2.4 Persistencia y respuesta
 
