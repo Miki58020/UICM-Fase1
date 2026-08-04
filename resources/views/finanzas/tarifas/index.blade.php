@@ -277,7 +277,7 @@ $finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
                     <div id="modal-descuento-dias" class="hidden">
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs text-gray-400 mb-1">Días con descuento (desde el 1°)</label>
+                                <label class="block text-xs text-gray-400 mb-1">Días con descuento</label>
                                 <input type="number" name="dias_descuento_pronto_pago" id="modal-dias-descuento"
                                        min="1" max="28"
                                        class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-bold bg-white focus:outline-none focus:ring-2 focus:border-transparent"
@@ -291,7 +291,7 @@ $finClases = $periodoActivo?->fecha_fin_clases?->format('Y-m-d');
                                        style="--tw-ring-color: #0F4229;">
                             </div>
                         </div>
-                        <p class="mt-1 text-xs text-gray-400">Después del día límite, el pago se marca como atrasado (sin suspender el acceso).</p>
+                        <p class="mt-1 text-xs text-gray-400">El descuento aplica del día 1 al indicado. Después del día límite, el pago se marca como atrasado (sin suspender el acceso).</p>
                     </div>
                 </div>
 
