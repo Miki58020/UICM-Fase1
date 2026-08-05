@@ -10,8 +10,8 @@ use App\Models\Periodo;
 use App\Models\PeriodoPrograma;
 use App\Models\Programa;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Support\Correo;
 use App\Support\Texto;
 
 class AspiranteController extends Controller
@@ -77,10 +77,11 @@ class AspiranteController extends Controller
 
         $aspirante->update(['estado' => 'aprobado']);
 
-        Mail::to($aspirante->email)->send(new AspiranteAprobado($aspirante));
+        $enviado = Correo::enviar($aspirante->email, new AspiranteAprobado($aspirante));
 
         return redirect()->route('admin.aspirantes.show', $aspirante)
-            ->with('success', "Expediente aprobado. El aspirante puede proceder con el pago. Folio: {$aspirante->folio}");
+            ->with('success', "Expediente aprobado. El aspirante puede proceder con el pago. Folio: {$aspirante->folio}"
+                . ($enviado ? '' : " No se pudo enviar el aviso a {$aspirante->email}; comunícaselo por otro medio."));
     }
 
     public function rechazar(Request $request, Aspirante $aspirante)
@@ -98,9 +99,10 @@ class AspiranteController extends Controller
             'observaciones' => $request->observaciones,
         ]);
 
-        Mail::to($aspirante->email)->send(new AspiranteRechazado($aspirante));
+        $enviado = Correo::enviar($aspirante->email, new AspiranteRechazado($aspirante));
 
-        return redirect()->back()->with('success', 'Aspirante rechazado correctamente.');
+        return redirect()->back()->with('success', 'Aspirante rechazado correctamente.'
+            . ($enviado ? '' : " No se pudo enviar el aviso a {$aspirante->email}; comunícaselo por otro medio."));
     }
 
     public function resultado(Request $request)
@@ -294,9 +296,14 @@ class AspiranteController extends Controller
         ]);
 
         $aspirante = Aspirante::where('folio', $folio)->first();
-        Mail::to($aspirante->email)->send(new RegistroConfirmado($aspirante));
 
-        return redirect()->route('aspirantes.confirmacion')->with('folio', $folio);
+        // La solicitud ya quedó guardada: si el correo falla, el aspirante debe
+        // ver de todas formas su folio en pantalla y no un error 500.
+        $enviado = Correo::enviar($aspirante->email, new RegistroConfirmado($aspirante));
+
+        return redirect()->route('aspirantes.confirmacion')
+            ->with('folio', $folio)
+            ->with('correo_enviado', $enviado);
     }
 
     private function generarFolio(string $generacion): string

@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use App\Support\Correo;
 use Illuminate\Validation\Rule;
 
 class UsuarioController extends Controller
@@ -112,12 +112,15 @@ class UsuarioController extends Controller
 
         $usuario->update($datos);
 
+        $notaCorreo = '';
         if ($request->filled('password')) {
-            Mail::to($usuario->email)->send(new NuevaContrasena($usuario, $request->password));
+            $notaCorreo = Correo::enviar($usuario->email, new NuevaContrasena($usuario, $request->password))
+                ? ' Se notificó la nueva contraseña por correo.'
+                : " No se pudo enviar el aviso a {$usuario->email}; comunícale la nueva contraseña por otro medio.";
         }
 
         return redirect()->route('admin.usuarios.index')
-            ->with('success', 'Usuario actualizado correctamente.');
+            ->with('success', 'Usuario actualizado correctamente.' . $notaCorreo);
     }
 
     public function destroy(User $usuario)

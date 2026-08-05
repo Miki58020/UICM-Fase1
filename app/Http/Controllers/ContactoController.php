@@ -8,7 +8,7 @@ use App\Models\Contacto;
 use App\Models\ContactoInteres;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use App\Support\Correo;
 use Illuminate\Validation\Rule;
 
 class ContactoController extends Controller
@@ -28,7 +28,11 @@ class ContactoController extends Controller
             'respuesta.required' => 'La respuesta no puede estar vacía.',
         ]);
 
-        Mail::to($contacto->correo)->send(new ContactoRespuesta($contacto, $request->respuesta));
+        // Aquí el correo ES la operación: si no sale, el mensaje no queda
+        // atendido, porque nadie recibió la respuesta.
+        if (! Correo::enviar($contacto->correo, new ContactoRespuesta($contacto, $request->respuesta))) {
+            return back()->with('error', 'No se pudo enviar la respuesta a ' . $contacto->correo . '. El mensaje sigue pendiente de atender.');
+        }
 
         $contacto->update(['atendido' => true]);
 
@@ -54,9 +58,11 @@ class ContactoController extends Controller
 
         $contacto = Contacto::create($request->only(['nombre', 'correo', 'telefono', 'interes', 'mensaje']));
 
+        // El mensaje del visitante ya quedó registrado; el aviso interno a los
+        // administradores no debe hacer fallar el formulario público.
         $admins = User::where('rol', 'admin')->get();
         foreach ($admins as $admin) {
-            Mail::to($admin->email)->send(new ContactoRecibido($contacto));
+            Correo::enviar($admin->email, new ContactoRecibido($contacto));
         }
 
         return redirect()->route('home', ['#contacto'])->with('contacto_enviado', true);

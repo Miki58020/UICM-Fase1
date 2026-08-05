@@ -8,7 +8,7 @@ use App\Models\Profesor;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use App\Support\Correo;
 use Illuminate\Support\Str;
 
 class ProfesorController extends Controller
@@ -44,7 +44,7 @@ class ProfesorController extends Controller
 
         if ($profesor->user_id) {
             $profesor->user->update(['password' => Hash::make($password)]);
-            Mail::to($profesor->correo)->send(new NuevaContrasena($profesor->user, $password));
+            $enviado = Correo::enviar($profesor->correo, new NuevaContrasena($profesor->user, $password));
         } else {
             $user = User::create([
                 'name'     => $profesor->nombre,
@@ -54,11 +54,15 @@ class ProfesorController extends Controller
             ]);
             $profesor->update(['user_id' => $user->id]);
             $profesor->load('user');
-            Mail::to($profesor->correo)->send(new BienvenidaProfesor($profesor, $password));
+            $enviado = Correo::enviar($profesor->correo, new BienvenidaProfesor($profesor, $password));
         }
 
+        // El acceso ya quedó creado aunque el correo no salga; se avisa para
+        // que el personal entregue la contraseña por otro medio.
         return redirect()->route('admin.profesores.index')
-            ->with('success', "Acceso generado para {$profesor->nombre}. Se envió correo con credenciales.");
+            ->with('success', $enviado
+                ? "Acceso generado para {$profesor->nombre}. Se envió correo con credenciales."
+                : "Acceso generado para {$profesor->nombre}, pero no se pudo enviar el correo a {$profesor->correo}. La contraseña temporal es: {$password}");
     }
 
     public function store(Request $request)
@@ -90,10 +94,12 @@ class ProfesorController extends Controller
             'user_id'      => $user->id,
         ]);
 
-        Mail::to($profesor->correo)->send(new BienvenidaProfesor($profesor, $password));
+        $enviado = Correo::enviar($profesor->correo, new BienvenidaProfesor($profesor, $password));
 
         $redirect = redirect()->route('admin.profesores.index')
-            ->with('success', "Profesor registrado. Se enviaron las credenciales de acceso a {$profesor->correo}.");
+            ->with('success', $enviado
+                ? "Profesor registrado. Se enviaron las credenciales de acceso a {$profesor->correo}."
+                : "Profesor registrado, pero no se pudo enviar el correo a {$profesor->correo}. La contraseña temporal es: {$password}");
 
         if ($aviso = $this->avisoTelefonoDuplicado($request->telefono, $profesor->id)) {
             $redirect->with('notif_warning_admin', $aviso);
@@ -129,12 +135,19 @@ class ProfesorController extends Controller
 
             if ($request->filled('password')) {
                 $profesor->user->update(['password' => Hash::make($request->password)]);
-                Mail::to($profesor->correo)->send(new NuevaContrasena($profesor->user, $request->password));
+                $avisoEnviado = Correo::enviar($profesor->correo, new NuevaContrasena($profesor->user, $request->password));
             }
         }
 
+        $notaCorreo = '';
+        if ($request->filled('password')) {
+            $notaCorreo = ($avisoEnviado ?? false)
+                ? ' Se notificó la nueva contraseña por correo.'
+                : " No se pudo enviar el aviso a {$profesor->correo}; comunícale la nueva contraseña por otro medio.";
+        }
+
         $redirect = redirect()->route('admin.profesores.index')
-            ->with('success', 'Profesor actualizado correctamente.' . ($request->filled('password') ? ' Se notificó la nueva contraseña por correo.' : ''));
+            ->with('success', 'Profesor actualizado correctamente.' . $notaCorreo);
 
         if ($aviso = $this->avisoTelefonoDuplicado($request->telefono, $profesor->id)) {
             $redirect->with('notif_warning_admin', $aviso);

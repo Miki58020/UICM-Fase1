@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use App\Support\Correo;
 use Illuminate\Support\Str;
 use MercadoPago\Client\Common\RequestOptions;
 use MercadoPago\Client\Payment\PaymentClient;
@@ -718,11 +718,10 @@ class PagoController extends Controller
         }
 
         $email = $pago->aspirante?->email ?? $pago->alumno?->email;
-        if ($email) {
-            Mail::to($email)->send(new PagoAprobado($pago));
-        }
+        $enviado = Correo::enviar($email, new PagoAprobado($pago));
 
-        return redirect()->back()->with('success', 'Pago aprobado correctamente.');
+        return redirect()->back()->with('success', 'Pago aprobado correctamente.'
+            . ($enviado || ! $email ? '' : " No se pudo enviar el aviso a {$email}."));
     }
 
     public function rechazar(Request $request, Pago $pago)
@@ -741,11 +740,10 @@ class PagoController extends Controller
         ]);
 
         $email = $pago->aspirante?->email ?? $pago->alumno?->email;
-        if ($email) {
-            Mail::to($email)->send(new PagoRechazado($pago));
-        }
+        $enviado = Correo::enviar($email, new PagoRechazado($pago));
 
-        return redirect()->back()->with('success', 'Pago rechazado correctamente.');
+        return redirect()->back()->with('success', 'Pago rechazado correctamente.'
+            . ($enviado || ! $email ? '' : " No se pudo enviar el aviso a {$email}."));
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────

@@ -12,7 +12,7 @@ use App\Models\Programa;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use App\Support\Correo;
 use Illuminate\Support\Str;
 
 class InscripcionController extends Controller
@@ -116,10 +116,14 @@ class InscripcionController extends Controller
         ]);
 
         $alumno->load(['programa', 'grupo']);
-        Mail::to($alumno->email)->send(new BienvenidaAlumno($alumno, $password));
+
+        // La matrícula y el usuario ya se crearon. Si el correo no sale, la
+        // pantalla de resultado muestra la contraseña temporal de todas formas.
+        $enviado = Correo::enviar($alumno->email, new BienvenidaAlumno($alumno, $password));
 
         return redirect()->route('admin.inscripciones.resultado', $alumno)
-            ->with('temp_password', $password);
+            ->with('temp_password', $password)
+            ->with('correo_enviado', $enviado);
     }
 
     public function resultado(Alumno $alumno)
@@ -143,7 +147,10 @@ class InscripcionController extends Controller
         $alumno->user->update(['password' => Hash::make($password)]);
 
         $alumno->load('programa');
-        Mail::to($alumno->email)->send(new ReenvioCredenciales($alumno, $password));
+
+        if (! Correo::enviar($alumno->email, new ReenvioCredenciales($alumno, $password))) {
+            return redirect()->back()->with('error', "La contraseña se restableció, pero no se pudo enviar el correo a {$alumno->email}. Vuelve a intentarlo o entrégala por otro medio.");
+        }
 
         return redirect()->back()->with('success', "Credenciales reenviadas a {$alumno->user->email}.");
     }
