@@ -126,6 +126,42 @@ class AltaMasivaAlumnosController extends Controller
             $d['apellido_paterno'] = Texto::normalizarNombre($d['apellido_paterno']);
             $d['apellido_materno'] = Texto::normalizarNombre($d['apellido_materno']);
 
+            // Los límites de las columnas los aplica el motor de forma estricta: sin
+            // estas comprobaciones una sola fila larga aborta la importación completa
+            // en lugar de reportarse junto con los demás errores.
+            $limites = [
+                'nombre'           => 255,
+                'apellido_paterno' => 255,
+                'apellido_materno' => 255,
+                'email'            => 255,
+                'curp'             => 18,
+                'telefono'         => 20,
+            ];
+
+            $excedido = null;
+            foreach ($limites as $campo => $maximo) {
+                if (mb_strlen((string) ($d[$campo] ?? '')) > $maximo) {
+                    $excedido = "Línea {$fila['linea']}: {$campo} no puede tener más de {$maximo} caracteres.";
+                    break;
+                }
+            }
+
+            if ($excedido !== null) {
+                $errores[] = $excedido;
+                continue;
+            }
+
+            // fecha_nacimiento es una columna DATE: un valor que no se pueda interpretar
+            // rompe la inserción, así que se valida y se normaliza a Y-m-d.
+            if (!empty($d['fecha_nacimiento'])) {
+                $fecha = $this->interpretarFecha($d['fecha_nacimiento']);
+                if ($fecha === null) {
+                    $errores[] = "Línea {$fila['linea']}: \"{$d['fecha_nacimiento']}\" no es una fecha de nacimiento válida (usa el formato AAAA-MM-DD).";
+                    continue;
+                }
+                $d['fecha_nacimiento'] = $fecha;
+            }
+
             $validas[] = $d;
         }
 
@@ -215,6 +251,27 @@ class AltaMasivaAlumnosController extends Controller
         }
 
         return $respuesta;
+    }
+
+    /**
+     * Convierte la fecha del CSV a Y-m-d, o devuelve null si no es válida.
+     *
+     * Se interpretan los formatos de forma explícita en lugar de usar strtotime():
+     * esa función lee "01/03/1995" como mes/día/año y guardaría el 3 de enero en vez
+     * del 1 de marzo, sin marcar ningún error. La comparación final contra el valor
+     * original descarta además fechas inexistentes como 31/02, que PHP ajustaría solo.
+     */
+    private function interpretarFecha(string $valor): ?string
+    {
+        foreach (['Y-m-d', 'd/m/Y', 'd-m-Y'] as $formato) {
+            $fecha = \DateTime::createFromFormat('!' . $formato, $valor);
+
+            if ($fecha !== false && $fecha->format($formato) === $valor) {
+                return $fecha->format('Y-m-d');
+            }
+        }
+
+        return null;
     }
 
     private function crearGrupoHermano(Grupo $referencia): Grupo

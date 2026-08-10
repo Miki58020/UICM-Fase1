@@ -186,6 +186,11 @@ class MateriaController extends Controller
                 continue;
             }
 
+            if (mb_strlen($d['nombre']) > 255) {
+                $errores[] = "Línea {$linea}: el nombre no puede tener más de 255 caracteres.";
+                continue;
+            }
+
             $existente = Materia::where('clave', $clave)->first();
 
             Materia::updateOrCreate(
