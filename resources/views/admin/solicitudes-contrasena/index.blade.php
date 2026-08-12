@@ -1,6 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Solicitudes de contraseña | UICM')
+@php
+    // La vista la comparten las tres áreas; cada una atiende a un público distinto
+    // (ver SolicitudContrasenaController::listar). El título lo dice explícitamente
+    // porque las tres entradas del menú se llaman igual.
+    $area = match ($tipo) {
+        'profesores' => 'Coordinación Académica',
+        'alumnos'    => 'Control Escolar',
+        default      => 'Administración',
+    };
+    $publico = match ($tipo) {
+        'profesores' => 'profesores',
+        'alumnos'    => 'alumnos',
+        default      => 'personal administrativo',
+    };
+    $titulo = 'Recuperación de contraseñas de ' . $publico;
+@endphp
+
+@section('title', $titulo . ' | UICM')
 
 @section('content')
 
@@ -11,10 +28,10 @@
         {{-- Encabezado --}}
         <div class="mb-8">
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-                {{ $tipo === 'profesores' ? 'Coordinación Académica' : ($tipo === 'alumnos' ? 'Control Escolar' : 'Administración') }}
+                {{ $area }}
             </p>
             <h1 class="text-2xl font-extrabold text-gray-900">
-                {{ $tipo === 'profesores' ? 'Contraseñas de profesores' : 'Solicitudes de contraseña' }}
+                {{ $titulo }}
             </h1>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
         </div>
