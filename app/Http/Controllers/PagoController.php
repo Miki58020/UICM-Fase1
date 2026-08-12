@@ -279,7 +279,9 @@ class PagoController extends Controller
 
     public function webhook(Request $request)
     {
-        $type = $request->query('type') ?? $request->query('topic');
+        // Los webhooks dados de alta en el panel de MP mandan el tipo en el cuerpo JSON;
+        // el IPN viejo lo manda como query string. Se aceptan ambos.
+        $type = $request->query('type') ?? $request->query('topic') ?? $request->input('type');
         $id   = $request->query('data_id')
             ?? $request->input('data.id')
             ?? $request->query('id');
