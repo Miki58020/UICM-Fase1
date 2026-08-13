@@ -93,9 +93,10 @@ class PagoController extends Controller
 
                 $preference   = (new PreferenceClient())->create($preferenceData);
                 $preferenceId = $preference->id;
-                $checkoutUrl  = app()->environment('production')
-                    ? $preference->init_point
-                    : $preference->sandbox_init_point;
+                // Siempre el checkout normal: el sandbox como sitio aparte quedó obsoleto y
+                // rechaza los pagos ("No pudimos procesar tu pago"). Con credenciales de
+                // prueba, lo que hace ficticio al pago es la credencial, no la URL.
+                $checkoutUrl  = $preference->init_point;
 
                 session([
                     $sessionKeyPref => $preferenceId,
@@ -219,7 +220,7 @@ class PagoController extends Controller
     public function retorno(Request $request)
     {
         $status    = $request->query('payment_status', $request->query('status', 'pendiente'));
-        $paymentId = $request->query('payment_id');
+        $paymentId = $this->paymentIdValido($request->query('payment_id'));
         $extRef    = $request->query('external_reference');
 
         // Crear el registro de pago cuando MP redirige de vuelta (Checkout Pro).
@@ -427,9 +428,10 @@ class PagoController extends Controller
                 $preference = (new PreferenceClient())->create($preferenceData);
 
                 $preferenceId = $preference->id;
-                $checkoutUrl  = app()->environment('production')
-                    ? $preference->init_point
-                    : $preference->sandbox_init_point;
+                // Siempre el checkout normal: el sandbox como sitio aparte quedó obsoleto y
+                // rechaza los pagos ("No pudimos procesar tu pago"). Con credenciales de
+                // prueba, lo que hace ficticio al pago es la credencial, no la URL.
+                $checkoutUrl  = $preference->init_point;
 
                 session([$sessionKeyPref => $preferenceId, $sessionKeyUrl => $checkoutUrl]);
                 $pago->update(['mp_preference_id' => $preferenceId]);
@@ -449,7 +451,7 @@ class PagoController extends Controller
 
     public function retornoAlumno(Request $request, Pago $pago)
     {
-        $paymentId = $request->query('payment_id');
+        $paymentId = $this->paymentIdValido($request->query('payment_id'));
 
         if ($paymentId) {
             try {
@@ -755,6 +757,16 @@ class PagoController extends Controller
         $periodo = Periodo::where('nombre', $aspirante->generacion)->first() ?? new Periodo();
 
         return Alumno::generarMatricula($periodo, $aspirante->programa);
+    }
+
+    /**
+     * Cuando el pago no se concreta, Mercado Pago regresa al sitio con
+     * `payment_id=null` —la cadena, no un valor vacío—, que en PHP es verdadera y
+     * terminaba consultando el pago 0: un error 400 en cada intento abandonado.
+     */
+    private function paymentIdValido(?string $paymentId): ?string
+    {
+        return is_numeric($paymentId) && (int) $paymentId > 0 ? $paymentId : null;
     }
 
     private function configurarMP(): void
