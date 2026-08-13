@@ -94,7 +94,7 @@ class DashboardController extends Controller
 
     private function datosCoordinacion(): array
     {
-        $periodo = Periodo::where('activo', true)->first();
+        $periodo = Periodo::where('estado', 'activo')->first();
 
         return [
             'periodoActivo'          => $periodo,
