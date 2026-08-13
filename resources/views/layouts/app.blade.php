@@ -588,6 +588,135 @@
             </a>
             @endif
 
+            {{-- ══ CONTROL ESCOLAR ══ --}}
+            @if($rol === 'control_escolar' || $rol === 'admin')
+            <div class="nav-section-label mt-4 border-t border-white/10 pt-3 pb-1 px-2">
+                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Control Escolar</p>
+            </div>
+
+            <a href="{{ route('admin.alta-masiva-alumnos.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Alta masiva de alumnos"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.alta-masiva-alumnos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3m-3-7v9"/>
+                </svg>
+                <span class="nav-link-text">Alta masiva de alumnos</span>
+            </a>
+
+            <a href="{{ route('admin.alumnos.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Alumnos"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.alumnos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857
+                             M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857
+                             m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span class="nav-link-text">Alumnos</span>
+            </a>
+
+            @php
+                $pendientesAspirantes = \App\Models\Aspirante::where('estado', 'pendiente')->count();
+            @endphp
+            <a href="{{ route('admin.aspirantes.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Aspirantes"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.aspirantes.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
+                             a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="flex-1 nav-link-text">Aspirantes</span>
+                @if($pendientesAspirantes > 0)
+                    <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
+                          style="background-color: #dc2626; color: #fff;">
+                        {{ $pendientesAspirantes }}
+                    </span>
+                @endif
+            </a>
+
+            <a href="{{ route('admin.expedientes.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Expedientes"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.expedientes.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
+                             a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="nav-link-text">Expedientes</span>
+            </a>
+
+            @php
+                $pendientesInscripciones = \App\Models\Aspirante::where('estado', 'aprobado')
+                    ->whereHas('pagos', fn($q) => $q->where('estado', 'aprobado'))
+                    ->whereHas('alumno', fn($q) => $q->whereNull('user_id'))
+                    ->count();
+            @endphp
+            <a href="{{ route('admin.inscripciones.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Inscripciones"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.inscripciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5
+                             m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4z"/>
+                </svg>
+                <span class="flex-1 nav-link-text">Inscripciones</span>
+                @if($pendientesInscripciones > 0)
+                    <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
+                          style="background-color: #dc2626; color: #fff;">
+                        {{ $pendientesInscripciones }}
+                    </span>
+                @endif
+            </a>
+
+            @php
+                $pendientesAlumnos = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
+                    ->whereHas('user', fn($u) => $u->where('rol', 'alumno'))
+                    ->count();
+            @endphp
+            <a href="{{ route('admin.solicitudes-contrasena.index', ['tipo' => 'alumnos']) }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Contraseñas de alumnos"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.solicitudes-contrasena.*') && request()->query('tipo', 'alumnos') === 'alumnos' ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
+                             a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                </svg>
+                <span class="flex-1 nav-link-text">Recuperación de contraseñas</span>
+                @if($pendientesAlumnos > 0)
+                    <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
+                          style="background-color: #dc2626; color: #fff;">
+                        {{ $pendientesAlumnos }}
+                    </span>
+                @endif
+            </a>
+
+            <a href="{{ route('admin.reinscripciones.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Reinscripciones"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.reinscripciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <span class="nav-link-text">Reinscripciones</span>
+            </a>
+            @endif
+
             {{-- ══ COORDINACIÓN ACADÉMICA ══ --}}
             @if($rol === 'coordinacion' || $rol === 'admin')
             <div class="nav-section-label mt-4 border-t border-white/10 pt-3 pb-1 px-2">
@@ -717,135 +846,6 @@
                         {{ $pendientesProfesores }}
                     </span>
                 @endif
-            </a>
-            @endif
-
-            {{-- ══ CONTROL ESCOLAR ══ --}}
-            @if($rol === 'control_escolar' || $rol === 'admin')
-            <div class="nav-section-label mt-4 border-t border-white/10 pt-3 pb-1 px-2">
-                <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Control Escolar</p>
-            </div>
-
-            <a href="{{ route('admin.alta-masiva-alumnos.index') }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Alta masiva de alumnos"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.alta-masiva-alumnos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3m-3-7v9"/>
-                </svg>
-                <span class="nav-link-text">Alta masiva de alumnos</span>
-            </a>
-
-            <a href="{{ route('admin.alumnos.index') }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Alumnos"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.alumnos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857
-                             M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857
-                             m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                <span class="nav-link-text">Alumnos</span>
-            </a>
-
-            @php
-                $pendientesAspirantes = \App\Models\Aspirante::where('estado', 'pendiente')->count();
-            @endphp
-            <a href="{{ route('admin.aspirantes.index') }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Aspirantes"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.aspirantes.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
-                             a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <span class="flex-1 nav-link-text">Aspirantes</span>
-                @if($pendientesAspirantes > 0)
-                    <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
-                          style="background-color: #dc2626; color: #fff;">
-                        {{ $pendientesAspirantes }}
-                    </span>
-                @endif
-            </a>
-
-            <a href="{{ route('admin.expedientes.index') }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Expedientes"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.expedientes.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586
-                             a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <span class="nav-link-text">Expedientes</span>
-            </a>
-
-            @php
-                $pendientesInscripciones = \App\Models\Aspirante::where('estado', 'aprobado')
-                    ->whereHas('pagos', fn($q) => $q->where('estado', 'aprobado'))
-                    ->whereHas('alumno', fn($q) => $q->whereNull('user_id'))
-                    ->count();
-            @endphp
-            <a href="{{ route('admin.inscripciones.index') }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Inscripciones"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.inscripciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5
-                             m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4z"/>
-                </svg>
-                <span class="flex-1 nav-link-text">Inscripciones</span>
-                @if($pendientesInscripciones > 0)
-                    <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
-                          style="background-color: #dc2626; color: #fff;">
-                        {{ $pendientesInscripciones }}
-                    </span>
-                @endif
-            </a>
-
-            @php
-                $pendientesAlumnos = \App\Models\SolicitudContrasena::where('estado', 'pendiente')
-                    ->whereHas('user', fn($u) => $u->where('rol', 'alumno'))
-                    ->count();
-            @endphp
-            <a href="{{ route('admin.solicitudes-contrasena.index', ['tipo' => 'alumnos']) }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Contraseñas de alumnos"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.solicitudes-contrasena.*') && request()->query('tipo', 'alumnos') === 'alumnos' ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4
-                             a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                </svg>
-                <span class="flex-1 nav-link-text">Recuperación de contraseñas</span>
-                @if($pendientesAlumnos > 0)
-                    <span class="nav-badge inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full"
-                          style="background-color: #dc2626; color: #fff;">
-                        {{ $pendientesAlumnos }}
-                    </span>
-                @endif
-            </a>
-
-            <a href="{{ route('admin.reinscripciones.index') }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Reinscripciones"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.reinscripciones.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                </svg>
-                <span class="nav-link-text">Reinscripciones</span>
             </a>
             @endif
 
