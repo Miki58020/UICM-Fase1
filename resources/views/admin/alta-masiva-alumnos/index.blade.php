@@ -10,7 +10,7 @@
         {{-- Encabezado --}}
         <div class="mb-8">
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #D4AF37;">
-                Coordinación Académica
+                Control Escolar
             </p>
             <h1 class="text-2xl font-extrabold text-gray-900">Alta masiva de alumnos</h1>
             <div class="w-14 h-1 rounded-full mt-2" style="background-color: #D4AF37;"></div>
