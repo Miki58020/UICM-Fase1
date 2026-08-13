@@ -134,6 +134,10 @@ Route::middleware(['auth', 'rol:control_escolar'])->group(function () {
     Route::get('/admin/reinscripciones', [ReinscripcionController::class, 'index'])->name('admin.reinscripciones.index');
     Route::post('/admin/reinscripciones/{alumno}/generar-pago', [ReinscripcionController::class, 'generarPago'])->name('admin.reinscripciones.generar-pago');
     Route::post('/admin/reinscripciones/{alumno}/completar', [ReinscripcionController::class, 'completar'])->name('admin.reinscripciones.completar');
+
+    Route::get('/admin/alta-masiva-alumnos', [AltaMasivaAlumnosController::class, 'index'])->name('admin.alta-masiva-alumnos.index');
+    Route::get('/admin/alta-masiva-alumnos/plantilla', [AltaMasivaAlumnosController::class, 'plantillaMigracion'])->name('admin.alta-masiva-alumnos.plantilla');
+    Route::post('/admin/alta-masiva-alumnos/importar', [AltaMasivaAlumnosController::class, 'importarMigracion'])->name('admin.alta-masiva-alumnos.importar');
 });
 
 // Módulo admin — Gestión de usuarios del sistema
@@ -210,10 +214,6 @@ Route::middleware(['auth', 'rol:coordinacion'])->group(function () {
     Route::patch('/admin/carga-academica/{carga}/actualizar', [CargaAcademicaController::class, 'actualizar'])->name('admin.carga-academica.actualizar');
     Route::get('/admin/carga-academica/horarios/plantilla', [CargaAcademicaController::class, 'plantillaHorarios'])->name('admin.carga-academica.plantilla-horarios');
     Route::post('/admin/carga-academica/horarios/importar', [CargaAcademicaController::class, 'importarHorarios'])->name('admin.carga-academica.importar-horarios');
-
-    Route::get('/admin/alta-masiva-alumnos', [AltaMasivaAlumnosController::class, 'index'])->name('admin.alta-masiva-alumnos.index');
-    Route::get('/admin/alta-masiva-alumnos/plantilla', [AltaMasivaAlumnosController::class, 'plantillaMigracion'])->name('admin.alta-masiva-alumnos.plantilla');
-    Route::post('/admin/alta-masiva-alumnos/importar', [AltaMasivaAlumnosController::class, 'importarMigracion'])->name('admin.alta-masiva-alumnos.importar');
 
     Route::get('/admin/periodos', [PeriodoController::class, 'index'])->name('admin.periodos.index');
     Route::post('/admin/periodos', [PeriodoController::class, 'store'])->name('admin.periodos.store');

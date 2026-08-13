@@ -607,18 +607,6 @@
                 <span class="nav-link-text">Aclaraciones</span>
             </a>
 
-            <a href="{{ route('admin.alta-masiva-alumnos.index') }}"
-               @click="sidebarOpen = false"
-               data-tooltip="Alta masiva de alumnos"
-               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
-                      {{ request()->routeIs('admin.alta-masiva-alumnos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3m-3-7v9"/>
-                </svg>
-                <span class="nav-link-text">Alta masiva de alumnos</span>
-            </a>
-
             <a href="{{ route('admin.calificaciones.index') }}"
                @click="sidebarOpen = false"
                data-tooltip="Calificaciones"
@@ -737,6 +725,18 @@
             <div class="nav-section-label mt-4 border-t border-white/10 pt-3 pb-1 px-2">
                 <p class="text-xs font-semibold uppercase tracking-wider opacity-70" style="color: #D4AF37;">Control Escolar</p>
             </div>
+
+            <a href="{{ route('admin.alta-masiva-alumnos.index') }}"
+               @click="sidebarOpen = false"
+               data-tooltip="Alta masiva de alumnos"
+               class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium transition-colors duration-150
+                      {{ request()->routeIs('admin.alta-masiva-alumnos.*') ? 'bg-white/20 text-white' : 'text-green-100 hover:bg-white/10 hover:text-white' }}">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3 3-3m-3-7v9"/>
+                </svg>
+                <span class="nav-link-text">Alta masiva de alumnos</span>
+            </a>
 
             <a href="{{ route('admin.alumnos.index') }}"
                @click="sidebarOpen = false"
