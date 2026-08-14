@@ -148,12 +148,14 @@
                     y puedes realizar el pago cuando lo prefieras.
                 </p>
 
-                <a href="{{ route('aspirantes.seguimiento') }}"
+                {{-- Con folio se vuelve directo a la pantalla de pago; sin el, al formulario
+                     de consulta, que es el camino largo pero siempre disponible. --}}
+                <a href="{{ $folio ? route('aspirantes.pago', ['folio' => $folio]) : route('aspirantes.seguimiento') }}"
                    class="block w-full py-3 rounded-xl text-white text-sm font-bold text-center transition-colors duration-200 shadow-sm mb-3"
                    style="background-color: #0F4229;"
                    onmouseover="this.style.backgroundColor='#0a2e1c'"
                    onmouseout="this.style.backgroundColor='#0F4229'">
-                    Intentar de nuevo
+                    {{ $folio ? 'Continuar con el pago' : 'Intentar de nuevo' }}
                 </a>
                 <a href="{{ route('home') }}"
                    class="block text-sm font-medium transition-colors duration-150 text-gray-400"
@@ -191,12 +193,14 @@
                     Tu pago no pudo procesarse. Verifica los datos de tu tarjeta o elige otro método de pago e intenta de nuevo.
                 </p>
 
-                <a href="{{ route('aspirantes.seguimiento') }}"
+                {{-- Con folio se vuelve directo a la pantalla de pago; sin el, al formulario
+                     de consulta, que es el camino largo pero siempre disponible. --}}
+                <a href="{{ $folio ? route('aspirantes.pago', ['folio' => $folio]) : route('aspirantes.seguimiento') }}"
                    class="block w-full py-3 rounded-xl text-white text-sm font-bold text-center transition-colors duration-200 shadow-sm mb-3"
                    style="background-color: #0F4229;"
                    onmouseover="this.style.backgroundColor='#0a2e1c'"
                    onmouseout="this.style.backgroundColor='#0F4229'">
-                    Intentar de nuevo
+                    {{ $folio ? 'Continuar con el pago' : 'Intentar de nuevo' }}
                 </a>
                 <a href="{{ route('home') }}"
                    class="block text-sm font-medium transition-colors duration-150 text-gray-400"

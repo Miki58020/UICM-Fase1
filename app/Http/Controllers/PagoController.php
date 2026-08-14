@@ -277,9 +277,12 @@ class PagoController extends Controller
         // distingue como cancelado para no anunciarle un pago en proceso inexistente.
         $esCancelacion = !$paymentId && !isset($estadoMapa[$status]);
 
-        return redirect()->route('aspirantes.pago.confirmacion', [
+        return redirect()->route('aspirantes.pago.confirmacion', array_filter([
             'status' => $esCancelacion ? 'cancelado' : ($estadoMapa[$status] ?? 'pendiente'),
-        ]);
+            // El external_reference es el folio del aspirante. Se arrastra para que la
+            // pantalla de resultado pueda ofrecer el reintento en un solo clic.
+            'folio'  => $extRef ? strtoupper(trim($extRef)) : null,
+        ]));
     }
 
     // ─── Webhook IPN de Mercado Pago ──────────────────────────────────────────
@@ -358,7 +361,13 @@ class PagoController extends Controller
     public function confirmacion(Request $request)
     {
         $status = $request->query('status', 'pendiente');
-        return view('aspirantes.pago_confirmacion', compact('status'));
+
+        // El folio llega solo cuando Mercado Pago lo devuelve en el retorno. Sirve para
+        // ofrecer el reintento directo a la pantalla de pago, sin volver a pedirlo. Si no
+        // viene, la vista cae al camino largo (consultar folio) y nada se rompe.
+        $folio = strtoupper(trim((string) $request->query('folio', '')));
+
+        return view('aspirantes.pago_confirmacion', compact('status', 'folio'));
     }
 
     // ─── Alumno: pagar un cargo pendiente dentro del portal ───────────────────
