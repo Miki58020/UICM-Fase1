@@ -271,8 +271,14 @@ class PagoController extends Controller
             'rejected' => 'rechazado',
         ];
 
+        // Si el aspirante abandona el checkout sin pagar, Mercado Pago regresa sin
+        // identificador de pago y con el estado vacio o como la cadena "null". Eso no
+        // es un pago pendiente —no se genero ningun cargo ni ticket—, asi que se
+        // distingue como cancelado para no anunciarle un pago en proceso inexistente.
+        $esCancelacion = !$paymentId && !isset($estadoMapa[$status]);
+
         return redirect()->route('aspirantes.pago.confirmacion', [
-            'status' => $estadoMapa[$status] ?? 'pendiente',
+            'status' => $esCancelacion ? 'cancelado' : ($estadoMapa[$status] ?? 'pendiente'),
         ]);
     }
 

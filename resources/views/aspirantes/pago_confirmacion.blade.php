@@ -116,6 +116,54 @@
             </div>
         </div>
 
+        @elseif($status === 'cancelado')
+        {{-- ══════ PAGO CANCELADO (salio del checkout sin pagar) ══════ --}}
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="h-1.5 w-full" style="background-color: #9CA3AF;"></div>
+
+            <div class="px-8 py-10 text-center">
+                <div class="flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-5"
+                     style="background-color: #f3f4f6;">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         style="color: #6B7280;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                </div>
+
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Pago no realizado</h1>
+                <div class="w-12 h-0.5 mx-auto my-4" style="background-color: #D1D5DB;"></div>
+
+                <div class="flex justify-center mb-5">
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-white"
+                          style="background-color: #6B7280;">
+                        <span class="w-2 h-2 rounded-full bg-white opacity-80 inline-block"></span>
+                        Pago cancelado
+                    </span>
+                </div>
+
+                <p class="text-sm text-gray-600 leading-relaxed mb-8">
+                    Saliste del proceso de pago antes de completarlo, por lo que
+                    <strong>no se generó ningún cargo ni ticket</strong>. Tu solicitud sigue registrada
+                    y puedes realizar el pago cuando lo prefieras.
+                </p>
+
+                <a href="{{ route('aspirantes.seguimiento') }}"
+                   class="block w-full py-3 rounded-xl text-white text-sm font-bold text-center transition-colors duration-200 shadow-sm mb-3"
+                   style="background-color: #0F4229;"
+                   onmouseover="this.style.backgroundColor='#0a2e1c'"
+                   onmouseout="this.style.backgroundColor='#0F4229'">
+                    Intentar de nuevo
+                </a>
+                <a href="{{ route('home') }}"
+                   class="block text-sm font-medium transition-colors duration-150 text-gray-400"
+                   onmouseover="this.style.textDecoration='underline'"
+                   onmouseout="this.style.textDecoration='none'">
+                    Volver al inicio
+                </a>
+            </div>
+        </div>
+
         @else
         {{-- ══════ PAGO RECHAZADO / ERROR ══════ --}}
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
