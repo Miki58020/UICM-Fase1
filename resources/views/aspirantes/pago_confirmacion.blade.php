@@ -157,12 +157,26 @@
                    onmouseout="this.style.backgroundColor='#0F4229'">
                     {{ $folio ? 'Continuar con el pago' : 'Intentar de nuevo' }}
                 </a>
-                <a href="{{ route('home') }}"
-                   class="block text-sm font-medium transition-colors duration-150 text-gray-400"
-                   onmouseover="this.style.textDecoration='underline'"
-                   onmouseout="this.style.textDecoration='none'">
-                    Volver al inicio
-                </a>
+                {{-- Mismo boton secundario que la pantalla de pago, para que el regreso se
+                     vea igual en todo el flujo del aspirante. --}}
+                <div class="flex justify-center">
+                    <a href="{{ route('home') }}"
+                       class="group inline-flex items-center gap-3 px-4 py-3 rounded-xl
+                              bg-white shadow-sm border border-gray-200
+                              hover:border-gray-300 hover:shadow transition-all duration-150">
+                        <span class="flex items-center justify-center w-8 h-8 rounded-lg transition-colors duration-150"
+                              style="background-color: #f0f9f4;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                 style="color: #0F4229;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                      d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </span>
+                        <span class="text-xs font-semibold text-gray-500 group-hover:text-gray-700 transition-colors duration-150">
+                            Volver al inicio
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -202,12 +216,26 @@
                    onmouseout="this.style.backgroundColor='#0F4229'">
                     {{ $folio ? 'Continuar con el pago' : 'Intentar de nuevo' }}
                 </a>
-                <a href="{{ route('home') }}"
-                   class="block text-sm font-medium transition-colors duration-150 text-gray-400"
-                   onmouseover="this.style.textDecoration='underline'"
-                   onmouseout="this.style.textDecoration='none'">
-                    Volver al inicio
-                </a>
+                {{-- Mismo boton secundario que la pantalla de pago, para que el regreso se
+                     vea igual en todo el flujo del aspirante. --}}
+                <div class="flex justify-center">
+                    <a href="{{ route('home') }}"
+                       class="group inline-flex items-center gap-3 px-4 py-3 rounded-xl
+                              bg-white shadow-sm border border-gray-200
+                              hover:border-gray-300 hover:shadow transition-all duration-150">
+                        <span class="flex items-center justify-center w-8 h-8 rounded-lg transition-colors duration-150"
+                              style="background-color: #f0f9f4;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                 style="color: #0F4229;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                      d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </span>
+                        <span class="text-xs font-semibold text-gray-500 group-hover:text-gray-700 transition-colors duration-150">
+                            Volver al inicio
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
         @endif
