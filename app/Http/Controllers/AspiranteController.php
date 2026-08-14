@@ -234,6 +234,9 @@ class AspiranteController extends Controller
             ],
         ], [
             'curp.regex' => 'El CURP no tiene un formato válido. Verifica que esté escrito tal como aparece en tu documento oficial.',
+            // Sin este mensaje, Laravel sustituye :date por el parametro literal de la regla
+            // ("today") y el aviso sale a medio traducir: "...anterior a today".
+            'fecha_nacimiento.before' => 'La fecha de nacimiento debe ser anterior a hoy.',
         ]);
 
         $programa = $programaSeleccionado ?? abort(404);
