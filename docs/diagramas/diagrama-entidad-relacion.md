@@ -24,7 +24,7 @@ Esta agrupación es la misma usada en `diagrama-base-datos.svg`, para que ambos 
 ## 3. Cómo leer las relaciones
 
 - Cada línea conecta una `FK` con la `PK` que referencia. La etiqueta `1—N` se lee desde la tabla con la llave foránea hacia la tabla referenciada: *"muchos registros de la tabla A pueden apuntar a un mismo registro de la tabla B"*.
-- Línea **sólida gris** = la relación tiene una restricción de llave foránea real en la base de datos (SQLite la hace cumplir).
+- Línea **sólida gris** = la relación tiene una restricción de llave foránea real en la base de datos (el motor la hace cumplir).
 - Línea **punteada dorada** (`fk` en minúscula) = la relación existe y se usa en el código (Eloquent la declara y la aplicación la respeta), pero **no tiene un constraint de base de datos detrás**. Ver la sección 5.
 
 ## 4. Relaciones centrales del modelo
@@ -35,15 +35,16 @@ Esta agrupación es la misma usada en `diagrama-base-datos.svg`, para que ambos 
 - **`pagos`** se relaciona con **dos** entidades del flujo de admisión/académico (`aspirantes` y `alumnos`) porque cubre dos momentos distintos: el pago de inscripción (antes de que exista el alumno) y los pagos posteriores de reinscripción/colegiatura (ya con el alumno dado de alta).
 - **`tarifas_inscripcion`** y **`contacto_intereses`** son catálogos administrables sin relación de base de datos formal con el resto — se enlazan por coincidencia de valor (`nivel`, `interes`), no por FK.
 
-## 5. Aviso importante: relaciones sin FK real en la tabla `alumnos`
+## 5. Aviso: las FK de `alumnos` dependen del motor
 
-Una reconstrucción de la tabla `alumnos` (migración `2026_04_06_000001_fix_alumnos_estado_enum.php`, para poder cambiar el enum de `estado` en SQLite) recreó la tabla sin volver a declarar las llaves foráneas originales. En el estado actual de la base de datos:
+La migración `2026_04_06_000001_fix_alumnos_estado_enum.php` tiene una rama por motor, y eso hace que el esquema de `alumnos` **no sea idéntico en SQLite y en MariaDB**:
 
-- `alumnos.user_id`, `alumnos.aspirante_id`, `alumnos.programa_id` y `alumnos.grupo_id` **no tienen constraint de FK a nivel de motor** — son columnas numéricas sueltas.
-- Sólo `alumnos.periodo_id` (agregada en una migración posterior) sí quedó como FK real con `ON DELETE SET NULL`.
-- Los modelos Eloquent (`Alumno::user()`, `::aspirante()`, `::programa()`, `::grupo()`) siguen declarando estas relaciones con normalidad, y la aplicación las respeta — el riesgo es únicamente que **la base de datos no rechazaría, por sí sola, un `user_id` o `programa_id` inexistente** insertado fuera de la aplicación (por ejemplo, en una consulta manual o un script de migración de datos).
+- **En MariaDB** (producción) la migración ejecuta `ALTER TABLE alumnos MODIFY estado ENUM(...)` y termina ahí, sin tocar la estructura. Las llaves foráneas originales nunca se pierden: `user_id`, `aspirante_id`, `programa_id`, `grupo_id` y `periodo_id` son **las cinco restricciones reales**. Verificado en `information_schema.KEY_COLUMN_USAGE` y en la vista de relaciones de phpMyAdmin.
+- **En SQLite**, que no admite modificar un `ENUM` en sitio, la migración reconstruye la tabla completa y al recrearla no vuelve a declarar esas cuatro llaves. Sobre ese motor quedan como columnas numéricas sueltas y sólo `periodo_id` sobrevive como FK real.
 
-En el diagrama, estas cuatro relaciones aparecen con línea punteada dorada y la etiqueta `fk` en minúscula para distinguirlas de las relaciones con integridad referencial real.
+Los modelos Eloquent (`Alumno::user()`, `::aspirante()`, `::programa()`, `::grupo()`) declaran las relaciones igual en ambos casos, de modo que la aplicación se comporta del mismo modo sobre cualquiera de los dos motores.
+
+**El diagrama refleja el estado de producción:** las cinco aparecen como llaves foráneas con integridad referencial real.
 
 ## 6. Notas de alcance
 

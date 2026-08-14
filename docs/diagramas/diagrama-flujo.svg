@@ -1,209 +1,176 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="2200" viewBox="0 0 1500 2200" font-family="Arial, Helvetica, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="2200" viewBox="0 0 1500 2200" font-family="Segoe UI, Helvetica, Arial, sans-serif">
 
   <defs>
-    <marker id="arrowGreenF" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#0F4229"/>
+    <marker id="ahG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#14532D"/>
     </marker>
-    <marker id="arrowOrangeF" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#b0530a"/>
+    <marker id="ahB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563EB"/>
     </marker>
-    <marker id="arrowGoldF" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#8a6d0a"/>
+    <marker id="ahO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#C2410C"/>
     </marker>
-    <marker id="arrowBlueF" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#164a99"/>
+    <marker id="ahY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#B4881B"/>
     </marker>
   </defs>
 
-  <rect x="0" y="0" width="1500" height="2200" fill="#ffffff"/>
+  <rect width="1500" height="2200" fill="#FFFFFF"/>
 
-  <!-- TITLE -->
-  <text x="50" y="45" font-size="26" font-weight="800" fill="#0F4229">UICM — Diagrama de Flujo: Ciclo de una Petición</text>
-  <text x="50" y="68" font-size="13" fill="#6b7280">Cómo procesa el sistema cualquier acción de un usuario, desde que hace clic hasta que ve el resultado — aplica a todos los módulos</text>
+  <!-- ================= TITULO ================= -->
+  <text x="45" y="46" font-size="31" font-weight="700" fill="#14532D">UICM — Diagrama de Flujo: Ciclo de una Petición</text>
+  <text x="47" y="76" font-size="15" fill="#6B7280">Cómo procesa el sistema cualquier acción de un usuario, desde que hace clic hasta que ve el resultado — aplica a todos los módulos</text>
 
-  <g transform="translate(0,60)">
-  <!-- ============ T0 START ============ -->
-  <rect x="490" y="40" width="520" height="64" rx="32" fill="#0F4229"/>
-  <text x="750" y="78" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">INICIO — el actor hace clic o envía un formulario</text>
-  <line x1="750" y1="104" x2="750" y2="134" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
+  <!-- ================= INICIO ================= -->
+  <rect x="489" y="105" width="522" height="62" rx="31" fill="#14532D"/>
+  <text x="750" y="143" font-size="17" font-weight="700" fill="#FFFFFF" text-anchor="middle">INICIO — el actor hace clic o envía un formulario</text>
+  <path d="M750,167 V190" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
 
-  <!-- P1 -->
-  <rect x="490" y="134" width="520" height="64" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="2"/>
-  <text x="750" y="171" text-anchor="middle" font-size="13" fill="#111827">Request HTTP entra por <tspan font-weight="700">routes/web.php</tspan></text>
-  <line x1="750" y1="198" x2="750" y2="228" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
+  <!-- routes/web.php -->
+  <rect x="489" y="196" width="522" height="57" rx="10" fill="#FFFFFF" stroke="#14532D" stroke-width="2"/>
+  <text x="750" y="231" font-size="16" fill="#111827" text-anchor="middle">Request HTTP entra por <tspan font-weight="700">routes/web.php</tspan></text>
+  <path d="M750,253 V294" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
 
-  <!-- D1 diamond -->
-  <polygon points="750,228 1050,288 750,348 450,288" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
-  <text x="750" y="283" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">¿Hay sesión iniciada válida,</text>
-  <text x="750" y="299" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">si la ruta lo requiere?</text>
+  <!-- ================= D1 sesion ================= -->
+  <polygon points="750,300 1050,352 750,405 450,352" fill="#EAF2FE" stroke="#2563EB" stroke-width="2"/>
+  <text x="750" y="346" font-size="16" fill="#111827" text-anchor="middle">¿Hay sesión iniciada válida,</text>
+  <text x="750" y="368" font-size="16" fill="#111827" text-anchor="middle">si la ruta lo requiere?</text>
+  <rect x="40" y="318" width="380" height="68" rx="10" fill="#FEF6EC" stroke="#F0A860" stroke-width="2"/>
+  <text x="230" y="345" font-size="15" font-weight="700" fill="#C2410C" text-anchor="middle">Redirige a /login</text>
+  <text x="230" y="368" font-size="13" fill="#9CA3AF" text-anchor="middle">Fin de esta petición</text>
+  <path d="M450,352 H426" stroke="#C2410C" stroke-width="2.5" fill="none" marker-end="url(#ahO)"/>
+  <text x="437" y="343" font-size="13" font-weight="700" fill="#C2410C" text-anchor="middle">No</text>
+  <path d="M750,405 V446" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
+  <text x="768" y="429" font-size="13" font-weight="700" fill="#14532D">Sí</text>
 
-  <!-- E1 error box -->
-  <rect x="40" y="256" width="380" height="64" rx="8" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
-  <text x="230" y="282" text-anchor="middle" font-size="12" font-weight="700" fill="#b0530a">Redirige a /login</text>
-  <text x="230" y="300" text-anchor="middle" font-size="10.5" fill="#6b7280">Fin de esta petición</text>
-  <line x1="450" y1="288" x2="424" y2="288" stroke="#b0530a" stroke-width="2.2" marker-end="url(#arrowOrangeF)"/>
-  <text x="437" y="278" text-anchor="middle" font-size="10.5" fill="#b0530a" font-weight="700">No</text>
+  <!-- ================= D2 rol ================= -->
+  <polygon points="750,452 1050,504 750,557 450,504" fill="#EAF2FE" stroke="#2563EB" stroke-width="2"/>
+  <text x="750" y="498" font-size="16" fill="#111827" text-anchor="middle">¿El rol tiene permiso para</text>
+  <text x="750" y="520" font-size="16" fill="#111827" text-anchor="middle">esta ruta? (middleware rol:*)</text>
+  <rect x="40" y="470" width="380" height="68" rx="10" fill="#FEF6EC" stroke="#F0A860" stroke-width="2"/>
+  <text x="230" y="497" font-size="15" font-weight="700" fill="#C2410C" text-anchor="middle">Responde 403 — Acceso denegado</text>
+  <text x="230" y="520" font-size="13" fill="#9CA3AF" text-anchor="middle">Fin de esta petición</text>
+  <path d="M450,504 H426" stroke="#C2410C" stroke-width="2.5" fill="none" marker-end="url(#ahO)"/>
+  <text x="437" y="495" font-size="13" font-weight="700" fill="#C2410C" text-anchor="middle">No</text>
+  <path d="M750,557 V594" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
+  <text x="768" y="581" font-size="13" font-weight="700" fill="#14532D">Sí</text>
 
-  <line x1="750" y1="348" x2="750" y2="378" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
-  <text x="768" y="368" font-size="10.5" fill="#0F4229" font-weight="700">Sí</text>
+  <!-- Controller recibe -->
+  <rect x="489" y="600" width="522" height="57" rx="10" fill="#FFFFFF" stroke="#14532D" stroke-width="2"/>
+  <text x="750" y="635" font-size="16" fill="#111827" text-anchor="middle">El <tspan font-weight="700">Controller</tspan> del módulo recibe la petición</text>
+  <path d="M750,657 V694" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
 
-  <!-- D2 diamond -->
-  <polygon points="750,378 1050,438 750,498 450,438" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
-  <text x="750" y="433" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">¿El rol tiene permiso para</text>
-  <text x="750" y="449" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">esta ruta? (middleware rol:*)</text>
+  <!-- ================= D3 trae datos ================= -->
+  <polygon points="750,700 1050,752 750,805 450,752" fill="#EAF2FE" stroke="#2563EB" stroke-width="2"/>
+  <text x="750" y="746" font-size="16" fill="#111827" text-anchor="middle">¿Trae datos de formulario</text>
+  <text x="750" y="768" font-size="16" fill="#111827" text-anchor="middle">(POST / PUT)?</text>
+  <path d="M750,805 V844" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
+  <text x="768" y="831" font-size="13" font-weight="700" fill="#14532D">Sí</text>
+  <!-- rama No: sin datos de formulario -->
+  <path d="M1050,752 H1180 V1125 H1019" stroke="#2563EB" stroke-width="2" fill="none" marker-end="url(#ahB)"/>
+  <text x="1093" y="744" font-size="13" font-weight="700" fill="#2563EB">No</text>
+  <text x="1172" y="1113" font-size="12" fill="#2563EB" text-anchor="end">(sin datos de formulario)</text>
 
-  <!-- E2 error box -->
-  <rect x="40" y="406" width="380" height="64" rx="8" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
-  <text x="230" y="432" text-anchor="middle" font-size="12" font-weight="700" fill="#b0530a">Responde 403 — Acceso denegado</text>
-  <text x="230" y="450" text-anchor="middle" font-size="10.5" fill="#6b7280">Fin de esta petición</text>
-  <line x1="450" y1="438" x2="424" y2="438" stroke="#b0530a" stroke-width="2.2" marker-end="url(#arrowOrangeF)"/>
-  <text x="437" y="428" text-anchor="middle" font-size="10.5" fill="#b0530a" font-weight="700">No</text>
+  <!-- CORREGIDO: validacion en el controlador, no Form Request -->
+  <rect x="489" y="850" width="522" height="57" rx="10" fill="#FFFFFF" stroke="#14532D" stroke-width="2"/>
+  <text x="750" y="885" font-size="16" fill="#111827" text-anchor="middle">El <tspan font-weight="700">Controller</tspan> valida los datos con las reglas del módulo</text>
+  <path d="M750,907 V944" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
 
-  <line x1="750" y1="498" x2="750" y2="528" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
-  <text x="768" y="518" font-size="10.5" fill="#0F4229" font-weight="700">Sí</text>
+  <!-- ================= D4 datos validos ================= -->
+  <polygon points="750,950 1050,1002 750,1055 450,1002" fill="#EAF2FE" stroke="#2563EB" stroke-width="2"/>
+  <text x="750" y="996" font-size="16" fill="#111827" text-anchor="middle">¿Los datos son</text>
+  <text x="750" y="1018" font-size="16" fill="#111827" text-anchor="middle">válidos?</text>
+  <!-- CORREGIDO: 302 en formulario / 422 en AJAX -->
+  <rect x="40" y="962" width="380" height="80" rx="10" fill="#FEF6EC" stroke="#F0A860" stroke-width="2"/>
+  <text x="230" y="990" font-size="15" font-weight="700" fill="#C2410C" text-anchor="middle">Rechaza la petición con los errores</text>
+  <text x="230" y="1012" font-size="12.5" fill="#9CA3AF" text-anchor="middle">302 de vuelta al formulario, o 422 en JSON</text>
+  <text x="230" y="1030" font-size="12.5" fill="#9CA3AF" text-anchor="middle">si la petición es asíncrona (Alpine)</text>
+  <path d="M450,1002 H426" stroke="#C2410C" stroke-width="2.5" fill="none" marker-end="url(#ahO)"/>
+  <text x="437" y="993" font-size="13" font-weight="700" fill="#C2410C" text-anchor="middle">No</text>
+  <path d="M750,1055 V1084" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
+  <text x="768" y="1076" font-size="13" font-weight="700" fill="#14532D">Sí</text>
 
-  <!-- P2 -->
-  <rect x="490" y="528" width="520" height="64" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="2"/>
-  <text x="750" y="565" text-anchor="middle" font-size="13" fill="#111827">El <tspan font-weight="700">Controller</tspan> del módulo recibe la petición</text>
-  <line x1="750" y1="592" x2="750" y2="622" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
+  <!-- logica de negocio -->
+  <rect x="489" y="1090" width="522" height="70" rx="10" fill="#F0F7F2" stroke="#14532D" stroke-width="2"/>
+  <text x="750" y="1119" font-size="16" font-weight="700" fill="#14532D" text-anchor="middle">Controller ejecuta la lógica de negocio</text>
+  <text x="750" y="1141" font-size="13" fill="#6B7280" text-anchor="middle">del módulo (reglas, cálculos, permisos finos)</text>
+  <path d="M750,1160 V1194" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
 
-  <!-- D3 diamond -->
-  <polygon points="750,622 1050,682 750,742 450,682" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
-  <text x="750" y="677" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">¿Trae datos de formulario</text>
-  <text x="750" y="693" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">(POST / PUT)?</text>
+  <!-- ================= D5 servicio externo ================= -->
+  <polygon points="750,1200 1050,1252 750,1305 450,1252" fill="#EAF2FE" stroke="#2563EB" stroke-width="2"/>
+  <text x="750" y="1246" font-size="16" fill="#111827" text-anchor="middle">¿Requiere un servicio externo?</text>
+  <text x="750" y="1268" font-size="16" fill="#111827" text-anchor="middle">(pago en línea / correo)</text>
+  <path d="M750,1305 V1344" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
+  <text x="768" y="1331" font-size="13" font-weight="700" fill="#14532D">Sí</text>
+  <path d="M1050,1252 H1180 V1742 H1019" stroke="#2563EB" stroke-width="2" fill="none" marker-end="url(#ahB)"/>
+  <text x="1093" y="1244" font-size="13" font-weight="700" fill="#2563EB">No</text>
 
-  <!-- D3 "No" bypass: right lane -->
-  <path d="M 1050 682 H 1150 V 1016" fill="none" stroke="#164a99" stroke-width="2.2"/>
-  <text x="1160" y="700" font-size="10.5" fill="#164a99" font-weight="700">No</text>
+  <!-- CORREGIDO: Checkout Pro, no Bricks -->
+  <rect x="489" y="1350" width="522" height="57" rx="10" fill="#FDF6DC" stroke="#E3B341" stroke-width="2"/>
+  <text x="750" y="1385" font-size="16" font-weight="700" fill="#7A5B10" text-anchor="middle">Llama a Mercado Pago (Checkout Pro) o SMTP</text>
+  <path d="M750,1407 V1444" stroke="#B4881B" stroke-width="2.5" fill="none" marker-end="url(#ahY)"/>
 
-  <line x1="750" y1="742" x2="750" y2="772" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
-  <text x="768" y="762" font-size="10.5" fill="#0F4229" font-weight="700">Sí</text>
+  <!-- ================= D6 respuesta exitosa ================= -->
+  <polygon points="750,1450 1050,1502 750,1555 450,1502" fill="#EAF2FE" stroke="#2563EB" stroke-width="2"/>
+  <text x="750" y="1496" font-size="16" fill="#111827" text-anchor="middle">¿Respuesta exitosa</text>
+  <text x="750" y="1518" font-size="16" fill="#111827" text-anchor="middle">del servicio?</text>
+  <path d="M1050,1502 H1115 V1706 H1019" stroke="#2563EB" stroke-width="2" fill="none" marker-end="url(#ahB)"/>
+  <text x="1063" y="1494" font-size="13" font-weight="700" fill="#2563EB">Sí</text>
+  <path d="M750,1555 V1584" stroke="#C2410C" stroke-width="2.5" fill="none" marker-end="url(#ahO)"/>
+  <text x="768" y="1576" font-size="13" font-weight="700" fill="#C2410C">No</text>
 
-  <!-- P3 -->
-  <rect x="490" y="772" width="520" height="64" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="2"/>
-  <text x="750" y="809" text-anchor="middle" font-size="13" fill="#111827">Un <tspan font-weight="700">Form Request</tspan> valida las reglas del módulo</text>
-  <line x1="750" y1="836" x2="750" y2="866" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
+  <rect x="489" y="1590" width="522" height="70" rx="10" fill="#FEF6EC" stroke="#F0A860" stroke-width="2"/>
+  <text x="750" y="1619" font-size="16" font-weight="700" fill="#C2410C" text-anchor="middle">Registra el error / marca pendiente</text>
+  <text x="750" y="1641" font-size="13" fill="#6B7280" text-anchor="middle">no detiene el flujo (ej. correo con reintento)</text>
+  <path d="M750,1660 V1684" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
 
-  <!-- D4 diamond -->
-  <polygon points="750,866 1050,926 750,986 450,926" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
-  <text x="750" y="921" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">¿Los datos son</text>
-  <text x="750" y="937" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">válidos?</text>
+  <!-- CORREGIDO: MariaDB + sin transaccion atomica -->
+  <rect x="489" y="1690" width="522" height="70" rx="10" fill="#EAF2FE" stroke="#2563EB" stroke-width="2"/>
+  <text x="750" y="1719" font-size="16" font-weight="700" fill="#1E40AF" text-anchor="middle">Eloquent ORM lee o escribe en MariaDB</text>
+  <text x="750" y="1741" font-size="13" fill="#6B7280" text-anchor="middle">las restricciones del esquema (InnoDB) resguardan la integridad</text>
+  <path d="M750,1760 V1794" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
 
-  <!-- E3 error box -->
-  <rect x="40" y="894" width="380" height="64" rx="8" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
-  <text x="230" y="918" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b0530a">Responde 422 — regresa al</text>
-  <text x="230" y="934" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b0530a">formulario con errores</text>
-  <text x="230" y="950" text-anchor="middle" font-size="10" fill="#6b7280">Fin de esta petición</text>
-  <line x1="450" y1="926" x2="424" y2="926" stroke="#b0530a" stroke-width="2.2" marker-end="url(#arrowOrangeF)"/>
-  <text x="437" y="916" text-anchor="middle" font-size="10.5" fill="#b0530a" font-weight="700">No</text>
+  <!-- prepara respuesta -->
+  <rect x="489" y="1800" width="522" height="57" rx="10" fill="#FFFFFF" stroke="#14532D" stroke-width="2"/>
+  <text x="750" y="1835" font-size="16" fill="#111827" text-anchor="middle">Controller prepara la respuesta</text>
+  <path d="M750,1857 V1894" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
 
-  <!-- D4 "Sí" down to merge M1, plus bypass lane arrives -->
-  <line x1="750" y1="986" x2="750" y2="1016" stroke="#0F4229" stroke-width="2.5"/>
-  <text x="768" y="1006" font-size="10.5" fill="#0F4229" font-weight="700">Sí</text>
-  <path d="M 1150 1016 H 1010" fill="none" stroke="#164a99" stroke-width="2.2" marker-end="url(#arrowBlueF)"/>
-  <circle cx="750" cy="1016" r="4" fill="#0F4229"/>
-  <text x="1030" y="1006" text-anchor="middle" font-size="9.5" fill="#164a99">(sin datos de formulario)</text>
+  <!-- ================= D7 AJAX ================= -->
+  <polygon points="750,1900 1050,1952 750,2005 450,1952" fill="#EAF2FE" stroke="#2563EB" stroke-width="2"/>
+  <text x="750" y="1946" font-size="16" fill="#111827" text-anchor="middle">¿Es una petición</text>
+  <text x="750" y="1968" font-size="16" fill="#111827" text-anchor="middle">Alpine/fetch (AJAX)?</text>
 
-  <!-- P4 -->
-  <rect x="490" y="1016" width="520" height="70" rx="8" fill="#f0f9f4" stroke="#0F4229" stroke-width="2"/>
-  <text x="750" y="1046" text-anchor="middle" font-size="13" font-weight="700" fill="#0F4229">Controller ejecuta la lógica de negocio</text>
-  <text x="750" y="1062" text-anchor="middle" font-size="10.5" fill="#6b7280">del módulo (reglas, cálculos, permisos finos)</text>
-  <line x1="750" y1="1086" x2="750" y2="1116" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
+  <rect x="150" y="1921" width="280" height="62" rx="10" fill="#FFFFFF" stroke="#14532D" stroke-width="2"/>
+  <text x="290" y="1946" font-size="15" font-weight="700" fill="#111827" text-anchor="middle">Renderiza vista</text>
+  <text x="290" y="1968" font-size="15" font-weight="700" fill="#111827" text-anchor="middle">Blade</text>
+  <path d="M450,1952 H436" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
+  <text x="443" y="1941" font-size="13" font-weight="700" fill="#14532D" text-anchor="middle">No</text>
 
-  <!-- D5 diamond -->
-  <polygon points="750,1116 1050,1176 750,1236 450,1176" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
-  <text x="750" y="1171" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">¿Requiere un servicio externo?</text>
-  <text x="750" y="1187" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">(pago en línea / correo)</text>
+  <rect x="1070" y="1921" width="280" height="62" rx="10" fill="#FFFFFF" stroke="#14532D" stroke-width="2"/>
+  <text x="1210" y="1946" font-size="15" font-weight="700" fill="#111827" text-anchor="middle">Responde</text>
+  <text x="1210" y="1968" font-size="15" font-weight="700" fill="#111827" text-anchor="middle">JSON</text>
+  <path d="M1050,1952 H1064" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
+  <text x="1057" y="1941" font-size="13" font-weight="700" fill="#14532D" text-anchor="middle">Sí</text>
 
-  <!-- D5 "No" bypass: right lane 2 -->
-  <path d="M 1050 1176 H 1150 V 1604" fill="none" stroke="#164a99" stroke-width="2.2"/>
-  <text x="1160" y="1194" font-size="10.5" fill="#164a99" font-weight="700">No</text>
+  <path d="M290,1983 V2016 H750 V2034" stroke="#14532D" stroke-width="2.5" fill="none" marker-end="url(#ahG)"/>
+  <path d="M1210,1983 V2016 H750" stroke="#14532D" stroke-width="2.5" fill="none"/>
 
-  <line x1="750" y1="1236" x2="750" y2="1266" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
-  <text x="768" y="1256" font-size="10.5" fill="#0F4229" font-weight="700">Sí</text>
+  <!-- ================= FIN ================= -->
+  <rect x="489" y="2040" width="522" height="62" rx="31" fill="#14532D"/>
+  <text x="750" y="2078" font-size="17" font-weight="700" fill="#FFFFFF" text-anchor="middle">FIN — el actor ve el resultado en el navegador</text>
 
-  <!-- P5 external service -->
-  <rect x="490" y="1266" width="520" height="64" rx="8" fill="#fdf3d0" stroke="#D4AF37" stroke-width="2"/>
-  <text x="750" y="1303" text-anchor="middle" font-size="13" font-weight="700" fill="#111827">Llama a MercadoPago (Checkout Pro) o SMTP</text>
-  <line x1="750" y1="1330" x2="750" y2="1360" stroke="#8a6d0a" stroke-width="2.5" marker-end="url(#arrowGoldF)"/>
-
-  <!-- D6 diamond -->
-  <polygon points="750,1360 1050,1420 750,1480 450,1420" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
-  <text x="750" y="1415" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">¿Respuesta exitosa</text>
-  <text x="750" y="1431" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">del servicio?</text>
-
-  <!-- D6 "Sí" bypass joining lane 2 -->
-  <path d="M 1050 1420 H 1150" fill="none" stroke="#164a99" stroke-width="2.2"/>
-  <text x="1090" y="1410" text-anchor="middle" font-size="10.5" fill="#164a99" font-weight="700">Sí</text>
-
-  <line x1="750" y1="1480" x2="750" y2="1510" stroke="#b0530a" stroke-width="2.5" marker-end="url(#arrowOrangeF)"/>
-  <text x="768" y="1500" font-size="10.5" fill="#b0530a" font-weight="700">No</text>
-
-  <!-- P5b -->
-  <rect x="490" y="1510" width="520" height="64" rx="8" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
-  <text x="750" y="1538" text-anchor="middle" font-size="12" font-weight="700" fill="#b0530a">Registra el error / marca pendiente</text>
-  <text x="750" y="1555" text-anchor="middle" font-size="10.5" fill="#6b7280">no detiene el flujo (ej. correo con reintento)</text>
-
-  <!-- Merge M2 -->
-  <line x1="750" y1="1574" x2="750" y2="1604" stroke="#0F4229" stroke-width="2.5"/>
-  <path d="M 1150 1604 H 1010" fill="none" stroke="#164a99" stroke-width="2.2" marker-end="url(#arrowBlueF)"/>
-
-  <!-- P6 -->
-  <rect x="490" y="1604" width="520" height="64" rx="8" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
-  <text x="750" y="1632" text-anchor="middle" font-size="13" font-weight="700" fill="#111827">Eloquent ORM lee o escribe en SQLite</text>
-  <text x="750" y="1649" text-anchor="middle" font-size="10.5" fill="#6b7280">(dentro de una transacción atómica si la operación lo requiere)</text>
-  <line x1="750" y1="1668" x2="750" y2="1698" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
-
-  <!-- P7 -->
-  <rect x="490" y="1698" width="520" height="64" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="2"/>
-  <text x="750" y="1735" text-anchor="middle" font-size="13" fill="#111827">Controller prepara la respuesta</text>
-  <line x1="750" y1="1762" x2="750" y2="1792" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
-
-  <!-- D7 diamond -->
-  <polygon points="750,1792 1050,1852 750,1912 450,1852" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
-  <text x="750" y="1847" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">¿Es una petición</text>
-  <text x="750" y="1863" text-anchor="middle" font-size="12.5" font-weight="700" fill="#111827">Alpine/fetch (AJAX)?</text>
-
-  <!-- Blade box (No, left) -->
-  <rect x="180" y="1820" width="260" height="64" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="2"/>
-  <text x="310" y="1846" text-anchor="middle" font-size="11.5" font-weight="700" fill="#111827">Renderiza vista</text>
-  <text x="310" y="1862" text-anchor="middle" font-size="11.5" font-weight="700" fill="#111827">Blade</text>
-  <line x1="450" y1="1852" x2="444" y2="1852" stroke="#0F4229" stroke-width="2.2" marker-end="url(#arrowGreenF)"/>
-  <text x="415" y="1842" text-anchor="middle" font-size="10.5" fill="#0F4229" font-weight="700">No</text>
-
-  <!-- JSON box (Sí, right) -->
-  <rect x="1060" y="1820" width="260" height="64" rx="8" fill="#ffffff" stroke="#0F4229" stroke-width="2"/>
-  <text x="1190" y="1846" text-anchor="middle" font-size="11.5" font-weight="700" fill="#111827">Responde</text>
-  <text x="1190" y="1862" text-anchor="middle" font-size="11.5" font-weight="700" fill="#111827">JSON</text>
-  <line x1="1050" y1="1852" x2="1056" y2="1852" stroke="#0F4229" stroke-width="2.2" marker-end="url(#arrowGreenF)"/>
-  <text x="1085" y="1842" text-anchor="middle" font-size="10.5" fill="#0F4229" font-weight="700">Sí</text>
-
-  <!-- Converge to T1 -->
-  <line x1="310" y1="1884" x2="750" y2="1954" stroke="#0F4229" stroke-width="2.2"/>
-  <line x1="1190" y1="1884" x2="750" y2="1954" stroke="#0F4229" stroke-width="2.2"/>
-  <line x1="750" y1="1954" x2="750" y2="1984" stroke="#0F4229" stroke-width="2.5" marker-end="url(#arrowGreenF)"/>
-
-  <!-- T1 END -->
-  <rect x="490" y="1984" width="520" height="64" rx="32" fill="#0F4229"/>
-  <text x="750" y="2022" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">FIN — el actor ve el resultado en el navegador</text>
-
-  <!-- LEGEND -->
-  <g font-size="11" fill="#374151">
-    <rect x="1140" y="1984" width="16" height="16" rx="3" fill="#ffffff" stroke="#0F4229" stroke-width="2"/>
-    <text x="1162" y="1996">Proceso</text>
-
-    <rect x="1140" y="2008" width="16" height="16" fill="#eaf2fd" stroke="#1F5FBF" stroke-width="2"/>
-    <text x="1162" y="2020">Decisión</text>
-
-    <rect x="1140" y="2032" width="16" height="16" rx="3" fill="#fef4e3" stroke="#EFAD5A" stroke-width="2"/>
-    <text x="1162" y="2044">Salida / error</text>
-
-    <rect x="1140" y="2056" width="16" height="16" rx="3" fill="#fdf3d0" stroke="#D4AF37" stroke-width="2"/>
-    <text x="1162" y="2068">Servicio externo</text>
-
-    <rect x="1140" y="2080" width="16" height="16" rx="8" fill="#0F4229"/>
-    <text x="1162" y="2092">Inicio / Fin</text>
-  </g>
+  <!-- ================= LEYENDA ================= -->
+  <g transform="translate(1140,2020)">
+    <rect x="0" y="0" width="22" height="16" rx="4" fill="#FFFFFF" stroke="#14532D" stroke-width="2"/>
+    <text x="32" y="13" font-size="13" fill="#374151">Proceso</text>
+    <rect x="0" y="26" width="22" height="16" rx="4" fill="#EAF2FE" stroke="#2563EB" stroke-width="2"/>
+    <text x="32" y="39" font-size="13" fill="#374151">Decisión</text>
+    <rect x="0" y="52" width="22" height="16" rx="4" fill="#FEF6EC" stroke="#F0A860" stroke-width="2"/>
+    <text x="32" y="65" font-size="13" fill="#374151">Salida / error</text>
+    <rect x="0" y="78" width="22" height="16" rx="4" fill="#FDF6DC" stroke="#E3B341" stroke-width="2"/>
+    <text x="32" y="91" font-size="13" fill="#374151">Servicio externo</text>
+    <circle cx="11" cy="112" r="8" fill="#14532D"/>
+    <text x="32" y="117" font-size="13" fill="#374151">Inicio / Fin</text>
   </g>
 
 </svg>

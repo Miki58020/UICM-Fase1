@@ -4,7 +4,7 @@
 
 ## 1. Propósito
 
-Es el esquema **físico** completo: las 23 tablas de negocio con **todas** sus columnas, tipo de dato, llave primaria, llaves foráneas y restricciones `unique`, tal como quedan en `database/database.sqlite` después de aplicar todas las migraciones en orden.
+Es el esquema **físico** completo: las 23 tablas de negocio con **todas** sus columnas, tipo de dato, llave primaria, llaves foráneas y restricciones `unique`, tal como quedan en la base de datos de producción —**MariaDB 11.8**, motor InnoDB, cotejamiento `utf8mb4_unicode_ci`— después de aplicar todas las migraciones en orden. En el entorno de desarrollo local el mismo esquema puede reconstruirse sobre SQLite, con las salvedades por motor que se indican más abajo.
 
 A diferencia de `diagrama-entidad-relacion.svg` (conceptual, solo atributos clave), aquí está cada columna — es la referencia a usar cuando se va a escribir una consulta, una migración nueva o revisar qué tipo exacto tiene un campo.
 

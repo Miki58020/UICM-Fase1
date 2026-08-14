@@ -4,7 +4,7 @@
 
 ## 1. Propósito
 
-Este documento describe, columna por columna, las 23 tablas de negocio del sistema tal como quedan en `database/database.sqlite` después de aplicar todas las migraciones (`database/migrations/`). Es la referencia de texto que complementa a `diagrama-base-datos.svg` (visual) y `diagrama-entidad-relacion.svg` (conceptual).
+Este documento describe, columna por columna, las 23 tablas de negocio del sistema tal como quedan en la base de datos de producción (**MariaDB 11.8**, InnoDB) después de aplicar todas las migraciones (`database/migrations/`). Es la referencia de texto que complementa a `diagrama-base-datos.svg` (visual) y `diagrama-entidad-relacion.svg` (conceptual).
 
 **Convenciones de esta tabla:**
 - **Null** — `Sí` si la columna acepta `NULL`.
@@ -203,7 +203,7 @@ Alumno inscrito, generado a partir de un aspirante aprobado. **Tabla con avisos 
 
 #### 4.6.1 Avisos sobre `alumnos`
 
-1. **Llaves foráneas sin constraint real:** una migración de reparación del enum de `estado` (`2026_04_06_000001_fix_alumnos_estado_enum.php`) reconstruyó la tabla completa en SQLite y, al recrearla, declaró `user_id`, `aspirante_id`, `programa_id` y `grupo_id` como columnas numéricas simples en vez de llaves foráneas con `constrained()`. Los modelos Eloquent siguen usando estas relaciones con total normalidad (`belongsTo`), pero la base de datos por sí sola no impediría insertar, por ejemplo, un `programa_id` que no existe. Sólo `periodo_id` (agregada después) sí es una FK real.
+1. **Llaves foráneas dependientes del motor:** la migración de reparación del enum de `estado` (`2026_04_06_000001_fix_alumnos_estado_enum.php`) reconstruye la tabla completa **sólo cuando el motor es SQLite** y, al recrearla, declara `user_id`, `aspirante_id`, `programa_id` y `grupo_id` como columnas numéricas simples en vez de llaves foráneas con `constrained()`; sobre ese motor sólo `periodo_id` es una FK real. **En MariaDB la migración toma la rama `ALTER TABLE ... MODIFY` y las cinco llaves foráneas se conservan como restricciones reales.** El esquema documentado aquí es el de producción, sobre MariaDB.
 2. **Cambio de valores de `estado`:** el esquema original tenía cuatro valores (`activo`, `baja_temporal`, `baja_definitiva`, `egresado`). Se migraron a tres (`activo`, `inactivo`, `baja`): `baja_temporal`→`inactivo`, y tanto `baja_definitiva` como `egresado`→`baja`. **`egresado` ya no existe como valor distinguible** — un alumno que egresó y uno que causó baja definitiva hoy tienen el mismo valor de `estado`.
 3. **Relación de pagos no estándar:** el método `pagos()` del modelo trae los pagos por `aspirante_id` (el pago de inscripción original), no por `alumno_id`. Los pagos posteriores (reinscripción/colegiatura) se acceden con `reinscripciones()` (por `alumno_id`). Existe `todosLosPagos()` para traer ambos conjuntos juntos.
 

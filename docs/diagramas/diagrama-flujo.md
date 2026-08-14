@@ -30,7 +30,7 @@ El flujo va de arriba hacia abajo. Los rombos azules son decisiones; las flechas
 
 ### 2.4 Persistencia y respuesta
 
-8. **Eloquent ORM** hace la lectura o escritura sobre SQLite. Las operaciones que tocan varias tablas a la vez (ej. captura de calificaciones, aprobación de un aspirante) se envuelven en una transacción atómica para que no queden a medias si algo falla a mitad de camino.
+8. **Eloquent ORM** hace la lectura o escritura sobre MariaDB (SQLite en el entorno de desarrollo). La integridad de las operaciones que tocan varias tablas se apoya en las restricciones de llave foránea declaradas en el esquema, que el motor InnoDB hace cumplir en cada escritura. El proyecto **no** envuelve estas operaciones en transacciones explícitas: no hay usos de `DB::transaction` ni de `beginTransaction` en `app/`.
 9. El Controller prepara la respuesta: si la petición vino de una interacción con Alpine.js (`fetch`/AJAX), responde JSON; si no, renderiza la vista Blade completa.
 
 ## 3. Por qué existen las tres salidas de error

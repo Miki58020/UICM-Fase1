@@ -59,7 +59,7 @@ La capa de aplicación se integra con dos servicios de terceros, con credenciale
 
 ### 2.5 Capa de datos
 
-Persistencia sobre **SQLite** (`database/database.sqlite`), accedida vía Eloquent ORM. Las entidades principales del modelo de datos son:
+Persistencia sobre **MariaDB 11.8** en producción —y sobre SQLite en el entorno de desarrollo local—, accedida en ambos casos vía Eloquent ORM. Las entidades principales del modelo de datos son:
 
 `Alumno`, `Aspirante`, `Profesor`, `Programa`, `Periodo`, `Materia`, `Grupo`, `CargaAcademica`, `Calificacion`, `AclaracionCalificacion`, `Pago`, `TarifaInscripcion`, `DocumentoAlumno`, `Contacto`, `User`, `Configuracion` (sitio, correo y MercadoPago).
 
@@ -67,7 +67,7 @@ Persistencia sobre **SQLite** (`database/database.sqlite`), accedida vía Eloque
 
 ```
 Actor → Portal correspondiente (Blade) → routes/web.php + middleware rol:*
-      → Controller del módulo → Eloquent ORM → SQLite
+      → Controller del módulo → Eloquent ORM → MariaDB
       → (según el módulo) MercadoPago o SMTP como servicios externos
 ```
 
