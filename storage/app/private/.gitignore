@@ -1,2 +1,9 @@
-# Antes ignoraba todo el contenido subido (perfiles, documentos de aspirantes/alumnos);
-# ahora se trackea a propósito, incluye documentos personales sensibles.
+# Contenido subido por los usuarios: documentos personales de aspirantes y
+# alumnos (actas de nacimiento, CURP, identificaciones, comprobantes de
+# domicilio, certificados) y fotografias de perfil.
+#
+# NO se versiona: son datos personales y este repositorio es publico.
+# El contenido publico del sitio (hero, carrusel) si se versiona a proposito
+# y vive en storage/app/public/.
+*
+!.gitignore
