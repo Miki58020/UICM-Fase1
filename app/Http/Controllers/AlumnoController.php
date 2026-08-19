@@ -125,7 +125,6 @@ class AlumnoController extends Controller
             'cuatrimestre_actual.required' => 'El cuatrimestre es obligatorio.',
             'cuatrimestre_actual.integer'  => 'El cuatrimestre debe ser un número.',
             'grupo_id.exists'              => 'El grupo seleccionado no es válido.',
-            'password.min'                 => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
         // El grupo manda: si hay uno asignado, el cuatrimestre del alumno siempre
@@ -290,7 +289,6 @@ class AlumnoController extends Controller
             'password' => ['required', 'string', 'confirmed', Contrasena::politica()],
         ], [
             'password.required'  => 'Ingresa la nueva contraseña.',
-            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 

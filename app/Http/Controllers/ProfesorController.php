@@ -117,7 +117,6 @@ class ProfesorController extends Controller
             'especialidad' => 'nullable|string|max:100',
             'password'     => ['nullable', 'string', Contrasena::politica()],
         ], [
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);
 
         $profesor->update([

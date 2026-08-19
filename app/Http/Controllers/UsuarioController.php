@@ -55,7 +55,6 @@ class UsuarioController extends Controller
             'email.required'            => 'El correo es obligatorio.',
             'email.unique'              => 'Ese correo ya está registrado.',
             'password.required'         => 'La contraseña es obligatoria.',
-            'password.min'              => 'La contraseña debe tener al menos 6 caracteres.',
             'rol.required'              => 'Selecciona un rol.',
         ]);
 
@@ -86,7 +85,6 @@ class UsuarioController extends Controller
             'apellido_paterno.required' => 'El apellido paterno es obligatorio.',
             'email.required'            => 'El correo es obligatorio.',
             'email.unique'              => 'Ese correo ya está registrado.',
-            'password.min'              => 'La contraseña debe tener al menos 6 caracteres.',
             'rol.required'              => 'Selecciona un rol.',
         ]);
 

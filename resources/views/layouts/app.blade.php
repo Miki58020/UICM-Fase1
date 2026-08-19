@@ -121,7 +121,7 @@
       x-data="{
           sidebarOpen: false,
           sidebarCollapsed: localStorage.getItem('uicm_sidebar') === '1',
-          modalCambiarPassword: {{ $errors->has('password') ? 'true' : 'false' }},
+          modalCambiarPassword: {{ $errors->has('password') && old('form_origen') === 'password_propia' ? 'true' : 'false' }},
           userMenuOpen: false,
           toggleCollapse() {
               this.sidebarCollapsed = !this.sidebarCollapsed;
@@ -1045,6 +1045,7 @@
             <form method="POST" action="{{ $cambiarPasswordRoute }}" class="px-6 py-5 space-y-4"
                   x-data="{ showPwd: false }">
                 @csrf
+                <input type="hidden" name="form_origen" value="password_propia">
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
@@ -1052,13 +1053,13 @@
                     </label>
                     <input :type="showPwd ? 'text' : 'password'" name="password" required
                            class="w-full px-4 py-2.5 text-sm border rounded-xl bg-white focus:outline-none
-                                  @error('password') border-red-400 @else border-gray-300 @enderror"
+                                  @if($errors->has('password') && old('form_origen') === 'password_propia') border-red-400 @else border-gray-300 @endif"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.15)'"
                            onblur="this.style.borderColor=''; this.style.boxShadow=''">
                     <p class="mt-1 text-xs text-gray-400">Mínimo 8 caracteres, con mayúscula, minúscula y número.</p>
-                    @error('password')
-                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                    @enderror
+                    @if($errors->has('password') && old('form_origen') === 'password_propia')
+                        <p class="mt-1 text-xs text-red-600">{{ $errors->first('password') }}</p>
+                    @endif
                 </div>
 
                 <div>

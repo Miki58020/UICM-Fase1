@@ -230,7 +230,6 @@ class CalificacionController extends Controller
             'password' => ['required', 'string', 'confirmed', Contrasena::politica()],
         ], [
             'password.required'  => 'Ingresa la nueva contraseña.',
-            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
