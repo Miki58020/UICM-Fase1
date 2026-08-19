@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Support\Contrasena;
 
 class PerfilController extends Controller
 {
@@ -35,7 +36,7 @@ class PerfilController extends Controller
     public function cambiarPassword(Request $request)
     {
         $request->validate([
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'confirmed', Contrasena::politica()],
         ], [
             'password.required'  => 'Ingresa la nueva contraseña.',
             'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',

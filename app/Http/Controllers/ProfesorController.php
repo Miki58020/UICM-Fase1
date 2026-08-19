@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Support\Correo;
-use Illuminate\Support\Str;
+use App\Support\Contrasena;
 
 class ProfesorController extends Controller
 {
@@ -40,7 +40,7 @@ class ProfesorController extends Controller
     // Genera acceso al portal para un profesor (crea o regenera contraseña)
     public function generarAcceso(Profesor $profesor)
     {
-        $password = Str::random(8);
+        $password = Contrasena::generar();
 
         if ($profesor->user_id) {
             $profesor->user->update(['password' => Hash::make($password)]);
@@ -76,7 +76,7 @@ class ProfesorController extends Controller
             'correo.unique' => 'Este correo ya está registrado en el sistema.',
         ]);
 
-        $password = Str::random(10);
+        $password = Contrasena::generar();
 
         $user = User::create([
             'name'     => $request->nombre,
@@ -115,7 +115,7 @@ class ProfesorController extends Controller
             'correo'       => 'required|email|unique:profesores,correo,' . $profesor->id,
             'telefono'     => 'nullable|digits:10',
             'especialidad' => 'nullable|string|max:100',
-            'password'     => 'nullable|string|min:6',
+            'password'     => ['nullable', 'string', Contrasena::politica()],
         ], [
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
         ]);

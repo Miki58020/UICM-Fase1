@@ -13,7 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Support\Correo;
-use Illuminate\Support\Str;
+use App\Support\Contrasena;
 
 class InscripcionController extends Controller
 {
@@ -99,7 +99,7 @@ class InscripcionController extends Controller
             );
         }
 
-        $password = Str::random(8);
+        $password = Contrasena::generar();
 
         $emailInstitucional = strtolower($alumno->matricula) . '@' . ConfiguracionCorreo::dominio();
 
@@ -142,7 +142,7 @@ class InscripcionController extends Controller
             return redirect()->back()->with('error', 'Este alumno no tiene acceso al portal aún.');
         }
 
-        $password = Str::random(8);
+        $password = Contrasena::generar();
 
         $alumno->user->update(['password' => Hash::make($password)]);
 

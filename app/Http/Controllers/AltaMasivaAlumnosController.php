@@ -15,7 +15,7 @@ use App\Support\Texto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use App\Support\Contrasena;
 
 class AltaMasivaAlumnosController extends Controller
 {
@@ -190,7 +190,7 @@ class AltaMasivaAlumnosController extends Controller
             }
 
             $matricula = Alumno::generarMatricula($grupoDestino->periodo, $grupoDestino->programa);
-            $password = Str::random(8);
+            $password = Contrasena::generar();
 
             $user = User::create([
                 'name'     => trim("{$d['nombre']} {$d['apellido_paterno']} {$d['apellido_materno']}"),

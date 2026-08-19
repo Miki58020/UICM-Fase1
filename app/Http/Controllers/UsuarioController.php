@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Support\Correo;
 use Illuminate\Validation\Rule;
+use App\Support\Contrasena;
 
 class UsuarioController extends Controller
 {
@@ -46,7 +47,7 @@ class UsuarioController extends Controller
             'apellido_paterno' => 'required|string|max:100',
             'apellido_materno' => 'nullable|string|max:100',
             'email'            => 'required|email|unique:users,email',
-            'password'         => 'required|string|min:6',
+            'password'         => ['required', 'string', Contrasena::politica()],
             'rol'              => ['required', Rule::in(self::ROLES)],
         ], [
             'name.required'             => 'El nombre es obligatorio.',
@@ -78,7 +79,7 @@ class UsuarioController extends Controller
             'apellido_paterno' => 'required|string|max:100',
             'apellido_materno' => 'nullable|string|max:100',
             'email'            => ['required', 'email', Rule::unique('users', 'email')->ignore($usuario->id)],
-            'password'         => 'nullable|string|min:6',
+            'password'         => ['nullable', 'string', Contrasena::politica()],
             'rol'              => ['required', Rule::in(self::ROLES)],
         ], [
             'name.required'             => 'El nombre es obligatorio.',

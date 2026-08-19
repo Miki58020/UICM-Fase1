@@ -466,7 +466,7 @@
                             :type="showPwd ? 'text' : 'password'"
                             name="password"
                             x-model="form.password"
-                            placeholder="Mínimo 6 caracteres"
+                            placeholder="Mínimo 8 caracteres"
                             autocomplete="new-password"
                             class="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-10 text-sm text-gray-800
                                    placeholder-gray-400 outline-none transition-all duration-150"
@@ -483,6 +483,7 @@
                             </svg>
                         </button>
                     </div>
+                    <p class="mt-1 text-xs text-gray-400">Mínimo 8 caracteres, con mayúscula, minúscula y número.</p>
                     @error('password')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror

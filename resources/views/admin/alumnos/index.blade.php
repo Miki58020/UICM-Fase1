@@ -395,8 +395,8 @@ $gruposJson = $grupos->map(fn($g) => [
                     </label>
                     <div class="relative" x-data="{ showPwd: false }">
                         <input :type="showPwd ? 'text' : 'password'" name="password" x-model="form.password"
-                               placeholder="Mínimo 6 caracteres"
-                               minlength="6" maxlength="50"
+                               placeholder="Mínimo 8 caracteres"
+                               minlength="8" maxlength="50"
                                class="w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none"
                                onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.20)'"
                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
@@ -411,6 +411,7 @@ $gruposJson = $grupos->map(fn($g) => [
                             </svg>
                         </button>
                     </div>
+                    <p class="mt-1 text-xs text-gray-400">Mínimo 8 caracteres, con mayúscula, minúscula y número.</p>
                 </div>
 
                 <div x-show="editando && !editando.tiene_usuario">

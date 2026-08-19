@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Support\Contrasena;
 
 class AlumnoController extends Controller
 {
@@ -118,7 +119,7 @@ class AlumnoController extends Controller
             'estado'             => 'required|in:activo,inactivo,baja',
             'cuatrimestre_actual'=> ['required', 'integer', 'min:1', $this->reglaCuatrimestreValido($request, $alumno)],
             'grupo_id'           => 'nullable|exists:grupos,id',
-            'password'           => 'nullable|string|min:6',
+            'password'           => ['nullable', 'string', Contrasena::politica()],
         ], [
             'estado.required'              => 'El estado es obligatorio.',
             'cuatrimestre_actual.required' => 'El cuatrimestre es obligatorio.',
@@ -161,7 +162,7 @@ class AlumnoController extends Controller
             return redirect()->back()->with('error', 'Este alumno todavía no tiene acceso al portal.');
         }
 
-        $password = \Illuminate\Support\Str::random(8);
+        $password = Contrasena::generar();
         $alumno->user->update(['password' => Hash::make($password)]);
 
         // Correo personal, no el institucional: si perdió el acceso al portal,
@@ -286,7 +287,7 @@ class AlumnoController extends Controller
     public function cambiarPassword(Request $request)
     {
         $request->validate([
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'confirmed', Contrasena::politica()],
         ], [
             'password.required'  => 'Ingresa la nueva contraseña.',
             'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',

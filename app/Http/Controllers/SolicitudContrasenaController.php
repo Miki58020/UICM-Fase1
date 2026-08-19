@@ -7,7 +7,7 @@ use App\Models\SolicitudContrasena;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use App\Support\Contrasena;
 
 class SolicitudContrasenaController extends Controller
 {
@@ -52,7 +52,7 @@ class SolicitudContrasenaController extends Controller
 
     public function atender(SolicitudContrasena $solicitud)
     {
-        $password = Str::random(8);
+        $password = Contrasena::generar();
 
         $solicitud->user->update(['password' => Hash::make($password)]);
         $solicitud->update(['estado' => 'atendida']);

@@ -1048,13 +1048,14 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                        Nueva contraseña <span class="normal-case font-normal text-gray-400">(mín. 8 caracteres)</span>
+                        Nueva contraseña
                     </label>
                     <input :type="showPwd ? 'text' : 'password'" name="password" required
                            class="w-full px-4 py-2.5 text-sm border rounded-xl bg-white focus:outline-none
                                   @error('password') border-red-400 @else border-gray-300 @enderror"
                            onfocus="this.style.borderColor='#0F4229'; this.style.boxShadow='0 0 0 2px rgba(15,66,41,0.15)'"
                            onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                    <p class="mt-1 text-xs text-gray-400">Mínimo 8 caracteres, con mayúscula, minúscula y número.</p>
                     @error('password')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror
